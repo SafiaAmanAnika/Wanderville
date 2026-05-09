@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+
+# Env files (never commit real secrets)
+.env
+.env.*
+!.env.example
+
+# SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Godot
+.godot/
+*.import
+export_presets.cfg
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/

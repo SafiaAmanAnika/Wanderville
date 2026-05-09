@@ -1,0 +1,7 @@
+; Engine configuration file.
+; This is a minimal Godot 4.x project stub to establish repository structure.
+config_version=5
+
+[application]
+config/name="Wanderville"
+config/features=PackedStringArray("4.0")

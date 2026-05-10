@@ -1,4 +1,4 @@
-# Manual Backend Testing Guide (Beginner Friendly)
+# Manual Backend Testing Guide
 
 This guide shows how to manually test the current Wanderville backend locally after you have completed setup.
 

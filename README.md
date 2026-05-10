@@ -10,6 +10,10 @@ meet friends in a shared community area.
 `code/server/` - FastAPI backend
 `doc/` - proposal, reports, references, and presentations
 
+## Team Setup Guide
+
+See `doc/setup/local_setup.md`.
+
 ## Run Server
 
 ```bash

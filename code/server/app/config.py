@@ -8,5 +8,13 @@ class Settings(BaseSettings):
     wanderville_host: str = "127.0.0.1"
     wanderville_port: int = 8000
 
+    # SQLAlchemy database URL, e.g. "sqlite:///./wanderville.db"
+    database_url: str = "sqlite:///./wanderville.db"
+
+    # JWT configuration
+    jwt_secret_key: str = "change-me"
+    jwt_algorithm: str = "HS256"
+    access_token_expire_minutes: int = 60 * 24 * 7
+
 
 settings = Settings()

@@ -9,7 +9,7 @@ All commands below are written to be copy-paste friendly for **Git Bash on Windo
 Before you begin, make sure you have:
 
 1. Repo cloned
-2. You are on the `dev` branch
+2. You are on the `authentication-and-database` branch
 3. You are inside `code/server`
 4. `.venv` created and activated
 5. Dependencies installed
@@ -28,14 +28,14 @@ which python
 
 Expected:
 
-1. Branch shows `dev`
+1. Branch shows `authentication-and-database`
 2. `pwd` ends with `/code/server`
 3. `which python` points inside `code/server/.venv/...`
 
 If you still need the setup commands (run from repo root):
 
 ```bash
-git checkout dev
+git checkout authentication-and-database
 cd code/server
 python -m venv .venv
 source .venv/Scripts/activate

@@ -23,8 +23,8 @@ Run these in Git Bash (or your terminal):
 ```bash
 git clone https://github.com/SafiaAmanAnika/Wanderville.git
 cd Wanderville
-git checkout dev
-git pull origin dev
+git checkout authentication-and-database
+git pull origin authentication-and-database
 ```
 
 ## Backend Setup

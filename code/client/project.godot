@@ -16,9 +16,8 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="Wanderville"
 run/main_scene="res://scenes/menus/LoginScene.tscn"
-# Godot 4.x projects typically keep the core feature tag as "4.0".
-# This project is intended to be opened with Godot 4.6.
-config/features=PackedStringArray("4.0")
+config/features=PackedStringArray("4.6")
+4.0.#ThisprojectisintendedtobeopenedwithGodot4.6.config/features=PackedStringArray("4.0")
 
 [autoload]
 

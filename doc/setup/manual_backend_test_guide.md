@@ -12,9 +12,9 @@ Before you begin, make sure you have:
 2. You are on the `authentication-and-database` branch
 3. You are inside `code/server`
 4. `.venv` created and activated
-5. Dependencies installed
+5. Dependencies installed (including alembic)
 6. `.env` created from `.env.example`
-7. Database initialized with `python init_db.py`
+7. Database created via `python -m alembic upgrade head`
 
 Quick verify commands:
 
@@ -41,24 +41,24 @@ python -m venv .venv
 source .venv/Scripts/activate
 pip install -r requirements.txt
 cp .env.example .env
-python init_db.py
+python -m alembic upgrade head
 ```
 
 ## 2. Database Checks
 
 These checks confirm SQLite is created and the expected `players` table exists.
 
-### 2.1 Re-run init (safe)
+### 2.1 Verify migrations are applied
 
 From `code/server`:
 
 ```bash
-python init_db.py
+python -m alembic upgrade head
 ```
 
 Expected output includes:
 
-1. `Database initialized.`
+1. `INFO [alembic.runtime.migration] Running upgrade ...`
 
 ### 2.2 Check that `wanderville.db` exists
 
@@ -96,18 +96,20 @@ Expected columns (names may appear in a tuple list):
 4. `display_name`
 5. `created_at`
 6. `is_active`
+7. `position_x`
+8. `position_y`
 
 ## 3. Automated Test
 
 From `code/server`:
 
 ```bash
-pytest -q
+python -m pytest -q
 ```
 
 Expected:
 
-1. `1 passed` (the test covers signup, duplicate signup, login, wrong password, and `/auth/me` auth behavior)
+1. `2 passed` (test_auth.py covers signup/login/me flow; test_auth_deps.py covers OAuth2 token handling and position fields)
 
 ## 4. Start Server
 
@@ -248,8 +250,92 @@ Expected:
 
 1. `success: true`
 2. Returned player data matches your logged-in user (`username` is `$USERNAME`)
+3. Returned player data includes `position_x` and `position_y` (both default to `0`)
 
-## 6. Password Hash Check
+## 5.9 Verify position fields in player data
+
+After logging in and getting your token (step 5.7), check that the player response includes position fields:
+
+```bash
+curl -sS "$BASE_URL/auth/me" \
+  -H "Authorization: Bearer $TOKEN" \
+  | python -c "import sys, json; d=json.load(sys.stdin)['data']; print(f'position_x={d[\"position_x\"]}, position_y={d[\"position_y\"]}')"
+```
+
+Expected:
+
+1. `position_x=0, position_y=0` (new players start at origin)
+
+## 6. Testing OAuth2 Authentication
+
+This section verifies that the new `OAuth2PasswordBearer` token extraction works correctly.
+
+### 6.1 Missing Authorization header returns 401
+
+```bash
+curl -sS -w "\nHTTP_CODE:%{http_code}\n" "$BASE_URL/auth/me"
+```
+
+Expected:
+
+1. HTTP status code `401`
+2. Response includes `"success": false`
+3. Error code is `"NOT_AUTHENTICATED"`
+
+### 6.2 Malformed Authorization header returns 401
+
+```bash
+curl -sS -w "\nHTTP_CODE:%{http_code}\n" "$BASE_URL/auth/me" \
+  -H "Authorization: InvalidFormat"
+```
+
+Expected:
+
+1. HTTP status code `401`
+2. Response includes `"success": false`
+3. Error code is `"NOT_AUTHENTICATED"`
+
+### 6.3 Expired or invalid token returns 401
+
+```bash
+curl -sS -w "\nHTTP_CODE:%{http_code}\n" "$BASE_URL/auth/me" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIn0.invalid"
+```
+
+Expected:
+
+1. HTTP status code `401`
+2. Response includes `"success": false`
+3. Error code is `"INVALID_TOKEN"`
+
+### 6.4 Valid token returns player data with position fields
+
+Use the token from step 5.7:
+
+```bash
+curl -sS "$BASE_URL/auth/me" \
+  -H "Authorization: Bearer $TOKEN" \
+  | python -m json.tool
+```
+
+Expected:
+
+1. HTTP status code `200`
+2. `"success": true`
+3. `data` contains `id`, `username`, `display_name`, `created_at`, `is_active`, `position_x`, `position_y`
+4. `position_x` and `position_y` are integers (default `0`)
+
+### 6.5 OpenAPI docs show auth scheme
+
+Open `http://127.0.0.1:8000/docs` in a browser.
+
+Expected:
+
+1. `/auth/me` endpoint shows a lock icon (requires authentication)
+2. Click "Authorize" button at the top — you can paste your Bearer token there
+3. The token URL for auth is listed as `/auth/login`
+
+## 7. Password Hash Check
 
 This confirms the backend stores a password hash in SQLite, not the plain password.
 
@@ -301,6 +387,7 @@ Fix (from `code/server`):
 
 ```bash
 cp .env.example .env
+python -m alembic upgrade head
 ```
 
 ### `USERNAME_TAKEN`
@@ -347,5 +434,6 @@ Do not commit these local-only files/folders:
 2. `.venv/`
 3. `wanderville.db`
 4. `tests/test_auth.db`
-5. `__pycache__/`
-6. `.pytest_cache/`
+5. `tests/test_auth_deps.db`
+6. `__pycache__/`
+7. `.pytest_cache/`

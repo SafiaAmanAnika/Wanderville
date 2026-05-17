@@ -37,8 +37,8 @@ python -m venv .venv
 source .venv/Scripts/activate
 pip install -r requirements.txt
 cp .env.example .env
-python init_db.py
-pytest -q
+python -m alembic upgrade head
+python -m pytest -q
 uvicorn main:app --reload
 ```
 
@@ -46,6 +46,37 @@ Notes:
 
 - Keep the terminal running while `uvicorn` is running.
 - If activation fails on your machine, see Troubleshooting.
+- `python -m alembic upgrade head` applies all pending database migrations. This is the only command needed to set up the database — `init_db.py` is deprecated and kept only for legacy convenience.
+
+## Database Migrations
+
+This project uses **Alembic** for schema migrations. Never use `python init_db.py` in production — it is only for local convenience on a fresh database.
+
+### After pulling new code
+
+```bash
+cd code/server
+source .venv/Scripts/activate
+python -m alembic upgrade head
+```
+
+This reads migration files in `migrations/versions/` and applies any that have not yet been run.
+
+### Creating a new migration
+
+After changing a model (e.g., adding a column to `Player`):
+
+```bash
+python -m alembic revision --autogenerate -m "describe_your_change"
+```
+
+This creates a new file in `migrations/versions/`. Review the generated `upgrade()` and `downgrade()` functions before committing.
+
+### Rolling back a migration
+
+```bash
+python -m alembic downgrade -1
+```
 
 ## Files/Folders You Must Not Commit
 
@@ -55,6 +86,7 @@ These are local-only artifacts and should never be pushed to GitHub:
 - `.venv/`
 - `wanderville.db`
 - `test_auth.db`
+- `test_auth_deps.db`
 - `__pycache__/`
 - `.pytest_cache/`
 - `.godot/`
@@ -103,13 +135,14 @@ cp .env.example .env
 
 ### Database Not Created
 
-- Re-run initialization from `code/server`:
+- Run migrations from `code/server`:
 
 ```bash
-python init_db.py
+python -m alembic upgrade head
 ```
 
-- Ensure it created `wanderville.db` in the same folder.
+- This creates all tables via Alembic. Ensure `wanderville.db` appears in the same folder.
+- If the database is corrupted, delete `wanderville.db` and re-run the command.
 
 ### Username Already Taken
 

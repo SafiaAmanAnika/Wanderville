@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.deps.auth import get_current_player
+from app.models.player import Player
 from app.schemas.auth import LoginRequest, SignupRequest
 from app.schemas.player import PlayerPublic
 from app.services import auth_service
@@ -57,7 +58,7 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
 
 
 @router.get("/me")
-def me(player=Depends(get_current_player)):
+def me(player: Player = Depends(get_current_player)):
     return {
         "success": True,
         "data": PlayerPublic.model_validate(player).model_dump(),

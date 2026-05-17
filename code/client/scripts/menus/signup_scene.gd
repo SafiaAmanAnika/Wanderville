@@ -31,21 +31,51 @@ func _on_create_pressed() -> void:
 	var u := _username.text.strip_edges()
 	var d := _display_name.text.strip_edges()
 	var p := _password.text
+
 	if u == "" or d == "" or p == "":
-		_status.text = "Fill in username, display name, and password."
+		_status.text = "Fill in all fields."
+		return
+	if u.length() < 3:
+		_status.text = "Username must be at least 3 characters."
+		return
+	if p.length() < 6:
+		_status.text = "Password must be at least 6 characters."
 		return
 
 	_set_busy(true)
 	_status.text = "Creating account..."
-
 	var res: Dictionary = await APIClient.signup(u, p, d)
 	_set_busy(false)
 
 	if not bool(res.get("ok", false)):
+		var body = res.get("body")
+		if typeof(body) == TYPE_DICTIONARY:
+			var err = str(body.get("error", ""))
+			if err == "USERNAME_TAKEN":
+				_status.text = "That username is already taken."
+				return
 		_status.text = _format_error(res)
 		return
 
-	_status.text = "Signup successful. You can log in now."
+	# Auto-login after successful signup
+	_status.text = "Account created! Logging you in..."
+	_set_busy(true)
+	var login_res := await APIClient.login(u, p)
+	_set_busy(false)
+
+	if bool(login_res.get("ok", false)):
+		var lbody = login_res.get("body")
+		if typeof(lbody) == TYPE_DICTIONARY:
+			var data = lbody.get("data", {})
+			var token = str(data.get("token", ""))
+			var player = data.get("player", {})
+			if token != "" and not player.is_empty():
+				Global.set_session(token, player)
+				await get_tree().create_timer(0.5).timeout
+				SceneManager.goto_main_menu()
+				return
+
+	_status.text = "Account created. Please log in manually."
 
 
 func _format_error(res: Dictionary) -> String:

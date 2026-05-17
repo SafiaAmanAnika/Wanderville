@@ -14,6 +14,18 @@ func _ready() -> void:
 
 	# Quality-of-life: allow Enter to submit.
 	_password.text_submitted.connect(func(_t: String) -> void: _on_login_pressed())
+
+	# Auto-login if saved token exists
+	if Global.load_session():
+		_status.text = "Restoring session..."
+		var me_res := await APIClient.me(Global.token)
+		if bool(me_res.get("ok", false)):
+			SceneManager.goto_main_menu()
+			return
+		else:
+			Global.clear_session()
+			_status.text = "Session expired. Please log in again."
+
 	_username.grab_focus()
 
 
@@ -65,7 +77,9 @@ func _on_login_pressed() -> void:
 		_status.text = "Logged in, but /auth/me failed. Token may be invalid."
 		return
 
-	_status.text = "Logged in successfully. MainWorld is not created yet."
+	_status.text = "Logged in successfully."
+	await get_tree().create_timer(0.5).timeout
+	SceneManager.goto_main_menu()
 
 
 func _format_error(res: Dictionary) -> String:

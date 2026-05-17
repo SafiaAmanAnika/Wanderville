@@ -1,7 +1,11 @@
+import logging
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from app.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 class Base(DeclarativeBase):
@@ -16,6 +20,11 @@ engine = create_engine(
 )
 
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+
+if "sqlite" in settings.database_url and settings.wanderville_env != "dev":
+    logger.warning(
+        "SQLite is configured for a non-dev environment. Consider migrating to PostgreSQL for production."
+    )
 
 
 def get_db():

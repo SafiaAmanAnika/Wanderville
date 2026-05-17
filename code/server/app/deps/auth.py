@@ -1,33 +1,20 @@
 from __future__ import annotations
 
-from fastapi import Depends, Header, HTTPException
+from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.player import Player
 from app.services import auth_service
 
-
-def _get_bearer_token(authorization: str | None) -> str:
-    if not authorization:
-        raise HTTPException(
-            status_code=401,
-            detail={"success": False, "error": "NOT_AUTHENTICATED", "message": "Missing Authorization header"},
-        )
-    prefix = "Bearer "
-    if not authorization.startswith(prefix):
-        raise HTTPException(
-            status_code=401,
-            detail={"success": False, "error": "NOT_AUTHENTICATED", "message": "Invalid Authorization header"},
-        )
-    return authorization[len(prefix) :].strip()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 def get_current_player(
     db: Session = Depends(get_db),
-    authorization: str | None = Header(default=None),
+    token: str = Depends(oauth2_scheme),
 ) -> Player:
-    token = _get_bearer_token(authorization)
     try:
         player_id = auth_service.decode_access_token(token)
     except auth_service.AuthError as e:
@@ -47,3 +34,15 @@ def get_current_player(
             detail={"success": False, "error": "INACTIVE_ACCOUNT", "message": "Account is inactive"},
         )
     return player
+
+
+def get_current_player_id(player: Player = Depends(get_current_player)) -> int:
+    return player.id
+
+
+def check_owner(resource_owner_id: int, current_user_id: int) -> None:
+    if resource_owner_id != current_user_id:
+        raise HTTPException(
+            status_code=403,
+            detail={"success": False, "error": "FORBIDDEN", "message": "You do not own this resource"},
+        )

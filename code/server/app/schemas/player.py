@@ -13,3 +13,5 @@ class PlayerPublic(BaseModel):
     display_name: str
     created_at: datetime
     is_active: bool
+    position_x: int
+    position_y: int

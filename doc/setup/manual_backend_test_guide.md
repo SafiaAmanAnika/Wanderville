@@ -437,3 +437,92 @@ Do not commit these local-only files/folders:
 5. `tests/test_auth_deps.db`
 6. `__pycache__/`
 7. `.pytest_cache/`
+
+## 10. Testing World Endpoints
+
+This section covers the new map/world endpoints added in Milestone 3.
+
+### Prerequisites
+
+Make sure you have:
+
+1. Applied the latest migration: `python -m alembic upgrade head`
+2. A valid token from the login step (see section 5.7)
+
+### 10.1 GET `/world/me`
+
+Returns the current player's world. If no world exists, one is auto-created.
+
+```bash
+curl -sS "$BASE_URL/world/me" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+Expected:
+
+1. `success: true`
+2. `data.id` is an integer
+3. `data.owner_id` matches your player ID
+4. `data.name` defaults to `"My World"`
+5. `data.tiles` is an empty object `{}` for a new world
+6. `data.created_at` is an ISO timestamp
+
+### 10.2 PUT `/world/tiles`
+
+Replace the entire tiles dictionary for your world.
+
+```bash
+curl -sS -X PUT "$BASE_URL/world/tiles" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"tiles": {"0,0": "grass", "1,0": "dirt", "0,1": "water"}}'
+```
+
+Expected:
+
+1. `success: true`
+2. `data.tiles` now contains `{"0,0": "grass", "1,0": "dirt", "0,1": "water"}`
+3. `message: "Tiles updated"`
+
+### 10.3 PUT `/world/tile`
+
+Set a single tile at a specific coordinate.
+
+```bash
+curl -sS -X PUT "$BASE_URL/world/tile" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"x": 2, "y": 3, "tile_type": "stone"}'
+```
+
+Expected:
+
+1. `success: true`
+2. `data.tiles` now includes `"2,3": "stone"` alongside any existing tiles
+3. `message: "Tile updated"`
+
+### 10.4 Verify tiles with `/world/me`
+
+After updating tiles, confirm they persisted:
+
+```bash
+curl -sS "$BASE_URL/world/me" \
+  -H "Authorization: Bearer $TOKEN" \
+  | python -m json.tool
+```
+
+Expected:
+
+1. `data.tiles` contains all tiles you set in previous steps
+
+### 10.5 Unauthorized access (no token)
+
+```bash
+curl -sS -w "\nHTTP_CODE:%{http_code}\n" "$BASE_URL/world/me"
+```
+
+Expected:
+
+1. HTTP status code `401`
+2. `success: false`
+3. `error: "NOT_AUTHENTICATED"`

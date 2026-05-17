@@ -46,11 +46,11 @@ Notes:
 
 - Keep the terminal running while `uvicorn` is running.
 - If activation fails on your machine, see Troubleshooting.
-- `python -m alembic upgrade head` applies all pending database migrations. This is the only command needed to set up the database — `init_db.py` is deprecated and kept only for legacy convenience.
+- `python -m alembic upgrade head` applies all pending database migrations. This is the only command needed to set up the database.
 
 ## Database Migrations
 
-This project uses **Alembic** for schema migrations. Never use `python init_db.py` in production — it is only for local convenience on a fresh database.
+This project uses **Alembic** for schema migrations.
 
 ### After pulling new code
 
@@ -146,12 +146,12 @@ python -m alembic upgrade head
 
 ### Username Already Taken
 
-- Sign up with a different username, or delete/reset your local database and re-init:
+- Sign up with a different username, or delete/reset your local database and re-run migrations:
 
 ```bash
 # WARNING: this deletes your local data
 rm -f wanderville.db
-python init_db.py
+python -m alembic upgrade head
 ```
 
 ### Port 8000 Already In Use
@@ -161,3 +161,18 @@ python init_db.py
 ```bash
 uvicorn main:app --reload --port 8001
 ```
+
+## World & Map Setup
+
+Starting from Milestone 3, every player automatically gets a **World** created when they sign up. The world stores a `tiles` dictionary that maps coordinate keys (e.g. `"0,0"`, `"1,0"`) to tile types (e.g. `"grass"`, `"dirt"`).
+
+### How it works
+
+1. When a player signs up via `POST /auth/signup`, the backend creates a `World` row linked to that player.
+2. The world starts with an empty `tiles` dictionary and the default name `"My World"`.
+3. You can access your world via `GET /world/me` (requires authentication).
+4. You can update tiles via `PUT /world/tiles` (full replacement) or `PUT /world/tile` (single tile).
+
+### Manual testing
+
+After signing up and obtaining a token, follow the curl commands in the [Manual Backend Test Guide](manual_backend_test_guide.md) under **Testing World Endpoints**.

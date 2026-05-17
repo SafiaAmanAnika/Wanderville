@@ -17,7 +17,6 @@ python -m venv .venv
 source .venv/Scripts/activate
 pip install -r requirements.txt
 cp .env.example .env
-python init_db.py
 python -m alembic upgrade head
 python -m pytest -q
 uvicorn main:app --reload
@@ -40,22 +39,25 @@ code/server/
 ├── main.py                  # FastAPI app entry point
 ├── alembic.ini              # Alembic configuration
 ├── requirements.txt         # Python dependencies
-├── init_db.py               # Local DB initialization (dev only)
 ├── app/
 │   ├── config.py            # Pydantic settings (loads .env)
 │   ├── database.py          # SQLAlchemy engine + session
 │   ├── api/                 # Route handlers
 │   │   ├── auth.py          # /auth/signup, /auth/login, /auth/me
-│   │   └── health.py        # /health
+│   │   ├── health.py        # /health
+│   │   └── world.py         # /world/me, /world/tiles, /world/tile
 │   ├── deps/                # FastAPI dependencies
 │   │   └── auth.py          # get_current_player, get_current_player_id, check_owner
 │   ├── models/              # SQLAlchemy models
-│   │   └── player.py        # Player table
+│   │   ├── player.py        # Player table
+│   │   └── world.py         # World table (map data)
 │   ├── schemas/             # Pydantic request/response schemas
 │   │   ├── auth.py          # SignupRequest, LoginRequest
-│   │   └── player.py        # PlayerPublic
+│   │   ├── player.py        # PlayerPublic
+│   │   └── world.py         # WorldCreate, WorldPublic, TileUpdate
 │   ├── services/            # Business logic
-│   │   └── auth_service.py  # signup, login, JWT helpers
+│   │   ├── auth_service.py  # signup, login, JWT helpers
+│   │   └── world_service.py # get_world_by_owner, create_world, update_tiles
 │   ├── websocket/           # (future: multiplayer sync)
 │   └── scheduler/           # (future: crop growth ticks)
 ├── migrations/              # Alembic migration files

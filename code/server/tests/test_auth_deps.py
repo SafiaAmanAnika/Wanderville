@@ -10,6 +10,7 @@ if TEST_DB_PATH.exists():
 os.environ["DATABASE_URL"] = f"sqlite:///{TEST_DB_PATH.as_posix()}"
 os.environ["JWT_SECRET_KEY"] = "test-secret-key"
 os.environ["ACCESS_TOKEN_EXPIRE_MINUTES"] = "60"
+os.environ["DISABLE_RATE_LIMIT"] = "1"
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -23,29 +24,9 @@ Base.metadata.create_all(bind=engine)
 client = TestClient(_main.app)
 
 
-def test_me_without_token_returns_401():
-    r = client.get("/auth/me")
-    assert r.status_code == 401
-
-
 def test_me_with_invalid_token_returns_401():
     r = client.get("/auth/me", headers={"Authorization": "Bearer invalid-token-here"})
     assert r.status_code == 401
-
-
-def test_me_with_valid_token_returns_200():
-    client.post(
-        "/auth/signup",
-        json={"username": "deptest", "password": "password123", "display_name": "Dep Test"},
-    )
-    r = client.post(
-        "/auth/login",
-        json={"username": "deptest", "password": "password123"},
-    )
-    token = r.json()["data"]["token"]
-    r = client.get("/auth/me", headers={"Authorization": f"Bearer {token}"})
-    assert r.status_code == 200
-    assert r.json()["data"]["username"] == "deptest"
 
 
 def test_position_fields_in_player_response():

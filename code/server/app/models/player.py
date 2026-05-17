@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 
 from sqlalchemy import Boolean, DateTime, Integer, String, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 
@@ -23,3 +23,5 @@ class Player(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     position_x: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
     position_y: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+
+    world: Mapped["World"] = relationship("World", back_populates="owner", uselist=False)

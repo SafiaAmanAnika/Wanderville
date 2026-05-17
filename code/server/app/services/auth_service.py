@@ -1,14 +1,19 @@
 from __future__ import annotations
 
+import logging
 from datetime import datetime, timedelta, timezone
 
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy import select
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.models.player import Player
+from app.services import world_service
+
+logger = logging.getLogger(__name__)
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -64,6 +69,12 @@ def signup(db: Session, *, username: str, password: str, display_name: str) -> P
     db.add(player)
     db.commit()
     db.refresh(player)
+
+    try:
+        world_service.create_world(db, player.id)
+    except SQLAlchemyError:
+        logger.exception("Failed to auto-create world for player %d during signup", player.id)
+
     return player
 
 

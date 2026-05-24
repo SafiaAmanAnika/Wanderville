@@ -1,0 +1,244 @@
+[gd_scene format=3 uid="uid://bf8rfgfa4mc4e"]
+
+[ext_resource type="Texture2D" uid="uid://yeu6ljm8wv3m" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/east/frame_000.png" id="1_64rp6"]
+[ext_resource type="Texture2D" uid="uid://cs3ndtiakrxr1" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/east/frame_001.png" id="2_whtle"]
+[ext_resource type="Texture2D" uid="uid://dibc6vfbealj3" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/east/frame_002.png" id="3_5v1tc"]
+[ext_resource type="Texture2D" uid="uid://cxv7yja8mops6" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/east/frame_003.png" id="4_4biuk"]
+[ext_resource type="Texture2D" uid="uid://dc3s2dgpymrh3" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/east/frame_004.png" id="5_01bnm"]
+[ext_resource type="Texture2D" uid="uid://b5ysrejv4trf" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/east/frame_005.png" id="6_tb10q"]
+[ext_resource type="Texture2D" uid="uid://c5ed3wen0bxpr" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-0f67bf70/frame_000.png" id="7_tkxx4"]
+[ext_resource type="Texture2D" uid="uid://lrmkj35ixm2o" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-0f67bf70/frame_001.png" id="8_crpxi"]
+[ext_resource type="Texture2D" uid="uid://dkhthf2wfacns" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-0f67bf70/frame_002.png" id="9_evhrm"]
+[ext_resource type="Texture2D" uid="uid://c1hlq3yyndqgr" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-0f67bf70/frame_003.png" id="10_bb24y"]
+[ext_resource type="Texture2D" uid="uid://bj3xhfudkj4ra" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-0f67bf70/frame_004.png" id="11_lp33w"]
+[ext_resource type="Texture2D" uid="uid://ds7tcb88jabj6" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-0f67bf70/frame_005.png" id="12_3aewr"]
+[ext_resource type="Texture2D" uid="uid://cqrf1a0ccddnm" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-east/frame_000.png" id="13_28sv5"]
+[ext_resource type="Texture2D" uid="uid://uqmb1in0ivl3" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-east/frame_001.png" id="14_18x61"]
+[ext_resource type="Texture2D" uid="uid://cljtrl8jpivep" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-east/frame_002.png" id="15_pchlg"]
+[ext_resource type="Texture2D" uid="uid://cud802yceqhlf" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-east/frame_003.png" id="16_f3xiq"]
+[ext_resource type="Texture2D" uid="uid://ddnrdyrjnone3" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-east/frame_004.png" id="17_yhdwc"]
+[ext_resource type="Texture2D" uid="uid://cybhuege8h4ho" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-east/frame_005.png" id="18_2nfl3"]
+[ext_resource type="Texture2D" uid="uid://caqd8imf8afl2" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-west/frame_000.png" id="19_byk2u"]
+[ext_resource type="Texture2D" uid="uid://be1lfqtcxlt6y" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-west/frame_001.png" id="20_g0h8i"]
+[ext_resource type="Texture2D" uid="uid://daujn7egt1oxc" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-west/frame_002.png" id="21_y2hop"]
+[ext_resource type="Texture2D" uid="uid://ry6fcw7rvigr" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-west/frame_003.png" id="22_8b4ei"]
+[ext_resource type="Texture2D" uid="uid://de0gb0tq4o51j" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-west/frame_004.png" id="23_1xobx"]
+[ext_resource type="Texture2D" uid="uid://dvcsoioeey0v5" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-west/frame_005.png" id="24_hpndm"]
+[ext_resource type="Texture2D" uid="uid://b7ytxxqckgcf1" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south/frame_000.png" id="25_m2uka"]
+[ext_resource type="Texture2D" uid="uid://boj7pe53btdsj" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south/frame_001.png" id="26_8nj26"]
+[ext_resource type="Texture2D" uid="uid://by4eoja28ie2b" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south/frame_002.png" id="27_bnyyo"]
+[ext_resource type="Texture2D" uid="uid://btm5jgi5t3udm" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south/frame_003.png" id="28_esyh5"]
+[ext_resource type="Texture2D" uid="uid://dki0dkl2h6v3a" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south/frame_004.png" id="29_kns2n"]
+[ext_resource type="Texture2D" uid="uid://cpr5yjmh8w0uk" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south/frame_005.png" id="30_urbhl"]
+[ext_resource type="Texture2D" uid="uid://bk2ihx24u22oq" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-east/frame_000.png" id="31_bdl82"]
+[ext_resource type="Texture2D" uid="uid://43v7fg4go6u0" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-east/frame_001.png" id="32_0ix88"]
+[ext_resource type="Texture2D" uid="uid://dkss5jipuj7ck" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-east/frame_002.png" id="33_r7u0s"]
+[ext_resource type="Texture2D" uid="uid://b46nn6qy56w80" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-east/frame_003.png" id="34_mxa2d"]
+[ext_resource type="Texture2D" uid="uid://da6vwxfx1kchj" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-east/frame_004.png" id="35_i66mp"]
+[ext_resource type="Texture2D" uid="uid://bhhlipvwlu5mv" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-east/frame_005.png" id="36_2glic"]
+[ext_resource type="Texture2D" uid="uid://bjcm8uh51m0ym" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-west/frame_000.png" id="37_bsx7f"]
+[ext_resource type="Texture2D" uid="uid://cvp2kedpbvnaw" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-west/frame_001.png" id="38_72alc"]
+[ext_resource type="Texture2D" uid="uid://cuc1w20b6v5nk" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-west/frame_002.png" id="39_5lnc3"]
+[ext_resource type="Texture2D" uid="uid://bxoue8yqg3l6o" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-west/frame_003.png" id="40_6abxw"]
+[ext_resource type="Texture2D" uid="uid://cjbuyfx4dktad" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-west/frame_004.png" id="41_rtdy6"]
+[ext_resource type="Texture2D" uid="uid://d1wbn5yxavk2f" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-west/frame_005.png" id="42_6y862"]
+[ext_resource type="Texture2D" uid="uid://b751j552adv4k" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/west/frame_000.png" id="43_5rh3v"]
+[ext_resource type="Texture2D" uid="uid://ds7w55054xand" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/west/frame_001.png" id="44_yh3mk"]
+[ext_resource type="Texture2D" uid="uid://cgga1kwl4mliw" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/west/frame_002.png" id="45_gjxr0"]
+[ext_resource type="Texture2D" uid="uid://bw7h3b63ecb6t" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/west/frame_003.png" id="46_6bwva"]
+[ext_resource type="Texture2D" uid="uid://8r8vsdljw3ou" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/west/frame_004.png" id="47_5x0e8"]
+[ext_resource type="Texture2D" uid="uid://ex7hudk4yo03" path="res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/west/frame_005.png" id="48_hdse7"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_t48c2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_whtle")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_5v1tc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_4biuk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_64rp6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_01bnm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_tb10q")
+}],
+"loop": true,
+"name": &"run_east",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_tkxx4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_crpxi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_evhrm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_bb24y")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_lp33w")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_3aewr")
+}],
+"loop": true,
+"name": &"run_north",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("13_28sv5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_18x61")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_pchlg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_f3xiq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_yhdwc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_2nfl3")
+}],
+"loop": true,
+"name": &"run_north_east",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("19_byk2u")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_g0h8i")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_y2hop")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_8b4ei")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_1xobx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_hpndm")
+}],
+"loop": true,
+"name": &"run_north_west",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("25_m2uka")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_8nj26")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27_bnyyo")
+}, {
+"duration": 1.0,
+"texture": ExtResource("28_esyh5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("29_kns2n")
+}, {
+"duration": 1.0,
+"texture": ExtResource("30_urbhl")
+}],
+"loop": true,
+"name": &"run_south",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("31_bdl82")
+}, {
+"duration": 1.0,
+"texture": ExtResource("32_0ix88")
+}, {
+"duration": 1.0,
+"texture": ExtResource("33_r7u0s")
+}, {
+"duration": 1.0,
+"texture": ExtResource("34_mxa2d")
+}, {
+"duration": 1.0,
+"texture": ExtResource("35_i66mp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("36_2glic")
+}],
+"loop": true,
+"name": &"run_south_east",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("37_bsx7f")
+}, {
+"duration": 1.0,
+"texture": ExtResource("38_72alc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("39_5lnc3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("40_6abxw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("41_rtdy6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("42_6y862")
+}],
+"loop": true,
+"name": &"run_south_west",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("48_hdse7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("45_gjxr0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("44_yh3mk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("43_5rh3v")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_5x0e8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("46_6bwva")
+}],
+"loop": true,
+"name": &"run_west",
+"speed": 5.0
+}]
+
+[node name="girl" type="AnimatedSprite2D" unique_id=1947344456]
+scale = Vector2(0.3, 0.31)
+sprite_frames = SubResource("SpriteFrames_t48c2")
+animation = &"run_west"
+frame_progress = 0.7366122
+speed_scale = -1.0

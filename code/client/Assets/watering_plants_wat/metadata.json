@@ -1,0 +1,228 @@
+{
+  "group_id": "fb7ada22-82da-412a-83f1-6c1ca71c7b24",
+  "states": [
+    {
+      "character": {
+        "id": "283037a0-65c7-4f54-90d2-65f028f41721",
+        "name": "female farmer character, pink hair with ribbon, floral dress,\npixel art, 16-bit SNES style, top-down, 4 directional, \ntransparent background, 32x32 ",
+        "prompt": "female farmer character, pink hair with ribbon, floral dress,\npixel art, 16-bit SNES style, top-down, 4 directional, \ntransparent background, 32x32 ",
+        "size": {
+          "width": 48,
+          "height": 48
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-05-17T15:55:01.885603+00:00"
+      },
+      "folder": "female_farmer_character_pink_hair_with_ribbon_flor",
+      "frames": {
+        "rotations": {
+          "south": "female_farmer_character_pink_hair_with_ribbon_flor/rotations/south.png",
+          "south-east": "female_farmer_character_pink_hair_with_ribbon_flor/rotations/south-east.png",
+          "east": "female_farmer_character_pink_hair_with_ribbon_flor/rotations/east.png",
+          "north-east": "female_farmer_character_pink_hair_with_ribbon_flor/rotations/north-east.png",
+          "north": "female_farmer_character_pink_hair_with_ribbon_flor/rotations/north.png",
+          "north-west": "female_farmer_character_pink_hair_with_ribbon_flor/rotations/north-west.png",
+          "west": "female_farmer_character_pink_hair_with_ribbon_flor/rotations/west.png",
+          "south-west": "female_farmer_character_pink_hair_with_ribbon_flor/rotations/south-west.png"
+        },
+        "animations": {
+          "Running-79e518a9": {
+            "south": [
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south/frame_000.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south/frame_001.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south/frame_002.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south/frame_003.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south/frame_004.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south/frame_005.png"
+            ],
+            "west": [
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/west/frame_000.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/west/frame_001.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/west/frame_002.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/west/frame_003.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/west/frame_004.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/west/frame_005.png"
+            ],
+            "east": [
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/east/frame_000.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/east/frame_001.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/east/frame_002.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/east/frame_003.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/east/frame_004.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/east/frame_005.png"
+            ],
+            "south-east": [
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-east/frame_000.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-east/frame_001.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-east/frame_002.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-east/frame_003.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-east/frame_004.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-east/frame_005.png"
+            ],
+            "north-east": [
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-east/frame_000.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-east/frame_001.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-east/frame_002.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-east/frame_003.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-east/frame_004.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-east/frame_005.png"
+            ],
+            "north-west": [
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-west/frame_000.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-west/frame_001.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-west/frame_002.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-west/frame_003.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-west/frame_004.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-west/frame_005.png"
+            ],
+            "south-west": [
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-west/frame_000.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-west/frame_001.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-west/frame_002.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-west/frame_003.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-west/frame_004.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south-west/frame_005.png"
+            ],
+            "north-0f67bf70": [
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-0f67bf70/frame_000.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-0f67bf70/frame_001.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-0f67bf70/frame_002.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-0f67bf70/frame_003.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-0f67bf70/frame_004.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-0f67bf70/frame_005.png"
+            ],
+            "north-c6d6ea24": [
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-c6d6ea24/frame_000.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-c6d6ea24/frame_001.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-c6d6ea24/frame_002.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-c6d6ea24/frame_003.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-c6d6ea24/frame_004.png",
+              "female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/north-c6d6ea24/frame_005.png"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "character": {
+        "id": "93bcacae-9550-4eeb-9a3b-82e298c19a4a",
+        "name": "female farmer character, pink hair with ribbon, floral dress,\npixel art, 16-bit SNES style, top-down, 4 directional, \ntransparent background, 32x32  (copy)",
+        "prompt": "female farmer character, pink hair with ribbon, floral dress,\npixel art, 16-bit SNES style, top-down, 4 directional, \ntransparent background, 32x32 ",
+        "size": {
+          "width": 48,
+          "height": 48
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-05-17T15:56:49.369486+00:00"
+      },
+      "folder": "female_farmer_character_pink_hair_with_ribbon_flor_2",
+      "frames": {
+        "rotations": {
+          "south": "female_farmer_character_pink_hair_with_ribbon_flor_2/rotations/south.png",
+          "south-east": "female_farmer_character_pink_hair_with_ribbon_flor_2/rotations/south-east.png",
+          "east": "female_farmer_character_pink_hair_with_ribbon_flor_2/rotations/east.png",
+          "north-east": "female_farmer_character_pink_hair_with_ribbon_flor_2/rotations/north-east.png",
+          "north": "female_farmer_character_pink_hair_with_ribbon_flor_2/rotations/north.png",
+          "north-west": "female_farmer_character_pink_hair_with_ribbon_flor_2/rotations/north-west.png",
+          "west": "female_farmer_character_pink_hair_with_ribbon_flor_2/rotations/west.png",
+          "south-west": "female_farmer_character_pink_hair_with_ribbon_flor_2/rotations/south-west.png"
+        },
+        "animations": {}
+      }
+    },
+    {
+      "character": {
+        "id": "a3b81377-0e46-43db-ae1a-810d2e77606a",
+        "name": "watering plants (wat",
+        "prompt": "female farmer character, pink hair with ribbon, floral dress,\npixel art, 16-bit SNES style, top-down, 4 directional, \ntransparent background, 32x32 ",
+        "size": {
+          "width": 48,
+          "height": 48
+        },
+        "template_id": "mannequin",
+        "directions": 8,
+        "view": "low top-down",
+        "created_at": "2026-05-17T16:09:27.116393+00:00"
+      },
+      "folder": "watering_plants_wat",
+      "frames": {
+        "rotations": {
+          "south": "watering_plants_wat/rotations/south.png",
+          "south-east": "watering_plants_wat/rotations/south-east.png",
+          "east": "watering_plants_wat/rotations/east.png",
+          "north-east": "watering_plants_wat/rotations/north-east.png",
+          "north": "watering_plants_wat/rotations/north.png",
+          "north-west": "watering_plants_wat/rotations/north-west.png",
+          "west": "watering_plants_wat/rotations/west.png",
+          "south-west": "watering_plants_wat/rotations/south-west.png"
+        },
+        "animations": {
+          "hoeing_soil_with_a_hoe-17ac76b7": {
+            "north-west": [
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/north-west/frame_000.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/north-west/frame_001.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/north-west/frame_002.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/north-west/frame_003.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/north-west/frame_004.png"
+            ],
+            "north-east": [
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/north-east/frame_000.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/north-east/frame_001.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/north-east/frame_002.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/north-east/frame_003.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/north-east/frame_004.png"
+            ],
+            "west": [
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/west/frame_000.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/west/frame_001.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/west/frame_002.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/west/frame_003.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/west/frame_004.png"
+            ],
+            "south-west": [
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/south-west/frame_000.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/south-west/frame_001.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/south-west/frame_002.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/south-west/frame_003.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/south-west/frame_004.png"
+            ],
+            "east": [
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/east/frame_000.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/east/frame_001.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/east/frame_002.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/east/frame_003.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/east/frame_004.png"
+            ],
+            "south": [
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/south/frame_000.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/south/frame_001.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/south/frame_002.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/south/frame_003.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/south/frame_004.png"
+            ],
+            "north": [
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/north/frame_000.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/north/frame_001.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/north/frame_002.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/north/frame_003.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/north/frame_004.png"
+            ],
+            "south-east": [
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/south-east/frame_000.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/south-east/frame_001.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/south-east/frame_002.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/south-east/frame_003.png",
+              "watering_plants_wat/animations/hoeing_soil_with_a_hoe-17ac76b7/south-east/frame_004.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.0",
+  "export_date": "2026-05-17T16:22:51.394702"
+}

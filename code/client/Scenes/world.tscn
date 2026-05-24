@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://bp82py5pxy8s4"]
+
+[ext_resource type="PackedScene" uid="uid://b7esfm8fd2mm3" path="res://Scenes/map.tscn" id="1_5a7ea"]
+[ext_resource type="PackedScene" uid="uid://bf4i3yp261iqw" path="res://Scenes/catto.tscn" id="2_tlwt5"]
+[ext_resource type="PackedScene" uid="uid://dnjgimyfr24k8" path="res://Scenes/player1.tscn" id="6_5ukr8"]
+
+[node name="World" type="Node2D" unique_id=917717580]
+position = Vector2(0, 6)
+
+[node name="Map" parent="." unique_id=615307148 instance=ExtResource("1_5a7ea")]
+texture_filter = 1
+
+[node name="Catto" parent="." unique_id=1947344456 node_paths=PackedStringArray("player") instance=ExtResource("2_tlwt5")]
+scale = Vector2(1, 1.034)
+frame_progress = 0.042346716
+speed_scale = 1.0
+player = NodePath("../girl")
+
+[node name="girl" parent="." unique_id=516710621 instance=ExtResource("6_5ukr8")]
+position = Vector2(555, -4)
+scale = Vector2(20, 20)
+
+[node name="Camera2D" type="Camera2D" parent="girl" unique_id=449118108]
+position = Vector2(0, 0.012399994)
+rotation = 1.1434734
+scale = Vector2(0.000770528, 0.0007545937)
+skew = -0.025264144
+zoom = Vector2(0.3, 0.3)

@@ -20,10 +20,6 @@ venv/
 *.sqlite
 *.sqlite3
 
-# Godot
-.godot/
-*.import
-export_presets.cfg
 
 # OS/editor
 .DS_Store

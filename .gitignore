@@ -20,6 +20,22 @@ venv/
 *.sqlite
 *.sqlite3
 
+# Godot editor cache & metadata
+.godot/
+*.godot/editor/
+*.godot/imported/
+*.godot/mono/
+
+# Specific files shown in your merge conflicts
+.godot/editor/uid_cache.bin
+.godot/editor/editor_layout.cfg
+.godot/editor/filesystem_cache*
+.godot/editor/filesystem_update*
+.godot/editor/project_metadata.cfg
+.godot/editor/recent_dirs
+
+# General Godot cache pattern
+.godot/editor/*
 
 # OS/editor
 .DS_Store

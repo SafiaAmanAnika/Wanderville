@@ -1,0 +1,53 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/menus/signup_scene.gd" id="1"]
+
+[node name="SignupScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+script = ExtResource("1")
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Panel" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(520, 0)
+
+[node name="VBox" type="VBoxContainer" parent="Center/Panel"]
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Center/Panel/VBox"]
+text = "Create Account"
+horizontal_alignment = 1
+
+[node name="UsernameInput" type="LineEdit" parent="Center/Panel/VBox"]
+placeholder_text = "Username (3+ chars)"
+
+[node name="DisplayNameInput" type="LineEdit" parent="Center/Panel/VBox"]
+placeholder_text = "Display name"
+
+[node name="PasswordInput" type="LineEdit" parent="Center/Panel/VBox"]
+placeholder_text = "Password (6+ chars)"
+secret = true
+
+[node name="Buttons" type="HBoxContainer" parent="Center/Panel/VBox"]
+alignment = 1
+
+[node name="SignupButton" type="Button" parent="Center/Panel/VBox/Buttons"]
+text = "Sign Up"
+
+[node name="BackToLoginButton" type="Button" parent="Center/Panel/VBox/Buttons"]
+text = "Back To Login"
+
+[node name="StatusLabel" type="Label" parent="Center/Panel/VBox"]
+text = ""
+autowrap_mode = 3

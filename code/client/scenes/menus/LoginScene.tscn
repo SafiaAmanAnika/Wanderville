@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://csw7j0o4yotg0"]
+
+[ext_resource type="Script" uid="uid://dpv7km6pw8qnf" path="res://scripts/menus/login_scene.gd" id="1"]
+
+[node name="LoginScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(520, 0)
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Center/Panel/VBox"]
+layout_mode = 2
+text = "Wanderville Login"
+horizontal_alignment = 1
+
+[node name="UsernameInput" type="LineEdit" parent="Center/Panel/VBox"]
+layout_mode = 2
+placeholder_text = "Username"
+
+[node name="PasswordInput" type="LineEdit" parent="Center/Panel/VBox"]
+layout_mode = 2
+placeholder_text = "Password"
+secret = true
+
+[node name="Buttons" type="HBoxContainer" parent="Center/Panel/VBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="LoginButton" type="Button" parent="Center/Panel/VBox/Buttons"]
+layout_mode = 2
+text = "Log In"
+
+[node name="GoToSignupButton" type="Button" parent="Center/Panel/VBox/Buttons"]
+layout_mode = 2
+text = "Go To Signup"
+
+[node name="StatusLabel" type="Label" parent="Center/Panel/VBox"]
+layout_mode = 2
+autowrap_mode = 3

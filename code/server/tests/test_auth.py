@@ -12,6 +12,7 @@ if TEST_DB_PATH.exists():
 os.environ.setdefault("DATABASE_URL", f"sqlite:///{TEST_DB_PATH.as_posix()}")
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key")
 os.environ.setdefault("ACCESS_TOKEN_EXPIRE_MINUTES", "60")
+os.environ.setdefault("DISABLE_RATE_LIMIT", "1")
 
 # Ensure `code/server` is importable as the root module path.
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))

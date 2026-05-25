@@ -13,5 +13,7 @@ config_version=5
 compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
+
 config/name="Wanderville"
-config/features=PackedStringArray("4.0")
+run/main_scene="uid://bp82py5pxy8s4"
+config/features=PackedStringArray("4.6")

@@ -17,3 +17,8 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 config/name="Wanderville"
 run/main_scene="uid://bp82py5pxy8s4"
 config/features=PackedStringArray("4.6")
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720

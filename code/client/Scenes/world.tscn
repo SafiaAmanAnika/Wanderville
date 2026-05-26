@@ -19,7 +19,7 @@ position = Vector2(0, -0.0390625)
 rotation = 1.14347
 scale = Vector2(0.000770528, 0.000754594)
 skew = -0.0252641
-zoom = Vector2(0.3, 0.3)
+zoom = Vector2(0.1, 0.1)
 
 [node name="catto_og" parent="." unique_id=1448107131 instance=ExtResource("3_5a7ea")]
 scale = Vector2(3, 3)

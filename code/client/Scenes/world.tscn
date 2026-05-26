@@ -1,22 +1,14 @@
 [gd_scene format=3 uid="uid://bp82py5pxy8s4"]
 
 [ext_resource type="PackedScene" uid="uid://b7esfm8fd2mm3" path="res://Scenes/map.tscn" id="1_5a7ea"]
-[ext_resource type="PackedScene" uid="uid://bf4i3yp261iqw" path="res://Scenes/catto.tscn" id="2_tlwt5"]
+[ext_resource type="PackedScene" uid="uid://0on5q8sndxdt" path="res://Scenes/catto_og.tscn" id="3_5a7ea"]
 [ext_resource type="PackedScene" uid="uid://dnjgimyfr24k8" path="res://Scenes/player1.tscn" id="6_5ukr8"]
 
 [node name="World" type="Node2D" unique_id=1971179881]
-position = Vector2(-5214, 2215)
 
 [node name="Map" parent="." unique_id=2061458601 instance=ExtResource("1_5a7ea")]
 texture_filter = 1
 position = Vector2(77, 507)
-
-[node name="Catto" parent="." unique_id=1843142918 node_paths=PackedStringArray("player") instance=ExtResource("2_tlwt5")]
-position = Vector2(-1, -1)
-scale = Vector2(1, 1.034)
-frame_progress = 0.0423467
-speed_scale = 1.0
-player = NodePath("../girl")
 
 [node name="girl" parent="." unique_id=332949648 instance=ExtResource("6_5ukr8")]
 position = Vector2(560, -8)
@@ -28,3 +20,6 @@ rotation = 1.14347
 scale = Vector2(0.000770528, 0.000754594)
 skew = -0.0252641
 zoom = Vector2(0.3, 0.3)
+
+[node name="catto_og" parent="." unique_id=1448107131 instance=ExtResource("3_5a7ea")]
+scale = Vector2(3, 3)

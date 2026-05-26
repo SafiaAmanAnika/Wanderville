@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://0on5q8sndxdt"]
+
+[ext_resource type="PackedScene" uid="uid://bf4i3yp261iqw" path="res://Scenes/catto.tscn" id="1_6ndh4"]
+[ext_resource type="Script" uid="uid://bi0xdsnkhy3oy" path="res://Scripts/catto.gd" id="1_agh3c"]
+
+[node name="catto_og" type="CharacterBody2D" unique_id=1448107131]
+script = ExtResource("1_agh3c")
+
+[node name="Catto" parent="." unique_id=1947344456 instance=ExtResource("1_6ndh4")]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=342438126]
+polygon = PackedVector2Array(-3, -11, 5, -11, 10, -1, 11, 10, 3, 14, -5, 14, -11, 9, -10, -2)

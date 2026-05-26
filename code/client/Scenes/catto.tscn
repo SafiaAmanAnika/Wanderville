@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://bf4i3yp261iqw"]
 
 [ext_resource type="Texture2D" uid="uid://c2o8nkgiy6lts" path="res://Assets/_ (1) (1).png" id="1_kd3if"]
-[ext_resource type="Script" uid="uid://bi0xdsnkhy3oy" path="res://Scripts/catto.gd" id="2_yy41r"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_04du3"]
 atlas = ExtResource("1_kd3if")
@@ -228,9 +227,3 @@ scale = Vector2(0.3, 0.31)
 sprite_frames = SubResource("SpriteFrames_t48c2")
 animation = &"cat sit"
 speed_scale = -1.0
-script = ExtResource("2_yy41r")
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=1407144884]
-position = Vector2(0, 0.16129017)
-scale = Vector2(1, 0.983871)
-polygon = PackedVector2Array(-9.999999, -39.508194, 9.999999, -36.229507, 26.666664, -16.557377, 39.999996, 12.950819, 29.999996, 45.737705, -13.333332, 52.295082, -39.999996, 29.344261, -33.33333, -13.278688, -13.333332, -39.508194)

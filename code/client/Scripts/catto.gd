@@ -1,4 +1,4 @@
-extends AnimatedSprite2D
+extends CharacterBody2D
 
 # --- Settings ---
 const FOLLOW_SPEED = 200.0
@@ -6,18 +6,18 @@ const FOLLOW_DISTANCE = 250.0
 const IDLE_TIME_TO_LICK = 2.0
 const IDLE_TIME_TO_SLEEP = 5.0
 
-# --- Drag your player node here in the Inspector ---
-@export var player: Node2D
+@onready var player: CharacterBody2D = $"../girl"
+@onready var anim: AnimatedSprite2D = $Catto
 
 var idle_timer: float = 0.0
 
 func _ready():
 	if player == null:
-		print("Please assign the player node in the Inspector!")
+		print("Could not find girl node!")
 	else:
 		global_position = player.global_position + Vector2(50, 0)
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if player == null:
 		return
 
@@ -26,23 +26,26 @@ func _process(delta: float) -> void:
 	if distance > FOLLOW_DISTANCE:
 		idle_timer = 0.0
 		var direction = (player.global_position - global_position).normalized()
-		position += direction * FOLLOW_SPEED * delta
+		velocity = direction * FOLLOW_SPEED
+		move_and_slide()
 		_play_walk_animation(direction)
 	else:
+		velocity = Vector2.ZERO
+		move_and_slide()
 		idle_timer += delta
 		if idle_timer >= IDLE_TIME_TO_SLEEP:
-			play("cat slep")
+			anim.play("cat slep")
 		elif idle_timer >= IDLE_TIME_TO_LICK:
-			play("cat lick")
+			anim.play("cat lick")
 		else:
-			play("cat sit")
+			anim.play("cat sit")
 
 func _play_walk_animation(direction: Vector2):
 	if direction.y < 0 and abs(direction.y) >= abs(direction.x):
-		play("walk up")
+		anim.play("walk up")
 	elif direction.y > 0 and abs(direction.y) >= abs(direction.x):
-		play("walk down")
+		anim.play("walk down")
 	elif direction.x > 0:
-		play("walk right")
+		anim.play("walk right")
 	else:
-		play("walk left")
+		anim.play("walk left")

@@ -7,6 +7,9 @@
 script = ExtResource("1_pqb02")
 
 [node name="girl" parent="." unique_id=1197702788 instance=ExtResource("2_ytgb6")]
+position = Vector2(0, 1)
+frame_progress = 0.9350544
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=1783879331]
-polygon = PackedVector2Array(-3, -4, 0, -5, 2, -4, 1, -2, 2, 0, 4, 2, 2, 6, 0, 6, -3, 5, -2, 2, -1, 0)
+polygon = PackedVector2Array(-2, -2, -1, -4, 1, -3, 1, -2, 2, 0, 2, 2, 2, 6, 0, 6, -1, 3, -2, 2, -1, 0)
+metadata/_edit_lock_ = true

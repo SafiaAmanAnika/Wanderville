@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bi0xdsnkhy3oy" path="res://Scripts/catto.gd" id="2_45xhi"]
 [ext_resource type="PackedScene" uid="uid://bf4i3yp261iqw" path="res://Scenes/catto.tscn" id="2_v2ndg"]
 
-[node name="Catto" type="CharacterBody2D" unique_id=1885605944]
+[node name="Catto" type="CharacterBody2D" unique_id=2043715732]
 scale = Vector2(0.3, 0.31)
 script = ExtResource("2_45xhi")
 

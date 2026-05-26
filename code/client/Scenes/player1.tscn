@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://dnjgimyfr24k8"]
+[gd_scene load_steps=4 format=3 uid="uid://dnjgimyfr24k8"]
 
 [ext_resource type="Script" uid="uid://dliavsupibxkc" path="res://Scripts/player.gd" id="1_pqb02"]
 [ext_resource type="PackedScene" uid="uid://bf8rfgfa4mc4e" path="res://Scenes/girl.tscn" id="2_ytgb6"]
@@ -7,11 +7,11 @@
 radius = 3.0
 height = 12.0
 
-[node name="CharacterBody2D" type="CharacterBody2D" unique_id=516710621]
+[node name="CharacterBody2D" type="CharacterBody2D"]
 script = ExtResource("1_pqb02")
 
-[node name="girl" parent="." unique_id=1947344456 instance=ExtResource("2_ytgb6")]
+[node name="girl" parent="." instance=ExtResource("2_ytgb6")]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=596512905]
-rotation = 0.0025248013
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 0.0025248
 shape = SubResource("CapsuleShape2D_3pafw")

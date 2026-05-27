@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bm2dmfqkcnui3"
-path="res://.godot/imported/fivepillars.png-e26b0e27db65101a3a14e8bf27470dd1.ctex"
+uid="uid://cnx3ib8tgy8p1"
+path="res://.godot/imported/5pil.png-bac53f2f615a8c17eede34c8746665c0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/buildings/fivepillars.png"
-dest_files=["res://.godot/imported/fivepillars.png-e26b0e27db65101a3a14e8bf27470dd1.ctex"]
+source_file="res://Assets/buildings/5pil.png"
+dest_files=["res://.godot/imported/5pil.png-bac53f2f615a8c17eede34c8746665c0.ctex"]
 
 [params]
 

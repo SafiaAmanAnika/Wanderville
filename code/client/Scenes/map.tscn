@@ -18,7 +18,6 @@
 [ext_resource type="Texture2D" uid="uid://cmii1t2n7a5pr" path="res://Assets/buildings/audi.png" id="11_uus22"]
 [ext_resource type="Texture2D" uid="uid://b0gjglom4sve3" path="res://Assets/tiles/tiles-stone32x32.png" id="12_ltf6m"]
 [ext_resource type="Texture2D" uid="uid://ddbriexj8vr2l" path="res://Assets/buildings/cds.png" id="12_tuwt4"]
-[ext_resource type="Texture2D" uid="uid://bm2dmfqkcnui3" path="res://Assets/buildings/fivepillars.png" id="14_1ye5v"]
 [ext_resource type="Texture2D" uid="uid://cbdd5juufo026" path="res://Assets/buildings/library.png" id="15_8cxpi"]
 [ext_resource type="Texture2D" uid="uid://dpguh2ip65f53" path="res://Assets/buildings/mosque.png" id="16_wpvg5"]
 [ext_resource type="Texture2D" uid="uid://cwminkvyntrc2" path="res://Assets/buildings/onepillar.png" id="18_1ye5v"]
@@ -30,6 +29,7 @@
 [ext_resource type="Texture2D" uid="uid://dhknl7wvho875" path="res://Assets/trees/HealthyChrismas.png" id="24_ak4ow"]
 [ext_resource type="Texture2D" uid="uid://dn12eba71n0yp" path="res://Assets/trees/lighterChristmasTree.png" id="25_ajvq6"]
 [ext_resource type="Texture2D" uid="uid://c38iskeems7pe" path="res://Assets/trees/SupposedTobePineButIsCoconut(1).png" id="27_cwq17"]
+[ext_resource type="Texture2D" uid="uid://cnx3ib8tgy8p1" path="res://Assets/buildings/5pil.png" id="28_unquq"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_uus22"]
 texture = ExtResource("1_q6lx1")
@@ -9098,12 +9098,13 @@ polygon = PackedVector2Array(8459, -5585, 11087, -5585, 11286, -5086, 11278, -47
 [node name="fivepillars" type="StaticBody2D" parent="Buildings" unique_id=1716393168]
 
 [node name="Sprite2D" type="Sprite2D" parent="Buildings/fivepillars" unique_id=1410689139]
-position = Vector2(7176, -2034.0001)
-scale = Vector2(0.37272522, 0.3169746)
-texture = ExtResource("14_1ye5v")
+position = Vector2(7187, -2012.9999)
+rotation = 0.31066862
+scale = Vector2(1.7592857, 1.2749058)
+texture = ExtResource("28_unquq")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Buildings/fivepillars" unique_id=1108643956]
-polygon = PackedVector2Array(6882, -1819, 6970, -1728, 7044, -1730, 7069, -1709, 7160, -1712, 7173, -1626, 7145, -1550, 7176, -1535, 7830, -1499, 7836, -1536, 7684, -1555, 7490, -1732, 7752, -2219, 7652, -2330, 7145, -2336, 7086, -2232, 7040, -2290, 7113, -2401, 7163, -2409, 7181, -2478, 7134, -2520, 7060, -2517, 7025, -2448, 7048, -2422, 6927, -2208, 6700, -2330, 6617, -2169, 6462, -2184, 6496, -2130, 6593, -2122, 6669, -2108, 6690, -2020, 6767, -2013, 6773, -1941, 6853, -1922)
+polygon = PackedVector2Array(6927, -2208)
 
 [node name="library" type="StaticBody2D" parent="Buildings" unique_id=1751552167]
 

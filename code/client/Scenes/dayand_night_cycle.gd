@@ -1,5 +1,5 @@
 extends CanvasModulate
-class_name DayandNightCycle 
+class_name DayAndNightCycle 
 
 signal changeDayTime(dayTime: DAY_STATE)
 
@@ -10,9 +10,9 @@ enum DAY_STATE{NOON, EVENING}
 var dayTime : DAY_STATE = DAY_STATE.NOON
 
 func _ready() -> void: 
-	add_to_group("DayandNightCycle")
+	add_to_group("DayAndNightCycle")
 
-func _process(delta : float) -> void:
+func _process(_delta : float) -> void:
 	var animationPos = animation_player.current_animation_position
 	var animationLength = animation_player.current_animation_length * 3 / 4
 	

@@ -14,9 +14,15 @@ var current_season = Season.SUMMER
 
 func _ready():
 	rain.emitting = false
-
+	
+	# DEBUG
+	print("WeatherManager ready!")
+	print("Rain node found: ", rain != null)
+	print("Rain path: ", rain.get_path())
+	print("WeatherTimer found: ", weather_timer != null)
+	print("Current season: ", current_season)
+	
 	weather_timer.timeout.connect(_on_weather_timer_timeout)
-
 	start_random_weather_timer()
 	
 func start_random_weather_timer():

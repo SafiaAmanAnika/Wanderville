@@ -16,7 +16,11 @@ position = Vector2(-22, 707)
 position = Vector2(560, -8)
 scale = Vector2(20, 20)
 
-[node name="Camera2D" type="Camera2D" parent="girl" unique_id=433939363]
+[node name="Camera2D" type="Camera2D" parent="girl" unique_id=784418730]
+position = Vector2(0, -0.0390625)
+rotation = 1.14347
+scale = Vector2(0.000770528, 0.000754594)
+skew = -0.0252641
 zoom = Vector2(0.3, 0.3)
 
 [node name="catto_og" parent="." unique_id=1448107131 instance=ExtResource("3_5a7ea")]

@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://bp82py5pxy8s4"]
+
+[ext_resource type="PackedScene" uid="uid://b7esfm8fd2mm3" path="res://Scenes/map.tscn" id="1_5a7ea"]
+[ext_resource type="PackedScene" uid="uid://0on5q8sndxdt" path="res://Scenes/catto_og.tscn" id="3_5a7ea"]
+[ext_resource type="PackedScene" uid="uid://dyi8ni3f8ofed" path="res://Scenes/farm_menu.tscn" id="4_fo5ed"]
+[ext_resource type="PackedScene" uid="uid://clwliaqe8bb1k" path="res://Scenes/sign_board.tscn" id="5_5ukr8"]
+[ext_resource type="PackedScene" uid="uid://dnjgimyfr24k8" path="res://Scenes/player1.tscn" id="6_5ukr8"]
+
+[node name="World" type="Node2D" unique_id=1971179881]
+
+[node name="Map" parent="." unique_id=2061458601 instance=ExtResource("1_5a7ea")]
+texture_filter = 1
+position = Vector2(-22, 707)
+
+[node name="girl" parent="." unique_id=332949648 instance=ExtResource("6_5ukr8")]
+position = Vector2(560, -8)
+scale = Vector2(20, 20)
+
+[node name="Camera2D2" type="Camera2D" parent="girl" unique_id=784418730]
+position = Vector2(0, -0.0390625)
+rotation = 1.14347
+scale = Vector2(0.000770528, 0.000754594)
+skew = -0.0252641
+zoom = Vector2(0.3, 0.3)
+
+[node name="catto_og" parent="." unique_id=1448107131 instance=ExtResource("3_5a7ea")]
+scale = Vector2(3, 3)
+
+[node name="FarmMenu" parent="." unique_id=886063808 instance=ExtResource("4_fo5ed")]
+
+[node name="SignBoard" parent="." unique_id=569688739 instance=ExtResource("5_5ukr8")]
+y_sort_enabled = true
+position = Vector2(8577, -3806)

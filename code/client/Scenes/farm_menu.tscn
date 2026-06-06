@@ -1,0 +1,166 @@
+[gd_scene format=3 uid="uid://dyi8ni3f8ofed"]
+
+[ext_resource type="Script" uid="uid://bbhim0n0ah54d" path="res://Scripts/farm_menu.gd" id="1_d5dv1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.13, 0.13, 0.17, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.35, 0.55, 0.25, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font_size = 20
+font_color = Color(0.9, 0.85, 0.75, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ci82o"]
+bg_color = Color(0.22, 0.22, 0.28, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="LabelSettings" id="LabelSettings_option"]
+font_size = 14
+font_color = Color(0.85, 0.85, 0.9, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d5dv1"]
+bg_color = Color(0.22, 0.22, 0.28, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l30ra"]
+bg_color = Color(0.22, 0.22, 0.28, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_evaqh"]
+bg_color = Color(0.22, 0.22, 0.28, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="LabelSettings" id="LabelSettings_c3iay"]
+font_size = 13
+font_color = Color(0.75, 0.75, 0.8, 1)
+
+[node name="FarmMenu" type="CanvasLayer" unique_id=886063808 groups=["farm_menu"]]
+script = ExtResource("1_d5dv1")
+
+[node name="Overlay" type="ColorRect" parent="." unique_id=1432755083]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0.45)
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=315016429]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -210.0
+offset_top = -145.0
+offset_right = 210.0
+offset_bottom = 145.0
+color = Color(0, 0, 0, 0)
+
+[node name="BgPanel" type="Panel" parent="ColorRect" unique_id=1576255736]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+
+[node name="TitleLabel" type="Label" parent="ColorRect" unique_id=1207226451]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 18.0
+offset_right = 400.0
+offset_bottom = 48.0
+text = "Farm Management"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+
+[node name="Level1Container" type="HBoxContainer" parent="ColorRect" unique_id=1582813268]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 75.0
+offset_right = 395.0
+offset_bottom = 135.0
+
+[node name="FarmOption" type="PanelContainer" parent="ColorRect/Level1Container" unique_id=1209000318]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_ci82o")
+
+[node name="Label" type="Label" parent="ColorRect/Level1Container/FarmOption" unique_id=1755898599]
+layout_mode = 2
+text = "Farm"
+label_settings = SubResource("LabelSettings_option")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="WaterOption" type="PanelContainer" parent="ColorRect/Level1Container" unique_id=931147137]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_d5dv1")
+
+[node name="Label" type="Label" parent="ColorRect/Level1Container/WaterOption" unique_id=457982090]
+layout_mode = 2
+text = "Water Plants"
+label_settings = SubResource("LabelSettings_option")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Level2Container" type="HBoxContainer" parent="ColorRect" unique_id=1715551587]
+visible = false
+layout_mode = 0
+offset_left = 25.0
+offset_top = 75.0
+offset_right = 395.0
+offset_bottom = 135.0
+
+[node name="ShowOption" type="PanelContainer" parent="ColorRect/Level2Container" unique_id=617386774]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_l30ra")
+
+[node name="Label" type="Label" parent="ColorRect/Level2Container/ShowOption" unique_id=1755892247]
+layout_mode = 2
+text = "Sow Seeds"
+label_settings = SubResource("LabelSettings_option")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlaceOption" type="PanelContainer" parent="ColorRect/Level2Container" unique_id=765143453]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_evaqh")
+
+[node name="Label" type="Label" parent="ColorRect/Level2Container/PlaceOption" unique_id=1605296602]
+layout_mode = 2
+text = "Place Farm Tile"
+label_settings = SubResource("LabelSettings_option")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HintLabel" type="Label" parent="ColorRect" unique_id=1074941125]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 160.0
+offset_right = 400.0
+offset_bottom = 190.0
+text = "← → to choose | Enter to select | Esc to close"
+label_settings = SubResource("LabelSettings_c3iay")
+horizontal_alignment = 1

@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://clwliaqe8bb1k"]
+
+[ext_resource type="Script" uid="uid://iufrwwp4e427" path="res://Scripts/sign_board.gd" id="1_545v6"]
+[ext_resource type="Texture2D" uid="uid://cvytrb36bjf6d" path="res://Assets/banners/farm_signboard.png" id="1_mk0sl"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_545v6"]
+radius = 60.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pkhe8"]
+size = Vector2(15, 25)
+
+[node name="SignBoard" type="Area2D" unique_id=569688739]
+script = ExtResource("1_545v6")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=609705424]
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("1_mk0sl")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2036633395]
+shape = SubResource("CircleShape2D_545v6")
+
+[node name="Label" type="Label" parent="." unique_id=1736498715]
+visible = false
+offset_top = -40.0
+offset_right = 150.0
+offset_bottom = -17.0
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1348199723]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1657007085]
+shape = SubResource("RectangleShape2D_pkhe8")

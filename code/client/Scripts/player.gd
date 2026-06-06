@@ -7,13 +7,20 @@ const SPEED = 300.0
 @onready var anim = $girl
 
 func _physics_process(delta):
-	# Get input
-	var input = Vector2.ZERO
-	input.x = Input.get_axis("ui_left", "ui_right")
-	input.y = Input.get_axis("ui_up", "ui_down")
+	# FREEZE WHEN MENU IS OPEN
+	if GameState.menu_open:
+		velocity = Vector2.ZERO
+		anim.stop()
+		return
 	
-	# Normalize so diagonal isn't faster
-	if input.length() > 1.0:
+	# Get input
+	var input = Vector2(
+		Input.get_axis("ui_left", "ui_right"),
+		Input.get_axis("ui_up", "ui_down")
+	)
+	
+	# ALWAYS normalize to prevent diagonal speed boost
+	if input != Vector2.ZERO:
 		input = input.normalized()
 	
 	# Move

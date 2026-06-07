@@ -1,8 +1,8 @@
 extends Node
 
-const LOGIN_SCENE := "res://scenes/menus/LoginScene.tscn"
-const SIGNUP_SCENE := "res://scenes/menus/SignupScene.tscn"
-const MAIN_MENU_SCENE := "res://scenes/menus/MainMenu.tscn"
+const LOGIN_SCENE := "res://Scenes/menus/LoginScene.tscn"
+const SIGNUP_SCENE := "res://Scenes/menus/SignupScene.tscn"
+const MAIN_MENU_SCENE := "res://Scenes/menus/MainMenu.tscn"
 
 
 func goto_login() -> void:

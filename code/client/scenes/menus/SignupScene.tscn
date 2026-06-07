@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://2322mdhitlro"]
 
-[ext_resource type="Script" uid="uid://os2ma0lyjli8" path="res://scripts/menus/signup_scene.gd" id="1"]
+[ext_resource type="Script" uid="uid://os2ma0lyjli8" path="res://Scripts/menus/signup_scene.gd" id="1"]
 
 [node name="SignupScene" type="Control"]
 layout_mode = 3

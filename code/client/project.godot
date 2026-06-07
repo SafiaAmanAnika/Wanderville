@@ -20,8 +20,9 @@ config/features=PackedStringArray("4.6")
 
 [autoload]
 
-ApiClient="*uid://d14ku1rfsnobk"
 GameState="*res://autoloads/GameState.gd"
+Global="*res://autoloads/Global.gd"
+SceneManager="*res://autoloads/SceneManager.gd"
 APIClient="*res://autoloads/APIClient.gd"
 
 [display]

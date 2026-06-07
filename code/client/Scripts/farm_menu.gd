@@ -13,6 +13,9 @@ var selected_index: int = 0
 var normal_color: Color = Color(0.17, 0.17, 0.17, 1.0)
 var selected_color: Color = Color(0.4, 0.6, 0.3, 1.0)
 
+var seed_list: Array[String] = ["wheat", "corn", "cotton", "tulip"]
+var seed_index: int = 0
+
 func _ready():
 	visible = false
 	for child in level1.get_children():
@@ -21,12 +24,14 @@ func _ready():
 	for child in level2.get_children():
 		if child is PanelContainer:
 			level2_options.append(child)
+	GameState.seed_changed.connect(_on_seed_changed)
 
 func open():
 	visible = true
 	GameState.menu_open = true
 	current_level = 1
 	selected_index = 0
+	seed_index = 0
 	level1.visible = true
 	level2.visible = false
 	hint_label.text = "← → to choose  |  Enter to select  |  Esc to close"
@@ -39,6 +44,12 @@ func close():
 
 func _process(_delta):
 	if not visible:
+		# Seed cycling when in sow mode outside menu
+		if GameState.farm_mode == "sow":
+			if Input.is_action_just_pressed("ui_up"):
+				_cycle_seed(-1)
+			elif Input.is_action_just_pressed("ui_down"):
+				_cycle_seed(1)
 		return
 
 	if Input.is_action_just_pressed("ui_left"):
@@ -55,12 +66,7 @@ func _process(_delta):
 
 	if Input.is_action_just_pressed("ui_cancel"):
 		if current_level == 2:
-			current_level = 1
-			selected_index = 0
-			level1.visible = true
-			level2.visible = false
-			hint_label.text = "← → to choose  |  Enter to select  |  Esc to close"
-			_update_highlight()
+			_go_back_to_level1()
 		else:
 			close()
 
@@ -80,20 +86,65 @@ func _update_highlight():
 
 func _on_confirm():
 	if current_level == 1:
-		if selected_index == 0:  # Farm
-			current_level = 2
-			selected_index = 0
-			level1.visible = false
-			level2.visible = true
-			hint_label.text = "← → to choose  |  Enter to select  |  Esc to go back"
-			_update_highlight()
-		else:  # Water Plants
-			close()
-			GameState.set_mode("water")
+		match selected_index:
+			0:  # Farm → Level 2
+				current_level = 2
+				selected_index = 0
+				level1.visible = false
+				level2.visible = true
+				hint_label.text = "← → to choose  |  Enter to select  |  Esc to go back"
+				_update_highlight()
+			1:  # Water Plants
+				close()
+				GameState.set_mode("water")
 	else:  # Level 2
-		if selected_index == 0:  # Sow Seeds
-			close()
-			GameState.set_mode("sow")
-		else:  # Place Farm Tile
-			close()
-			GameState.set_mode("place_tile")
+		match selected_index:
+			0:  # Sow Seeds
+				_pick_available_seed()
+				if GameState.selected_seed != "":
+					close()
+					GameState.set_mode("sow")
+					_update_sow_hint()
+				else:
+					hint_label.text = "No seeds available!"
+			1:  # Place Farm Tile / Till
+				close()
+				GameState.set_mode("till")
+
+func _go_back_to_level1():
+	current_level = 1
+	selected_index = 0
+	level1.visible = true
+	level2.visible = false
+	hint_label.text = "← → to choose  |  Enter to select  |  Esc to close"
+	_update_highlight()
+
+func _pick_available_seed():
+	for i in range(seed_list.size()):
+		var seed = seed_list[i]
+		if GameState.seed_inventory.get(seed, 0) > 0:
+			seed_index = i
+			GameState.set_seed(seed)
+			return
+	GameState.set_seed("")
+
+func _cycle_seed(direction: int):
+	var start = seed_index
+	while true:
+		seed_index = (seed_index + direction + seed_list.size()) % seed_list.size()
+		var seed = seed_list[seed_index]
+		if GameState.seed_inventory.get(seed, 0) > 0:
+			GameState.set_seed(seed)
+			_update_sow_hint()
+			return
+		if seed_index == start:
+			break
+
+func _update_sow_hint():
+	var seed = GameState.selected_seed
+	var count = GameState.seed_inventory.get(seed, 0)
+	hint_label.text = "Seed: %s (%d)  |  ↑↓ to change  |  Click to plant" % [seed, count]
+
+func _on_seed_changed():
+	if GameState.farm_mode == "sow" and not visible:
+		_update_sow_hint()

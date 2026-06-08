@@ -4,6 +4,9 @@ class_name DayAndNightCycle
 signal changeDayTime(dayTime: DAY_STATE)
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var weather_manager = $"../WeatherManager"
+
+var previous_animation_pos := 0.0
 
 enum DAY_STATE{NOON, EVENING}
 
@@ -22,3 +25,8 @@ func _process(_delta : float) -> void:
 	elif animationPos < animationLength && dayTime != DAY_STATE.NOON:
 		dayTime = DAY_STATE.NOON
 		changeDayTime.emit(dayTime)
+	
+	if animationPos < previous_animation_pos:
+		weather_manager.on_new_day()
+
+	previous_animation_pos = animationPos

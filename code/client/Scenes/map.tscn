@@ -33,6 +33,8 @@
 [ext_resource type="Texture2D" uid="uid://cnx3ib8tgy8p1" path="res://Assets/buildings/5pil.png" id="28_unquq"]
 [ext_resource type="Script" uid="uid://o1vq0iykvjn2" path="res://Scripts/dayand_night_cycle.gd" id="31_pptwf"]
 [ext_resource type="Script" uid="uid://yqrjjex1acer" path="res://Scripts/weather_manager.gd" id="32_ak4ow"]
+[ext_resource type="Script" uid="uid://na2j6by3bg3i" path="res://Scripts/weather_fx_manager.gd" id="33_wcnou"]
+[ext_resource type="Script" uid="uid://7ktjb6o15io1" path="res://Scripts/season_visual_manager.gd" id="34_1xwpj"]
 [ext_resource type="Script" uid="uid://cqcm1065smcqr" path="res://Scripts/farm_field.gd" id="35_fn4ks"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_uus22"]
@@ -11789,20 +11791,6 @@ script = ExtResource("31_pptwf")
 libraries/ = SubResource("AnimationLibrary_cwq17")
 autoplay = &"new_animation"
 
-[node name="Rain" type="GPUParticles2D" parent="." unique_id=273553922]
-material = SubResource("CanvasItemMaterial_pptwf")
-emitting = false
-amount = 100000
-lifetime = 0.6
-preprocess = 0.5
-process_material = SubResource("ParticleProcessMaterial_pptwf")
-
-[node name="Snow" type="GPUParticles2D" parent="." unique_id=1082114801]
-amount = 50000
-lifetime = 10.0
-preprocess = 30.0
-process_material = SubResource("ParticleProcessMaterial_pmuo0")
-
 [node name="WeatherManager" type="Node2D" parent="." unique_id=1976445493]
 script = ExtResource("32_ak4ow")
 
@@ -11810,6 +11798,27 @@ script = ExtResource("32_ak4ow")
 one_shot = true
 
 [node name="SeasonTimer" type="Timer" parent="WeatherManager" unique_id=871816163]
+
+[node name="WeatherFXManager" type="Node2D" parent="." unique_id=982514583]
+script = ExtResource("33_wcnou")
+
+[node name="Rain" type="GPUParticles2D" parent="WeatherFXManager" unique_id=273553922]
+material = SubResource("CanvasItemMaterial_pptwf")
+amount = 100000
+lifetime = 0.6
+preprocess = 0.5
+process_material = SubResource("ParticleProcessMaterial_pptwf")
+
+[node name="Snow" type="GPUParticles2D" parent="WeatherFXManager" unique_id=1082114801]
+amount = 50000
+lifetime = 10.0
+preprocess = 30.0
+process_material = SubResource("ParticleProcessMaterial_pmuo0")
+
+[node name="SeasonVisualManager" type="Node2D" parent="." unique_id=1620922588]
+script = ExtResource("34_1xwpj")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="SeasonVisualManager" unique_id=1490363976]
 
 [node name="FarmField" type="Node2D" parent="." unique_id=1664821398]
 script = ExtResource("35_fn4ks")

@@ -13,11 +13,8 @@ var current_season: Season = Season.SUMMER
 var days_in_season: int = 0
 var days_per_season: int = 7
 
-
 func _ready() -> void:
-	# initial state broadcast so other systems sync correctly
 	season_changed.emit(current_season)
-
 
 func on_new_day() -> void:
 	days_in_season += 1

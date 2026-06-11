@@ -11,17 +11,18 @@
 
 [node name="Map" parent="." unique_id=2061458601 instance=ExtResource("1_5a7ea")]
 texture_filter = 1
-position = Vector2(-22, 707)
+position = Vector2(-23, 705)
 
 [node name="girl" parent="." unique_id=332949648 instance=ExtResource("6_5ukr8")]
-position = Vector2(560, -8)
+position = Vector2(7377.9995, -891)
 scale = Vector2(20, 20)
 
 [node name="Camera2D" type="Camera2D" parent="girl" unique_id=784418730]
-position = Vector2(0, -0.0390625)
+position = Vector2(-10.149994, -0.6000023)
 zoom = Vector2(0.3, 0.3)
 
 [node name="catto_og" parent="." unique_id=1448107131 instance=ExtResource("3_5a7ea")]
+position = Vector2(7475, -771)
 scale = Vector2(3, 3)
 collision_layer = 0
 collision_mask = 0

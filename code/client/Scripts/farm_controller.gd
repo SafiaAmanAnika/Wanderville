@@ -2,13 +2,23 @@ extends Node2D
 
 @onready var farm_layer: TileMapLayer = $"../Map/FarmLayer"
 
-# How big one farm tile should LOOK on screen, in world pixels.
-# FarmLayer's TileSet has no tile_size set, so Godot defaults it to 16x16 -
-# that's why everything was rendering as a tiny "dot" before. This value
-# replaces that default for VISUAL purposes (sprite size + grid spacing).
-# Tune this in the Inspector on the FarmController node until tiles look
-# right next to the player (the player sprite is ~960x960 world units).
-@export var tile_visual_size: Vector2 = Vector2(800, 800)
+# Farm area boundary, in global/world coordinates (same units as
+# player.global_position - the "Player at: ..." values printed below).
+# The whole farming grid lives inside this rectangle - nothing outside it
+# can ever be tilled.
+const FARM_AREA_MIN := Vector2(-551, -194)
+const FARM_AREA_MAX := Vector2(-301, 34)
+
+# How many tiles to divide the farm area into (columns, rows). The farm area
+# is split evenly into this many cells, so the grid always exactly fills
+# FARM_AREA_MIN..FARM_AREA_MAX with no gaps and nothing sticking outside it.
+# Tune this in the Inspector to make tiles bigger/smaller (fewer/more tiles).
+@export var farm_grid_size: Vector2i = Vector2i(5, 5)
+
+# Size of one tile, in world pixels - derived from the farm area and grid size.
+func _get_tile_visual_size() -> Vector2:
+	var area_size = FARM_AREA_MAX - FARM_AREA_MIN
+	return Vector2(area_size.x / float(farm_grid_size.x), area_size.y / float(farm_grid_size.y))
 
 # Growth settings
 const GROWTH_STAGES = 3
@@ -46,12 +56,15 @@ func _input(event):
 			return
 		
 		var player_pos = player.global_position
-		var local_pos = farm_layer.to_local(player_pos)
-		var tile_pos = farm_layer.local_to_map(local_pos)
+		var tile_pos = _get_tile_pos(player_pos)
 		var key = _key(tile_pos)
 
 		print("Player at: ", player_pos)
 		print("Tile pos: ", tile_pos, " Tilled: ", tilled_tiles.has(key))
+
+		if not _is_in_farm_area(tile_pos):
+			print("Outside farm area - can't farm here")
+			return
 
 		# Auto-progression: Empty -> Tilled -> Planted -> Watered -> Harvest
 		if not tilled_tiles.has(key):
@@ -78,7 +91,7 @@ const SOIL_TEXTURE = preload("res://Assets/farming/soil.png")
 const SOIL_REGION = Rect2(408, 106, 605, 556)  # cropped bounding box of the soil art in soil.png
 
 # Render above FarmLayer (z_index 10) so the soil/crop sprites aren't hidden behind the tilemap
-const VISUAL_Z_INDEX = 11
+const VISUAL_Z_INDEX = 1
 
 func _till(tile_pos: Vector2i):
 	print(">>> TILLING <<<")
@@ -95,19 +108,37 @@ func _till(tile_pos: Vector2i):
 	soil.centered = true
 	soil.z_index = VISUAL_Z_INDEX
 
-	soil.scale = tile_visual_size / Vector2(SOIL_REGION.size)
+	soil.scale = _get_tile_visual_size() / Vector2(SOIL_REGION.size)
 
 	add_child(soil)
 	soil.global_position = _tile_to_world(tile_pos)
 
 	_sfx("till")
 
-# Where a tile should be drawn in world/global space. Uses FarmLayer's real
-# (16px) grid to convert the tile coordinate back to a world position - this
-# is what correctly lands the sprite on/near the player. tile_visual_size only
-# controls how BIG the sprite is drawn, not where its center point goes.
+# Converts a global position into a tile coordinate, relative to the farm
+# area's top-left corner (FARM_AREA_MIN). This is the SAME grid used for
+# visuals, so "standing on the same tile" and "looking at the same tilled
+# patch" always agree.
+func _get_tile_pos(global_pos: Vector2) -> Vector2i:
+	var size = _get_tile_visual_size()
+	var rel = global_pos - FARM_AREA_MIN
+	return Vector2i(floori(rel.x / size.x), floori(rel.y / size.y))
+
+# True if this tile coordinate is one of the farm_grid_size x farm_grid_size
+# cells that make up the farm area. Anything outside that grid - including
+# negative coordinates or coordinates >= farm_grid_size - is outside the
+# rectangle the user defined.
+func _is_in_farm_area(tile_pos: Vector2i) -> bool:
+	return tile_pos.x >= 0 and tile_pos.x < farm_grid_size.x \
+		and tile_pos.y >= 0 and tile_pos.y < farm_grid_size.y
+
+# Center of the given tile, in global space.
 func _tile_to_world(tile_pos: Vector2i) -> Vector2:
-	return farm_layer.to_global(farm_layer.map_to_local(tile_pos))
+	var size = _get_tile_visual_size()
+	return FARM_AREA_MIN + Vector2(
+		(tile_pos.x + 0.5) * size.x,
+		(tile_pos.y + 0.5) * size.y
+	)
 
 func _plant(tile_pos: Vector2i, key: String):
 	# Find first available seed
@@ -192,7 +223,7 @@ func _spawn_crop_visual(tile_pos: Vector2i, crop_type: String, stage: int):
 	if crop_type == "paddy":
 		path = "res://Assets/farming/regular_crops/paddy_spritesheet.png"
 
-	var tile_world_size = tile_visual_size
+	var tile_world_size = _get_tile_visual_size()
 
 	if ResourceLoader.exists(path):
 		var tex = load(path)

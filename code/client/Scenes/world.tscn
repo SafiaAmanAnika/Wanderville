@@ -33,4 +33,6 @@ y_sort_enabled = true
 position = Vector2(8585, -3777)
 
 [node name="FarmController" type="Node2D" parent="." unique_id=920773311]
+show_behind_parent = true
 script = ExtResource("6_o06y3")
+tile_visual_size = Vector2(300, 300)

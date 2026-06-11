@@ -2,10 +2,13 @@ extends Node2D
 
 @onready var farm_layer: TileMapLayer = $"../Map/FarmLayer"
 
-# UPDATE THESE: Your actual soil tile coordinates from the TileMap palette
-const SOIL_TILLED   = Vector2i(22, 48)
-const SOIL_WATERED  = Vector2i(22, 48)
-const SOIL_SOURCE_ID = 0
+# How big one farm tile should LOOK on screen, in world pixels.
+# FarmLayer's TileSet has no tile_size set, so Godot defaults it to 16x16 -
+# that's why everything was rendering as a tiny "dot" before. This value
+# replaces that default for VISUAL purposes (sprite size + grid spacing).
+# Tune this in the Inspector on the FarmController node until tiles look
+# right next to the player (the player sprite is ~960x960 world units).
+@export var tile_visual_size: Vector2 = Vector2(800, 800)
 
 # Growth settings
 const GROWTH_STAGES = 3
@@ -13,6 +16,9 @@ const STAGE_DURATION = 5.0
 
 # Crop data: tile_key -> {type, stage, watered, timer}
 var active_crops: Dictionary = {}
+
+# Tiles that have been tilled (key -> true)
+var tilled_tiles: Dictionary = {}
 
 func _ready():
 	print("=== FARM CONTROLLER READY ===")
@@ -42,49 +48,66 @@ func _input(event):
 		var player_pos = player.global_position
 		var local_pos = farm_layer.to_local(player_pos)
 		var tile_pos = farm_layer.local_to_map(local_pos)
-		var current = farm_layer.get_cell_atlas_coords(tile_pos)
-		
+		var key = _key(tile_pos)
+
 		print("Player at: ", player_pos)
-		print("Tile pos: ", tile_pos, " Current tile: ", current)
-		
+		print("Tile pos: ", tile_pos, " Tilled: ", tilled_tiles.has(key))
+
 		# Auto-progression: Empty -> Tilled -> Planted -> Watered -> Harvest
-		match current:
-			Vector2i(-1, -1):
-				# Empty ground - TILL it
-				_till(tile_pos)
-			SOIL_TILLED, SOIL_WATERED:
-				# Already tilled - check if has crop
-				var key = _key(tile_pos)
-				if active_crops.has(key):
-					var crop = active_crops[key]
-					if crop.stage >= GROWTH_STAGES:
-						# Ready to harvest
-						_harvest(tile_pos, key)
-					elif not crop.watered:
-						# Needs water
-						_water(tile_pos, key)
-					else:
-						# Already watered, waiting to grow
-						print("GROWING... stage: ", crop.stage)
+		if not tilled_tiles.has(key):
+			# Empty ground - TILL it
+			_till(tile_pos)
+		else:
+			# Already tilled - check if has crop
+			if active_crops.has(key):
+				var crop = active_crops[key]
+				if crop.stage >= GROWTH_STAGES:
+					# Ready to harvest
+					_harvest(tile_pos, key)
+				elif not crop.watered:
+					# Needs water
+					_water(tile_pos, key)
 				else:
-					# Tilled but no crop - PLANT
-					_plant(tile_pos, key)
-			_:
-				print("Unknown tile state: ", current)
+					# Already watered, waiting to grow
+					print("GROWING... stage: ", crop.stage)
+			else:
+				# Tilled but no crop - PLANT
+				_plant(tile_pos, key)
+
+const SOIL_TEXTURE = preload("res://Assets/farming/soil.png")
+const SOIL_REGION = Rect2(408, 106, 605, 556)  # cropped bounding box of the soil art in soil.png
+
+# Render above FarmLayer (z_index 10) so the soil/crop sprites aren't hidden behind the tilemap
+const VISUAL_Z_INDEX = 11
 
 func _till(tile_pos: Vector2i):
 	print(">>> TILLING <<<")
-	farm_layer.set_cell(tile_pos, SOIL_SOURCE_ID, SOIL_TILLED)
-	
-	# DEBUG: Force the tile to be super obvious
-	var debug = ColorRect.new()
-	debug.size = Vector2(100, 100)
-	debug.position = farm_layer.to_global(farm_layer.map_to_local(tile_pos)) - Vector2(50, 50)
-	debug.color = Color(1, 0, 0, 0.5)  # Big red semi-transparent square
-	debug.z_index = 100
-	add_child(debug)
-	
+
+	var key = _key(tile_pos)
+	tilled_tiles[key] = true
+
+	# Show a tilled-soil sprite over the tile instead of a debug box
+	var soil = Sprite2D.new()
+	soil.name = "Soil_" + key
+	soil.texture = SOIL_TEXTURE
+	soil.region_enabled = true
+	soil.region_rect = SOIL_REGION
+	soil.centered = true
+	soil.z_index = VISUAL_Z_INDEX
+
+	soil.scale = tile_visual_size / Vector2(SOIL_REGION.size)
+
+	add_child(soil)
+	soil.global_position = _tile_to_world(tile_pos)
+
 	_sfx("till")
+
+# Where a tile should be drawn in world/global space. Uses FarmLayer's real
+# (16px) grid to convert the tile coordinate back to a world position - this
+# is what correctly lands the sprite on/near the player. tile_visual_size only
+# controls how BIG the sprite is drawn, not where its center point goes.
+func _tile_to_world(tile_pos: Vector2i) -> Vector2:
+	return farm_layer.to_global(farm_layer.map_to_local(tile_pos))
 
 func _plant(tile_pos: Vector2i, key: String):
 	# Find first available seed
@@ -118,12 +141,17 @@ func _water(tile_pos: Vector2i, key: String):
 	if GameState.water_drops <= 0:
 		print("NO WATER")
 		return
-	
+
 	if not GameState.spend_water(1):
 		return
-	
-	farm_layer.set_cell(tile_pos, SOIL_SOURCE_ID, SOIL_WATERED)
+
 	active_crops[key].watered = true
+
+	# Darken the soil sprite to show it's watered
+	var soil = get_node_or_null("Soil_" + key)
+	if soil:
+		soil.modulate = Color(0.6, 0.6, 0.9)
+
 	print(">>> WATERED <<<")
 	_sfx("water")
 
@@ -131,54 +159,66 @@ func _harvest(tile_pos: Vector2i, key: String):
 	var crop = active_crops[key]
 	var crop_type = crop.type
 	print(">>> HARVESTED: ", crop_type, " <<<")
-	
+
 	# Remove visual
 	var visual = get_node_or_null("CropVisual_" + key)
 	if visual:
 		visual.queue_free()
-	
+
 	# Remove data
 	active_crops.erase(key)
-	
-	# Reset tile to tilled
-	farm_layer.set_cell(tile_pos, SOIL_SOURCE_ID, SOIL_TILLED)
+
+	# Reset soil sprite back to its un-watered look (tile stays tilled)
+	var soil = get_node_or_null("Soil_" + key)
+	if soil:
+		soil.modulate = Color(1, 1, 1)
+
 	_sfx("harvest")
 
 func _spawn_crop_visual(tile_pos: Vector2i, crop_type: String, stage: int):
 	var key = _key(tile_pos)
+
+	# Remove any previous visual for this tile so growth stages don't stack up
+	var old = get_node_or_null("CropVisual_" + key)
+	if old:
+		remove_child(old)
+		old.queue_free()
+
 	var node = Node2D.new()
 	node.name = "CropVisual_" + key
-	node.position = farm_layer.to_global(farm_layer.map_to_local(tile_pos))
-	node.z_index = 2
+	node.z_index = VISUAL_Z_INDEX + 1
 	
 	var path = "res://Assets/farming/regular_crops/%s_spritesheet.png" % crop_type
 	if crop_type == "paddy":
 		path = "res://Assets/farming/regular_crops/paddy_spritesheet.png"
-	
+
+	var tile_world_size = tile_visual_size
+
 	if ResourceLoader.exists(path):
 		var tex = load(path)
 		var sprite = Sprite2D.new()
 		sprite.texture = tex
 		sprite.region_enabled = true
 		sprite.centered = true
-		sprite.scale = Vector2(2, 2)
-		
+
 		var frame_w = tex.get_width() / 4
 		var frame_h = 32
 		if tex.get_height() < frame_h:
 			frame_h = tex.get_height()
 		sprite.region_rect = Rect2(stage * frame_w, 0, frame_w, frame_h)
-		
+		sprite.scale = tile_world_size / Vector2(frame_w, frame_h)
+
 		node.add_child(sprite)
 	else:
 		# Placeholder for missing spritesheets
 		var rect = ColorRect.new()
-		rect.size = Vector2(48, 48)
-		rect.position = Vector2(-24, -24)
+		rect.size = tile_world_size
+		rect.position = -tile_world_size / 2.0
 		rect.color = _crop_color(crop_type)
 		node.add_child(rect)
-	
+
 	add_child(node)
+	node.global_position = _tile_to_world(tile_pos)
 
 func _crop_color(crop_type: String) -> Color:
 	match crop_type:

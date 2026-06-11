@@ -1,21 +1,21 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://b4tw36c74l0v0"]
 
-[ext_resource type="Script" uid="uid://ctpqgvb4apojp" path="res://Scripts/farm_plot.gd" id="1_plot"]
+[ext_resource type="Script" uid="uid://c54f6oq0ig1c0" path="res://Scripts/farm_plot.gd" id="1_plot"]
 [ext_resource type="Texture2D" uid="uid://clj7wuhl4wbfo" path="res://Assets/farming/soil.png" id="2_soil"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_7h3ab"]
 radius = 30.0
 
-[node name="FarmPlot" type="Node2D"]
+[node name="FarmPlot" type="Node2D" unique_id=333267979]
 script = ExtResource("1_plot")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=815052092]
+scale = Vector2(2, 2)
 texture = ExtResource("2_soil")
 region_enabled = true
 region_rect = Rect2(0, 0, 32, 32)
-scale = Vector2(2, 2)
 
-[node name="InteractionZone" type="Area2D" parent="."]
+[node name="InteractionZone" type="Area2D" parent="." unique_id=1156404285]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionZone"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionZone" unique_id=1151087466]
 shape = SubResource("CircleShape2D_7h3ab")

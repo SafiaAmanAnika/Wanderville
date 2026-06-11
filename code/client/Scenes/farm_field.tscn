@@ -1,6 +1,6 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dg4kbjdjla66q"]
 
-[ext_resource type="Script" uid="uid://dgxfqxc8ccqh7" path="res://Scripts/farm_field.gd" id="1_fyx6v"]
+[ext_resource type="Script" uid="uid://cqcm1065smcqr" path="res://Scripts/farm_field.gd" id="1_fyx6v"]
 
-[node name="FarmField" type="Node2D"]
+[node name="FarmField" type="Node2D" unique_id=1142757944]
 script = ExtResource("1_fyx6v")

@@ -6,19 +6,18 @@ extends Node2D
 # player.global_position - the "Player at: ..." values printed below).
 # The whole farming grid lives inside this rectangle - nothing outside it
 # can ever be tilled.
-const FARM_AREA_MIN := Vector2(-551, -194)
-const FARM_AREA_MAX := Vector2(-301, 34)
+const FARM_AREA_MIN := Vector2(8629.15, -3797.821)
+const FARM_AREA_MAX := Vector2(11129.43, -693.0)
 
-# How many tiles to divide the farm area into (columns, rows). The farm area
-# is split evenly into this many cells, so the grid always exactly fills
-# FARM_AREA_MIN..FARM_AREA_MAX with no gaps and nothing sticking outside it.
-# Tune this in the Inspector to make tiles bigger/smaller (fewer/more tiles).
-@export var farm_grid_size: Vector2i = Vector2i(5, 5)
 
-# Size of one tile, in world pixels - derived from the farm area and grid size.
+# Size of one tillable patch, in world pixels. The farm area itself is just
+# an invisible rectangle (FARM_AREA_MIN..FARM_AREA_MAX) - the player can till
+# anywhere inside it, this only controls how big each individual soil/crop
+# sprite is. Tune this in the Inspector.
+@export var tile_visual_size: Vector2 = Vector2(50, 50)
+
 func _get_tile_visual_size() -> Vector2:
-	var area_size = FARM_AREA_MAX - FARM_AREA_MIN
-	return Vector2(area_size.x / float(farm_grid_size.x), area_size.y / float(farm_grid_size.y))
+	return tile_visual_size
 
 # Growth settings
 const GROWTH_STAGES = 3
@@ -124,13 +123,13 @@ func _get_tile_pos(global_pos: Vector2) -> Vector2i:
 	var rel = global_pos - FARM_AREA_MIN
 	return Vector2i(floori(rel.x / size.x), floori(rel.y / size.y))
 
-# True if this tile coordinate is one of the farm_grid_size x farm_grid_size
-# cells that make up the farm area. Anything outside that grid - including
-# negative coordinates or coordinates >= farm_grid_size - is outside the
-# rectangle the user defined.
+# True if this tile's center falls inside the invisible farm area rectangle
+# (FARM_AREA_MIN..FARM_AREA_MAX). The player can till anywhere inside that
+# rectangle, regardless of tile_visual_size.
 func _is_in_farm_area(tile_pos: Vector2i) -> bool:
-	return tile_pos.x >= 0 and tile_pos.x < farm_grid_size.x \
-		and tile_pos.y >= 0 and tile_pos.y < farm_grid_size.y
+	var center = _tile_to_world(tile_pos)
+	return center.x >= FARM_AREA_MIN.x and center.x <= FARM_AREA_MAX.x \
+		and center.y >= FARM_AREA_MIN.y and center.y <= FARM_AREA_MAX.y
 
 # Center of the given tile, in global space.
 func _tile_to_world(tile_pos: Vector2i) -> Vector2:

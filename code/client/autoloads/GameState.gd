@@ -1,11 +1,14 @@
 extends Node
 
+const MAX_WATER := 50
+
 var water_drops: int = 10
 var farm_zone_tilled: bool = false
 var crop_tiles: Dictionary = {}
 var menu_open: bool = false
 var farm_mode: String = "none"
 var selected_seed: String = ""
+
 var seed_inventory: Dictionary = {
 	"wheat": 5,
 	"corn": 3,
@@ -24,8 +27,8 @@ func spend_water(amount: int) -> bool:
 		return true
 	return false
 
-func add_water(amount: int):
-	water_drops += amount
+func add_water(amount: int) -> void:
+	water_drops = clampi(water_drops + amount, 0, MAX_WATER)
 	water_changed.emit(water_drops)
 
 func set_mode(mode: String) -> void:

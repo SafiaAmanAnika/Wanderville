@@ -29,6 +29,7 @@
 [ext_resource type="Texture2D" uid="uid://b64gi6mp6y5cv" path="res://Assets/trees/FakeChristmasTree_Nobg.png" id="23_pptwf"]
 [ext_resource type="Texture2D" uid="uid://dhknl7wvho875" path="res://Assets/trees/HealthyChrismas.png" id="24_ak4ow"]
 [ext_resource type="Texture2D" uid="uid://dn12eba71n0yp" path="res://Assets/trees/lighterChristmasTree.png" id="25_ajvq6"]
+[ext_resource type="Script" uid="uid://dibir1qteifpl" path="res://Scripts/water_source.gd" id="26_pmuo0"]
 [ext_resource type="Texture2D" uid="uid://c38iskeems7pe" path="res://Assets/trees/SupposedTobePineButIsCoconut(1).png" id="27_cwq17"]
 [ext_resource type="Texture2D" uid="uid://cnx3ib8tgy8p1" path="res://Assets/buildings/5pil.png" id="28_unquq"]
 [ext_resource type="Script" uid="uid://b3m6kj32fib06" path="res://Scripts/day_and_night_cycle.gd" id="31_a0h6a"]
@@ -10116,6 +10117,8 @@ sources/39 = SubResource("TileSetAtlasSource_whj3y")
 sources/40 = SubResource("TileSetAtlasSource_db2lx")
 sources/15 = SubResource("TileSetAtlasSource_1xwpj")
 
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_1xwpj"]
+
 [sub_resource type="Animation" id="Animation_ak4ow"]
 length = 0.001
 tracks/0/type = "value"
@@ -11718,14 +11721,15 @@ tile_map_data = PackedByteArray("AAAUAKn/HwAAAAAAAAC2AUz/IAAAAAAAAACrAVr/IAAAAAA
 tile_set = SubResource("TileSet_wcnou")
 
 [node name="CollisionLayer" type="StaticBody2D" parent="." unique_id=453210505]
+physics_material_override = SubResource("PhysicsMaterial_1xwpj")
 
 [node name="left_lake" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=1658730864]
 position = Vector2(-9, 6)
 polygon = PackedVector2Array(1697, -1315, 3235, -1323, 3211, -2143, 2426, -2144, 2424, -3039, 2045, -3036, 2045, -3869, 2433, -3856, 2433, -4513, 3005, -4507, 3008, -5117, 1695, -5123)
 
 [node name="right_lake_north" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=1560294110]
-position = Vector2(-2670, -922)
-scale = Vector2(1.005257, 0.9999999)
+position = Vector2(-7131.5483, 2489.8806)
+scale = Vector2(1.4738202, 1.8936579)
 polygon = PackedVector2Array(9183.861, -4190.9995, 10302.978, -4190.9995, 10302.978, -3587.9995, 9185.851, -3587.9995)
 
 [node name="right_lake_east" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=1274577690]
@@ -11734,7 +11738,7 @@ polygon = PackedVector2Array(6701, -4077, 7672, -4073, 7658, -1500, 6695, -2357,
 
 [node name="right_lake_south" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=681727307]
 position = Vector2(10, -3)
-polygon = PackedVector2Array(3778, -2132, 6541, -2128, 7460, -1301, 3739, -1329)
+polygon = PackedVector2Array(3778, -2132, 6541, -2128, 7426, -1340, 3727, -1345)
 
 [node name="north_lake" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=603284279]
 polygon = PackedVector2Array(3582, -5124, 6191, -5120, 6191, -4508, 3573, -4510)
@@ -11762,6 +11766,91 @@ position = Vector2(38592, -10447.001)
 rotation = 3.1415927
 scale = Vector2(1.0696911, -0.30405334)
 polygon = PackedVector2Array(25182.234, 15211.137, 36625.49, 15237.469, 36625.49, 15819.602, 25167.709, 15914.961)
+
+[node name="WaterSource" type="Area2D" parent="." unique_id=489887061]
+script = ExtResource("26_pmuo0")
+
+[node name="left_lake" type="CollisionPolygon2D" parent="WaterSource" unique_id=1556757911]
+position = Vector2(-9, 6)
+polygon = PackedVector2Array(1394, -991, 3556, -1063, 3211, -2143, 2426, -2144, 2424, -3039, 2045, -3036, 2045, -3869, 2867, -3859, 2753, -4290, 3382, -4139, 3329, -5468, 1421, -5366)
+
+[node name="right_lake_north" type="CollisionPolygon2D" parent="WaterSource" unique_id=1635655553]
+position = Vector2(-2670, -922)
+scale = Vector2(1.005257, 0.9999999)
+polygon = PackedVector2Array(9183.861, -4190.9995, 10302.978, -4190.9995, 10302.978, -3587.9995, 9185.851, -3587.9995)
+
+[node name="right_lake_east" type="CollisionPolygon2D" parent="WaterSource" unique_id=678033338]
+position = Vector2(-5357.524, 615.90607)
+scale = Vector2(1.7272254, 1.1857294)
+polygon = PackedVector2Array(6829.7534, -4104.5674, 7672, -4073, 7681.9873, -1743.995, 6966.968, -2487.8408, 6704, -3098, 7148, -3094, 7139, -3492, 7042, -3944, 6852.333, -3839.7515)
+
+[node name="right_lake_south" type="CollisionPolygon2D" parent="WaterSource" unique_id=1547608993]
+position = Vector2(-1045.4688, 706.0655)
+scale = Vector2(1.2031375, 1.3635682)
+polygon = PackedVector2Array(3778, -2132, 6303.909, -2096.0195, 7199.9, -1327.4478, 3739, -1329)
+
+[node name="north_lake" type="CollisionPolygon2D" parent="WaterSource" unique_id=976843065]
+position = Vector2(-704.3862, 3643.045)
+scale = Vector2(1.1380348, 1.7674513)
+polygon = PackedVector2Array(3582, -5124, 6191, -5120, 6191, -4508, 3573, -4510)
+
+[node name="right_border" type="CollisionPolygon2D" parent="WaterSource" unique_id=1862951663]
+position = Vector2(14809.956, -4122.0728)
+rotation = -3.1415925
+scale = Vector2(0.39101487, -0.30405357)
+polygon = PackedVector2Array(8320.477, -4976.4834, 8855.031, -4920.6045, 8799.836, 15665.242, 8387.297, 15724.443)
+
+[node name="left_border" type="CollisionPolygon2D" parent="WaterSource" unique_id=541569983]
+position = Vector2(12463, -4414.0005)
+rotation = -3.1415925
+scale = Vector2(0.3442109, -0.30405357)
+polygon = PackedVector2Array(37375.344, -4285.424, 37997.06, -4285.424, 38424.117, 16684.566, 37619.38, 16674.701)
+
+[node name="bottom_border" type="CollisionPolygon2D" parent="WaterSource" unique_id=473142337]
+position = Vector2(39749.83, -3972.9932)
+rotation = -3.1415925
+scale = Vector2(1.1160903, -0.30405328)
+polygon = PackedVector2Array(25182.234, 15211.137, 36279.168, 15135.495, 36279.168, 15842.607, 25167.709, 15914.961)
+
+[node name="top_border" type="CollisionPolygon2D" parent="WaterSource" unique_id=1584432438]
+position = Vector2(38592, -10447.001)
+rotation = -3.1415925
+scale = Vector2(1.0696911, -0.30405334)
+polygon = PackedVector2Array(25182.234, 15211.137, 36625.49, 15237.469, 36625.49, 15819.602, 25167.709, 15914.961)
+
+[node name="PromptLayer" type="CanvasLayer" parent="WaterSource" unique_id=1684223903]
+
+[node name="Panel" type="Panel" parent="WaterSource/PromptLayer" unique_id=431590616]
+visible = false
+custom_minimum_size = Vector2(100, 50)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -535.5
+offset_top = -145.5
+offset_right = 535.5
+offset_bottom = 145.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="prompt" type="Label" parent="WaterSource/PromptLayer" unique_id=1346304814]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -116.5
+offset_top = -14.0
+offset_right = 116.5
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "Press Q to collect water "
 
 [node name="Buildings" type="Node2D" parent="." unique_id=1639218678]
 

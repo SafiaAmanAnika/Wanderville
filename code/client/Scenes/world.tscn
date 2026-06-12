@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://clwliaqe8bb1k" path="res://Scenes/sign_board.tscn" id="5_5ukr8"]
 [ext_resource type="PackedScene" uid="uid://dnjgimyfr24k8" path="res://Scenes/player1.tscn" id="6_5ukr8"]
 [ext_resource type="Script" uid="uid://ccsbjwh2vip7" path="res://Scripts/farm_controller.gd" id="6_o06y3"]
+[ext_resource type="Script" uid="uid://v0sfr2gwlupt" path="res://Scripts/HUD_waterAmount.gd" id="7_o06y3"]
+[ext_resource type="Script" uid="uid://dxcfeslajrfk0" path="res://Scripts/HUD_waterPanel.gd" id="8_k7acu"]
 
 [node name="World" type="Node2D" unique_id=1971179881]
 
@@ -37,3 +39,16 @@ position = Vector2(8585, -3777)
 show_behind_parent = true
 script = ExtResource("6_o06y3")
 tile_visual_size = Vector2(150, 150)
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1011606990]
+
+[node name="WaterPanel" type="Panel" parent="HUD" unique_id=110732403]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("8_k7acu")
+
+[node name="WaterAmount" type="Label" parent="HUD/WaterPanel" unique_id=984837588]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+script = ExtResource("7_o06y3")

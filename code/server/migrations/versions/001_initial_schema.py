@@ -26,7 +26,7 @@ def upgrade() -> None:
         sa.Column('hashed_password', sa.String(length=255), nullable=False),
         sa.Column('display_name', sa.String(length=64), nullable=False),
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
-        sa.Column('is_active', sa.Boolean(), nullable=False, server_default=sa.text('1')),
+        sa.Column('is_active', sa.Boolean(), nullable=False, server_default=sa.true()),
         sa.Column('position_x', sa.Integer(), nullable=False, server_default=sa.text('0')),
         sa.Column('position_y', sa.Integer(), nullable=False, server_default=sa.text('0')),
         sa.PrimaryKeyConstraint('id'),

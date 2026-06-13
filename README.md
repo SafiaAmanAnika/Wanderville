@@ -14,13 +14,21 @@ meet friends in a shared community area.
 
 See `doc/setup/local_setup.md`.
 
+## Prerequisites
+
+- Python 3.12+
+- PostgreSQL (wanderville_admin / wanderville123 @ localhost:5432/wanderville)
+
 ## Run Server
 
-```bash
+```powershell
 cd code/server
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+Copy-Item .env.example .env   # then edit .env with your credentials
+python -m alembic upgrade head
+python -m pytest -q           # 41 tests should pass
 uvicorn main:app --reload
 ```
 

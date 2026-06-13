@@ -9,6 +9,8 @@ from fastapi.responses import JSONResponse
 from app.api.health import router as health_router
 from app.api.auth import router as auth_router
 from app.api.world import router as world_router
+from app.api.farm import router as farm_router
+from app.api.inventory import router as inventory_router
 from app.config import settings
 
 logging.basicConfig(
@@ -53,6 +55,8 @@ async def request_logging_middleware(request: Request, call_next):
 app.include_router(health_router)
 app.include_router(auth_router)
 app.include_router(world_router)
+app.include_router(farm_router)
+app.include_router(inventory_router)
 
 
 @app.exception_handler(HTTPException)

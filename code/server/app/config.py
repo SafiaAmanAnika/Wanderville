@@ -9,8 +9,8 @@ class Settings(BaseSettings):
     wanderville_host: str = "127.0.0.1"
     wanderville_port: int = 8000
 
-    # SQLAlchemy database URL, e.g. "sqlite:///./wanderville.db"
-    database_url: str = "sqlite:///./wanderville.db"
+    # SQLAlchemy database URL, e.g. "postgresql://user:pass@localhost/db"
+    database_url: str = "postgresql://wanderville_admin:wanderville123@localhost:5432/wanderville"
 
     # JWT configuration
     jwt_secret_key: str = "change-me"

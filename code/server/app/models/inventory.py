@@ -1,6 +1,9 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, UniqueConstraint
-from sqlalchemy.orm import relationship
+from __future__ import annotations
+
 from datetime import datetime, timezone
+
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, UniqueConstraint
+
 from app.database import Base
 
 
@@ -18,14 +21,3 @@ class InventoryItem(Base):
     __table_args__ = (
         UniqueConstraint('player_id', 'item_type', name='uix_player_item'),
     )
-
-    def to_dict(self) -> dict:
-        return {
-            "id": self.id,
-            "player_id": self.player_id,
-            "item_type": self.item_type,
-            "quantity": self.quantity,
-            "slot_index": self.slot_index,
-            "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
-        }

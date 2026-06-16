@@ -1,5 +1,8 @@
-from sqlalchemy.orm import Session
+from __future__ import annotations
+
 from sqlalchemy import and_
+from sqlalchemy.orm import Session
+
 from app.models.inventory import InventoryItem
 from app.models.player import Player
 
@@ -13,10 +16,6 @@ class ItemNotFound(InventoryError):
 
 
 class NotEnoughQuantity(InventoryError):
-    pass
-
-
-class ItemAlreadyExists(InventoryError):
     pass
 
 
@@ -48,7 +47,7 @@ def add_item(db: Session, player_id: int, item_type: str, quantity: int = 1) -> 
     return item
 
 
-def remove_item(db: Session, player_id: int, item_type: str, quantity: int = 1) -> InventoryItem:
+def remove_item(db: Session, player_id: int, item_type: str, quantity: int = 1) -> InventoryItem | None:
     item = db.query(InventoryItem).filter(
         and_(InventoryItem.player_id == player_id, InventoryItem.item_type == item_type)
     ).first()
@@ -73,7 +72,9 @@ def remove_item(db: Session, player_id: int, item_type: str, quantity: int = 1) 
     return item
 
 
-def transfer_item(db: Session, from_player_id: int, to_player_username: str, item_type: str, quantity: int) -> tuple[InventoryItem, InventoryItem]:
+def transfer_item(
+    db: Session, from_player_id: int, to_player_username: str, item_type: str, quantity: int
+) -> tuple[InventoryItem | None, InventoryItem]:
     to_player = db.query(Player).filter(Player.username == to_player_username).first()
     if not to_player:
         raise InventoryError(f"Player {to_player_username} not found")

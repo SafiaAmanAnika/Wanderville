@@ -10157,9 +10157,6 @@ _data = {
 &"new_animation": SubResource("Animation_ajvq6")
 }
 
-[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_pptwf"]
-blend_mode = 1
-
 [sub_resource type="Curve" id="Curve_ak4ow"]
 _limits = [0.0, 0.3, 0.0, 1.0]
 _data = [Vector2(0, 0.00018897653), 0.0, 0.0, 0, 0, Vector2(1e-05, 0), 1.9188999, 1.9188999, 0, 0, Vector2(0.51612896, 0.3), 0.0, 0.0, 0, 0, Vector2(1, 0), -1.959275, 0.0, 0, 0]
@@ -10274,12 +10271,14 @@ emission_shape_offset = Vector3(5500, -2500, 0)
 emission_shape = 3
 emission_box_extents = Vector3(6000, 3500, 1)
 gravity = Vector3(130, 0, 0)
+linear_accel_min = -50.0
+linear_accel_max = -50.0
 tangential_accel_min = -2.2351742e-06
 tangential_accel_max = 5.9999976
 tangential_accel_curve = SubResource("CurveTexture_natfk")
 damping_max = 100.00001
-scale_min = 1.8
-scale_max = 2.1
+scale_min = 4.0
+scale_max = 6.0
 color_ramp = SubResource("GradientTexture1D_pmuo0")
 color_initial_ramp = SubResource("GradientTexture1D_wcnou")
 
@@ -10299,7 +10298,20 @@ initial_velocity_min = 20.0
 initial_velocity_max = 80.0
 gravity = Vector3(0, 10, 0)
 scale_min = 0.099999994
-scale_max = 0.099999994
+scale_max = 0.19999999
+anim_offset_max = 1.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gg4i5"]
+particle_flag_disable_z = true
+emission_shape_offset = Vector3(5500, -2500, 0)
+emission_shape = 3
+emission_box_extents = Vector3(7000, 3500, 1)
+spread = 20.0
+initial_velocity_min = 20.0
+initial_velocity_max = 80.0
+gravity = Vector3(0, 10, 0)
+scale_min = 0.19999999
+scale_max = 0.5
 anim_offset_max = 1.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ajvq6"]
@@ -11935,8 +11947,9 @@ script = ExtResource("33_wcnou")
 
 [node name="Rain" type="GPUParticles2D" parent="WeatherFXManager" unique_id=273553922]
 modulate = Color(0.68, 0.7333333, 1, 1)
-material = SubResource("CanvasItemMaterial_pptwf")
-emitting = false
+show_behind_parent = true
+top_level = true
+use_parent_material = true
 amount = 30000
 lifetime = 0.6
 preprocess = 0.5
@@ -11945,7 +11958,6 @@ trail_lifetime = 0.4
 process_material = SubResource("ParticleProcessMaterial_pptwf")
 
 [node name="Snow" type="GPUParticles2D" parent="WeatherFXManager" unique_id=1082114801]
-emitting = false
 amount = 50000
 lifetime = 10.0
 preprocess = 30.0
@@ -11954,7 +11966,7 @@ process_material = SubResource("ParticleProcessMaterial_pmuo0")
 [node name="Wind" type="GPUParticles2D" parent="WeatherFXManager" unique_id=390048945]
 texture_filter = 4
 position = Vector2(563, -270)
-amount = 5000
+amount = 3000
 texture = SubResource("GradientTexture2D_gg4i5")
 lifetime = 5.0
 preprocess = 2.0
@@ -11966,7 +11978,7 @@ process_material = SubResource("ParticleProcessMaterial_wcnou")
 [node name="Autumn_leaves" type="GPUParticles2D" parent="WeatherFXManager" unique_id=1371484847]
 material = SubResource("CanvasItemMaterial_a0h6a")
 position = Vector2(2419, -365)
-amount = 2000
+amount = 2500
 texture = ExtResource("34_1xwpj")
 visibility_rect = Rect2(-500, -200, 1000, 400)
 process_material = SubResource("ParticleProcessMaterial_1xwpj")
@@ -11974,10 +11986,10 @@ process_material = SubResource("ParticleProcessMaterial_1xwpj")
 [node name="Spring_leaves" type="GPUParticles2D" parent="WeatherFXManager" unique_id=1209836167]
 material = SubResource("CanvasItemMaterial_a0h6a")
 position = Vector2(2419, -365)
-amount = 2000
+amount = 2500
 texture = ExtResource("35_pmuo0")
 visibility_rect = Rect2(-500, -200, 1000, 400)
-process_material = SubResource("ParticleProcessMaterial_1xwpj")
+process_material = SubResource("ParticleProcessMaterial_gg4i5")
 
 [node name="FarmField" type="Node2D" parent="." unique_id=1664821398]
 script = ExtResource("35_fn4ks")

@@ -7,7 +7,6 @@ const WeatherManager = preload("../Scripts/weather_manager.gd")
 @onready var snow: GPUParticles2D = $Snow
 @onready var autumn_leaves: GPUParticles2D = $Autumn_leaves
 @onready var spring_leaves: GPUParticles2D = $Spring_leaves
-@onready var wind: GPUParticles2D = $Wind
 
 func _ready():
 	weather_manager.season_changed.connect(_on_season_changed)
@@ -18,7 +17,6 @@ func _on_season_changed(season: int) -> void:
 	snow.emitting = false
 	autumn_leaves.emitting = false
 	spring_leaves.emitting = false
-	wind.emitting = false
 
 	match season:
 		WeatherManager.Season.SUMMER:
@@ -32,4 +30,3 @@ func _on_season_changed(season: int) -> void:
 
 		WeatherManager.Season.SPRING:
 			spring_leaves.emitting = true
-			wind.emitting = true

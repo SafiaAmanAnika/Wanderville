@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://qicqxmogfgn6"]
+
+[ext_resource type="Script" uid="uid://dqthyrkfgpurf" path="res://Scripts/seed_picker_menu.gd" id="1_0pi1k"]
+
+[node name="SeedPickerMenu" type="CanvasLayer" unique_id=391319660]
+script = ExtResource("1_0pi1k")
+
+[node name="Panel" type="Panel" parent="." unique_id=923625531]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel" unique_id=2021033016]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TitleLabel" type="Label" parent="Panel/VBoxContainer" unique_id=874837139]
+layout_mode = 2
+
+[node name="Grid" type="GridContainer" parent="Panel/VBoxContainer" unique_id=1489426501]
+layout_mode = 2

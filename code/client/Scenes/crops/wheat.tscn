@@ -46,8 +46,17 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_m2hl6"]
+size = Vector2(132, 119)
+
 [node name="Wheat" type="Node2D" unique_id=19058655]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=413394676]
 sprite_frames = SubResource("SpriteFrames_auuy5")
 script = ExtResource("1_m2hl6")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=242976502]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1059562608]
+position = Vector2(-4, 21.5)
+shape = SubResource("RectangleShape2D_m2hl6")

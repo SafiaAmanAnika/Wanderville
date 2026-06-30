@@ -185,7 +185,7 @@ func _on_crop_fully_grown(key: String) -> void:
 func _get_tile_pos(global_pos: Vector2) -> Vector2i:
 	var size = _get_tile_visual_size()
 	var rel = global_pos - FARM_AREA_MIN
-	return Vector2i(floori(rel.x / size.x), floori(rel.y / size.y))
+	return Vector2i(roundi(rel.x / size.x), roundi(rel.y / size.y))
 
 func _is_in_farm_area(tile_pos: Vector2i) -> bool:
 	var center = _tile_to_world(tile_pos)

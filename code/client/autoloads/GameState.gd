@@ -47,6 +47,9 @@ signal water_changed(new_amount: int)
 signal mode_changed(new_mode: String)
 signal seed_changed(new_seed: String)
 
+func load_from_backend() -> void:
+	print("GameState.load_from_backend() called")
+
 func spend_water(amount: int) -> bool:
 	if water_drops >= amount:
 		water_drops -= amount

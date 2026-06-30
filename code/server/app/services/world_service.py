@@ -4,7 +4,19 @@ from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
 
-from app.models.world import WorldState
+from app.models.world import World, WorldState
+
+
+def create_world(db: Session, player_id: int) -> World:
+    world = World(
+        owner_id=player_id,
+        name="My World",
+        tiles={},
+    )
+    db.add(world)
+    db.commit()
+    db.refresh(world)
+    return world
 
 
 def get_or_create_world_state(db: Session) -> WorldState:

@@ -9,8 +9,10 @@ from app.schemas.inventory import (
     AddItemRequest,
     InventoryItemResponse,
     InventoryListResponse,
+    ItemDefinitionResponse,
     RemoveItemRequest,
     TransferItemRequest,
+    UseItemRequest,
 )
 from app.schemas.responses import Envelope
 from app.services import inventory_service
@@ -39,6 +41,31 @@ def get_inventory(
     }
 
 
+@router.get("/catalog", response_model=Envelope[list[ItemDefinitionResponse]])
+def get_catalog(
+    db: Session = Depends(get_db),
+):
+    items = inventory_service.get_catalog(db)
+    return {
+        "success": True,
+        "data": [ItemDefinitionResponse.model_validate(item) for item in items],
+        "message": "Item catalog retrieved",
+    }
+
+
+@router.get("/catalog/{season}", response_model=Envelope[list[ItemDefinitionResponse]])
+def get_catalog_by_season(
+    season: str,
+    db: Session = Depends(get_db),
+):
+    items = inventory_service.get_catalog_by_season(db, season)
+    return {
+        "success": True,
+        "data": [ItemDefinitionResponse.model_validate(item) for item in items],
+        "message": f"Catalog for {season} retrieved",
+    }
+
+
 @router.post("/add", response_model=Envelope[InventoryItemResponse])
 def add_item(
     req: AddItemRequest,
@@ -46,12 +73,14 @@ def add_item(
     db: Session = Depends(get_db),
 ):
     try:
-        item = inventory_service.add_item(db, player_id, req.item_type, req.quantity)
+        item = inventory_service.add_item(
+            db, player_id, req.item_code, req.quantity, req.location
+        )
         data = InventoryItemResponse.model_validate(item)
         return {
             "success": True,
             "data": data.model_dump(),
-            "message": f"Added {req.quantity} {req.item_type}",
+            "message": f"Added {req.quantity} {req.item_code}",
         }
     except inventory_service.InventoryError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -64,18 +93,42 @@ def remove_item(
     db: Session = Depends(get_db),
 ):
     try:
-        item = inventory_service.remove_item(db, player_id, req.item_type, req.quantity)
+        item = inventory_service.remove_item(db, player_id, req.item_code, req.quantity)
         if item is None:
             return {
                 "success": True,
                 "data": None,
-                "message": f"Removed all {req.item_type}",
+                "message": f"Removed all {req.item_code}",
             }
         data = InventoryItemResponse.model_validate(item)
         return {
             "success": True,
             "data": data.model_dump(),
-            "message": f"Removed {req.quantity} {req.item_type}",
+            "message": f"Removed {req.quantity} {req.item_code}",
+        }
+    except inventory_service.InventoryError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/use", response_model=Envelope[InventoryItemResponse | None])
+def use_item(
+    req: UseItemRequest,
+    player_id: int = Depends(get_current_player_id),
+    db: Session = Depends(get_db),
+):
+    try:
+        item = inventory_service.remove_item(db, player_id, req.item_code, req.quantity)
+        if item is None:
+            return {
+                "success": True,
+                "data": None,
+                "message": f"Used all {req.item_code}",
+            }
+        data = InventoryItemResponse.model_validate(item)
+        return {
+            "success": True,
+            "data": data.model_dump(),
+            "message": f"Used {req.quantity} {req.item_code}",
         }
     except inventory_service.InventoryError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -89,16 +142,16 @@ def transfer_item(
 ):
     try:
         _, received = inventory_service.transfer_item(
-            db, player_id, req.to_player_username, req.item_type, req.quantity
+            db, player_id, req.to_player_username, req.item_code, req.quantity
         )
         return {
             "success": True,
             "data": {
-                "transferred": req.item_type,
+                "transferred": req.item_code,
                 "quantity": req.quantity,
                 "to": req.to_player_username,
             },
-            "message": f"Sent {req.quantity} {req.item_type} to {req.to_player_username}",
+            "message": f"Sent {req.quantity} {req.item_code} to {req.to_player_username}",
         }
     except inventory_service.InventoryError as e:
         raise HTTPException(status_code=400, detail=str(e))

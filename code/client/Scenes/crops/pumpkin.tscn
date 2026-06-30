@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://dnhxxvfpufw5s"]
+
+[ext_resource type="Texture2D" uid="uid://b84f7jscf22qn" path="res://Assets/farming/autumn_crops/pumpkin_spritesheet.png" id="1_kur3o"]
+[ext_resource type="Script" uid="uid://darippfffjob0" path="res://Scripts/crop_visual.gd" id="2_dyua3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dyua3"]
+atlas = ExtResource("1_kur3o")
+region = Rect2(0, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oh40g"]
+atlas = ExtResource("1_kur3o")
+region = Rect2(495, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u0fra"]
+atlas = ExtResource("1_kur3o")
+region = Rect2(990, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lids2"]
+atlas = ExtResource("1_kur3o")
+region = Rect2(1485, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tvnbw"]
+atlas = ExtResource("1_kur3o")
+region = Rect2(1980, 0, 495, 416)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_v226a"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dyua3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oh40g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u0fra")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lids2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tvnbw")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ys4fc"]
+size = Vector2(316, 298)
+
+[node name="Pumpkin" type="Node2D" unique_id=19058655]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=928597287]
+position = Vector2(1, 1)
+sprite_frames = SubResource("SpriteFrames_v226a")
+script = ExtResource("2_dyua3")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=619520114]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=162654894]
+position = Vector2(-14, 19)
+shape = SubResource("RectangleShape2D_ys4fc")

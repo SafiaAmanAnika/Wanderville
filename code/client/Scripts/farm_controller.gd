@@ -6,6 +6,10 @@ extends Node2D
 var _pending_tile_pos: Vector2i
 var _pending_key: String
 
+var _dragging: bool = false
+var _drag_key: String = ""
+var _drag_crop: Dictionary = {}
+
 const FARM_AREA_MIN := Vector2(8629.15, -3797.821)
 const FARM_AREA_MAX := Vector2(11129.43, -693.0)
 
@@ -33,25 +37,79 @@ func _ready():
 func _input(event):
 	if GameState.menu_open:
 		return
-	if not event.is_action_pressed("interact"):
-		return
-
-	if farm_layer == null:
-		push_error("FarmLayer is null!")
-		return
 
 	var player = get_tree().get_first_node_in_group("player")
 	if not player:
-		push_error("No player found!")
 		return
 
 	var tile_pos = _get_tile_pos(player.global_position)
 	var key = _key(tile_pos)
 
+	# --- DRAG CROP (hold M) ---
+	if event.is_action_pressed("move_crop"):
+		if not _dragging:
+			# PICK UP - find nearest crop
+			var nearest_key: String = ""
+			var nearest_dist: float = INF
+			for crop_key in active_crops.keys():
+				var crop_world = _tile_to_world(_str_to_vec(crop_key))
+				var dist = player.global_position.distance_to(crop_world)
+				if dist < tile_visual_size.x * 4.0 and dist < nearest_dist:
+					nearest_dist = dist
+					nearest_key = crop_key
+			if nearest_key == "":
+				print("No crop nearby")
+				return
+			_drag_key = nearest_key
+			_drag_crop = active_crops[nearest_key].duplicate()
+			active_crops.erase(nearest_key)
+			var visual = get_node_or_null("CropVisual_" + nearest_key)
+			if visual:
+				visual.z_index = VISUAL_Z_INDEX + 5
+				var body = visual.get_node_or_null("StaticBody2D")
+				if body:
+					body.set_deferred("disabled", true)
+			_dragging = true
+			print(">>> PICKED UP: ", _drag_crop.type)
+		else:
+			# DROP - place at current player tile
+			var drop_tile = _get_tile_pos(player.global_position)
+			var drop_key = _key(drop_tile)
+			var visual = get_node_or_null("CropVisual_" + _drag_key)
+			if _is_in_farm_area(drop_tile) and tilled_tiles.has(drop_key) and not active_crops.has(drop_key):
+				if visual:
+					visual.name = "CropVisual_" + drop_key
+					visual.global_position = _tile_to_world(drop_tile)
+					visual.z_index = VISUAL_Z_INDEX
+					var body = visual.get_node_or_null("StaticBody2D/CollisionShape2D")
+					if body:
+						body.set_deferred("disabled", false)
+				active_crops[drop_key] = _drag_crop
+				_till(_str_to_vec(_drag_key))
+				print(">>> DROPPED at: ", drop_key)
+			else:
+				# Invalid — return to original
+				if visual:
+					visual.global_position = _tile_to_world(_str_to_vec(_drag_key))
+					visual.z_index = VISUAL_Z_INDEX
+					var body = visual.get_node_or_null("StaticBody2D")
+					if body:
+						body.set_deferred("disabled", false)
+				active_crops[_drag_key] = _drag_crop
+				print(">>> RETURNED: ", _drag_crop.type)
+			_dragging = false
+			_drag_key = ""
+			_drag_crop = {}
+		return
+	# --- INTERACT (E) ---
+	if not event.is_action_pressed("interact"):
+		return
+	if farm_layer == null:
+		push_error("FarmLayer is null!")
+		return
 	if not _is_in_farm_area(tile_pos):
 		print("Outside farm area")
 		return
-
 	if not tilled_tiles.has(key):
 		_till(tile_pos)
 	elif not active_crops.has(key):
@@ -64,14 +122,23 @@ func _input(event):
 			_water(tile_pos, key)
 		else:
 			print("GROWING... stage: ", crop.stage)
-			
-	print("Tile key: ", key, " Has crop: ", active_crops.has(key))
 
+func _process(_delta):
+	if not _dragging:
+		return
+
+	var player = get_tree().get_first_node_in_group("player")
+	if not player:
+		return
+
+	var visual = get_node_or_null("CropVisual_" + _drag_key)
+	if visual:
+		# Carry the crop above the player
+		visual.global_position = player.global_position + Vector2(0, -32)
 func _till(tile_pos: Vector2i):
 	print(">>> TILLING <<<")
 	var key = _key(tile_pos)
 	tilled_tiles[key] = true
-
 	var soil = Sprite2D.new()
 	soil.name = "Soil_" + key
 	soil.texture = SOIL_TEXTURE
@@ -114,13 +181,11 @@ func _water(tile_pos: Vector2i, key: String):
 		print("NO WATER")
 		return
 	active_crops[key].watered = true
-
 	var crop_root = get_node_or_null("CropVisual_" + key)
 	if crop_root:
 		var anim = crop_root.get_node_or_null("AnimatedSprite2D")
 		if anim:
 			anim.water()
-
 	print(">>> WATERED <<<")
 	_sfx("water")
 
@@ -130,23 +195,17 @@ func _harvest(tile_pos: Vector2i, key: String):
 	if visual:
 		visual.queue_free()
 	active_crops.erase(key)
-	# Restore soil after harvest
 	_till(tile_pos)
 	_sfx("harvest")
 
 func _spawn_crop_visual(tile_pos: Vector2i, crop_type: String) -> void:
 	var key = _key(tile_pos)
-
-	# Remove existing crop visual
 	var old = get_node_or_null("CropVisual_" + key)
 	if old:
 		old.queue_free()
-
-	# Remove soil — crop scene frame 0 shows seed on soil already
 	var soil = get_node_or_null("Soil_" + key)
 	if soil:
 		soil.queue_free()
-
 	var path = "res://Scenes/crops/%s.tscn" % crop_type
 	if not ResourceLoader.exists(path):
 		print("No scene for: ", crop_type, " - using placeholder")
@@ -160,16 +219,14 @@ func _spawn_crop_visual(tile_pos: Vector2i, crop_type: String) -> void:
 		add_child(rect)
 		rect.global_position = _tile_to_world(tile_pos)
 		return
-
 	var node: Node = load(path).instantiate()
 	node.name = "CropVisual_" + key
 	node.z_index = VISUAL_Z_INDEX
 	add_child(node)
 	node.global_position = _tile_to_world(tile_pos)
-
 	var anim = node.get_node_or_null("AnimatedSprite2D")
 	if anim:
-		anim.fully_grown.connect(_on_crop_fully_grown.bind(key))
+		anim.fully_grown.connect(_on_crop_fully_grown.bind(key), CONNECT_ONE_SHOT)
 		var frame_tex = anim.sprite_frames.get_frame_texture("default", 0)
 		if frame_tex:
 			var frame_size = frame_tex.get_size()

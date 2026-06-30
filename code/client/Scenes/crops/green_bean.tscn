@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://dhn5aympa0s5i"]
+
+[ext_resource type="Texture2D" uid="uid://chipaieefl6d6" path="res://Assets/farming/summer_crops/greenbean_spritesheet.png" id="1_xkfao"]
+[ext_resource type="Script" uid="uid://darippfffjob0" path="res://Scripts/crop_visual.gd" id="2_sv3pb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sv3pb"]
+atlas = ExtResource("1_xkfao")
+region = Rect2(0, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mcqmm"]
+atlas = ExtResource("1_xkfao")
+region = Rect2(495, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8n4kh"]
+atlas = ExtResource("1_xkfao")
+region = Rect2(990, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_enlxf"]
+atlas = ExtResource("1_xkfao")
+region = Rect2(1485, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pm471"]
+atlas = ExtResource("1_xkfao")
+region = Rect2(1980, 0, 495, 416)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_v226a"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sv3pb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mcqmm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8n4kh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_enlxf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pm471")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ys4fc"]
+size = Vector2(306, 286)
+
+[node name="GreenBean" type="Node2D" unique_id=19058655]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=928597287]
+position = Vector2(1, 1)
+sprite_frames = SubResource("SpriteFrames_v226a")
+script = ExtResource("2_sv3pb")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=619520114]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=162654894]
+position = Vector2(-18, 40)
+shape = SubResource("RectangleShape2D_ys4fc")

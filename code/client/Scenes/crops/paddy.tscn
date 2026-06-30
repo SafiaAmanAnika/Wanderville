@@ -47,7 +47,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ys4fc"]
-size = Vector2(144, 138)
+size = Vector2(134, 135)
 
 [node name="Paddy" type="Node2D" unique_id=19058655]
 
@@ -61,5 +61,5 @@ script = ExtResource("1_ys4fc")
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=619520114]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=162654894]
-position = Vector2(2, 28)
+position = Vector2(4, 26.5)
 shape = SubResource("RectangleShape2D_ys4fc")

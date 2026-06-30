@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://1x02wgtx4cfl"]
+
+[ext_resource type="Texture2D" uid="uid://3hsg0hgf58gd" path="res://Assets/farming/summer_crops/sweetcorn_spritesheet.png" id="1_285gm"]
+[ext_resource type="Script" uid="uid://darippfffjob0" path="res://Scripts/crop_visual.gd" id="2_mtboy"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s6ujh"]
+atlas = ExtResource("1_285gm")
+region = Rect2(0, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xjhte"]
+atlas = ExtResource("1_285gm")
+region = Rect2(495, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t7b7n"]
+atlas = ExtResource("1_285gm")
+region = Rect2(990, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r8k60"]
+atlas = ExtResource("1_285gm")
+region = Rect2(1485, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dl8yt"]
+atlas = ExtResource("1_285gm")
+region = Rect2(1980, 0, 495, 416)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_pt1y1"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s6ujh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xjhte")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t7b7n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r8k60")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dl8yt")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_m0rg4"]
+size = Vector2(307, 289)
+
+[node name="SweetCorn" type="Node2D" unique_id=1410967312]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=918075885]
+position = Vector2(1, 1)
+sprite_frames = SubResource("SpriteFrames_pt1y1")
+script = ExtResource("2_mtboy")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1292384266]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1298072033]
+position = Vector2(-27.5, 49.5)
+shape = SubResource("RectangleShape2D_m0rg4")

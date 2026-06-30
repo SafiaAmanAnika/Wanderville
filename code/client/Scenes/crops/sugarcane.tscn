@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://bnflnahve1r0h"]
+
+[ext_resource type="Texture2D" uid="uid://bkgctx30btyq8" path="res://Assets/farming/regular_crops/sugarcane_spritesheet.png" id="1_6qjme"]
+[ext_resource type="Script" uid="uid://darippfffjob0" path="res://Scripts/crop_visual.gd" id="2_8l712"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8l712"]
+atlas = ExtResource("1_6qjme")
+region = Rect2(0, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5747t"]
+atlas = ExtResource("1_6qjme")
+region = Rect2(495, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ny6wa"]
+atlas = ExtResource("1_6qjme")
+region = Rect2(990, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_56yfs"]
+atlas = ExtResource("1_6qjme")
+region = Rect2(1485, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_orgmq"]
+atlas = ExtResource("1_6qjme")
+region = Rect2(1980, 0, 495, 416)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_v226a"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8l712")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5747t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ny6wa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_56yfs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_orgmq")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ys4fc"]
+size = Vector2(286, 275)
+
+[node name="Sugarcane" type="Node2D" unique_id=19058655]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=928597287]
+position = Vector2(1, 1)
+sprite_frames = SubResource("SpriteFrames_v226a")
+script = ExtResource("2_8l712")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=619520114]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=162654894]
+position = Vector2(-30, 51.5)
+shape = SubResource("RectangleShape2D_ys4fc")

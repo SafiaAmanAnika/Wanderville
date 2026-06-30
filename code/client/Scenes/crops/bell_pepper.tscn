@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://b7jkpavs5h8f6"]
+
+[ext_resource type="Texture2D" uid="uid://ixxnpumn2ik0" path="res://Assets/farming/summer_crops/bellpepper_spritesheet.png" id="1_863re"]
+[ext_resource type="Script" uid="uid://darippfffjob0" path="res://Scripts/crop_visual.gd" id="2_dysio"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dysio"]
+atlas = ExtResource("1_863re")
+region = Rect2(0, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3besw"]
+atlas = ExtResource("1_863re")
+region = Rect2(495, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e8vn4"]
+atlas = ExtResource("1_863re")
+region = Rect2(990, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aeyi0"]
+atlas = ExtResource("1_863re")
+region = Rect2(1485, 0, 495, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x4axt"]
+atlas = ExtResource("1_863re")
+region = Rect2(1980, 0, 495, 416)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_v226a"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dysio")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3besw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e8vn4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aeyi0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x4axt")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ys4fc"]
+size = Vector2(300, 306)
+
+[node name="BellPepper" type="Node2D" unique_id=19058655]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=928597287]
+position = Vector2(1, 1)
+sprite_frames = SubResource("SpriteFrames_v226a")
+script = ExtResource("2_dysio")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=619520114]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=162654894]
+position = Vector2(-20, 43)
+shape = SubResource("RectangleShape2D_ys4fc")

@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://bew5n0sg07ijc"]
+
+[ext_resource type="Texture2D" uid="uid://dd6eghxnd4bxk" path="res://Assets/farming/autumn_crops/turnip_spritesheet.png" id="1_25uxi"]
+[ext_resource type="Script" uid="uid://darippfffjob0" path="res://Scripts/crop_visual.gd" id="2_p0qvs"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p0qvs"]
+atlas = ExtResource("1_25uxi")
+region = Rect2(0, 0, 412, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uemuk"]
+atlas = ExtResource("1_25uxi")
+region = Rect2(824, 0, 412, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_msen4"]
+atlas = ExtResource("1_25uxi")
+region = Rect2(1236, 0, 412, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4xush"]
+atlas = ExtResource("1_25uxi")
+region = Rect2(1648, 0, 412, 416)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6m0sm"]
+atlas = ExtResource("1_25uxi")
+region = Rect2(2060, 0, 412, 416)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_auuy5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p0qvs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uemuk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_msen4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4xush")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6m0sm")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_m2hl6"]
+size = Vector2(305, 318)
+
+[node name="Turnip" type="Node2D" unique_id=19058655]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=413394676]
+sprite_frames = SubResource("SpriteFrames_auuy5")
+script = ExtResource("2_p0qvs")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=242976502]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1059562608]
+position = Vector2(20.5, 20)
+shape = SubResource("RectangleShape2D_m2hl6")

@@ -40,6 +40,133 @@ func me(token: String) -> Dictionary:
 	)
 
 
+func get_inventory(token: String) -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_GET,
+		"/inventory/",
+		null,
+		{"Authorization": "Bearer %s" % token}
+	)
+
+
+func get_catalog(token: String) -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_GET,
+		"/inventory/catalog",
+		null,
+		{"Authorization": "Bearer %s" % token}
+	)
+
+
+func add_item(token: String, item_code: String, quantity: int = 1, location: String = "inventory") -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_POST,
+		"/inventory/add",
+		{"item_code": item_code, "quantity": quantity, "location": location},
+		{"Authorization": "Bearer %s" % token}
+	)
+
+
+func remove_item(token: String, item_code: String, quantity: int = 1) -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_POST,
+		"/inventory/remove",
+		{"item_code": item_code, "quantity": quantity},
+		{"Authorization": "Bearer %s" % token}
+	)
+
+
+# ========== NEW: ECONOMY ENDPOINTS ==========
+
+func get_economy(token: String) -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_GET,
+		"/economy/",
+		null,
+		{"Authorization": "Bearer %s" % token}
+	)
+
+
+func earn_taka(token: String, amount: int, description: String = "") -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_POST,
+		"/economy/earn",
+		{"amount": amount, "currency_type": "taka", "description": description},
+		{"Authorization": "Bearer %s" % token}
+	)
+
+
+func spend_taka(token: String, amount: int, description: String = "") -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_POST,
+		"/economy/spend",
+		{"amount": amount, "currency_type": "taka", "description": description},
+		{"Authorization": "Bearer %s" % token}
+	)
+
+
+func get_xp(token: String) -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_GET,
+		"/economy/xp",
+		null,
+		{"Authorization": "Bearer %s" % token}
+	)
+
+
+func gain_xp(token: String, xp_amount: int, source: String = "") -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_POST,
+		"/economy/xp/gain",
+		{"xp_amount": xp_amount, "source": source},
+		{"Authorization": "Bearer %s" % token}
+	)
+
+func get_world_state(token: String) -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_GET,
+		"/world/state",
+		null,
+		{"Authorization": "Bearer %s" % token}
+	)
+
+
+func get_farm_plots(token: String) -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_GET,
+		"/farm/plots",
+		null,
+		{"Authorization": "Bearer %s" % token}
+	)
+
+
+func plant_crop(token: String, x: int, y: int, item_code: String) -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_POST,
+		"/farm/plant",
+		{"x": x, "y": y, "item_code": item_code},
+		{"Authorization": "Bearer %s" % token}
+	)
+
+
+func water_crop(token: String, plot_id: int) -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_POST,
+		"/farm/water",
+		{"plot_id": plot_id},
+		{"Authorization": "Bearer %s" % token}
+	)
+
+
+func harvest_crop(token: String, plot_id: int) -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_POST,
+		"/farm/harvest",
+		{"plot_id": plot_id},
+		{"Authorization": "Bearer %s" % token}
+	)
+
+
 func _request_json(method: int, path: String, body: Variant, extra_headers: Dictionary) -> Dictionary:
 	var url := base_url.rstrip("/") + path
 	var headers: PackedStringArray = ["Content-Type: application/json", "Accept: application/json"]

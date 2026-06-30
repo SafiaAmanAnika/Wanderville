@@ -78,6 +78,10 @@ func _on_login_pressed() -> void:
 		return
 
 	_status.text = "Logged in successfully."
+	
+	# Load all persistent data from backend
+	await GameState.load_from_backend()
+	
 	await get_tree().create_timer(0.5).timeout
 	SceneManager.goto_main_menu()
 

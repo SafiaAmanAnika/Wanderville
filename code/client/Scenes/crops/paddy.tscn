@@ -47,10 +47,10 @@ animations = [{
 }]
 
 [node name="Paddy" type="Node2D" unique_id=19058655]
-script = ExtResource("1_ys4fc")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=928597287]
 position = Vector2(1, 1)
 sprite_frames = SubResource("SpriteFrames_v226a")
 frame = 1
 frame_progress = 0.98839
+script = ExtResource("1_ys4fc")

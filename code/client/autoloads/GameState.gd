@@ -10,10 +10,37 @@ var farm_mode: String = "none"
 var selected_seed: String = ""
 
 var seed_inventory: Dictionary = {
+	# 🍃 General Purpose Crops
+	"paddy": 5,
 	"wheat": 5,
-	"corn": 3,
-	"cotton": 2,
-	"tulip": 2
+	"sugarcane": 5,
+
+	# 🌞 Summer
+	"sweet_corn": 3,
+	"bell_pepper": 3,
+	"green_bean": 3,
+
+	# 🍂 Autumn
+	"pumpkin": 2,
+	"apple": 2,
+	"turnip": 2,
+
+	# ❄️ Winter
+	"potato": 2,
+	"carrot": 2,
+	"cabbage": 2,
+	"strawberry": 2,
+
+	# 🌱 Spring
+	"lettuce": 3,
+	"pea": 3,
+	"radish": 3,
+
+	# 🪄 Rare Plants
+	"moonflower": 1,
+	"rivermint": 1,
+	"sunbloom": 1,
+	"ancient_grain": 1
 }
 
 signal water_changed(new_amount: int)

@@ -47,7 +47,7 @@ animations = [{
 }]
 
 [node name="Wheat" type="Node2D" unique_id=19058655]
-script = ExtResource("1_m2hl6")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=413394676]
 sprite_frames = SubResource("SpriteFrames_auuy5")
+script = ExtResource("1_m2hl6")

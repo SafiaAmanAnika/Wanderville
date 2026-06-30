@@ -1,6 +1,6 @@
 # Wanderville
 
-Wanderville is a 2.5D pixel-art isometric cozy social village game built with Godot and FastAPI.
+Wanderville is a 2D pixel-art isometric cozy social village game built with Godot and FastAPI.
 The player can sign up, log in, enter a village world, move around, farm, use inventory, and later
 meet friends in a shared community area.
 
@@ -16,8 +16,8 @@ See `doc/setup/local_setup.md`.
 
 ## Prerequisites
 
-- Python 3.12+
-- PostgreSQL (wanderville_admin / wanderville123 @ localhost:5432/wanderville)
+- Python 3.10+
+- SQLite (default, zero config) or PostgreSQL
 
 ## Run Server
 
@@ -26,11 +26,11 @@ cd code/server
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-Copy-Item .env.example .env   # then edit .env with your credentials
-python -m alembic upgrade head
-python -m pytest -q           # 41 tests should pass
+Copy-Item .env.example .env
 uvicorn main:app --reload
 ```
+
+Tables are auto-created on first startup. No migration commands needed.
 
 ## Run Client
 

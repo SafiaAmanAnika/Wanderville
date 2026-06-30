@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -22,7 +23,15 @@ class WorldPublic(BaseModel):
 class TileUpdate(BaseModel):
     x: int
     y: int
-    # tile_type is intentionally a plain string (not an enum).
-    # The tile catalog is not yet finalized; an enum will be added
-    # when farming/building systems define the canonical set.
     tile_type: str = Field(min_length=1, max_length=64)
+
+
+class WorldStateResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    current_season: str
+    season_start_time: Optional[datetime] = None
+    season_duration_minutes: int
+    day_night_cycle_minutes: int
+    current_time_of_day: float
+    is_raining: bool

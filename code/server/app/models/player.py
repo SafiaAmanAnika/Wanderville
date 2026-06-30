@@ -24,4 +24,8 @@ class Player(Base):
     position_x: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
     position_y: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
 
-    world: Mapped["World"] = relationship("World", back_populates="owner", uselist=False)
+    world = relationship("World", back_populates="owner", uselist=False)
+    economy = relationship("PlayerEconomy", back_populates="player", uselist=False)
+    experience = relationship("PlayerExperience", back_populates="player", uselist=False)
+    inventory_items = relationship("InventoryItem", back_populates="player", cascade="all, delete-orphan")
+    farm_plots = relationship("FarmPlot", back_populates="player", cascade="all, delete-orphan")

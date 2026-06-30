@@ -11,6 +11,7 @@ from app.api.auth import router as auth_router
 from app.api.world import router as world_router
 from app.api.farm import router as farm_router
 from app.api.inventory import router as inventory_router
+from app.api.economy import router as economy_router
 from app.config import settings
 
 logging.basicConfig(
@@ -57,6 +58,7 @@ app.include_router(auth_router)
 app.include_router(world_router)
 app.include_router(farm_router)
 app.include_router(inventory_router)
+app.include_router(economy_router)
 
 
 @app.exception_handler(HTTPException)

@@ -17,8 +17,9 @@ def get_my_world(
     player_id: int = Depends(get_current_player_id),
     db: Session = Depends(get_db),
 ):
-    # Your existing world logic here
-    pass
+    world = world_service.get_or_create_player_world(db, player_id)
+    data = WorldPublic.model_validate(world)
+    return {"success": True, "data": data.model_dump(), "message": "World retrieved"}
 
 
 @router.get("/state", response_model=Envelope[WorldStateResponse])

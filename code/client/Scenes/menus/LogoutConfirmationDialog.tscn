@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://by4qr6r2g2cgm"]
+
+[ext_resource type="Script" uid="uid://bui0rso1i8ypj" path="res://Scripts/menus/logout_confirmation_dialog.gd" id="1"]
+
+[node name="LogoutConfirmationDialog" type="ConfirmationDialog"]
+title = "Log Out"
+script = ExtResource("1")

@@ -33,6 +33,17 @@ def get_or_create_world_state(db: Session) -> WorldState:
     return state
 
 
+def get_player_world(db: Session, player_id: int) -> World | None:
+    return db.query(World).filter(World.owner_id == player_id).first()
+
+
+def get_or_create_player_world(db: Session, player_id: int) -> World:
+    world = get_player_world(db, player_id)
+    if not world:
+        world = create_world(db, player_id)
+    return world
+
+
 def get_world_state(db: Session) -> WorldState:
     return get_or_create_world_state(db)
 

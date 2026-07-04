@@ -122,6 +122,15 @@ func gain_xp(token: String, xp_amount: int, source: String = "") -> Dictionary:
 		{"Authorization": "Bearer %s" % token}
 	)
 
+func get_my_world(token: String) -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_GET,
+		"/world/me",
+		null,
+		{"Authorization": "Bearer %s" % token}
+	)
+
+
 func get_world_state(token: String) -> Dictionary:
 	return await _request_json(
 		HTTPClient.METHOD_GET,

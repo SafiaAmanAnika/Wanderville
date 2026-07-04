@@ -56,3 +56,12 @@ text = "Go To Signup"
 [node name="StatusLabel" type="Label" parent="Center/Panel/VBox"]
 layout_mode = 2
 autowrap_mode = 3
+
+[node name="RememberBox" type="CheckBox" parent="Center/Panel/VBox"]
+layout_mode = 2
+text = "Remember this device"
+button_pressed = true
+
+[node name="BackButton" type="Button" parent="Center/Panel/VBox"]
+layout_mode = 2
+text = "Back"

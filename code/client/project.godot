@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Wanderville"
-run/main_scene="uid://bp82py5pxy8s4"
+run/main_scene="res://Scenes/menus/TitleScreen.tscn"
 config/features=PackedStringArray("4.6")
 
 [autoload]
@@ -24,6 +24,7 @@ GameState="*res://autoloads/GameState.gd"
 Global="*res://autoloads/Global.gd"
 SceneManager="*res://autoloads/SceneManager.gd"
 APIClient="*res://autoloads/APIClient.gd"
+AudioManager="*res://autoloads/AudioManager.gd"
 
 [display]
 

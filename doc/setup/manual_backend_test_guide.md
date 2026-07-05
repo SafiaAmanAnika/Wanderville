@@ -11,9 +11,9 @@ Before you begin, make sure you have:
 1. Repo cloned
 2. You are inside `code/server`
 3. `.venv` created and activated
-4. Dependencies installed (including alembic)
-5. `.env` created from `.env.example`
-6. Database created via `python -m alembic upgrade head`
+4. Dependencies installed
+5. `.env` created from `.env.example` with a valid PostgreSQL `DATABASE_URL`
+6. PostgreSQL database created and migrations applied via `python -m alembic upgrade head`
 
 Quick verify commands:
 
@@ -36,12 +36,13 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 cp .env.example .env
+# Edit .env → set DATABASE_URL to your PostgreSQL connection string
 python -m alembic upgrade head
 ```
 
 ## 2. Database Checks
 
-These checks confirm SQLite is created and the expected `players` table exists.
+These checks confirm PostgreSQL is reachable and the expected `players` table exists.
 
 ### 2.1 Verify migrations are applied
 
@@ -55,22 +56,26 @@ Expected output includes:
 
 1. `INFO [alembic.runtime.migration] Running upgrade ...`
 
-### 2.2 Check that `wanderville.db` exists
+### 2.2 Check that PostgreSQL is running
 
 ```powershell
-Test-Path wanderville.db
+python -c "from app.config import settings; print(settings.database_url)"
 ```
 
 Expected:
 
-1. Returns `True`
+1. Prints a `postgresql://...` connection string
 
-### 2.3 Check that `players` table exists (via sqlite3 through Python)
-
-Run this exact one-liner:
+### 2.3 Check that `players` table exists (using psql)
 
 ```powershell
-python -c "import sqlite3; con=sqlite3.connect('wanderville.db'); cur=con.cursor(); cur.execute(\"SELECT name FROM sqlite_master WHERE type='table' ORDER BY name\"); print([r[0] for r in cur.fetchall()]); con.close()"
+python -c "
+from app.database import engine
+from sqlalchemy import inspect
+insp = inspect(engine)
+tables = insp.get_table_names()
+print(tables)
+"
 ```
 
 Expected:
@@ -80,10 +85,16 @@ Expected:
 ### 2.4 Check `players` table columns
 
 ```powershell
-python -c "import sqlite3; con=sqlite3.connect('wanderville.db'); cur=con.cursor(); cur.execute('PRAGMA table_info(players)'); print(cur.fetchall()); con.close()"
+python -c "
+from app.database import engine
+from sqlalchemy import inspect
+insp = inspect(engine)
+cols = [c['name'] for c in insp.get_columns('players')]
+print(cols)
+"
 ```
 
-Expected columns (names may appear in a tuple list):
+Expected columns:
 
 1. `id`
 2. `username`
@@ -330,19 +341,26 @@ Expected:
 
 ## 7. Password Hash Check
 
-This confirms the backend stores a password hash in SQLite, not the plain password.
+This confirms the backend stores a password hash, not the plain password.
 
 ### 7.1 Query `username` and `hashed_password` from `players`
 
 From `code/server`:
 
 ```powershell
-python -c "import os, sqlite3; u='manualtester'; con=sqlite3.connect('wanderville.db'); cur=con.cursor(); cur.execute('SELECT username, hashed_password FROM players WHERE username=?', (u,)); print(cur.fetchone()); con.close()"
+python -c "
+from app.database import SessionLocal
+from app.models.player import Player
+db = SessionLocal()
+p = db.query(Player).filter(Player.username == 'manualtester').first()
+db.close()
+print((p.username, p.hashed_password[:20] + '...') if p else 'User not found')
+"
 ```
 
 Expected:
 
-1. The result is something like `('yourname', '$2b$...')`
+1. The result is something like `('manualtester', '$2b$...')`
 2. `hashed_password` should NOT equal the password you typed
 
 ## 8. Expected Results (Summary)
@@ -642,13 +660,13 @@ Add items to the player's inventory.
 curl.exe -sS -X POST "$BASE_URL/inventory/add" `
   -H "Authorization: Bearer $TOKEN" `
   -H "Content-Type: application/json" `
-  -d '{\"item_type\": \"wheat\", \"quantity\": 5}'
+  -d '{\"item_code\": \"wheat\", \"quantity\": 5}'
 ```
 
 Expected:
 
 1. `success: true`
-2. `data.item_type` is `"wheat"`
+2. `data.item_code` is `"wheat"`
 3. `data.quantity` is `5`
 
 ### 13.3 Add the same item again (stacks)
@@ -657,7 +675,7 @@ Expected:
 curl.exe -sS -X POST "$BASE_URL/inventory/add" `
   -H "Authorization: Bearer $TOKEN" `
   -H "Content-Type: application/json" `
-  -d '{\"item_type\": \"wheat\", \"quantity\": 3}'
+  -d '{\"item_code\": \"wheat\", \"quantity\": 3}'
 ```
 
 Expected:
@@ -673,7 +691,7 @@ Remove items from inventory.
 curl.exe -sS -X POST "$BASE_URL/inventory/remove" `
   -H "Authorization: Bearer $TOKEN" `
   -H "Content-Type: application/json" `
-  -d '{\"item_type\": \"wheat\", \"quantity\": 2}'
+  -d '{\"item_code\": \"wheat\", \"quantity\": 2}'
 ```
 
 Expected:
@@ -692,7 +710,7 @@ First create a second user and get their token, then:
 curl.exe -sS -X POST "$BASE_URL/inventory/transfer" `
   -H "Authorization: Bearer $TOKEN" `
   -H "Content-Type: application/json" `
-  -d '{\"to_player_username\": \"otherplayer\", \"item_type\": \"wheat\", \"quantity\": 2}'
+  -d '{\"to_player_username\": \"otherplayer\", \"item_code\": \"wheat\", \"quantity\": 2}'
 ```
 
 Expected:

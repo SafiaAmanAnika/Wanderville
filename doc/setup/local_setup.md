@@ -33,7 +33,9 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 cp .env.example .env
-python -m pytest -q
+# Edit .env → set DATABASE_URL to your PostgreSQL connection string
+python -m alembic upgrade head   # apply database migrations
+python -m pytest -q              # run tests
 uvicorn main:app --reload
 ```
 
@@ -41,21 +43,40 @@ Notes:
 
 - Keep the terminal running while `uvicorn` is running.
 - If activation fails on your machine, see Troubleshooting.
-- Tables are auto-created on startup (`Base.metadata.create_all()`). No manual migration commands needed.
+- Migrations are managed with Alembic. Always run `python -m alembic upgrade head` after pulling.
 - Set `$env:DISABLE_RATE_LIMIT=1` to disable the in-memory rate limiter during development.
+- Tests use isolated SQLite files automatically — no PostgreSQL needed for tests.
 
 ## Database
 
-The project uses **SQLAlchemy** with auto table creation. By default (`.env.example`) it uses SQLite (`wanderville.db`), which requires zero configuration.
+The project uses **PostgreSQL** via **SQLAlchemy** + **Alembic** for migrations.
 
-For production, set `DATABASE_URL` in `.env` to a PostgreSQL connection string.
+Create a PostgreSQL database (local or [Neon](https://neon.tech) cloud):
+
+```sql
+CREATE DATABASE wanderville;
+CREATE USER wanderville_admin WITH PASSWORD 'wanderville123';
+GRANT ALL PRIVILEGES ON DATABASE wanderville TO wanderville_admin;
+```
+
+Then configure `DATABASE_URL` in `code/server/.env`:
+```
+DATABASE_URL=postgresql://wanderville_admin:wanderville123@localhost:5432/wanderville
+```
+
+Apply migrations:
+```powershell
+cd code/server
+.\.venv\Scripts\Activate.ps1
+python -m alembic upgrade head
+```
 
 ### Resetting the database
 
 ```powershell
-# WARNING: this deletes your local data
-Remove-Item -Force wanderville.db
-# Restart the server to recreate tables
+# Drop and recreate (PostgreSQL)
+psql -U wanderville_admin -d wanderville -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+python -m alembic upgrade head
 ```
 
 ## Files/Folders You Must Not Commit
@@ -64,8 +85,8 @@ These are local-only artifacts and should never be pushed to GitHub:
 
 - `.env`
 - `.venv/`
-- `wanderville.db`
-- `test_*.db` (test databases, e.g. `test_auth.db`, `test_world.db`, `test_inventory.db`)
+- `test_*.db` (test SQLite databases, e.g. `test_auth.db`, `test_world.db`, `test_inventory.db`)
+- `wanderville.db` (only if you ever run with SQLite locally)
 - `__pycache__/`
 - `.pytest_cache/`
 - `.godot/`
@@ -181,7 +202,7 @@ cd code/server
 pytest -q
 ```
 
-The test suite uses separate test databases (`test_*.db`) and a test JWT secret. Rate limiting is disabled automatically in tests.
+The test suite uses **isolated SQLite files** (`test_*.db`) automatically — no PostgreSQL needed for tests. Rate limiting is disabled automatically.
 
 ## Godot Setup
 
@@ -211,19 +232,16 @@ Godot notes:
 Copy-Item .env.example .env
 ```
 
-### Database Not Created
+### Database Connection Failed
 
-- Tables are auto-created on server startup. If `wanderville.db` is missing, just restart `uvicorn`.
-- If the database is corrupted, delete `wanderville.db` and restart the server.
+- Ensure PostgreSQL is running: `psql -U wanderville_admin -d wanderville -c "SELECT 1"`
+- Check your `DATABASE_URL` in `.env` has the correct credentials
+- Run `python -m alembic upgrade head` to apply migrations
+- If you need to reset: `psql -U wanderville_admin -d wanderville -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"` then re-run migrations
 
 ### Username Already Taken
 
-- Sign up with a different username, or delete/reset your local database:
-
-```powershell
-# WARNING: this deletes your local data
-Remove-Item -Force wanderville.db
-```
+- Sign up with a different username, or reset your PostgreSQL database
 
 ### Port 8000 Already In Use
 

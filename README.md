@@ -17,7 +17,23 @@ See `doc/setup/local_setup.md`.
 ## Prerequisites
 
 - Python 3.10+
-- SQLite (default, zero config) or PostgreSQL
+- PostgreSQL 14+ (local or [Neon](https://neon.tech) cloud)
+- Godot 4.6
+
+## Database Setup
+
+Set up a PostgreSQL database and create the `.env` file:
+
+```powershell
+cd code/server
+Copy-Item .env.example .env
+# Edit .env → set DATABASE_URL to your PostgreSQL connection string
+```
+
+Example `DATABASE_URL`:
+```
+DATABASE_URL=postgresql://user:password@localhost:5432/wanderville
+```
 
 ## Run Server
 
@@ -26,11 +42,11 @@ cd code/server
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-Copy-Item .env.example .env
+python -m alembic upgrade head   # apply migrations
 uvicorn main:app --reload
 ```
 
-Tables are auto-created on first startup. No migration commands needed.
+> The first run also auto-creates tables via `Base.metadata.create_all()` as a fallback, but running `alembic upgrade head` is the recommended approach.
 
 ## Run Client
 

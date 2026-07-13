@@ -76,6 +76,15 @@ func resend_verification(email: String) -> Dictionary:
 	)
 
 
+func reset_password(token: String, new_password: String) -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_POST,
+		"/auth/reset-password",
+		{"token": token, "new_password": new_password},
+		{}
+	)
+
+
 func me(token: String) -> Dictionary:
 	return await _request_json(
 		HTTPClient.METHOD_GET,

@@ -4,9 +4,6 @@ extends Control
 ## Reusable wooden-themed dialog with open/close animations.
 
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
-const PIXEL_FONT_SIZE := 28
-const SIZE_TITLE := 28
-const SIZE_BUTTON := 20
 
 const WOOD_DARK := Color(0.28, 0.17, 0.08)
 const WOOD_BORDER := Color(0.38, 0.25, 0.13)
@@ -49,7 +46,7 @@ func _build() -> void:
 
 	_title_label = Label.new()
 	_title_label.add_theme_font_override("font", PIXEL_FONT)
-	_title_label.add_theme_font_size_override("font_size", SIZE_TITLE)
+	_title_label.add_theme_font_size_override("font_size", WoodPanel.SIZE_PANEL_TITLE)
 	_title_label.add_theme_color_override("font_color", TEXT_COLOR)
 	_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER

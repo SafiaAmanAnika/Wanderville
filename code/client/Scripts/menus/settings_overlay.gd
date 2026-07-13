@@ -10,6 +10,7 @@ const BG_TEXTURE := preload("res://Assets/background/bg.png")
 @onready var _sfx_label: Label = $Center/Panel/VBox/SFXRow/SFXLabel
 @onready var _remember_check: CheckBox = %RememberCheck
 @onready var _close_button: Button = %CloseButton
+@onready var _panel: PanelContainer = $Center/Panel
 
 var _tween: Tween
 
@@ -17,6 +18,7 @@ var _tween: Tween
 func _ready() -> void:
 	visible = false
 	_apply_styles()
+	_apply_panel_style()
 	_music_slider.value = AudioManager.music_volume
 	_sfx_slider.value = AudioManager.sfx_volume
 	_remember_check.button_pressed = Global.remember_device
@@ -25,6 +27,10 @@ func _ready() -> void:
 	_sfx_slider.value_changed.connect(_on_sfx_changed)
 	_remember_check.toggled.connect(_on_remember_toggled)
 	_close_button.pressed.connect(_on_close)
+
+
+func _apply_panel_style() -> void:
+	_panel.add_theme_stylebox_override("panel", WoodPanel.make_dialog_panel_style())
 
 
 func _apply_styles() -> void:
@@ -92,9 +98,12 @@ func _check_font(check: CheckBox, size: int) -> void:
 func show_overlay() -> void:
 	visible = true
 	modulate.a = 0.0
+	_panel.scale = Vector2(0.92, 0.92)
+	_panel.pivot_offset = _panel.size / 2.0
 	_kill_tween()
 	_tween = create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 	_tween.tween_property(self, "modulate:a", 1.0, 0.3)
+	_tween.parallel().tween_property(_panel, "scale", Vector2.ONE, 0.35)
 
 
 func _on_music_changed(value: float) -> void:
@@ -114,6 +123,7 @@ func _on_close() -> void:
 	_kill_tween()
 	_tween = create_tween().set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_CUBIC)
 	_tween.tween_property(self, "modulate:a", 0.0, 0.25)
+	_tween.parallel().tween_property(_panel, "scale", Vector2(0.92, 0.92), 0.25)
 	_tween.tween_callback(func() -> void: visible = false)
 
 

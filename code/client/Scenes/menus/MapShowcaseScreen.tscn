@@ -36,13 +36,15 @@ mouse_filter = 2
 
 [node name="FormPanel" type="PanelContainer" parent="Center"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(800, 0)
+custom_minimum_size = Vector2(780, 0)
 layout_mode = 2
 script = ExtResource("2")
 
 [node name="VBox" type="VBoxContainer" parent="Center/FormPanel"]
 layout_mode = 2
+size_flags_vertical = 3
 theme_override_constants/separation = 14
+alignment = 1
 
 [node name="Title" type="Label" parent="Center/FormPanel/VBox"]
 layout_mode = 2
@@ -94,7 +96,7 @@ theme_override_constants/separation = 20
 
 [node name="EnterWorldButton" type="Button" parent="Center/FormPanel/VBox/Buttons"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(250, 0)
+custom_minimum_size = Vector2(280, 52)
 layout_mode = 2
 text = "Enter World"
 disabled = true
@@ -102,7 +104,7 @@ script = ExtResource("3")
 
 [node name="BackButton" type="Button" parent="Center/FormPanel/VBox/Buttons"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(250, 0)
+custom_minimum_size = Vector2(280, 52)
 layout_mode = 2
 text = "Back"
 script = ExtResource("3")

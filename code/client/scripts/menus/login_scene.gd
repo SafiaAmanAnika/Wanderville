@@ -3,9 +3,10 @@ extends Control
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
 const BG_TEXTURE := preload("res://Assets/background/bg.png")
 
-const TEXT_COLOR := Color(0.95, 0.91, 0.80)
+const TEXT_SUCCESS := Color(0.50, 0.78, 0.45)
 
 @onready var _bg: TextureRect = %Background
+@onready var _panel: PanelContainer = %FormPanel
 @onready var _title: Label = %Title
 @onready var _username: LineEdit = %UsernameInput
 @onready var _password: LineEdit = %PasswordInput
@@ -52,14 +53,7 @@ func _ready() -> void:
 			_set_busy(false)
 
 	_username.grab_focus()
-	_play_entrance()
-
-
-func _play_entrance() -> void:
-	var panel: PanelContainer = %FormPanel
-	panel.modulate.a = 0.0
-	var tw := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-	tw.tween_property(panel, "modulate:a", 1.0, 0.4)
+	WoodPanel.play_entrance(_panel)
 
 
 func _set_busy(busy: bool) -> void:
@@ -106,11 +100,7 @@ func _on_login() -> void:
 	if not bool(res.get("ok", false)):
 		_set_busy(false)
 		_loading_label.text = " "
-		_mark_field_error(_username)
-		_mark_field_error(_password)
-		_password.text = ""
-		_password.grab_focus()
-		_error_label.text = _format_error(res)
+		_handle_login_error(res)
 		return
 
 	var body: Variant = res.get("body")
@@ -121,7 +111,8 @@ func _on_login() -> void:
 		return
 
 	var data: Dictionary = body.get("data", {})
-	var token: String = str(data.get("access_token", data.get("token", "")))
+	var token: String = str(data.get("access_token", ""))
+	var new_refresh: String = str(data.get("refresh_token", ""))
 	var player: Dictionary = data.get("player", {})
 
 	if token == "" or player.is_empty():
@@ -130,7 +121,7 @@ func _on_login() -> void:
 		_error_label.text = "Login succeeded but response was incomplete."
 		return
 
-	Global.set_session(token, player)
+	Global.set_session(token, player, new_refresh)
 
 	var me_res: Dictionary = await APIClient.me(Global.token)
 	if not bool(me_res.get("ok", false)):
@@ -139,14 +130,43 @@ func _on_login() -> void:
 		_loading_label.text = " "
 		return
 
-	_loading_label.text = "Loading village..."
+	_loading_label.text = "Loading..."
 	await GameState.load_from_backend()
 	await get_tree().create_timer(1.0).timeout
 	SceneManager.goto_post_login()
 
 
 func _on_google() -> void:
-	_error_label.text = "Google login coming soon."
+	_set_busy(true)
+	_loading_label.text = "Opening Google Sign-In..."
+	_error_label.text = " "
+
+	var url := APIClient.base_url + "/auth/google/redirect"
+	OS.shell_open(url)
+
+	await get_tree().create_timer(3.0).timeout
+	_set_busy(false)
+	_loading_label.text = " "
+	_error_label.text = "Please complete Google Sign-In in your browser, then open the game from the link provided."
+
+
+func _handle_login_error(res: Dictionary) -> void:
+	var body: Variant = res.get("body")
+	if typeof(body) == TYPE_DICTIONARY:
+		var err := str(body.get("error", ""))
+		if err == "ACCOUNT_LOCKED":
+			_error_label.text = "Account is temporarily locked. Please try again later."
+			return
+		elif err == "EMAIL_NOT_VERIFIED":
+			_error_label.text = "Please verify your email first."
+			_mark_field_error(_username)
+			return
+
+	_mark_field_error(_username)
+	_mark_field_error(_password)
+	_password.text = ""
+	_password.grab_focus()
+	_error_label.text = _format_error(res)
 
 
 func _on_forgot() -> void:

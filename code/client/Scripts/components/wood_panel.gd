@@ -34,14 +34,16 @@ const INPUT_BG := Color(0.22, 0.15, 0.08)
 const INPUT_BORDER := Color(0.50, 0.36, 0.22)
 
 # ── Font sizes (desktop) ───────────────────────────────────────────
-const SIZE_TITLE := 32
-const SIZE_PANEL_TITLE := 28
-const SIZE_BUTTON := 20
-const SIZE_FIELD := 18
-const SIZE_STATUS := 16
-const SIZE_SMALL := 14
-const SIZE_CARD_NAME := 20
-const SIZE_CARD_DETAIL := 14
+const SIZE_TITLE := 36
+const SIZE_PANEL_TITLE := 32
+const SIZE_BUTTON := 24
+const SIZE_FIELD := 22
+const SIZE_STATUS := 20
+const SIZE_SMALL := 18
+const SIZE_CARD_NAME := 24
+const SIZE_CARD_DETAIL := 18
+const SIZE_BANNER_TITLE := 52
+const SIZE_BANNER_SUBTITLE := 22
 
 
 func _ready() -> void:

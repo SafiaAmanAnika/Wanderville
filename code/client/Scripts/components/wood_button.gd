@@ -34,7 +34,7 @@ func _ready() -> void:
 
 func _apply_text_style() -> void:
 	add_theme_font_override("font", PIXEL_FONT)
-	add_theme_font_size_override("font_size", 20)
+	add_theme_font_size_override("font_size", WoodPanel.SIZE_BUTTON)
 	add_theme_color_override("font_color", TEXT_COLOR)
 	add_theme_color_override("font_hover_color", TEXT_HOVER_COLOR)
 	add_theme_color_override("font_pressed_color", TEXT_COLOR)

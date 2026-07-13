@@ -96,7 +96,7 @@ func _apply_border_style(color: Color, width: int) -> void:
 
 func _apply_name_label_style() -> void:
 	_name_label.add_theme_font_override("font", PIXEL_FONT)
-	_name_label.add_theme_font_size_override("font_size", 20)
+	_name_label.add_theme_font_size_override("font_size", WoodPanel.SIZE_CARD_NAME)
 	_name_label.add_theme_color_override("font_color", TEXT_COLOR)
 	_name_label.add_theme_color_override("font_shadow_color", Color(WOOD_DARK.r, WOOD_DARK.g, WOOD_DARK.b, 0.9))
 	_name_label.add_theme_constant_override("shadow_offset_x", 1)
@@ -111,7 +111,7 @@ func _create_info_panel() -> void:
 	_info_label.clip_text = false
 	_info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_info_label.add_theme_font_override("font", PIXEL_FONT)
-	_info_label.add_theme_font_size_override("font_size", 14)
+	_info_label.add_theme_font_size_override("font_size", WoodPanel.SIZE_CARD_DETAIL)
 	_info_label.add_theme_color_override("font_color", PARCHMENT_DARK)
 	add_child(_info_label)
 
@@ -190,7 +190,7 @@ func set_world_info(info: Dictionary) -> void:
 	if info.has("day"):
 		lines.append("Day: %s" % str(info["day"]))
 	if info.has("population"):
-		lines.append("Villagers: %s" % str(info["population"]))
+		lines.append("Population: %s" % str(info["population"]))
 	_info_label.text = "\n".join(lines)
 
 func set_selected(selected: bool) -> void:

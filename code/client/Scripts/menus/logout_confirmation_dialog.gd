@@ -14,6 +14,7 @@ var _tween: Tween
 
 func _ready() -> void:
 	visible = false
+	_panel.add_theme_stylebox_override("panel", WoodPanel.make_dialog_panel_style())
 	WoodPanel.apply_panel_title_style(_title)
 	_apply_label_font(_message, WoodPanel.SIZE_FIELD)
 	_confirm_btn.pressed.connect(_on_confirm)

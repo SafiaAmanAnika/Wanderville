@@ -42,7 +42,7 @@ func _ready() -> void:
 	if _logout_dialog:
 		_logout_dialog.hide()
 
-	WoodPanel.play_entrance(%FormPanel)
+	WoodPanel.play_entrance(_form_panel)
 
 
 func _on_play() -> void:

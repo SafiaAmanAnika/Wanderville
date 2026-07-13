@@ -33,16 +33,19 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="FormPanel" type="PanelContainer" parent="Center"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(900, 0)
+custom_minimum_size = Vector2(820, 0)
 layout_mode = 2
 script = ExtResource("2")
 
 [node name="VBox" type="VBoxContainer" parent="Center/FormPanel"]
 layout_mode = 2
-theme_override_constants/separation = 0
+size_flags_vertical = 8
+theme_override_constants/separation = 10
+alignment = 1
 
 [node name="Title" type="Label" parent="Center/FormPanel/VBox"]
 layout_mode = 2
@@ -71,14 +74,14 @@ theme_override_constants/separation = 16
 
 [node name="ConfirmButton" type="Button" parent="Center/FormPanel/VBox/Buttons"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(180, 0)
+custom_minimum_size = Vector2(200, 52)
 layout_mode = 2
 text = "Confirm"
 script = ExtResource("3")
 
 [node name="BackButton" type="Button" parent="Center/FormPanel/VBox/Buttons"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(180, 0)
+custom_minimum_size = Vector2(200, 52)
 layout_mode = 2
 text = "Back"
 script = ExtResource("3")

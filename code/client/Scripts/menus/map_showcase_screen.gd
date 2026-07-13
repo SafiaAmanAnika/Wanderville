@@ -57,7 +57,7 @@ func _apply_info_panel_style() -> void:
 
 func _apply_info_label_style() -> void:
 	_info_label.add_theme_font_override("font", PIXEL_FONT)
-	_info_label.add_theme_font_size_override("font_size", 14)
+	_info_label.add_theme_font_size_override("font_size", WoodPanel.SIZE_SMALL)
 	_info_label.add_theme_color_override("font_color", Color(0.30, 0.22, 0.12))
 	_info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -67,6 +67,9 @@ func _fetch_worlds() -> void:
 	_status_label.text = "Loading worlds..."
 
 	var res := await APIClient.get_my_world(Global.token)
+
+	if not is_instance_valid(self):
+		return
 
 	if not bool(res.get("ok", false)):
 		var body = res.get("body", {})
@@ -79,9 +82,13 @@ func _fetch_worlds() -> void:
 	_status_label.text = ""
 
 	var body = res.get("body", {})
-	var data = body.get("data", {}) if typeof(body) == TYPE_DICTIONARY else {}
+	if typeof(body) != TYPE_DICTIONARY:
+		body = {}
+	var data = body.get("data", {})
+	if typeof(data) != TYPE_DICTIONARY:
+		data = {}
 	var worlds: Array[Dictionary] = []
-	if typeof(data) == TYPE_DICTIONARY and data.has("id"):
+	if data.has("id"):
 		worlds = [data]
 
 	_worlds = worlds
@@ -141,7 +148,7 @@ func _add_create_world_card() -> void:
 	btn.add_theme_stylebox_override("pressed", pressed_sb)
 
 	btn.add_theme_font_override("font", PIXEL_FONT)
-	btn.add_theme_font_size_override("font_size", 18)
+	btn.add_theme_font_size_override("font_size", WoodPanel.SIZE_BUTTON)
 	btn.add_theme_color_override("font_color", TEXT_SECONDARY)
 	btn.add_theme_color_override("font_hover_color", TEXT_COLOR)
 
@@ -184,7 +191,7 @@ func _show_world_info(world: Dictionary) -> void:
 	if world.has("play_time"):
 		lines.append("Played: %s" % str(world["play_time"]))
 	if world.has("population"):
-		lines.append("Villagers: %s" % str(world["population"]))
+		lines.append("Population: %s" % str(world["population"]))
 
 	_info_label.text = "   ".join(lines)
 	_info_panel.visible = true

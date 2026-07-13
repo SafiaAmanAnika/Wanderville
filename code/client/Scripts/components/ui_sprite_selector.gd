@@ -38,7 +38,7 @@ func _apply_name_style() -> void:
 	if _name_label == null:
 		return
 	_name_label.add_theme_font_override("font", PIXEL_FONT)
-	_name_label.add_theme_font_size_override("font_size", 20)
+	_name_label.add_theme_font_size_override("font_size", WoodPanel.SIZE_CARD_NAME)
 	_name_label.add_theme_color_override("font_color", TEXT_COLOR)
 	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER

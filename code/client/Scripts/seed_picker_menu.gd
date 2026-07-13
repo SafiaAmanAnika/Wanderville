@@ -13,7 +13,7 @@ func _ready() -> void:
 func _style_panel() -> void:
 	title.text = "Choose a Seed"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 18)
+	title.add_theme_font_size_override("font_size", WoodPanel.SIZE_BUTTON)
 	title.add_theme_color_override("font_color", Color(0.95, 0.85, 0.5))
 
 	grid.columns = 4
@@ -59,7 +59,7 @@ func show_menu() -> void:
 		btn_style.corner_radius_bottom_right = 8
 		btn.add_theme_stylebox_override("normal", btn_style)
 		btn.add_theme_color_override("font_color", Color.WHITE)
-		btn.add_theme_font_size_override("font_size", 13)
+		btn.add_theme_font_size_override("font_size", WoodPanel.SIZE_SMALL)
 
 		grid.add_child(btn)
 

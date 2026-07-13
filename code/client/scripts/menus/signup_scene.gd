@@ -7,10 +7,15 @@ const TEXT_SECONDARY := Color(0.82, 0.74, 0.58)
 const TEXT_WEAK := Color(0.85, 0.45, 0.30)
 const TEXT_MEDIUM := Color(0.85, 0.75, 0.35)
 const TEXT_STRONG := Color(0.45, 0.75, 0.40)
+const TEXT_SUCCESS := Color(0.50, 0.78, 0.45)
 
 @onready var _bg: TextureRect = %Background
+
+# Form nodes
+@onready var _form_panel: PanelContainer = %FormPanel
 @onready var _title: Label = %Title
 @onready var _username: LineEdit = %UsernameInput
+@onready var _display_name: LineEdit = %DisplayNameInput
 @onready var _email: LineEdit = %EmailInput
 @onready var _password: LineEdit = %PasswordInput
 @onready var _strength: Label = %PasswordStrength
@@ -19,6 +24,13 @@ const TEXT_STRONG := Color(0.45, 0.75, 0.40)
 @onready var _loading_label: Label = %LoadingLabel
 @onready var _create_btn: WoodButton = %CreateBtn
 @onready var _back_btn: WoodButton = %BackBtn
+
+# Success panel nodes
+@onready var _success_panel: PanelContainer = %SuccessPanel
+@onready var _success_title: Label = %SuccessTitle
+@onready var _success_message: RichTextLabel = %SuccessMessage
+@onready var _go_to_login_btn: WoodButton = %GoToLoginBtn
+@onready var _resend_btn: WoodButton = %ResendBtn
 
 var _all_fields: Array[LineEdit]
 var _re_upper: RegEx
@@ -32,6 +44,7 @@ func _ready() -> void:
 
 	WoodPanel.apply_title_style(_title)
 	WoodPanel.apply_field_style(_username)
+	WoodPanel.apply_field_style(_display_name)
 	WoodPanel.apply_field_style(_email)
 	WoodPanel.apply_field_style(_password)
 	WoodPanel.apply_field_style(_confirm)
@@ -39,7 +52,9 @@ func _ready() -> void:
 	WoodPanel.apply_status_label(_loading_label)
 	_apply_strength_style()
 
-	_all_fields = [_username, _email, _password, _confirm]
+	_apply_success_panel_style()
+
+	_all_fields = [_username, _display_name, _email, _password, _confirm]
 
 	_re_upper = RegEx.new(); _re_upper.compile("[A-Z]")
 	_re_lower = RegEx.new(); _re_lower.compile("[a-z]")
@@ -50,27 +65,36 @@ func _ready() -> void:
 	_back_btn.pressed.connect(_on_back)
 	_confirm.text_submitted.connect(func(_t: String) -> void: _on_create())
 	_password.text_changed.connect(_on_password_changed)
+	_go_to_login_btn.pressed.connect(_on_go_to_login)
+	_resend_btn.pressed.connect(_on_resend)
 
 	_error_label.text = " "
 	_loading_label.text = " "
 	_strength.text = " "
 
+	_success_panel.hide()
+	_form_panel.show()
+
 	_username.grab_focus()
-	_play_entrance()
+	WoodPanel.play_entrance(_form_panel)
 
 
 func _apply_strength_style() -> void:
 	_strength.add_theme_font_override("font", PIXEL_FONT)
-	_strength.add_theme_font_size_override("font_size", 14)
+	_strength.add_theme_font_size_override("font_size", WoodPanel.SIZE_SMALL)
 	_strength.add_theme_color_override("font_color", TEXT_SECONDARY)
 	_strength.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 
-func _play_entrance() -> void:
-	var panel: PanelContainer = %FormPanel
-	panel.modulate.a = 0.0
-	var tw := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-	tw.tween_property(panel, "modulate:a", 1.0, 0.4)
+func _apply_success_panel_style() -> void:
+	WoodPanel.apply_panel_title_style(_success_title)
+
+	_success_message.add_theme_font_override("normal_font", PIXEL_FONT)
+	_success_message.add_theme_font_size_override("normal_font_size", WoodPanel.SIZE_STATUS)
+	_success_message.add_theme_color_override("default_color", TEXT_SUCCESS)
+	_success_message.bbcode_enabled = false
+	_success_message.fit_content = true
+	_success_message.scroll_active = false
 
 
 func _on_password_changed(_new_text: String) -> void:
@@ -113,6 +137,7 @@ func _set_busy(busy: bool) -> void:
 	_create_btn.disabled = busy
 	_back_btn.disabled = busy
 	_username.editable = not busy
+	_display_name.editable = not busy
 	_email.editable = not busy
 	_password.editable = not busy
 	_confirm.editable = not busy
@@ -130,6 +155,7 @@ func _mark_field_error(field: LineEdit) -> void:
 
 func _on_create() -> void:
 	var u := _username.text.strip_edges()
+	var dn := _display_name.text.strip_edges()
 	var e := _email.text.strip_edges()
 	var p := _password.text
 	var c := _confirm.text
@@ -176,7 +202,8 @@ func _on_create() -> void:
 	_loading_label.text = "Creating account..."
 	_error_label.text = " "
 
-	var res: Dictionary = await APIClient.signup(u, e, p, u)
+	var display_name_val := dn if dn != "" else u
+	var res: Dictionary = await APIClient.signup(u, e, p, display_name_val)
 	_set_busy(false)
 	_loading_label.text = " "
 
@@ -199,9 +226,37 @@ func _on_create() -> void:
 		_error_label.text = _format_error(res)
 		return
 
-	# Signup succeeded — email verification required before login
+	Global.email = e
+	_show_success_panel(e)
+
+
+func _show_success_panel(user_email: String) -> void:
+	_form_panel.hide()
+	_success_panel.show()
+	_success_message.text = "We sent a verification link to:\n%s\n\nPlease check your email and verify your account before logging in." % user_email
+	WoodPanel.play_entrance(_success_panel)
+
+
+func _on_go_to_login() -> void:
+	SceneManager.goto_login()
+
+
+func _on_resend() -> void:
+	var e := Global.email if Global.email != "" else _email.text.strip_edges()
+	if e == "":
+		SceneManager.goto_email_verification("Please log in and use the resend verification option.", true)
+		return
+
+	_resend_btn.disabled = true
+	_resend_btn.text = "Sending..."
+
+	var _res: Dictionary = await APIClient.resend_verification(e)
+
+	_resend_btn.disabled = false
+	_resend_btn.text = "Resend Verification Email"
+
 	SceneManager.goto_email_verification(
-		"Account created! Please check your email to verify your account before logging in.",
+		"If that email is registered, a new verification link has been sent.",
 		true
 	)
 

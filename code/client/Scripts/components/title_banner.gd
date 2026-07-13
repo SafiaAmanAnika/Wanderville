@@ -59,7 +59,7 @@ func _build_content() -> void:
 	title_label.text = "WanderVille"
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title_label.add_theme_font_override("font", PIXEL_FONT)
-	title_label.add_theme_font_size_override("font_size", 40)
+	title_label.add_theme_font_size_override("font_size", 48)
 	title_label.add_theme_color_override("font_color", TITLE_COLOR)
 	vbox.add_child(title_label)
 
@@ -68,7 +68,7 @@ func _build_content() -> void:
 	subtitle_label.text = "A Farming Adventure"
 	subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	subtitle_label.add_theme_font_override("font", PIXEL_FONT)
-	subtitle_label.add_theme_font_size_override("font_size", 14)
+	subtitle_label.add_theme_font_size_override("font_size", 18)
 	subtitle_label.add_theme_color_override("font_color", SUBTITLE_COLOR)
 	vbox.add_child(subtitle_label)
 

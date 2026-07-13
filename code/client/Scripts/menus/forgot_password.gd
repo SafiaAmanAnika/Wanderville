@@ -24,7 +24,7 @@ func _ready() -> void:
 	WoodPanel.apply_status_label(_loading_label)
 
 	_subtitle.add_theme_font_override("font", PIXEL_FONT)
-	_subtitle.add_theme_font_size_override("font_size", 9)
+	_subtitle.add_theme_font_size_override("font_size", 14)
 	_subtitle.add_theme_color_override("font_color", TEXT_SECONDARY)
 	_subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

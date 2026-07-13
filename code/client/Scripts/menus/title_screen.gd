@@ -21,7 +21,7 @@ func _ready() -> void:
 	_content.hide()
 	_welcome_label.hide()
 	_welcome_label.add_theme_font_override("font", PIXEL_FONT)
-	_welcome_label.add_theme_font_size_override("font_size", 20)
+	_welcome_label.add_theme_font_size_override("font_size", 24)
 	_welcome_label.add_theme_color_override("font_color", TEXT_COLOR)
 
 	# Session restore path
@@ -33,7 +33,7 @@ func _ready() -> void:
 		tw.tween_property(_welcome_label, "modulate:a", 1.0, 0.4)
 		await tw.finished
 		await get_tree().create_timer(1.8).timeout
-		SceneManager.goto_map_selection()
+		SceneManager.goto_post_login()
 		return
 
 	_build_ui()
@@ -55,7 +55,7 @@ func _build_ui() -> void:
 	_signup_btn = WoodButton.new()
 	_signup_btn.text = "Sign Up"
 	_signup_btn.icon_type = "key"
-	_signup_btn.custom_minimum_size = Vector2(320, 52)
+	_signup_btn.custom_minimum_size = Vector2(340, 58)
 	_signup_btn.pressed.connect(_on_signup)
 	_content.add_child(_signup_btn)
 
@@ -63,14 +63,14 @@ func _build_ui() -> void:
 	_login_btn = WoodButton.new()
 	_login_btn.text = "Log In"
 	_login_btn.icon_type = "lock"
-	_login_btn.custom_minimum_size = Vector2(320, 52)
+	_login_btn.custom_minimum_size = Vector2(340, 58)
 	_login_btn.pressed.connect(_on_login)
 	_content.add_child(_login_btn)
 
 	# Exit button
 	_exit_btn = WoodButton.new()
 	_exit_btn.text = "Exit"
-	_exit_btn.custom_minimum_size = Vector2(320, 52)
+	_exit_btn.custom_minimum_size = Vector2(340, 58)
 	_exit_btn.pressed.connect(_on_exit)
 	_content.add_child(_exit_btn)
 

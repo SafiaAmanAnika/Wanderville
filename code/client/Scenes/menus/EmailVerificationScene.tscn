@@ -36,7 +36,7 @@ mouse_filter = 2
 
 [node name="FormPanel" type="PanelContainer" parent="Center"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(440, 0)
+custom_minimum_size = Vector2(480, 0)
 layout_mode = 2
 script = ExtResource("2")
 
@@ -67,7 +67,7 @@ layout_mode = 2
 
 [node name="ContinueBtn" type="Button" parent="Center/FormPanel/VBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 text = "Continue to Login"
 script = ExtResource("3")

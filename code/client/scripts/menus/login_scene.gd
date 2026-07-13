@@ -44,7 +44,7 @@ func _ready() -> void:
 		_set_busy(true)
 		var me_res := await APIClient.me(Global.token)
 		if bool(me_res.get("ok", false)):
-			SceneManager.goto_map_selection()
+			SceneManager.goto_post_login()
 			return
 		else:
 			Global.clear_session()
@@ -142,7 +142,7 @@ func _on_login() -> void:
 	_loading_label.text = "Loading village..."
 	await GameState.load_from_backend()
 	await get_tree().create_timer(1.0).timeout
-	SceneManager.goto_map_selection()
+	SceneManager.goto_post_login()
 
 
 func _on_google() -> void:

@@ -1,8 +1,7 @@
 class_name WoodButton
 extends Button
 
-## Reusable wooden plank button with carved look, hover/press animations,
-## and optional pixel-art icon (key / lock).
+## Reusable wooden plank button with carved look, hover/press animations.
 
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
 
@@ -12,7 +11,6 @@ const WOOD_BASE := Color(0.52, 0.36, 0.22)
 const WOOD_SURFACE := Color(0.60, 0.43, 0.27)
 const WOOD_HOVER := Color(0.72, 0.56, 0.37)
 const WOOD_BEVEL_LIGHT := Color(0.78, 0.62, 0.42)
-const WOOD_BEVEL_DARK := Color(0.32, 0.20, 0.10)
 const TEXT_COLOR := Color(0.95, 0.91, 0.80)
 const TEXT_HOVER_COLOR := Color(1.0, 0.97, 0.90)
 
@@ -36,7 +34,7 @@ func _ready() -> void:
 
 func _apply_text_style() -> void:
 	add_theme_font_override("font", PIXEL_FONT)
-	add_theme_font_size_override("font_size", 16)
+	add_theme_font_size_override("font_size", 20)
 	add_theme_color_override("font_color", TEXT_COLOR)
 	add_theme_color_override("font_hover_color", TEXT_HOVER_COLOR)
 	add_theme_color_override("font_pressed_color", TEXT_COLOR)
@@ -57,10 +55,10 @@ func _make_normal() -> StyleBoxFlat:
 	sb.border_color = WOOD_BORDER
 	sb.set_border_width_all(4)
 	sb.set_corner_radius_all(8)
-	sb.content_margin_left = 24
-	sb.content_margin_right = 24
-	sb.content_margin_top = 10
-	sb.content_margin_bottom = 10
+	sb.content_margin_left = 28
+	sb.content_margin_right = 28
+	sb.content_margin_top = 12
+	sb.content_margin_bottom = 12
 	sb.shadow_color = Color(0.12, 0.06, 0.02, 0.55)
 	sb.shadow_size = 4
 	sb.shadow_offset = Vector2(2, 3)
@@ -73,10 +71,10 @@ func _make_hover() -> StyleBoxFlat:
 	sb.border_color = WOOD_BEVEL_LIGHT
 	sb.set_border_width_all(4)
 	sb.set_corner_radius_all(8)
-	sb.content_margin_left = 24
-	sb.content_margin_right = 24
-	sb.content_margin_top = 10
-	sb.content_margin_bottom = 10
+	sb.content_margin_left = 28
+	sb.content_margin_right = 28
+	sb.content_margin_top = 12
+	sb.content_margin_bottom = 12
 	sb.shadow_color = Color(0.18, 0.10, 0.04, 0.6)
 	sb.shadow_size = 5
 	sb.shadow_offset = Vector2(2, 4)
@@ -90,10 +88,10 @@ func _make_pressed() -> StyleBoxFlat:
 	sb.set_border_width_all(4)
 	sb.border_width_top = 6
 	sb.set_corner_radius_all(8)
-	sb.content_margin_left = 24
-	sb.content_margin_right = 24
-	sb.content_margin_top = 12
-	sb.content_margin_bottom = 8
+	sb.content_margin_left = 28
+	sb.content_margin_right = 28
+	sb.content_margin_top = 14
+	sb.content_margin_bottom = 10
 	sb.shadow_color = Color(0.10, 0.05, 0.01, 0.4)
 	sb.shadow_size = 2
 	sb.shadow_offset = Vector2(1, 1)
@@ -106,10 +104,10 @@ func _make_disabled() -> StyleBoxFlat:
 	sb.border_color = WOOD_BORDER * Color(0.65, 0.6, 0.55, 0.6)
 	sb.set_border_width_all(4)
 	sb.set_corner_radius_all(8)
-	sb.content_margin_left = 24
-	sb.content_margin_right = 24
-	sb.content_margin_top = 10
-	sb.content_margin_bottom = 10
+	sb.content_margin_left = 28
+	sb.content_margin_right = 28
+	sb.content_margin_top = 12
+	sb.content_margin_bottom = 12
 	return sb
 
 
@@ -140,53 +138,3 @@ func _on_release() -> void:
 func _kill_tween() -> void:
 	if _tween and _tween.is_valid():
 		_tween.kill()
-
-
-# ── Pixel-art icon support (drawn directly on the button) ──────────
-
-func _draw() -> void:
-	if icon_type == "" or size == Vector2.ZERO:
-		return
-	var col := TEXT_COLOR if not disabled else TEXT_COLOR * Color(1, 1, 1, 0.45)
-	var icon_w := 9.0
-	var icon_h := 9.0
-	if icon_type == "lock":
-		icon_h = 10.0
-	var ox: float = size.x - 24.0 - icon_w * 0.5
-	var oy: float = (size.y - icon_h) * 0.5
-
-	match icon_type:
-		"key":
-			_paint_key(ox, oy, col)
-		"lock":
-			_paint_lock(ox, oy, col)
-
-
-func _paint_key(ox: float, oy: float, col: Color) -> void:
-	var p := func(x: int, y: int) -> void:
-		draw_rect(Rect2(ox + x, oy + y, 1, 1), col)
-	p.call(1, 0); p.call(2, 0)
-	p.call(0, 1); p.call(3, 1)
-	p.call(0, 2); p.call(3, 2)
-	p.call(1, 3); p.call(2, 3)
-	for x in range(4, 9):
-		p.call(x, 2)
-	p.call(7, 3); p.call(7, 4)
-	p.call(5, 3)
-
-
-func _paint_lock(ox: float, oy: float, col: Color) -> void:
-	var p := func(x: int, y: int) -> void:
-		draw_rect(Rect2(ox + x, oy + y, 1, 1), col)
-	for x in range(2, 7):
-		p.call(x, 0)
-	p.call(1, 1); p.call(7, 1)
-	for x in range(1, 8):
-		p.call(x, 2)
-	for x in range(1, 8):
-		p.call(x, 3)
-	for x in range(1, 8):
-		p.call(x, 4)
-	for x in range(1, 8):
-		p.call(x, 5)
-	p.call(4, 6)

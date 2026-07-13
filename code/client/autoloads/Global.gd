@@ -29,6 +29,10 @@ func is_logged_in() -> bool:
 	return token != "" and player_id > 0
 
 
+func has_completed_setup() -> bool:
+	return selected_character != "" and selected_world_id != ""
+
+
 func set_session(new_token: String, player: Dictionary) -> void:
 	token = new_token
 	player_id = int(player.get("id", 0))
@@ -45,6 +49,7 @@ func save_session() -> void:
 	cfg.set_value("auth", "display_name", display_name)
 	cfg.set_value("auth", "remember_device", remember_device)
 	cfg.set_value("auth", "selected_character", selected_character)
+	cfg.set_value("auth", "selected_world_id", selected_world_id)
 	cfg.save(AUTH_FILE)
 
 
@@ -59,6 +64,7 @@ func load_session() -> bool:
 	display_name = str(cfg.get_value("auth", "display_name", ""))
 	remember_device = bool(cfg.get_value("auth", "remember_device", true))
 	selected_character = str(cfg.get_value("auth", "selected_character", ""))
+	selected_world_id = str(cfg.get_value("auth", "selected_world_id", ""))
 	if not remember_device:
 		return false
 	return is_logged_in()
@@ -70,6 +76,7 @@ func clear_session() -> void:
 	username = ""
 	display_name = ""
 	selected_character = ""
+	selected_world_id = ""
 	remember_device = true
 	var dir := DirAccess.open("user://")
 	if dir:

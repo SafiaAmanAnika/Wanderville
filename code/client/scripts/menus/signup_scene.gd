@@ -61,7 +61,7 @@ func _ready() -> void:
 
 func _apply_strength_style() -> void:
 	_strength.add_theme_font_override("font", PIXEL_FONT)
-	_strength.add_theme_font_size_override("font_size", 10)
+	_strength.add_theme_font_size_override("font_size", 14)
 	_strength.add_theme_color_override("font_color", TEXT_SECONDARY)
 	_strength.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 

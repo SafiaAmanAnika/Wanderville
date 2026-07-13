@@ -1,6 +1,8 @@
-[gd_scene format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://Scripts/menus/map_showcase_screen.gd" id="1"]
+[ext_resource type="Script" path="res://Scripts/components/wood_panel.gd" id="2"]
+[ext_resource type="Script" path="res://Scripts/components/wood_button.gd" id="3"]
 
 [node name="MapShowcaseScreen" type="Control"]
 layout_mode = 3
@@ -11,6 +13,18 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 
+[node name="Background" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+stretch_mode = 6
+expand_mode = 3
+
 [node name="Center" type="CenterContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -18,39 +32,77 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
-[node name="VBox" type="VBoxContainer" parent="Center"]
-custom_minimum_size = Vector2(620, 0)
+[node name="FormPanel" type="PanelContainer" parent="Center"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(800, 0)
 layout_mode = 2
-theme_override_constants/separation = 12
+script = ExtResource("2")
 
-[node name="Title" type="Label" parent="Center/VBox"]
+[node name="VBox" type="VBoxContainer" parent="Center/FormPanel"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Title" type="Label" parent="Center/FormPanel/VBox"]
 layout_mode = 2
 text = "Select Your World"
 horizontal_alignment = 1
 
-[node name="WorldGrid" type="GridContainer" parent="Center/VBox"]
+[node name="Subtitle" type="Label" parent="Center/FormPanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Choose a world to continue your adventure"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="Center/FormPanel/VBox"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="WorldGrid" type="GridContainer" parent="Center/FormPanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 columns = 2
 size_flags_vertical = 3
-theme_override_constants/h_separation = 16
-theme_override_constants/v_separation = 16
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
 
-[node name="StatusLabel" type="Label" parent="Center/VBox"]
+[node name="InfoPanel" type="PanelContainer" parent="Center/FormPanel/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 0)
+layout_mode = 2
+visible = false
+
+[node name="InfoLabel" type="Label" parent="Center/FormPanel/VBox/InfoPanel"]
+layout_mode = 2
+autowrap_mode = 3
+horizontal_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="Center/FormPanel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 horizontal_alignment = 1
 
-[node name="EnterWorldButton" type="Button" parent="Center/VBox"]
+[node name="Spacer2" type="Control" parent="Center/FormPanel/VBox"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="Buttons" type="HBoxContainer" parent="Center/FormPanel/VBox"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 20
+
+[node name="EnterWorldButton" type="Button" parent="Center/FormPanel/VBox/Buttons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 text = "Enter World"
 disabled = true
+script = ExtResource("3")
 
-[node name="BackButton" type="Button" parent="Center/VBox"]
+[node name="BackButton" type="Button" parent="Center/FormPanel/VBox/Buttons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 text = "Back"
+script = ExtResource("3")

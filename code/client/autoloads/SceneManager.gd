@@ -51,7 +51,16 @@ func goto_forgot_password() -> void:
 
 
 func goto_email_verification(message: String = "", success: bool = true) -> void:
-	# Store params in Global for the target scene to read
 	Global._ev_message = message
 	Global._ev_success = success
 	get_tree().change_scene_to_file(EMAIL_VERIFICATION_SCENE)
+
+
+func goto_post_login() -> void:
+	# Smart routing after login:
+	# - If player has both character and world saved → go straight to world
+	# - Otherwise → go to hub (MapSelection) where they can manage
+	if Global.has_completed_setup():
+		goto_world()
+	else:
+		goto_map_selection()

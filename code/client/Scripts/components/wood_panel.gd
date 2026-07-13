@@ -1,30 +1,54 @@
 class_name WoodPanel
 extends PanelContainer
 
-## Reusable wooden board panel for forms.
-## Provides the carved-border, warm-brown panel look used across auth screens.
+## Reusable wooden board panel for all menu screens.
+## Provides the carved-border, warm-brown panel look with parchment accents.
 
+# ── Wood palette ────────────────────────────────────────────────────
 const WOOD_DARK := Color(0.28, 0.17, 0.08)
 const WOOD_BORDER := Color(0.38, 0.25, 0.13)
 const WOOD_FRAME := Color(0.45, 0.30, 0.17)
-const WOOD_SURFACE := Color(0.55, 0.40, 0.25)
+const WOOD_SURFACE := Color(0.60, 0.43, 0.27)
+const WOOD_BASE := Color(0.52, 0.36, 0.22)
+const WOOD_HOVER := Color(0.72, 0.56, 0.37)
+const WOOD_BEVEL_LIGHT := Color(0.78, 0.62, 0.42)
+const WOOD_BEVEL_DARK := Color(0.32, 0.20, 0.10)
+const ROPE_COLOR := Color(0.55, 0.45, 0.30)
+const ROPE_SHADOW := Color(0.35, 0.25, 0.15)
 
+# ── Text palette ────────────────────────────────────────────────────
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
 const TEXT_COLOR := Color(0.95, 0.91, 0.80)
-const TEXT_SECONDARY := Color(0.80, 0.72, 0.58)
+const TEXT_SECONDARY := Color(0.82, 0.74, 0.58)
 const TEXT_ERROR := Color(0.90, 0.38, 0.30)
+const TEXT_SUCCESS := Color(0.50, 0.78, 0.45)
 const TEXT_PLACEHOLDER := Color(0.60, 0.50, 0.38)
+
+# ── Parchment palette ───────────────────────────────────────────────
+const PARCHMENT := Color(0.92, 0.85, 0.68)
+const PARCHMENT_DARK := Color(0.80, 0.72, 0.55)
+const PARCHMENT_BG := Color(0.85, 0.78, 0.60)
+
+# ── Input palette ───────────────────────────────────────────────────
 const INPUT_BG := Color(0.22, 0.15, 0.08)
 const INPUT_BORDER := Color(0.50, 0.36, 0.22)
+
+# ── Font sizes (desktop) ───────────────────────────────────────────
+const SIZE_TITLE := 32
+const SIZE_PANEL_TITLE := 28
+const SIZE_BUTTON := 20
+const SIZE_FIELD := 18
+const SIZE_STATUS := 16
+const SIZE_SMALL := 14
+const SIZE_CARD_NAME := 20
+const SIZE_CARD_DETAIL := 14
 
 
 func _ready() -> void:
 	_apply_panel_style()
-	_apply_theme_overrides()
 
 
 func _apply_panel_style() -> void:
-	# Outer frame – darker border to simulate carved edge
 	var outer := StyleBoxFlat.new()
 	outer.bg_color = WOOD_FRAME
 	outer.border_color = WOOD_DARK
@@ -43,21 +67,65 @@ func _apply_panel_style() -> void:
 	add_theme_stylebox_override("panel", outer)
 
 
-func _apply_theme_overrides() -> void:
-	# Label styling for title children
-	add_theme_font_size_override("font_size", 16)
-
+# ── Static label styles ─────────────────────────────────────────────
 
 static func apply_title_style(label: Label) -> void:
 	label.add_theme_font_override("font", PIXEL_FONT)
-	label.add_theme_font_size_override("font_size", 24)
+	label.add_theme_font_size_override("font_size", SIZE_TITLE)
 	label.add_theme_color_override("font_color", TEXT_COLOR)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 
+static func apply_panel_title_style(label: Label) -> void:
+	label.add_theme_font_override("font", PIXEL_FONT)
+	label.add_theme_font_size_override("font_size", SIZE_PANEL_TITLE)
+	label.add_theme_color_override("font_color", TEXT_COLOR)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+
+static func apply_subtitle_style(label: Label) -> void:
+	label.add_theme_font_override("font", PIXEL_FONT)
+	label.add_theme_font_size_override("font_size", SIZE_SMALL)
+	label.add_theme_color_override("font_color", TEXT_SECONDARY)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+
+static func apply_status_label(label: Label) -> void:
+	label.add_theme_font_override("font", PIXEL_FONT)
+	label.add_theme_font_size_override("font_size", SIZE_STATUS)
+	label.add_theme_color_override("font_color", TEXT_SECONDARY)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+
+static func apply_error_label(label: Label) -> void:
+	label.add_theme_font_override("font", PIXEL_FONT)
+	label.add_theme_font_size_override("font_size", SIZE_STATUS)
+	label.add_theme_color_override("font_color", TEXT_ERROR)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+
+static func apply_card_name_style(label: Label) -> void:
+	label.add_theme_font_override("font", PIXEL_FONT)
+	label.add_theme_font_size_override("font_size", SIZE_CARD_NAME)
+	label.add_theme_color_override("font_color", TEXT_COLOR)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+
+static func apply_card_detail_style(label: Label) -> void:
+	label.add_theme_font_override("font", PIXEL_FONT)
+	label.add_theme_font_size_override("font_size", SIZE_CARD_DETAIL)
+	label.add_theme_color_override("font_color", TEXT_SECONDARY)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+
+# ── Static field styles ─────────────────────────────────────────────
+
 static func apply_field_style(edit: LineEdit) -> void:
 	edit.add_theme_font_override("font", PIXEL_FONT)
-	edit.add_theme_font_size_override("font_size", 14)
+	edit.add_theme_font_size_override("font_size", SIZE_FIELD)
 	edit.add_theme_color_override("font_color", TEXT_COLOR)
 	edit.add_theme_color_override("font_placeholder_color", TEXT_PLACEHOLDER)
 
@@ -68,8 +136,8 @@ static func apply_field_style(edit: LineEdit) -> void:
 	sb.set_corner_radius_all(6)
 	sb.content_margin_left = 12
 	sb.content_margin_right = 12
-	sb.content_margin_top = 8
-	sb.content_margin_bottom = 8
+	sb.content_margin_top = 10
+	sb.content_margin_bottom = 10
 	edit.add_theme_stylebox_override("normal", sb)
 
 	var focus_sb := StyleBoxFlat.new()
@@ -79,8 +147,8 @@ static func apply_field_style(edit: LineEdit) -> void:
 	focus_sb.set_corner_radius_all(6)
 	focus_sb.content_margin_left = 12
 	focus_sb.content_margin_right = 12
-	focus_sb.content_margin_top = 8
-	focus_sb.content_margin_bottom = 8
+	focus_sb.content_margin_top = 10
+	focus_sb.content_margin_bottom = 10
 	edit.add_theme_stylebox_override("focus", focus_sb)
 
 
@@ -92,37 +160,106 @@ static func apply_error_field_style(edit: LineEdit) -> void:
 	sb.set_corner_radius_all(6)
 	sb.content_margin_left = 12
 	sb.content_margin_right = 12
-	sb.content_margin_top = 8
-	sb.content_margin_bottom = 8
+	sb.content_margin_top = 10
+	sb.content_margin_bottom = 10
 	edit.add_theme_stylebox_override("normal", sb)
 
 
 static func clear_error_field_style(edit: LineEdit) -> void:
 	edit.remove_theme_stylebox_override("normal")
-	# Re-apply normal style
+	apply_field_style(edit)
+
+
+# ── Parchment style helpers ─────────────────────────────────────────
+
+static func make_parchment_style(margin: int = 20) -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = INPUT_BG
-	sb.border_color = INPUT_BORDER
+	sb.bg_color = PARCHMENT_BG
+	sb.border_color = PARCHMENT_DARK
 	sb.set_border_width_all(3)
-	sb.set_corner_radius_all(6)
-	sb.content_margin_left = 12
-	sb.content_margin_right = 12
-	sb.content_margin_top = 8
-	sb.content_margin_bottom = 8
-	edit.add_theme_stylebox_override("normal", sb)
+	sb.set_corner_radius_all(8)
+	sb.content_margin_left = margin
+	sb.content_margin_right = margin
+	sb.content_margin_top = margin
+	sb.content_margin_bottom = margin
+	return sb
 
 
-static func apply_status_label(label: Label) -> void:
+static func apply_parchment_label(label: Label, font_size: int = SIZE_STATUS) -> void:
 	label.add_theme_font_override("font", PIXEL_FONT)
-	label.add_theme_font_size_override("font_size", 12)
-	label.add_theme_color_override("font_color", TEXT_SECONDARY)
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", Color(0.30, 0.22, 0.12))
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 
-static func apply_error_label(label: Label) -> void:
-	label.add_theme_font_override("font", PIXEL_FONT)
-	label.add_theme_font_size_override("font_size", 11)
-	label.add_theme_color_override("font_color", TEXT_ERROR)
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+# ── Wooden card style helpers ───────────────────────────────────────
+
+static func make_wood_card_style() -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = WOOD_SURFACE
+	sb.border_color = WOOD_BORDER
+	sb.set_border_width_all(4)
+	sb.set_corner_radius_all(10)
+	sb.shadow_color = Color(0.10, 0.05, 0.01, 0.5)
+	sb.shadow_size = 5
+	sb.shadow_offset = Vector2(2, 3)
+	sb.content_margin_left = 16
+	sb.content_margin_right = 16
+	sb.content_margin_top = 16
+	sb.content_margin_bottom = 16
+	return sb
+
+
+static func make_wood_card_hover_style() -> StyleBoxFlat:
+	var sb := make_wood_card_style()
+	sb.bg_color = WOOD_HOVER
+	sb.border_color = WOOD_BEVEL_LIGHT
+	sb.shadow_size = 6
+	return sb
+
+
+static func make_wood_card_selected_style() -> StyleBoxFlat:
+	var sb := make_wood_card_style()
+	sb.bg_color = WOOD_HOVER
+	sb.border_color = Color(1.0, 0.84, 0.0)
+	sb.set_border_width_all(5)
+	sb.shadow_size = 8
+	return sb
+
+
+# ── Dialog overlay style ────────────────────────────────────────────
+
+static func make_overlay_color() -> Color:
+	return Color(0.05, 0.03, 0.01, 0.7)
+
+
+static func make_dialog_panel_style() -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = WOOD_FRAME
+	sb.border_color = WOOD_DARK
+	sb.border_width_left = 8
+	sb.border_width_right = 8
+	sb.border_width_top = 8
+	sb.border_width_bottom = 8
+	sb.set_corner_radius_all(14)
+	sb.shadow_color = Color(0.05, 0.02, 0.0, 0.8)
+	sb.shadow_size = 12
+	sb.shadow_offset = Vector2(4, 6)
+	sb.content_margin_left = 32
+	sb.content_margin_right = 32
+	sb.content_margin_top = 28
+	sb.content_margin_bottom = 28
+	return sb
+
+
+# ── Entrance animation helper ───────────────────────────────────────
+
+static func play_entrance(panel: Control, delay: float = 0.0) -> Tween:
+	panel.modulate.a = 0.0
+	panel.position.y += 20
+	var tw := panel.create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	if delay > 0.0:
+		tw.tween_interval(delay)
+	tw.tween_property(panel, "modulate:a", 1.0, 0.4)
+	tw.parallel().tween_property(panel, "position:y", panel.position.y - 20, 0.4)
+	return tw

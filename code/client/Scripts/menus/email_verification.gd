@@ -18,7 +18,7 @@ func _ready() -> void:
 	WoodPanel.apply_title_style(_title)
 
 	_message.add_theme_font_override("font", PIXEL_FONT)
-	_message.add_theme_font_size_override("font_size", 10)
+	_message.add_theme_font_size_override("font_size", 16)
 	_message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 

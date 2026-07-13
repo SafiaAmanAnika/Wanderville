@@ -17,6 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import main as _main  # noqa: E402
 from app.database import Base, engine  # noqa: E402
 import app.models.player  # noqa: F401, E402
+import app.models.refresh_token  # noqa: F401, E402
 import app.models.world  # noqa: F401, E402
 
 
@@ -25,17 +26,25 @@ Base.metadata.create_all(bind=engine)
 client = TestClient(_main.app)
 
 
-def _signup_and_login(username="worlduser", password="secret123", display_name="World User"):
-    """Helper: signup then login, return token string."""
+def _signup_and_login(username="worlduser", password="Secret123!", display_name="World User"):
+    email = f"{username}@test.com"
     client.post(
         "/auth/signup",
-        json={"username": username, "password": password, "display_name": display_name},
+        json={"username": username, "email": email, "password": password, "display_name": display_name},
     )
+    from app.database import SessionLocal
+    from app.models.player import Player
+
+    db = SessionLocal()
+    player = db.query(Player).filter(Player.username == username).first()
+    player.email_verified = True
+    player.is_active = True
+    db.commit()
+    db.close()
+
     r = client.post("/auth/login", json={"username": username, "password": password})
-    return r.json()["data"]["token"]
+    return r.json()["data"]["access_token"]
 
-
-# ── GET /world/me ──────────────────────────────────────────────────────────
 
 def test_get_world_me_without_token_returns_401():
     r = client.get("/world/me")
@@ -43,7 +52,7 @@ def test_get_world_me_without_token_returns_401():
 
 
 def test_get_world_me_auto_creates_world():
-    token = _signup_and_login("autocreate", "secret123", "Auto Create")
+    token = _signup_and_login("autocreate", "Secret123!", "Auto Create")
     r = client.get("/world/me", headers={"Authorization": f"Bearer {token}"})
     assert r.status_code == 200
     body = r.json()
@@ -56,17 +65,14 @@ def test_get_world_me_auto_creates_world():
 
 
 def test_get_world_me_is_idempotent():
-    """Calling /world/me multiple times returns the same world."""
-    token = _signup_and_login("idempotent", "secret123", "Idempotent")
+    token = _signup_and_login("idempotent", "Secret123!", "Idempotent")
     r1 = client.get("/world/me", headers={"Authorization": f"Bearer {token}"})
     r2 = client.get("/world/me", headers={"Authorization": f"Bearer {token}"})
     assert r1.json()["data"]["id"] == r2.json()["data"]["id"]
 
 
-# ── PUT /world/tiles ───────────────────────────────────────────────────────
-
 def test_update_tiles_full_replacement():
-    token = _signup_and_login("tileuser", "secret123", "Tile User")
+    token = _signup_and_login("tileuser", "Secret123!", "Tile User")
     client.get("/world/me", headers={"Authorization": f"Bearer {token}"})
 
     tiles = {"0,0": "grass", "1,0": "dirt", "0,1": "water"}
@@ -83,8 +89,7 @@ def test_update_tiles_full_replacement():
 
 
 def test_update_tiles_replaces_previous_data():
-    """Second PUT /world/tiles should fully replace, not merge."""
-    token = _signup_and_login("replaceuser", "secret123", "Replace User")
+    token = _signup_and_login("replaceuser", "Secret123!", "Replace User")
     client.get("/world/me", headers={"Authorization": f"Bearer {token}"})
 
     client.put(
@@ -106,7 +111,7 @@ def test_update_tiles_without_token_returns_401():
 
 
 def test_update_tiles_with_empty_dict():
-    token = _signup_and_login("emptyuser", "secret123", "Empty User")
+    token = _signup_and_login("emptyuser", "Secret123!", "Empty User")
     client.get("/world/me", headers={"Authorization": f"Bearer {token}"})
 
     r = client.put(
@@ -118,10 +123,8 @@ def test_update_tiles_with_empty_dict():
     assert r.json()["data"]["tiles"] == {}
 
 
-# ── PUT /world/tile ────────────────────────────────────────────────────────
-
 def test_update_single_tile_adds_new_tile():
-    token = _signup_and_login("singletile", "secret123", "Single Tile")
+    token = _signup_and_login("singletile", "Secret123!", "Single Tile")
     client.get("/world/me", headers={"Authorization": f"Bearer {token}"})
 
     r = client.put(
@@ -137,7 +140,7 @@ def test_update_single_tile_adds_new_tile():
 
 
 def test_update_single_tile_overwrites_existing():
-    token = _signup_and_login("overwrite", "secret123", "Overwrite")
+    token = _signup_and_login("overwrite", "Secret123!", "Overwrite")
     client.get("/world/me", headers={"Authorization": f"Bearer {token}"})
 
     client.put(
@@ -154,8 +157,7 @@ def test_update_single_tile_overwrites_existing():
 
 
 def test_update_single_tile_preserves_other_tiles():
-    """Updating one tile should not remove others."""
-    token = _signup_and_login("preserve", "secret123", "Preserve")
+    token = _signup_and_login("preserve", "Secret123!", "Preserve")
     client.get("/world/me", headers={"Authorization": f"Bearer {token}"})
 
     client.put(
@@ -180,8 +182,7 @@ def test_update_single_tile_without_token_returns_401():
 
 
 def test_update_single_tile_negative_coordinates():
-    """Negative coordinates should work as valid tile keys."""
-    token = _signup_and_login("negcoord", "secret123", "Neg Coord")
+    token = _signup_and_login("negcoord", "Secret123!", "Neg Coord")
     client.get("/world/me", headers={"Authorization": f"Bearer {token}"})
 
     r = client.put(
@@ -193,12 +194,9 @@ def test_update_single_tile_negative_coordinates():
     assert r.json()["data"]["tiles"]["-1,-2"] == "sand"
 
 
-# ── Cross-user isolation ──────────────────────────────────────────────────
-
 def test_users_have_separate_worlds():
-    """Two users should not see or modify each other's tiles."""
-    token_a = _signup_and_login("alice_world", "secret123", "Alice")
-    token_b = _signup_and_login("bob_world", "secret123", "Bob")
+    token_a = _signup_and_login("alice_world", "Secret123!", "Alice")
+    token_b = _signup_and_login("bob_world", "Secret123!", "Bob")
 
     client.get("/world/me", headers={"Authorization": f"Bearer {token_a}"})
     client.get("/world/me", headers={"Authorization": f"Bearer {token_b}"})
@@ -211,6 +209,3 @@ def test_users_have_separate_worlds():
 
     r_b = client.get("/world/me", headers={"Authorization": f"Bearer {token_b}"})
     assert r_b.json()["data"]["tiles"] == {}
-
-
-

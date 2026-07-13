@@ -16,11 +16,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app.database import Base, SessionLocal, engine  # noqa: E402
 import app.models.player  # noqa: F401, E402
+import app.models.refresh_token  # noqa: F401, E402
 import app.models.world  # noqa: F401, E402
 from app.models.player import Player  # noqa: E402
 from app.models.world import World  # noqa: E402
 from app.services import world_service  # noqa: E402
-from app.services.auth_service import signup as auth_signup  # noqa: E402
+from app.services.auth_service import signup as auth_signup, hash_password  # noqa: E402
 
 
 Base.metadata.create_all(bind=engine)
@@ -28,7 +29,6 @@ Base.metadata.create_all(bind=engine)
 
 @pytest.fixture(autouse=True)
 def clean_db():
-    """Delete all rows from worlds and players before each test."""
     db = SessionLocal()
     try:
         db.query(World).delete()
@@ -41,7 +41,6 @@ def clean_db():
 
 @pytest.fixture
 def db():
-    """Provide a database session."""
     session = SessionLocal()
     try:
         yield session
@@ -51,18 +50,20 @@ def db():
 
 @pytest.fixture
 def player(db):
-    """Create a player and return it."""
-    return auth_signup(db, username="svcplayer", password="secret123", display_name="Service Test")
+    return auth_signup(
+        db,
+        username="svcplayer",
+        email="svcplayer@test.com",
+        password="Secret123!",
+        display_name="Service Test",
+    )
 
 
 @pytest.fixture
 def player_no_world(db):
-    """Create a player without an auto-created world for testing world absence."""
-    from app.models.player import Player as PlayerModel
-    from app.services.auth_service import hash_password
-    p = PlayerModel(
+    p = Player(
         username="svcplayer_noworld",
-        hashed_password=hash_password("secret123"),
+        hashed_password=hash_password("Secret123!"),
         display_name="No World",
         is_active=True,
     )
@@ -72,10 +73,7 @@ def player_no_world(db):
     return p
 
 
-# ── create_world ───────────────────────────────────────────────────────────
-
 def test_create_world(db, player):
-    # Signup auto-creates a world; remove it so we test explicit creation.
     db.query(World).filter(World.owner_id == player.id).delete()
     db.commit()
     world = world_service.create_world(db, player.id)
@@ -92,14 +90,11 @@ def test_create_world_custom_name(db, player):
     assert world.name == "Custom Land"
 
 
-# ── get_world_by_owner ─────────────────────────────────────────────────────
-
 def test_get_world_by_owner_returns_none_when_missing(db, player_no_world):
     assert world_service.get_world_by_owner(db, player_no_world.id) is None
 
 
 def test_get_world_by_owner_returns_world(db, player):
-    # Signup auto-creates a world; remove it so we can test creation explicitly.
     db.query(World).filter(World.owner_id == player.id).delete()
     db.commit()
     world = world_service.create_world(db, player.id)
@@ -107,8 +102,6 @@ def test_get_world_by_owner_returns_world(db, player):
     assert found is not None
     assert found.id == world.id
 
-
-# ── update_tiles ───────────────────────────────────────────────────────────
 
 def test_update_tiles(db, player):
     db.query(World).filter(World.owner_id == player.id).delete()
@@ -132,8 +125,6 @@ def test_update_tiles_raises_for_missing_world(db):
     with pytest.raises(ValueError, match="not found"):
         world_service.update_tiles(db, 99999, {"0,0": "grass"})
 
-
-# ── update_single_tile ─────────────────────────────────────────────────────
 
 def test_update_single_tile(db, player):
     db.query(World).filter(World.owner_id == player.id).delete()

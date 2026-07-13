@@ -14,13 +14,26 @@ class Settings(BaseSettings):
     wanderville_host: str = "127.0.0.1"
     wanderville_port: int = 8000
 
-    # SQLAlchemy database URL, e.g. "postgresql://user:pass@localhost/db"
     database_url: str = "postgresql://wanderville_admin:wanderville123@localhost:5432/wanderville"
 
-    # JWT configuration
     jwt_secret_key: str = "change-me"
     jwt_algorithm: str = "HS256"
-    access_token_expire_minutes: int = 60 * 24 * 7
+    access_token_expire_minutes: int = 15
+    refresh_token_expire_days: int = 30
+
+    google_client_id: str = ""
+
+    smtp_host: str = "smtp.gmail.com"
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    email_from: str = "noreply@wanderville.game"
+    email_base_url: str = "http://localhost:8000"
+    email_verification_expire_minutes: int = 60
+    password_reset_expire_minutes: int = 30
+
+    max_login_attempts: int = 5
+    lockout_minutes: int = 15
 
     cors_origins: str = "*"
 

@@ -5,7 +5,6 @@ from typing import Generic, TypeVar
 from pydantic import BaseModel
 
 from app.schemas.player import PlayerPublic
-from app.schemas.world import WorldPublic
 
 T = TypeVar("T")
 
@@ -28,14 +27,29 @@ SignupResponse = Envelope[PlayerPublic]
 PlayerMeResponse = Envelope[PlayerPublic]
 
 
-class LoginData(BaseModel):
-    token: str
+class TokenPairData(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
     player: PlayerPublic
 
 
-class LoginResponse(Envelope[LoginData]):
+class LoginResponse(Envelope[TokenPairData]):
     pass
 
 
-WorldResponse = Envelope[WorldPublic]
-TileUpdateResponse = Envelope[WorldPublic]
+class RefreshData(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
+
+
+class RefreshResponse(Envelope[RefreshData]):
+    pass
+
+
+MessageResponse = Envelope[None]
+
+
+WorldResponse = Envelope[dict]
+TileUpdateResponse = Envelope[dict]

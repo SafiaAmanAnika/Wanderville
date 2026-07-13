@@ -3,8 +3,8 @@ from __future__ import annotations
 import os
 import time
 from collections import defaultdict
-from functools import wraps
 from typing import Callable
+from functools import wraps
 
 from fastapi import HTTPException, Request
 
@@ -31,6 +31,22 @@ class RateLimiter:
 rate_limiter = RateLimiter()
 
 _RATE_LIMIT_DISABLED = os.environ.get("DISABLE_RATE_LIMIT", "").lower() in ("1", "true", "yes")
+
+
+def _check_rate_limit(request: Request, max_requests: int) -> None:
+    if _RATE_LIMIT_DISABLED:
+        return
+    client_ip = request.client.host if request.client else "unknown"
+    key = f"{request.url.path}:{client_ip}"
+    if not rate_limiter.is_allowed(key, max_requests, 60):
+        raise HTTPException(
+            status_code=429,
+            detail={
+                "success": False,
+                "error": "RATE_LIMITED",
+                "message": f"Too many requests. Limit: {max_requests} per 60s",
+            },
+        )
 
 
 def rate_limit(max_requests: int, window_seconds: int = 60) -> Callable:

@@ -17,6 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import main as _main
 from app.database import Base, engine
 import app.models.player  # noqa: F401
+import app.models.refresh_token  # noqa: F401
 import app.models.inventory  # noqa: F401
 
 Base.metadata.create_all(bind=engine)
@@ -24,18 +25,29 @@ Base.metadata.create_all(bind=engine)
 client = TestClient(_main.app)
 
 
-def _signup_and_login(username="invuser", password="secret123", display_name="Inventory User"):
+def _signup_and_login(username="invuser", password="Secret123!", display_name="Inventory User"):
+    email = f"{username}@test.com"
     client.post(
         "/auth/signup",
-        json={"username": username, "password": password, "display_name": display_name},
+        json={"username": username, "email": email, "password": password, "display_name": display_name},
     )
+    from app.database import SessionLocal
+    from app.models.player import Player
+
+    db = SessionLocal()
+    player = db.query(Player).filter(Player.username == username).first()
+    player.email_verified = True
+    player.is_active = True
+    db.commit()
+    db.close()
+
     r = client.post("/auth/login", json={"username": username, "password": password})
-    return r.json()["data"]["token"]
+    return r.json()["data"]["access_token"]
 
 
 class TestInventory:
     def test_get_inventory_empty(self):
-        token = _signup_and_login("empty_inv", "secret123", "Empty")
+        token = _signup_and_login("empty_inv", "Secret123!", "Empty")
         resp = client.get("/inventory/", headers={"Authorization": f"Bearer {token}"})
         assert resp.status_code == 200
         body = resp.json()
@@ -45,7 +57,7 @@ class TestInventory:
         assert body["data"]["total_quantity"] == 0
 
     def test_add_item(self):
-        token = _signup_and_login("add_inv", "secret123", "Add")
+        token = _signup_and_login("add_inv", "Secret123!", "Add")
         resp = client.post(
             "/inventory/add",
             headers={"Authorization": f"Bearer {token}"},
@@ -58,7 +70,7 @@ class TestInventory:
         assert body["data"]["item_type"] == "wheat"
 
     def test_add_item_stacks(self):
-        token = _signup_and_login("stack_inv", "secret123", "Stack")
+        token = _signup_and_login("stack_inv", "Secret123!", "Stack")
         client.post(
             "/inventory/add",
             headers={"Authorization": f"Bearer {token}"},
@@ -72,7 +84,7 @@ class TestInventory:
         assert resp.json()["data"]["quantity"] == 5
 
     def test_remove_item(self):
-        token = _signup_and_login("remove_inv", "secret123", "Remove")
+        token = _signup_and_login("remove_inv", "Secret123!", "Remove")
         client.post(
             "/inventory/add",
             headers={"Authorization": f"Bearer {token}"},
@@ -87,7 +99,7 @@ class TestInventory:
         assert resp.json()["data"]["quantity"] == 3
 
     def test_remove_item_deletes_at_zero(self):
-        token = _signup_and_login("delete_inv", "secret123", "Delete")
+        token = _signup_and_login("delete_inv", "Secret123!", "Delete")
         client.post(
             "/inventory/add",
             headers={"Authorization": f"Bearer {token}"},
@@ -104,7 +116,7 @@ class TestInventory:
         assert resp.json()["data"]["total_items"] == 0
 
     def test_remove_not_enough(self):
-        token = _signup_and_login("notenough_inv", "secret123", "Not Enough")
+        token = _signup_and_login("notenough_inv", "Secret123!", "Not Enough")
         client.post(
             "/inventory/add",
             headers={"Authorization": f"Bearer {token}"},
@@ -118,7 +130,7 @@ class TestInventory:
         assert resp.status_code == 400
 
     def test_remove_not_found(self):
-        token = _signup_and_login("notfound_inv", "secret123", "Not Found")
+        token = _signup_and_login("notfound_inv", "Secret123!", "Not Found")
         resp = client.post(
             "/inventory/remove",
             headers={"Authorization": f"Bearer {token}"},
@@ -127,7 +139,7 @@ class TestInventory:
         assert resp.status_code == 400
 
     def test_multiple_item_types(self):
-        token = _signup_and_login("multi_inv", "secret123", "Multi")
+        token = _signup_and_login("multi_inv", "Secret123!", "Multi")
         client.post(
             "/inventory/add",
             headers={"Authorization": f"Bearer {token}"},
@@ -150,8 +162,8 @@ class TestInventory:
         assert body["data"]["total_quantity"] == 10
 
     def test_users_have_separate_inventories(self):
-        token_a = _signup_and_login("alice_inv", "secret123", "Alice")
-        token_b = _signup_and_login("bob_inv", "secret123", "Bob")
+        token_a = _signup_and_login("alice_inv", "Secret123!", "Alice")
+        token_b = _signup_and_login("bob_inv", "Secret123!", "Bob")
 
         client.post(
             "/inventory/add",
@@ -166,8 +178,8 @@ class TestInventory:
         assert resp_b.json()["data"]["total_quantity"] == 0
 
     def test_transfer_between_players(self):
-        token_a = _signup_and_login("sender_inv", "secret123", "Sender")
-        token_b = _signup_and_login("receiver_inv", "secret123", "Receiver")
+        token_a = _signup_and_login("sender_inv", "Secret123!", "Sender")
+        token_b = _signup_and_login("receiver_inv", "Secret123!", "Receiver")
 
         client.post(
             "/inventory/add",

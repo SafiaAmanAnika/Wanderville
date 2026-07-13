@@ -11,6 +11,10 @@ class PlayerPublic(BaseModel):
     id: int
     username: str
     display_name: str
+    email: str | None = None
+    email_verified: bool = False
+    avatar_url: str | None = None
+    oauth_provider: str | None = None
     created_at: datetime
     is_active: bool
     position_x: int

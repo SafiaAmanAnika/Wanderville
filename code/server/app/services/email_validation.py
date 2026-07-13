@@ -1,0 +1,86 @@
+from __future__ import annotations
+
+import re
+
+_DOMAIN_BLOCKLIST: set[str] = {
+    "mailinator.com", "guerrillamail.com", "guerrillamail.net", "guerrillamail.org",
+    "tempmail.com", "throwaway.email", "temp-mail.org", "tempail.com",
+    "yopmail.com", "yopmail.fr", "10minutemail.com", "10minutemail.co.za",
+    "maildrop.cc", "mailnesia.com", "discard.email", "discardmail.com",
+    "sharklasers.com", "guerrillamailblock.com", "grr.la", "guerrillamail.de",
+    "dispostable.com", "mailnull.com", "spamgourmet.com", "mytemp.email",
+    "emailondeck.com", "trashmail.com", "trashmail.net", "trashmail.me",
+    "trashmail.org", "trashmail.io", "getairmail.com", "getnada.com",
+    "mohmal.com", "fakeinbox.com", "tempinbox.com", "tmpmail.net",
+    "tmpmail.org", "mailcatch.com", "mailexpire.com", "mailfree.ga",
+    "mailscrap.com", "boun.cr", "vcshort.info", "filzmail.com",
+    "guerrillamail.info", "guerrillamail.biz", "guerrillamail.se",
+    "spamavert.com", "tempr.email", "tempemail.co.za", "thankyou2010.com",
+    "cubiclink.com", "jourrapide.com", "rppkn.com", "meltmail.com",
+    "nospam.ze.tc", "nospamfor.us", "quickinbox.com", "registrierung.net",
+    "recode.com", "regbypass.com", "s0ny.net", "safetymail.info",
+    "sandelf.de", "saynotospams.com", "scatmail.com", "schafmail.de",
+    "schrott-email.de", "secretemail.de", "secure-mail.biz", "skeefmail.com",
+    "slaskpost.se", "slipry.net", "slopsbox.com", "slowslow.de",
+    "smashmail.de", "smellfear.com", "snakemail.com", "sneakemail.com",
+    "sneakymail.de", "snkmail.com", "sofimail.com", "sofort-mail.de",
+    "softpls.asia", "sogetthis.com", "soodonims.com", "spam.la",
+    "spam.su", "spam4.me", "spambox.us", "spamcannon.com",
+    "spamcannon.net", "spamcero.com", "spamday.com", "spamex.com",
+    "spamfree24.com", "spamfree24.de", "spamfree24.eu", "spamfree24.info",
+    "spamfree24.net", "spamfree24.org", "spamgourmet.net", "spamgourmet.org",
+    "spamherelots.com", "spamhereplease.com", "spamhole.com", "spamify.com",
+    "spaminator.de", "spamkill.info", "spaml.com", "spaml.de",
+    "spammotel.com", "spamobox.com", "spamoff.de", "spamslicer.com",
+    "spamspot.com", "spamstack.net", "spamthis.co.uk", "spamthisplease.com",
+    "spamtrail.com", "spamtrap.ro", "speed.1s.fr", "superrito.com",
+    "supermailer.jp", "superramics.com", "surfarea.com", "survivormail.com",
+    "teleworm.com", "teleworm.us", "tempalias.com", "tempestry.com",
+    "tempemail.biz", "tempemail.net", "tempemail.net", "tempinbox.co.uk",
+    "tempmail.eu", "tempmail.it", "tempmail2.com", "tempmailer.com",
+    "tempmailer.de", "tempomail.fr", "temporarily.de", "temptheemail.com",
+    "thankyou2010.com", "thecloudindex.com", "thrma.com", "throwam.com",
+    "tittbit.in", "tizi.com", "tmailinator.com", "toiea.com",
+    "toomail.biz", "topranklist.de", "tradermail.info", "trash-amil.com",
+    "trashdevil.com", "trashdevil.de", "trashemail.de", "trashmail.at",
+    "trashmail.ch", "trashmail.com", "trashmail.de", "trashmail.fr",
+    "trashmail.in", "trashmail.info", "trashmail.me", "trashmail.net",
+    "trashmail.org", "trashmail.ws", "trashmailer.com", "trashymail.com",
+    "trashymail.net", "trillianpro.com", "turual.com", "twinmail.de",
+    "tyldd.com", "uggsrock.com", "umail.net", "upliftnow.com",
+    "uplipht.com", "venompen.com", "veryrealliemail.com", "vidchart.com",
+    "viditag.com", "viewcastmedia.com", "viewcastmedia.net", "viewcastmedia.org",
+    "wegwerfadresse.de", "wegwerfemail.com", "wegwerfemail.de", "wegwerfmail.de",
+    "wegwerfmail.net", "wegwerfmail.org", "wetrainbayarea.com", "wetrainbayarea.org",
+    "wh4f.org", "whatiaas.com", "whatpaas.com", "whyspam.me",
+    "wickmail.com", "wilemail.com", "willhackforfood.biz", "willselfdestruct.com",
+    "winemaven.info", "wronghead.com", "wuzup.net", "wuzupmail.net",
+    "wwwnew.eu", "xagloo.com", "xemaps.com", "xents.com",
+    "xjoi.com", "xmaily.com", "xoxy.net", "yapped.net",
+    "yeah.net", "yep.it", "yogamaven.com", "yomail.info",
+    "yoprivacy.com", "yourdomain.com", "zipperlovesvenom.com", "zehnminutenmail.de",
+}
+
+_EMAIL_REGEX = re.compile(
+    r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]"
+    r"(?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?"
+    r"(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
+)
+
+
+def is_valid_email_format(email: str) -> bool:
+    return _EMAIL_REGEX.match(email) is not None
+
+
+def is_disposable_email(email: str) -> bool:
+    domain = email.rsplit("@", 1)[-1].lower().strip(".")
+    return domain in _DOMAIN_BLOCKLIST
+
+
+def validate_email_address(email: str) -> str | None:
+    email = email.strip().lower()
+    if not is_valid_email_format(email):
+        return "Invalid email address format"
+    if is_disposable_email(email):
+        return "Disposable email addresses are not allowed"
+    return None

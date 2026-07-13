@@ -8,7 +8,7 @@ from app.database import get_db
 from app.models.player import Player
 from app.services import auth_service
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login", auto_error=True)
 
 
 def get_current_player(

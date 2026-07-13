@@ -72,6 +72,8 @@ func _apply_panel_style() -> void:
 # ── Static label styles ─────────────────────────────────────────────
 
 static func apply_title_style(label: Label) -> void:
+	if label == null:
+		return
 	label.add_theme_font_override("font", PIXEL_FONT)
 	label.add_theme_font_size_override("font_size", SIZE_TITLE)
 	label.add_theme_color_override("font_color", TEXT_COLOR)
@@ -79,6 +81,8 @@ static func apply_title_style(label: Label) -> void:
 
 
 static func apply_panel_title_style(label: Label) -> void:
+	if label == null:
+		return
 	label.add_theme_font_override("font", PIXEL_FONT)
 	label.add_theme_font_size_override("font_size", SIZE_PANEL_TITLE)
 	label.add_theme_color_override("font_color", TEXT_COLOR)
@@ -86,6 +90,8 @@ static func apply_panel_title_style(label: Label) -> void:
 
 
 static func apply_subtitle_style(label: Label) -> void:
+	if label == null:
+		return
 	label.add_theme_font_override("font", PIXEL_FONT)
 	label.add_theme_font_size_override("font_size", SIZE_SMALL)
 	label.add_theme_color_override("font_color", TEXT_SECONDARY)
@@ -94,6 +100,8 @@ static func apply_subtitle_style(label: Label) -> void:
 
 
 static func apply_status_label(label: Label) -> void:
+	if label == null:
+		return
 	label.add_theme_font_override("font", PIXEL_FONT)
 	label.add_theme_font_size_override("font_size", SIZE_STATUS)
 	label.add_theme_color_override("font_color", TEXT_SECONDARY)
@@ -102,6 +110,8 @@ static func apply_status_label(label: Label) -> void:
 
 
 static func apply_error_label(label: Label) -> void:
+	if label == null:
+		return
 	label.add_theme_font_override("font", PIXEL_FONT)
 	label.add_theme_font_size_override("font_size", SIZE_STATUS)
 	label.add_theme_color_override("font_color", TEXT_ERROR)
@@ -110,6 +120,8 @@ static func apply_error_label(label: Label) -> void:
 
 
 static func apply_card_name_style(label: Label) -> void:
+	if label == null:
+		return
 	label.add_theme_font_override("font", PIXEL_FONT)
 	label.add_theme_font_size_override("font_size", SIZE_CARD_NAME)
 	label.add_theme_color_override("font_color", TEXT_COLOR)
@@ -117,6 +129,8 @@ static func apply_card_name_style(label: Label) -> void:
 
 
 static func apply_card_detail_style(label: Label) -> void:
+	if label == null:
+		return
 	label.add_theme_font_override("font", PIXEL_FONT)
 	label.add_theme_font_size_override("font_size", SIZE_CARD_DETAIL)
 	label.add_theme_color_override("font_color", TEXT_SECONDARY)
@@ -126,6 +140,8 @@ static func apply_card_detail_style(label: Label) -> void:
 # ── Static field styles ─────────────────────────────────────────────
 
 static func apply_field_style(edit: LineEdit) -> void:
+	if edit == null:
+		return
 	edit.add_theme_font_override("font", PIXEL_FONT)
 	edit.add_theme_font_size_override("font_size", SIZE_FIELD)
 	edit.add_theme_color_override("font_color", TEXT_COLOR)
@@ -155,6 +171,8 @@ static func apply_field_style(edit: LineEdit) -> void:
 
 
 static func apply_error_field_style(edit: LineEdit) -> void:
+	if edit == null:
+		return
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = Color(0.35, 0.15, 0.12)
 	sb.border_color = Color(0.85, 0.30, 0.25)
@@ -168,6 +186,8 @@ static func apply_error_field_style(edit: LineEdit) -> void:
 
 
 static func clear_error_field_style(edit: LineEdit) -> void:
+	if edit == null:
+		return
 	edit.remove_theme_stylebox_override("normal")
 	apply_field_style(edit)
 
@@ -188,6 +208,8 @@ static func make_parchment_style(margin: int = 20) -> StyleBoxFlat:
 
 
 static func apply_parchment_label(label: Label, font_size: int = SIZE_STATUS) -> void:
+	if label == null:
+		return
 	label.add_theme_font_override("font", PIXEL_FONT)
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", Color(0.30, 0.22, 0.12))
@@ -254,14 +276,31 @@ static func make_dialog_panel_style() -> StyleBoxFlat:
 	return sb
 
 
+# ── Viewport helper ─────────────────────────────────────────────────
+
+static func get_viewport_size() -> Vector2:
+	var vp_size := Vector2(1578, 997)
+	if Engine.has_singleton("DisplayServer"):
+		vp_size = Vector2(
+			DisplayServer.window_get_size().x,
+			DisplayServer.window_get_size().y
+		)
+	return vp_size
+
+
+static func center_control(control: Control) -> void:
+	var vp := control.get_viewport_rect().size
+	control.position = (vp - control.size) / 2.0
+
+
 # ── Entrance animation helper ───────────────────────────────────────
 
 static func play_entrance(panel: Control, delay: float = 0.0) -> Tween:
+	if panel == null:
+		return null
 	panel.modulate.a = 0.0
-	panel.position.y += 20
 	var tw := panel.create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 	if delay > 0.0:
 		tw.tween_interval(delay)
 	tw.tween_property(panel, "modulate:a", 1.0, 0.4)
-	tw.parallel().tween_property(panel, "position:y", panel.position.y - 20, 0.4)
 	return tw

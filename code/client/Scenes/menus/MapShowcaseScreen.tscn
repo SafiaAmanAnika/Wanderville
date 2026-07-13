@@ -47,6 +47,7 @@ theme_override_constants/separation = 14
 alignment = 1
 
 [node name="Title" type="Label" parent="Center/FormPanel/VBox"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Select Your World"
 horizontal_alignment = 1

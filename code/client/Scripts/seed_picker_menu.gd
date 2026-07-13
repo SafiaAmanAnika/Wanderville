@@ -65,10 +65,9 @@ func show_menu() -> void:
 
 	# Wait one frame so Control nodes calculate their sizes, then center
 	await get_tree().process_frame
-	var screen_size := get_viewport().get_visible_rect().size
 	var min_size := panel.get_combined_minimum_size()
 	panel.size = min_size
-	panel.position = (screen_size - min_size) / 2
+	WoodPanel.center_control(panel)
 
 	GameState.menu_open = true
 	visible = true

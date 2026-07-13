@@ -1,5 +1,9 @@
 import logging
 import time
+from pathlib import Path
+
+from alembic import command
+from alembic.config import Config
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import HTTPException
@@ -13,6 +17,7 @@ from app.api.farm import router as farm_router
 from app.api.inventory import router as inventory_router
 from app.api.economy import router as economy_router
 from app.config import settings
+from app.database import Base, engine
 
 logging.basicConfig(
     level=logging.INFO,
@@ -22,6 +27,18 @@ logging.basicConfig(
 logger = logging.getLogger("wanderville")
 
 app = FastAPI(title="Wanderville API")
+
+
+def upgrade_database_schema() -> None:
+    if settings.database_url.startswith("sqlite"):
+        logger.info("Skipping automatic Alembic upgrade for SQLite database.")
+        return
+
+    alembic_ini = Path(__file__).resolve().parents[1] / "alembic.ini"
+    alembic_cfg = Config(str(alembic_ini))
+    alembic_cfg.set_main_option("script_location", str(alembic_ini.parent / "migrations"))
+    logger.info("Running Alembic upgrade head against configured database.")
+    command.upgrade(alembic_cfg, "head")
 
 cors_origins = (
     ["*"]
@@ -36,6 +53,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+def startup_tasks() -> None:
+    upgrade_database_schema()
 
 
 @app.middleware("http")

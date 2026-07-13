@@ -53,6 +53,22 @@ Notes:
 
 Use PostgreSQL for the actual running game server. The backend reads its database settings from `code/server/.env`, so if you point `DATABASE_URL` at Neon, the API, Alembic, and any friend using the same backend will all use that same shared database.
 
+If you already updated the project for Neon, you do not need any extra code changes in the backend. The server already reads the Neon connection string from `.env` and will use it for the app and migrations.
+
+### Neon Setup
+
+If you are using Neon instead of a local PostgreSQL install, do this:
+
+1. Create or open your Neon project.
+2. Copy the Neon PostgreSQL connection string.
+3. Paste it into `code/server/.env` as `DATABASE_URL`.
+4. Keep `sslmode=require` if Neon gives it to you.
+5. Save the file and do not commit it.
+6. Run `python -m alembic upgrade head` from `code/server`.
+7. Start the backend with `uvicorn main:app --reload`.
+
+Your friend can then use the same backend and Neon database as long as their `.env` points to the same Neon URL.
+
 ### 1. Install PostgreSQL
 
 - Install PostgreSQL 14+ on Windows, or use a managed provider like Neon.

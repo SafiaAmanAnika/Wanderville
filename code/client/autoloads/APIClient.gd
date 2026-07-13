@@ -13,6 +13,8 @@ func _ready() -> void:
 	add_child(_http)
 
 
+# ── Auth endpoints ──────────────────────────────────────────────────
+
 func login(username: String, password: String) -> Dictionary:
 	return await _request_json(
 		HTTPClient.METHOD_POST,
@@ -22,11 +24,54 @@ func login(username: String, password: String) -> Dictionary:
 	)
 
 
-func signup(username: String, password: String, display_name: String) -> Dictionary:
+func signup(username: String, email: String, password: String, display_name: String = "") -> Dictionary:
+	var body := {
+		"username": username,
+		"email": email,
+		"password": password,
+	}
+	if display_name != "":
+		body["display_name"] = display_name
 	return await _request_json(
 		HTTPClient.METHOD_POST,
 		"/auth/signup",
-		{"username": username, "password": password, "display_name": display_name},
+		body,
+		{}
+	)
+
+
+func google_login(id_token: String) -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_POST,
+		"/auth/google",
+		{"id_token": id_token},
+		{}
+	)
+
+
+func forgot_password(email: String) -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_POST,
+		"/auth/forgot-password",
+		{"email": email},
+		{}
+	)
+
+
+func verify_email(token: String) -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_GET,
+		"/auth/verify-email?token=" + token.uri_encode(),
+		null,
+		{}
+	)
+
+
+func resend_verification(email: String) -> Dictionary:
+	return await _request_json(
+		HTTPClient.METHOD_POST,
+		"/auth/resend-verification",
+		{"email": email},
 		{}
 	)
 
@@ -39,6 +84,8 @@ func me(token: String) -> Dictionary:
 		{"Authorization": "Bearer %s" % token}
 	)
 
+
+# ── Inventory endpoints ─────────────────────────────────────────────
 
 func get_inventory(token: String) -> Dictionary:
 	return await _request_json(
@@ -76,7 +123,7 @@ func remove_item(token: String, item_code: String, quantity: int = 1) -> Diction
 	)
 
 
-# ========== NEW: ECONOMY ENDPOINTS ==========
+# ── Economy endpoints ───────────────────────────────────────────────
 
 func get_economy(token: String) -> Dictionary:
 	return await _request_json(
@@ -122,6 +169,9 @@ func gain_xp(token: String, xp_amount: int, source: String = "") -> Dictionary:
 		{"Authorization": "Bearer %s" % token}
 	)
 
+
+# ── World endpoints ─────────────────────────────────────────────────
+
 func get_my_world(token: String) -> Dictionary:
 	return await _request_json(
 		HTTPClient.METHOD_GET,
@@ -139,6 +189,8 @@ func get_world_state(token: String) -> Dictionary:
 		{"Authorization": "Bearer %s" % token}
 	)
 
+
+# ── Farm endpoints ──────────────────────────────────────────────────
 
 func get_farm_plots(token: String) -> Dictionary:
 	return await _request_json(
@@ -175,6 +227,8 @@ func harvest_crop(token: String, plot_id: int) -> Dictionary:
 		{"Authorization": "Bearer %s" % token}
 	)
 
+
+# ── HTTP internals ──────────────────────────────────────────────────
 
 func _request_json(method: int, path: String, body: Variant, extra_headers: Dictionary) -> Dictionary:
 	var url := base_url.rstrip("/") + path

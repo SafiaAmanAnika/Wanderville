@@ -10,6 +10,9 @@ const MAP_SHOWCASE_SCENE := "res://Scenes/menus/MapShowcaseScreen.tscn"
 const CHARACTER_SELECT_SCENE := "res://Scenes/menus/CharacterSelectScreen.tscn"
 const WORLD_SCENE := "res://Scenes/world.tscn"
 
+const FORGOT_PASSWORD_SCENE := "res://Scenes/menus/ForgotPasswordScene.tscn"
+const EMAIL_VERIFICATION_SCENE := "res://Scenes/menus/EmailVerificationScene.tscn"
+
 
 func goto_login() -> void:
 	get_tree().change_scene_to_file(LOGIN_SCENE)
@@ -41,3 +44,14 @@ func goto_character_select() -> void:
 
 func goto_world() -> void:
 	get_tree().change_scene_to_file(WORLD_SCENE)
+
+
+func goto_forgot_password() -> void:
+	get_tree().change_scene_to_file(FORGOT_PASSWORD_SCENE)
+
+
+func goto_email_verification(message: String = "", success: bool = true) -> void:
+	# Store params in Global for the target scene to read
+	Global._ev_message = message
+	Global._ev_success = success
+	get_tree().change_scene_to_file(EMAIL_VERIFICATION_SCENE)

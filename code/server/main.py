@@ -1,6 +1,7 @@
 import logging
 import time
 from pathlib import Path
+from urllib.parse import urlparse
 
 from alembic import command
 from alembic.config import Config
@@ -30,11 +31,18 @@ app = FastAPI(title="Wanderville API")
 
 
 def upgrade_database_schema() -> None:
-    if settings.database_url.startswith("sqlite"):
+    parsed_url = urlparse(settings.database_url)
+    if parsed_url.scheme.startswith("sqlite"):
         logger.info("Skipping automatic Alembic upgrade for SQLite database.")
         return
 
-    alembic_ini = Path(__file__).resolve().parents[1] / "alembic.ini"
+    if not parsed_url.scheme.startswith("postgresql"):
+        logger.warning(
+            "DATABASE_URL is not set to PostgreSQL/Neon. Skipping automatic migration startup."
+        )
+        return
+
+    alembic_ini = Path(__file__).resolve().parent / "alembic.ini"
     alembic_cfg = Config(str(alembic_ini))
     alembic_cfg.set_main_option("script_location", str(alembic_ini.parent / "migrations"))
     logger.info("Running Alembic upgrade head against configured database.")

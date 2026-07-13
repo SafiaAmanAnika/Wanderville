@@ -1,124 +1,213 @@
 extends Control
 
-@onready var _username: LineEdit = $Center/Panel/VBox/UsernameInput
-@onready var _display_name: LineEdit = $Center/Panel/VBox/DisplayNameInput
-@onready var _password: LineEdit = $Center/Panel/VBox/PasswordInput
-@onready var _status: Label = $Center/Panel/VBox/StatusLabel
-@onready var _create_button: Button = $Center/Panel/VBox/Buttons/SignupButton
-@onready var _back_button: Button = $Center/Panel/VBox/Buttons/BackToLoginButton
+const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
+const BG_TEXTURE := preload("res://Assets/background/bg.png")
 
-var _lineedits: Array[LineEdit]
-var _error_style: StyleBoxFlat
+const TEXT_SECONDARY := Color(0.82, 0.74, 0.58)
+const TEXT_WEAK := Color(0.85, 0.45, 0.30)
+const TEXT_MEDIUM := Color(0.85, 0.75, 0.35)
+const TEXT_STRONG := Color(0.45, 0.75, 0.40)
+
+@onready var _bg: TextureRect = %Background
+@onready var _title: Label = %Title
+@onready var _username: LineEdit = %UsernameInput
+@onready var _email: LineEdit = %EmailInput
+@onready var _password: LineEdit = %PasswordInput
+@onready var _strength: Label = %PasswordStrength
+@onready var _confirm: LineEdit = %ConfirmInput
+@onready var _error_label: Label = %ErrorLabel
+@onready var _loading_label: Label = %LoadingLabel
+@onready var _create_btn: WoodButton = %CreateBtn
+@onready var _back_btn: WoodButton = %BackBtn
+
+var _all_fields: Array[LineEdit]
+var _re_upper: RegEx
+var _re_lower: RegEx
+var _re_digit: RegEx
+var _re_special: RegEx
 
 
 func _ready() -> void:
-	_create_button.pressed.connect(_on_create_pressed)
-	_back_button.pressed.connect(_on_back_pressed)
-	_status.text = ""
+	_bg.texture = BG_TEXTURE
+
+	WoodPanel.apply_title_style(_title)
+	WoodPanel.apply_field_style(_username)
+	WoodPanel.apply_field_style(_email)
+	WoodPanel.apply_field_style(_password)
+	WoodPanel.apply_field_style(_confirm)
+	WoodPanel.apply_status_label(_error_label)
+	WoodPanel.apply_status_label(_loading_label)
+	_apply_strength_style()
+
+	_all_fields = [_username, _email, _password, _confirm]
+
+	_re_upper = RegEx.new(); _re_upper.compile("[A-Z]")
+	_re_lower = RegEx.new(); _re_lower.compile("[a-z]")
+	_re_digit = RegEx.new(); _re_digit.compile("\\d")
+	_re_special = RegEx.new(); _re_special.compile("[!@#$%^&*()_+\\-=\\[\\]{};:'\",.<>?/\\\\|`~]")
+
+	_create_btn.pressed.connect(_on_create)
+	_back_btn.pressed.connect(_on_back)
+	_confirm.text_submitted.connect(func(_t: String) -> void: _on_create())
+	_password.text_changed.connect(_on_password_changed)
+
+	_error_label.text = " "
+	_loading_label.text = " "
+	_strength.text = " "
+
 	_username.grab_focus()
-	_lineedits = [_username, _display_name, _password]
-	_build_error_style()
-	_clear_error_styles()
+	_play_entrance()
 
 
-func _build_error_style() -> void:
-	_error_style = StyleBoxFlat.new()
-	_error_style.bg_color = Color(0.39, 0.43, 0.45, 1)
-	_error_style.border_width_left = 2
-	_error_style.border_width_right = 2
-	_error_style.border_width_top = 2
-	_error_style.border_width_bottom = 2
-	_error_style.border_color = Color(0.84, 0.19, 0.19, 1)
-	_error_style.corner_radius_top_left = 4
-	_error_style.corner_radius_top_right = 4
-	_error_style.corner_radius_bottom_right = 4
-	_error_style.corner_radius_bottom_left = 4
+func _apply_strength_style() -> void:
+	_strength.add_theme_font_override("font", PIXEL_FONT)
+	_strength.add_theme_font_size_override("font_size", 10)
+	_strength.add_theme_color_override("font_color", TEXT_SECONDARY)
+	_strength.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+
+func _play_entrance() -> void:
+	var panel: PanelContainer = %FormPanel
+	panel.modulate.a = 0.0
+	var tw := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	tw.tween_property(panel, "modulate:a", 1.0, 0.4)
+
+
+func _on_password_changed(_new_text: String) -> void:
+	var p := _password.text
+	if p.is_empty():
+		_strength.text = " "
+		return
+
+	var score := 0
+	if p.length() >= 8:
+		score += 1
+	if _re_upper.search(p):
+		score += 1
+	if _re_lower.search(p):
+		score += 1
+	if _re_digit.search(p):
+		score += 1
+	if _re_special.search(p):
+		score += 1
+
+	match score:
+		0, 1:
+			_strength.text = "Very Weak"
+			_strength.add_theme_color_override("font_color", TEXT_WEAK)
+		2:
+			_strength.text = "Weak"
+			_strength.add_theme_color_override("font_color", TEXT_WEAK)
+		3:
+			_strength.text = "Fair"
+			_strength.add_theme_color_override("font_color", TEXT_MEDIUM)
+		4:
+			_strength.text = "Strong"
+			_strength.add_theme_color_override("font_color", TEXT_STRONG)
+		5:
+			_strength.text = "Very Strong"
+			_strength.add_theme_color_override("font_color", TEXT_STRONG)
 
 
 func _set_busy(busy: bool) -> void:
-	_create_button.disabled = busy
-	_back_button.disabled = busy
+	_create_btn.disabled = busy
+	_back_btn.disabled = busy
 	_username.editable = not busy
-	_display_name.editable = not busy
+	_email.editable = not busy
 	_password.editable = not busy
+	_confirm.editable = not busy
 
 
-func _clear_error_styles() -> void:
-	for le in _lineedits:
-		le.remove_theme_stylebox_override("normal")
+func _clear_errors() -> void:
+	_error_label.text = " "
+	for f in _all_fields:
+		WoodPanel.clear_error_field_style(f)
 
 
-func _mark_error(edit: LineEdit) -> void:
-	edit.add_theme_stylebox_override("normal", _error_style)
+func _mark_field_error(field: LineEdit) -> void:
+	WoodPanel.apply_error_field_style(field)
 
 
-func _on_back_pressed() -> void:
-	SceneManager.goto_title()
-
-
-func _on_create_pressed() -> void:
+func _on_create() -> void:
 	var u := _username.text.strip_edges()
-	var d := _display_name.text.strip_edges()
+	var e := _email.text.strip_edges()
 	var p := _password.text
+	var c := _confirm.text
 
-	_clear_error_styles()
+	_clear_errors()
 
-	if u == "" or d == "" or p == "":
-		_status.text = "Please fill in all fields."
+	if u == "" or e == "" or p == "" or c == "":
+		_error_label.text = "Please fill in all fields."
 		if u == "":
-			_mark_error(_username)
+			_mark_field_error(_username)
 			_username.grab_focus()
-		elif d == "":
-			_mark_error(_display_name)
-			_display_name.grab_focus()
-		else:
-			_mark_error(_password)
+		elif e == "":
+			_mark_field_error(_email)
+			_email.grab_focus()
+		elif p == "":
+			_mark_field_error(_password)
 			_password.grab_focus()
+		else:
+			_mark_field_error(_confirm)
+			_confirm.grab_focus()
 		return
 
-	if p.length() < 6:
-		_mark_error(_password)
+	if not e.contains("@") or not e.contains("."):
+		_mark_field_error(_email)
+		_error_label.text = "Please enter a valid email address."
+		_email.grab_focus()
+		return
+
+	if p.length() < 8:
+		_mark_field_error(_password)
 		_password.text = ""
 		_password.grab_focus()
-		_status.text = "Password must be at least 6 letters."
+		_error_label.text = "Password must be at least 8 characters."
+		return
+
+	if p != c:
+		_mark_field_error(_confirm)
+		_confirm.text = ""
+		_confirm.grab_focus()
+		_error_label.text = "Passwords do not match."
 		return
 
 	_set_busy(true)
-	_status.text = "Creating account..."
-	var res: Dictionary = await APIClient.signup(u, p, d)
+	_loading_label.text = "Creating account..."
+	_error_label.text = " "
+
+	var res: Dictionary = await APIClient.signup(u, e, p, u)
 	_set_busy(false)
+	_loading_label.text = " "
 
 	if not bool(res.get("ok", false)):
-		var body = res.get("body")
-		if typeof(body) == TYPE_DICTIONARY:
-			var err = str(body.get("error", ""))
-			if err == "USERNAME_TAKEN":
-				_mark_error(_username)
-				_password.text = ""
+		var body_v: Variant = res.get("body")
+		if typeof(body_v) == TYPE_DICTIONARY:
+			var err_code := str(body_v.get("error", ""))
+			if err_code == "USERNAME_TAKEN":
+				_mark_field_error(_username)
 				_username.grab_focus()
-				_status.text = "That username is already taken."
+				_password.text = ""
+				_confirm.text = ""
+				_error_label.text = "That username is already taken."
 				return
-		_status.text = _format_error(res)
+			elif err_code == "EMAIL_TAKEN":
+				_mark_field_error(_email)
+				_email.grab_focus()
+				_error_label.text = "An account with this email already exists."
+				return
+		_error_label.text = _format_error(res)
 		return
 
-	_status.text = "Account created! Logging you in..."
-	_set_busy(true)
-	var login_res := await APIClient.login(u, p)
-	_set_busy(false)
+	# Signup succeeded — email verification required before login
+	SceneManager.goto_email_verification(
+		"Account created! Please check your email to verify your account before logging in.",
+		true
+	)
 
-	if bool(login_res.get("ok", false)):
-		var lbody = login_res.get("body")
-		if typeof(lbody) == TYPE_DICTIONARY:
-			var data = lbody.get("data", {})
-			var token = str(data.get("token", ""))
-			var player = data.get("player", {})
-			if token != "" and not player.is_empty():
-				Global.set_session(token, player)
-				await get_tree().create_timer(0.5).timeout
-				SceneManager.goto_map_selection()
-				return
 
-	_status.text = "Account created. Please log in manually."
+func _on_back() -> void:
+	SceneManager.goto_login()
 
 
 func _format_error(res: Dictionary) -> String:
@@ -133,7 +222,4 @@ func _format_error(res: Dictionary) -> String:
 		if err != "":
 			return err
 	var status_code := int(res.get("status_code", 0))
-	var raw := str(res.get("raw_text", ""))
-	if raw != "":
-		return "HTTP %d: %s" % [status_code, raw]
 	return "Request failed (HTTP %d)." % status_code

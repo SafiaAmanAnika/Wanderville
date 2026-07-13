@@ -8,6 +8,10 @@ var remember_device: bool = true
 var selected_character: String = ""
 var selected_world_id: String = ""
 
+# Email verification pass-through (set by SceneManager before scene change)
+var _ev_message: String = ""
+var _ev_success: bool = true
+
 const AUTH_FILE := "user://auth.cfg"
 
 const CHARACTER_SCENES: Dictionary = {

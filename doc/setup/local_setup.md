@@ -51,7 +51,7 @@ Notes:
 
 ## PostgreSQL Setup, Step By Step
 
-Use PostgreSQL for the actual running game server. The backend reads its database settings from `code/server/.env`, and the default example file uses SQLite only as a local fallback.
+Use PostgreSQL for the actual running game server. The backend reads its database settings from `code/server/.env`, so if you point `DATABASE_URL` at Neon, the API, Alembic, and any friend using the same backend will all use that same shared database.
 
 ### 1. Install PostgreSQL
 
@@ -137,7 +137,7 @@ GRANT ALL PRIVILEGES ON DATABASE wanderville TO wanderville_admin;
 
 Then configure `DATABASE_URL` in `code/server/.env`:
 ```
-DATABASE_URL=postgresql+psycopg2://wanderville_admin:wanderville123@localhost:5432/wanderville
+DATABASE_URL=postgresql+psycopg2://USER:PASSWORD@HOST/wanderville?sslmode=require
 ```
 
 Apply migrations:

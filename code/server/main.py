@@ -13,9 +13,6 @@ from app.api.farm import router as farm_router
 from app.api.inventory import router as inventory_router
 from app.api.economy import router as economy_router
 from app.config import settings
-from app.database import Base, engine
-from app.database import SessionLocal
-from app.seed_data import seed_item_definitions
 
 logging.basicConfig(
     level=logging.INFO,
@@ -25,11 +22,6 @@ logging.basicConfig(
 logger = logging.getLogger("wanderville")
 
 app = FastAPI(title="Wanderville API")
-
-Base.metadata.create_all(bind=engine)
-
-with SessionLocal() as db:
-    seed_item_definitions(db)
 
 cors_origins = (
     ["*"]

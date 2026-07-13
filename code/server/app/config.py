@@ -1,9 +1,14 @@
+from pathlib import Path
+
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+SERVER_ROOT = Path(__file__).resolve().parents[1]
+
+
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=SERVER_ROOT / ".env", extra="ignore")
 
     wanderville_env: str = "dev"
     wanderville_host: str = "127.0.0.1"

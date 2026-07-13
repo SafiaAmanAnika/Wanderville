@@ -30,6 +30,9 @@ if "sqlite" in settings.database_url and settings.wanderville_env != "dev":
 def get_db():
     db: Session = SessionLocal()
     try:
+        from app.seed_data import seed_item_definitions
+
+        seed_item_definitions(db)
         yield db
     finally:
         db.close()

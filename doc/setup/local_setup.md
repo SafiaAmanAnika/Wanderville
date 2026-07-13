@@ -46,6 +46,82 @@ Notes:
 - Migrations are managed with Alembic. Always run `python -m alembic upgrade head` after pulling.
 - Set `$env:DISABLE_RATE_LIMIT=1` to disable the in-memory rate limiter during development.
 - Tests use isolated SQLite files automatically — no PostgreSQL needed for tests.
+- If Alembic says `Context impl SQLiteImpl` and then fails with `table item_definitions already exists`, you are on a stale SQLite database, not PostgreSQL. Delete the local `*.db` file for that environment or reset the migration history before rerunning `python -m alembic upgrade head`.
+- Do not keep an old SQLite database around when switching branches or rerunning migrations, because the app also creates tables on startup and that can leave Alembic and the actual schema out of sync.
+
+## PostgreSQL Setup, Step By Step
+
+Use PostgreSQL for the actual running game server. The backend reads its database settings from `code/server/.env`, and the default example file uses SQLite only as a local fallback.
+
+### 1. Install PostgreSQL
+
+- Install PostgreSQL 14+ on Windows, or use a managed provider like Neon.
+- Make sure the PostgreSQL service is running.
+- Confirm the client tools are available by running `psql --version`.
+
+### 2. Create A Database And User
+
+Open `psql` as a PostgreSQL superuser and create a dedicated database and role:
+
+```sql
+CREATE DATABASE wanderville;
+CREATE USER wanderville_admin WITH PASSWORD 'choose-a-strong-password';
+GRANT ALL PRIVILEGES ON DATABASE wanderville TO wanderville_admin;
+```
+
+If you are using Neon or another hosted database, skip this step and use the database and username they provide.
+
+### 3. Create The Local `.env`
+
+Copy the example file and edit it:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Make sure `code/server/.env` contains values like these:
+
+```env
+WANDEVILLE_ENV=dev
+WANDEVILLE_HOST=127.0.0.1
+WANDEVILLE_PORT=8000
+DATABASE_URL=postgresql+psycopg2://wanderville_admin:your-password@localhost:5432/wanderville
+JWT_SECRET_KEY=some-long-random-value
+ACCESS_TOKEN_EXPIRE_MINUTES=10080
+CORS_ORIGINS=http://localhost:8080,http://127.0.0.1:8080
+```
+
+Use `postgresql+psycopg2://...` because the server installs `psycopg2-binary`.
+
+If you use a hosted database, your URL may also need `?sslmode=require` at the end.
+
+### 4. Verify The Connection
+
+Before running migrations, confirm PostgreSQL accepts the credentials:
+
+```powershell
+psql "postgresql://wanderville_admin:your-password@localhost:5432/wanderville" -c "SELECT 1"
+```
+
+If that fails, fix the database, username, password, or port before continuing.
+
+### 5. Apply Migrations
+
+From `code/server`, run:
+
+```powershell
+python -m alembic upgrade head
+```
+
+This creates the schema in PostgreSQL and records the current migration state.
+
+### 6. Start The Server
+
+```powershell
+uvicorn main:app --reload
+```
+
+If the server starts cleanly, open `http://127.0.0.1:8000/docs` to verify the API is responding.
 
 ## Database
 
@@ -61,7 +137,7 @@ GRANT ALL PRIVILEGES ON DATABASE wanderville TO wanderville_admin;
 
 Then configure `DATABASE_URL` in `code/server/.env`:
 ```
-DATABASE_URL=postgresql://wanderville_admin:wanderville123@localhost:5432/wanderville
+DATABASE_URL=postgresql+psycopg2://wanderville_admin:wanderville123@localhost:5432/wanderville
 ```
 
 Apply migrations:
@@ -238,6 +314,13 @@ Copy-Item .env.example .env
 - Check your `DATABASE_URL` in `.env` has the correct credentials
 - Run `python -m alembic upgrade head` to apply migrations
 - If you need to reset: `psql -U wanderville_admin -d wanderville -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"` then re-run migrations
+
+### Alembic Says SQLite And Fails On An Existing Table
+
+- Confirm the database URL in `.env` points to the database you intended to use.
+- Check for leftover SQLite files with `Get-ChildItem -Recurse *.db`.
+- If the database is disposable, delete the matching `.db` file and rerun `python -m alembic upgrade head`.
+- If you need to keep the data, inspect the Alembic state with `python -m alembic current` and align the schema history instead of rerunning the migration blindly.
 
 ### Username Already Taken
 

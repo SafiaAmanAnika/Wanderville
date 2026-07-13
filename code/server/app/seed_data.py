@@ -9,6 +9,8 @@ SEED_ITEMS = [
     {"item_code": "paddy", "name": "Paddy", "category": "general_crop", "growth_time_seconds": 30, "sell_value": 10, "xp_reward": 5, "season": "all"},
     {"item_code": "wheat", "name": "Wheat", "category": "general_crop", "growth_time_seconds": 45, "sell_value": 12, "xp_reward": 5, "season": "all"},
     {"item_code": "sugarcane", "name": "Sugarcane", "category": "general_crop", "growth_time_seconds": 50, "sell_value": 15, "xp_reward": 5, "season": "all"},
+    {"item_code": "corn", "name": "Corn", "category": "general_crop", "growth_time_seconds": 170, "sell_value": 20, "xp_reward": 8, "season": "summer"},
+    {"item_code": "cotton", "name": "Cotton", "category": "general_crop", "growth_time_seconds": 140, "sell_value": 18, "xp_reward": 8, "season": "summer"},
     # Summer
     {"item_code": "sweet_corn", "name": "Sweet Corn", "category": "summer_crop", "growth_time_seconds": 180, "sell_value": 25, "xp_reward": 10, "season": "summer"},
     {"item_code": "bell_pepper", "name": "Bell Pepper", "category": "summer_crop", "growth_time_seconds": 150, "sell_value": 22, "xp_reward": 10, "season": "summer"},

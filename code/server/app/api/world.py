@@ -22,6 +22,30 @@ def get_my_world(
     return {"success": True, "data": data.model_dump(), "message": "World retrieved"}
 
 
+@router.put("/tiles", response_model=Envelope[WorldPublic])
+def update_tiles(
+    req: TilesBulkUpdate,
+    player_id: int = Depends(get_current_player_id),
+    db: Session = Depends(get_db),
+):
+    world = world_service.get_or_create_player_world(db, player_id)
+    updated = world_service.update_tiles(db, world.id, req.tiles)
+    data = WorldPublic.model_validate(updated)
+    return {"success": True, "data": data.model_dump(), "message": "Tiles updated"}
+
+
+@router.put("/tile", response_model=Envelope[WorldPublic])
+def update_single_tile(
+    req: TileUpdate,
+    player_id: int = Depends(get_current_player_id),
+    db: Session = Depends(get_db),
+):
+    world = world_service.get_or_create_player_world(db, player_id)
+    updated = world_service.update_single_tile(db, world.id, req.x, req.y, req.tile_type)
+    data = WorldPublic.model_validate(updated)
+    return {"success": True, "data": data.model_dump(), "message": "Tile updated"}
+
+
 @router.get("/state", response_model=Envelope[WorldStateResponse])
 def get_world_state(
     db: Session = Depends(get_db),

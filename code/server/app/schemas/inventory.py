@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import List, Optional
+from typing import Annotated, List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class ItemDefinitionResponse(BaseModel):
@@ -28,25 +28,34 @@ class ItemDefinitionResponse(BaseModel):
     description: Optional[str] = None
 
 
-class AddItemRequest(BaseModel):
-    item_code: str = Field(..., min_length=1, max_length=32)
+class _ItemTypeRequest(BaseModel):
+    @model_validator(mode="before")
+    @classmethod
+    def _normalize_item_type(cls, data):
+        if isinstance(data, dict) and "item_type" not in data and "item_code" in data:
+            data = {**data, "item_type": data["item_code"]}
+        return data
+
+
+class AddItemRequest(_ItemTypeRequest):
+    item_type: Annotated[str, Field(min_length=1, max_length=32)]
     quantity: int = Field(1, ge=1)
     location: str = Field("inventory", min_length=1, max_length=16)
 
 
-class RemoveItemRequest(BaseModel):
-    item_code: str = Field(..., min_length=1, max_length=32)
+class RemoveItemRequest(_ItemTypeRequest):
+    item_type: Annotated[str, Field(min_length=1, max_length=32)]
     quantity: int = Field(1, ge=1)
 
 
-class UseItemRequest(BaseModel):
-    item_code: str = Field(..., min_length=1, max_length=32)
+class UseItemRequest(_ItemTypeRequest):
+    item_type: Annotated[str, Field(min_length=1, max_length=32)]
     quantity: int = Field(1, ge=1)
 
 
-class TransferItemRequest(BaseModel):
+class TransferItemRequest(_ItemTypeRequest):
     to_player_username: str = Field(..., min_length=1, max_length=32)
-    item_code: str = Field(..., min_length=1, max_length=32)
+    item_type: Annotated[str, Field(min_length=1, max_length=32)]
     quantity: int = Field(1, ge=1)
 
 
@@ -55,7 +64,7 @@ class InventoryItemResponse(BaseModel):
 
     id: int
     player_id: int
-    item_code: str
+    item_type: str
     quantity: int
     slot_index: Optional[int] = None
     location: str

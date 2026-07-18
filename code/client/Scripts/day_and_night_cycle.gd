@@ -55,5 +55,4 @@ func _process(delta: float) -> void:
 	var anim_length := animation_player.current_animation_length
 	if anim_length > 0.0:
 		var progress := time_elapsed / CYCLE_LENGTH
-		print("progress=", progress, " seek_to=", progress * anim_length, " anim_length=", anim_length)
 		animation_player.seek(progress * anim_length, true)

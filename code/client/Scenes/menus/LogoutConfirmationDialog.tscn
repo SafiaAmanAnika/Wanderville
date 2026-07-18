@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://by4qr6r2g2cgm"]
+[gd_scene format=3 uid="uid://by4qr6r2g2cgm"]
 
 [ext_resource type="Script" uid="uid://bui0rso1i8ypj" path="res://Scripts/menus/logout_confirmation_dialog.gd" id="1"]
 [ext_resource type="Script" path="res://Scripts/components/wood_panel.gd" id="2"]

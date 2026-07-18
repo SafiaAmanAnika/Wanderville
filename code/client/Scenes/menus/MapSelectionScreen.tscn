@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://djq4vtxxr7ln"]
+[gd_scene format=3 uid="uid://djq4vtxxr7ln"]
 
 [ext_resource type="Script" uid="uid://r4tb681d0fne" path="res://Scripts/menus/map_selection_screen.gd" id="1"]
 [ext_resource type="Script" path="res://Scripts/components/wood_panel.gd" id="2"]

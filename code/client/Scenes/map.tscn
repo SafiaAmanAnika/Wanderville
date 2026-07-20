@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cekdb4fhdph3n" path="res://Assets/tiles/tiles-terrain-32x32.png" id="3_ie368"]
 [ext_resource type="Texture2D" uid="uid://dv213cm5b1wiv" path="res://Assets/tiles/tiles-water.png" id="4_x5dfk"]
 [ext_resource type="Texture2D" uid="uid://bb7vs5niywoll" path="res://Assets/watering_plants_wat/water_animation_demo.png" id="5_5qtum"]
-[ext_resource type="Texture2D" path="res://Assets/tiles/tiles-fence-32x32.png" id="5_fls3e"]
+[ext_resource type="Texture2D" uid="uid://ddenirn05cl3u" path="res://Assets/tiles/tiles-fence-32x32.png" id="5_fls3e"]
 [ext_resource type="Texture2D" uid="uid://ce55yj2luvhv3" path="res://Assets/tiles/bricks.png" id="6_ie368"]
 [ext_resource type="Texture2D" uid="uid://813bltyuo7yj" path="res://Assets/tiles/tiles-grass dark-32x32.png" id="6_k63oc"]
 [ext_resource type="Texture2D" uid="uid://kbtcjnuevh7o" path="res://Assets/tiles/tiles-grass darkest-32x32.png" id="7_j4oe2"]
@@ -17,7 +17,7 @@
 [ext_resource type="Texture2D" uid="uid://djmseb7n78roh" path="res://Assets/tiles/tiles-grass medium-32x32.png" id="10_rg57b"]
 [ext_resource type="Texture2D" uid="uid://da035tbhuhkkb" path="res://Assets/tiles/tiles-grass-decoration-transparent-32x32.png" id="11_macow"]
 [ext_resource type="Texture2D" uid="uid://cmii1t2n7a5pr" path="res://Assets/buildings/audi.png" id="11_uus22"]
-[ext_resource type="Texture2D" path="res://Assets/tiles/tiles-stone32x32.png" id="12_ltf6m"]
+[ext_resource type="Texture2D" uid="uid://b0gjglom4sve3" path="res://Assets/tiles/tiles-stone32x32.png" id="12_ltf6m"]
 [ext_resource type="Texture2D" uid="uid://ddbriexj8vr2l" path="res://Assets/buildings/cds.png" id="12_tuwt4"]
 [ext_resource type="Texture2D" uid="uid://cbdd5juufo026" path="res://Assets/buildings/library.png" id="15_8cxpi"]
 [ext_resource type="Texture2D" uid="uid://dpguh2ip65f53" path="res://Assets/buildings/mosque.png" id="16_wpvg5"]
@@ -28,13 +28,11 @@
 [ext_resource type="Texture2D" uid="uid://c6knoaw7dsjlp" path="res://Assets/trees/Bush_nobg.png" id="22_unquq"]
 [ext_resource type="Texture2D" uid="uid://b64gi6mp6y5cv" path="res://Assets/trees/FakeChristmasTree_Nobg.png" id="23_pptwf"]
 [ext_resource type="Texture2D" uid="uid://dhknl7wvho875" path="res://Assets/trees/HealthyChrismas.png" id="24_ak4ow"]
-[ext_resource type="Texture2D" path="res://Assets/trees/lighterChristmasTree.png" id="25_ajvq6"]
+[ext_resource type="Texture2D" uid="uid://dn12eba71n0yp" path="res://Assets/trees/lighterChristmasTree.png" id="25_ajvq6"]
 [ext_resource type="Script" uid="uid://dibir1qteifpl" path="res://Scripts/water_source.gd" id="26_pmuo0"]
 [ext_resource type="Texture2D" uid="uid://c38iskeems7pe" path="res://Assets/trees/SupposedTobePineButIsCoconut(1).png" id="27_cwq17"]
 [ext_resource type="Texture2D" uid="uid://cnx3ib8tgy8p1" path="res://Assets/buildings/5pil.png" id="28_unquq"]
-[ext_resource type="Script" uid="uid://b3m6kj32fib06" path="res://Scripts/day_and_night_cycle.gd" id="31_a0h6a"]
 [ext_resource type="Script" uid="uid://yqrjjex1acer" path="res://Scripts/weather_manager.gd" id="32_ak4ow"]
-[ext_resource type="Script" uid="uid://na2j6by3bg3i" path="res://Scripts/weather_fx_manager.gd" id="33_wcnou"]
 [ext_resource type="Texture2D" uid="uid://bm0bjv6nbhttp" path="res://Assets/Orange_leaves.png" id="34_1xwpj"]
 [ext_resource type="Script" uid="uid://cqcm1065smcqr" path="res://Scripts/farm_field.gd" id="35_fn4ks"]
 [ext_resource type="Texture2D" uid="uid://bp2jfb6fmix8b" path="res://Assets/Pink_leaves.png" id="35_pmuo0"]
@@ -10119,43 +10117,11 @@ sources/15 = SubResource("TileSetAtlasSource_1xwpj")
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_1xwpj"]
 
-[sub_resource type="Animation" id="Animation_ak4ow"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:color")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
-}
-
-[sub_resource type="Animation" id="Animation_ajvq6"]
-resource_name = "new_animation"
-length = 2400.0
-loop_mode = 2
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = false
-tracks/0/path = NodePath(".:color")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.16666667, 1796.9333, 2400),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 0,
-"values": [Color(0.24150002, 0.24150002, 0.69, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(0.24150002, 0.24150002, 0.69, 1)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_cwq17"]
-_data = {
-&"RESET": SubResource("Animation_ak4ow"),
-&"new_animation": SubResource("Animation_ajvq6")
-}
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_wcnou"]
+particles_animation = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
 
 [sub_resource type="Curve" id="Curve_ak4ow"]
 _limits = [0.0, 0.3, 0.0, 1.0]
@@ -10192,6 +10158,7 @@ curve_y = SubResource("Curve_1xwpj")
 curve_z = SubResource("Curve_pmuo0")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_pptwf"]
+resource_local_to_scene = true
 particle_flag_disable_z = true
 emission_shape_offset = Vector3(5500, -2500, 0)
 emission_shape = 3
@@ -10220,6 +10187,7 @@ colors = PackedColorArray(1, 1, 1, 0.3529412, 1, 1, 1, 1)
 gradient = SubResource("Gradient_wcnou")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_pmuo0"]
+resource_local_to_scene = true
 particle_flag_disable_z = true
 emission_shape_offset = Vector3(5500, -2500, 0)
 emission_shape = 3
@@ -10266,6 +10234,7 @@ point_count = 11
 curve = SubResource("Curve_gg4i5")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_wcnou"]
+resource_local_to_scene = true
 particle_flag_disable_z = true
 emission_shape_offset = Vector3(5500, -2500, 0)
 emission_shape = 3
@@ -10289,7 +10258,7 @@ particles_anim_v_frames = 1
 particles_anim_loop = false
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_1xwpj"]
-particle_flag_disable_z = true
+resource_local_to_scene = true
 emission_shape_offset = Vector3(5500, -2500, 0)
 emission_shape = 3
 emission_box_extents = Vector3(7000, 3500, 1)
@@ -10302,7 +10271,7 @@ scale_max = 0.19999999
 anim_offset_max = 1.0
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gg4i5"]
-particle_flag_disable_z = true
+resource_local_to_scene = true
 emission_shape_offset = Vector3(5500, -2500, 0)
 emission_shape = 3
 emission_box_extents = Vector3(7000, 3500, 1)
@@ -11927,68 +11896,75 @@ texture = ExtResource("18_1ye5v")
 position = Vector2(-2867, 2796)
 polygon = PackedVector2Array(6059, -4495, 6234, -4497, 6253, -4678, 6339, -4749, 6419, -4675, 6426, -4495, 6621, -4490, 6621, -5121, 6332, -5128, 6056, -5126)
 
-[node name="DayAndNightCycle" type="CanvasModulate" parent="." unique_id=437576699]
-script = ExtResource("31_a0h6a")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="DayAndNightCycle" unique_id=1652868929]
-libraries/ = SubResource("AnimationLibrary_cwq17")
-autoplay = &"new_animation"
-
 [node name="WeatherManager" type="Node2D" parent="." unique_id=1976445493]
 script = ExtResource("32_ak4ow")
 
 [node name="WeatherTimer" type="Timer" parent="WeatherManager" unique_id=769635617]
+wait_time = 10.0
 one_shot = true
 
 [node name="SeasonTimer" type="Timer" parent="WeatherManager" unique_id=871816163]
+wait_time = 20.0
+autostart = true
 
 [node name="WeatherFXManager" type="Node2D" parent="." unique_id=982514583]
-script = ExtResource("33_wcnou")
 
 [node name="Rain" type="GPUParticles2D" parent="WeatherFXManager" unique_id=273553922]
 modulate = Color(0.68, 0.7333333, 1, 1)
 show_behind_parent = true
 top_level = true
+material = SubResource("CanvasItemMaterial_wcnou")
 use_parent_material = true
 amount = 30000
 lifetime = 0.6
 preprocess = 0.5
+local_coords = true
 trail_enabled = true
 trail_lifetime = 0.4
 process_material = SubResource("ParticleProcessMaterial_pptwf")
 
 [node name="Snow" type="GPUParticles2D" parent="WeatherFXManager" unique_id=1082114801]
+emitting = false
 amount = 50000
 lifetime = 10.0
 preprocess = 30.0
+local_coords = true
 process_material = SubResource("ParticleProcessMaterial_pmuo0")
 
 [node name="Wind" type="GPUParticles2D" parent="WeatherFXManager" unique_id=390048945]
 texture_filter = 4
 position = Vector2(563, -270)
+emitting = false
 amount = 3000
 texture = SubResource("GradientTexture2D_gg4i5")
 lifetime = 5.0
 preprocess = 2.0
 randomness = 1.0
+local_coords = true
 trail_enabled = true
 trail_section_subdivisions = 50
 process_material = SubResource("ParticleProcessMaterial_wcnou")
 
 [node name="Autumn_leaves" type="GPUParticles2D" parent="WeatherFXManager" unique_id=1371484847]
+z_index = 100
 material = SubResource("CanvasItemMaterial_a0h6a")
 position = Vector2(2419, -365)
+emitting = false
 amount = 2500
 texture = ExtResource("34_1xwpj")
 visibility_rect = Rect2(-500, -200, 1000, 400)
+local_coords = true
 process_material = SubResource("ParticleProcessMaterial_1xwpj")
 
 [node name="Spring_leaves" type="GPUParticles2D" parent="WeatherFXManager" unique_id=1209836167]
+z_index = 100
 material = SubResource("CanvasItemMaterial_a0h6a")
 position = Vector2(2419, -365)
+emitting = false
 amount = 2500
 texture = ExtResource("35_pmuo0")
 visibility_rect = Rect2(-500, -200, 1000, 400)
+local_coords = true
 process_material = SubResource("ParticleProcessMaterial_gg4i5")
 
 [node name="FarmField" type="Node2D" parent="." unique_id=1664821398]

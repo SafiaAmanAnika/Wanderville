@@ -1,56 +1,40 @@
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import create_engine, engine_from_config, pool
+from sqlalchemy import create_engine, pool
 
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from app.config import settings
-from app.database import Base
-from app.models import Player, World, FarmPlot, InventoryItem
+from app.core.config import settings
+from app.db.model_registry import Base
 
 config = context.config
-
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
-
+if config.config_file_name:
+    fileConfig(config.config_file_name, disable_existing_loggers=False)
 target_metadata = Base.metadata
 
 
-def run_migrations_offline() -> None:
-    url = settings.database_url
-    context.configure(
-        url=url,
-        target_metadata=target_metadata,
-        literal_binds=True,
-        dialect_opts={"paramstyle": "named"},
+def configure(connection=None):
+    options = dict(
+        target_metadata=target_metadata, compare_type=True, compare_server_default=True
     )
-
+    if connection is None:
+        context.configure(
+            url=settings.database_url,
+            literal_binds=True,
+            dialect_opts={"paramstyle": "named"},
+            **options,
+        )
+    else:
+        context.configure(connection=connection, **options)
     with context.begin_transaction():
         context.run_migrations()
 
 
-def run_migrations_online() -> None:
-    connectable = create_engine(
-        settings.database_url,
-        connect_args={"check_same_thread": False} if settings.database_url.startswith("sqlite") else {},
-        poolclass=pool.NullPool,
-    )
-
-    with connectable.connect() as connection:
-        context.configure(
-            connection=connection,
-            target_metadata=target_metadata,
-        )
-
-        with context.begin_transaction():
-            context.run_migrations()
-
-
 if context.is_offline_mode():
-    run_migrations_offline()
+    configure()
+elif config.attributes.get("connection") is not None:
+    configure(config.attributes["connection"])
 else:
-    run_migrations_online()
+    engine = create_engine(settings.database_url, poolclass=pool.NullPool)
+    with engine.connect() as connection:
+        configure(connection)
+    engine.dispose()

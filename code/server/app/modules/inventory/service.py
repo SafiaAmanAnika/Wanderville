@@ -55,11 +55,31 @@ class InventoryService:
         row = self.repo.stack(player_id, code, location)
         if (row.quantity if row else 0) + quantity > item.max_stack:
             raise AppError("INVENTORY_FULL", "Item stack capacity would be exceeded")
+        from sqlalchemy import func, select
+        from app.modules.shop.models import ItemRule, CollectionEntry
+        from app.modules.inventory.models import InventoryItem
+
+        rule = self.db.get(ItemRule, code)
+        if row is None and rule:
+            count = self.db.scalar(
+                select(func.count())
+                .select_from(InventoryItem)
+                .join(ItemRule, ItemRule.item_code == InventoryItem.item_code)
+                .where(
+                    InventoryItem.player_id == player_id,
+                    ItemRule.partition == rule.partition,
+                )
+            )
+            if count >= settings.inventory_partition_slots:
+                raise AppError("INVENTORY_FULL", "Inventory partition is full")
         if row:
             row.quantity += quantity
             self.db.flush()
         else:
             row = self.repo.add(player_id, code, quantity, location)
+        if self.db.get(CollectionEntry, (player_id, code)) is None:
+            self.db.add(CollectionEntry(player_id=player_id, item_code=code))
+            self.db.flush()
         return row
 
     def remove_internal(self, player_id, code, quantity=1, location="inventory"):
@@ -69,6 +89,11 @@ class InventoryService:
         if not row or row.quantity < quantity:
             raise AppError("INSUFFICIENT_INVENTORY", "Not enough items in inventory")
         if row.quantity == quantity:
+            from app.modules.pets.models import PlayerPet
+
+            pet = self.db.get(PlayerPet, player_id)
+            if pet and pet.accessory_code == code:
+                pet.accessory_code = None
             self.repo.delete(row)
             return None
         row.quantity -= quantity
@@ -94,7 +119,17 @@ class InventoryService:
     def remove(self, player_id, request, use=False):
         with transaction(self.db):
             self.players.lock(player_id)
-            if use and not self.definition(request.item_code).usable:
+            item = self.definition(request.item_code)
+            if (
+                not use
+                and (item.rarity != "common" or item.sell_value >= 50)
+                and not request.confirmed
+            ):
+                raise AppError(
+                    "CONFIRMATION_REQUIRED",
+                    "Confirm discarding a rare or high-value item",
+                )
+            if use and not item.usable:
                 raise AppError("ITEM_NOT_USABLE", "This item cannot be used directly")
             row = self.remove_internal(
                 player_id, request.item_code, request.quantity, request.location
@@ -112,6 +147,10 @@ class InventoryService:
             self.players.lock(player_id, receiver.id)
             if not receiver.is_active or not receiver.email_verified:
                 raise Forbidden("Recipient is not active")
+            from app.modules.social.service import SocialService
+
+            if SocialService(self.db).blocked(player_id, receiver.id):
+                raise Forbidden("Interaction is blocked")
             if not self.definition(request.item_code).tradable:
                 raise Forbidden("This item cannot be transferred")
             self.remove_internal(player_id, request.item_code, request.quantity)

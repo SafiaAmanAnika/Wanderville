@@ -5,6 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field, computed_field, model_validat
 
 
 class ItemRequest(BaseModel):
+    confirmed: bool = False
     item_code: str = Field(min_length=1, max_length=32)
     quantity: int = Field(1, gt=0, le=1_000_000, strict=True)
     location: Literal["inventory"] = "inventory"

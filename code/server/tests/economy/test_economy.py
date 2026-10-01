@@ -29,22 +29,25 @@ def test_reject_invalid_amounts(client, account, value):
 def test_insufficient_funds_ledger_and_isolation(client, account):
     first, second = account(), account("player_two")
     assert (
-        client.post("/economy/spend", headers=first.headers, json={"amount": 1}).json()[
-            "error"
-        ]
+        client.post(
+            "/economy/spend", headers=first.headers, json={"amount": 11}
+        ).json()["error"]
         == "INSUFFICIENT_FUNDS"
     )
     client.post("/economy/earn", headers=first.headers, json={"amount": 50})
     client.post("/economy/spend", headers=first.headers, json={"amount": 20})
     history = client.get("/economy/transactions", headers=first.headers).json()["data"]
-    assert [r["amount"] for r in history] == [-20, 50]
+    assert [r["amount"] for r in history] == [-20, 50, 10]
     assert (
         client.get("/economy/", headers=second.headers).json()["data"]["taka_balance"]
-        == 0
+        == 10
     )
-    assert (
-        client.get("/economy/transactions", headers=second.headers).json()["data"] == []
-    )
+    assert [
+        r["amount"]
+        for r in client.get("/economy/transactions", headers=second.headers).json()[
+            "data"
+        ]
+    ] == [10]
     result = client.post(
         "/economy/xp/gain", headers=first.headers, json={"xp_amount": 250}
     )
@@ -62,8 +65,8 @@ def test_ledger_failure_rolls_back_balance(account, db, monkeypatch):
     monkeypatch.setattr(EconomyRepository, "record", fail)
     with pytest.raises(RuntimeError):
         EconomyService(db).change(user.id, TransactionRequest(amount=40), earn=True)
-    assert EconomyService(db).get(user.id).aura_balance == 0
-    assert db.scalar(select(EconomyTransaction)) is None
+    assert EconomyService(db).get(user.id).aura_balance == 10
+    assert [r.amount for r in db.scalars(select(EconomyTransaction))] == [10]
 
 
 def test_arbitrary_rewards_disabled(client, account, monkeypatch):

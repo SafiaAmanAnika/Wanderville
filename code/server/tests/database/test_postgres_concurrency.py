@@ -45,7 +45,7 @@ def concurrent(factory, action):
 
 def test_no_double_spend(account, session_factory, db):
     user = account()
-    EconomyService(db).change(user.id, TransactionRequest(amount=10), earn=True)
+    # The first successful login already grants 10 Aura.
     result = concurrent(
         session_factory,
         lambda session, _: EconomyService(session).change(
@@ -126,3 +126,72 @@ def test_duplicate_planting_consumes_one_seed(account, session_factory, db):
     assert sorted(result) == ["FARM_PLOT_OCCUPIED", "ok"]
     db.expire_all()
     assert InventoryService(db).list(user.id).total_quantity == 1
+
+
+def test_simultaneous_purchase_is_idempotent(account, session_factory, db):
+    from app.modules.shop.service import ShopService
+    from app.modules.shop.schemas import PurchaseRequest
+
+    user = account()
+    request = PurchaseRequest(
+        request_id="parallel_purchase", item_code="basic_rod", quantity=1
+    )
+    results = concurrent(
+        session_factory, lambda session, _: ShopService(session).buy(user.id, request)
+    )
+    assert results == ["ok", "ok"]
+    db.expire_all()
+    assert InventoryService(db).repo.stack(user.id, "basic_rod").quantity == 1
+    assert EconomyService(db).get(user.id).aura_balance == 0
+
+
+def test_simultaneous_gift_claim_has_one_winner(account, session_factory, db):
+    from app.modules.social.service import SocialService
+    from app.modules.social.schemas import GiftRequest
+
+    a, b = account(), account("gift_receiver")
+    service = SocialService(db)
+    service.request(a.id, b.id)
+    service.respond(b.id, a.id, "accept")
+    InventoryService(db).add_compatibility(
+        a.id, ItemRequest(item_code="wheat", quantity=1)
+    )
+    gift = service.gift(
+        a.id,
+        GiftRequest(
+            target_id=b.id, item_code="wheat", quantity=1, request_id="parallel_gift"
+        ),
+    )
+    results = concurrent(
+        session_factory,
+        lambda session, _: SocialService(session).claim_gift(b.id, gift["id"]),
+    )
+    assert sorted(results) == ["ALREADY_CLAIMED", "ok"]
+    db.expire_all()
+    assert InventoryService(db).repo.stack(b.id, "wheat").quantity == 1
+
+
+def test_simultaneous_trade_acceptance_has_one_winner(account, session_factory, db):
+    from app.modules.social.service import SocialService
+    from app.modules.social.schemas import TradeRequest
+
+    a, b = account(), account("trade_receiver")
+    service = SocialService(db)
+    service.request(a.id, b.id)
+    service.respond(b.id, a.id, "accept")
+    for user, code in ((a, "wheat"), (b, "corn")):
+        InventoryService(db).add_compatibility(user.id, ItemRequest(item_code=code))
+    trade = service.propose(a.id, TradeRequest(
+        target_id=b.id, request_id="parallel_trade", offered_code="wheat",
+        offered_quantity=1, wanted_code="corn", wanted_quantity=1,
+    ))
+    results = concurrent(session_factory, lambda session, _: SocialService(session).trade_action(
+        b.id, trade["id"], "accept",
+    ))
+    assert sorted(results) == ["TRADE_CLOSED", "ok"]
+    db.expire_all()
+    inventory = InventoryService(db)
+    assert inventory.repo.stack(a.id, "wheat") is None
+    assert inventory.repo.stack(b.id, "corn") is None
+    assert inventory.repo.stack(a.id, "corn").quantity == 1
+    assert inventory.repo.stack(b.id, "wheat").quantity == 1

@@ -64,7 +64,7 @@ def test_inventory_exact_godot_payload(client, account):
         == 200
     )
     assert (
-        len(client.get("/inventory/catalog", headers=user.headers).json()["data"]) == 22
+        len(client.get("/inventory/catalog", headers=user.headers).json()["data"]) == 51
     )
 
 
@@ -72,20 +72,20 @@ def test_economy_exact_godot_payloads(client, account):
     user = account()
     assert (
         client.get("/economy/", headers=user.headers).json()["data"]["taka_balance"]
-        == 0
+        == 10
     )
     earned = client.post(
         "/economy/earn",
         headers=user.headers,
         json={"amount": 100, "currency_type": "taka", "description": "test"},
     )
-    assert earned.json()["data"]["taka_balance"] == 100
+    assert earned.json()["data"]["taka_balance"] == 110
     spent = client.post(
         "/economy/spend",
         headers=user.headers,
         json={"amount": 20, "currency_type": "taka", "description": "test"},
     )
-    assert spent.json()["data"]["aura_balance"] == 80
+    assert spent.json()["data"]["aura_balance"] == 90
     gained = client.post(
         "/economy/xp/gain",
         headers=user.headers,

@@ -31,4 +31,4 @@ Do not print DATABASE_URL or raw tokens into shared logs.
 12. Run `python -m pytest -q` for the automated constraint and rollback checks.
 
 For details and remaining limits, read [API_CONTRACT.md](API_CONTRACT.md)
-and [BACKEND_CLIENT_INTEGRATION_GAPS.md](BACKEND_CLIENT_INTEGRATION_GAPS.md).
+and [BACKEND_INTEGRATION_CHECKLIST.md](BACKEND_INTEGRATION_CHECKLIST.md).

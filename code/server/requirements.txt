@@ -9,3 +9,4 @@ psycopg2-binary==2.9.11
 email-validator==2.2.0
 google-auth==2.40.3
 requests==2.32.4
+websockets==13.1

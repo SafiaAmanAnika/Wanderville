@@ -61,3 +61,10 @@ def harvest(
     return success(
         FarmingService(db).harvest(player_id, payload.plot_id), "Crop harvested"
     )
+
+
+@router.post("/refill")
+def refill(
+    player_id: int = Depends(get_current_player_id), db: Session = Depends(get_db)
+):
+    return success(FarmingService(db).refill(player_id))

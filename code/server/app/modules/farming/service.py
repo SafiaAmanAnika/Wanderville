@@ -117,6 +117,14 @@ class FarmingService:
                     "FARM_PLOT_OCCUPIED", "This farm tile already has a crop", 409
                 )
             item = self.inventory.definition(request.item_code)
+            from app.modules.shop.models import ItemRule
+
+            rule = self.db.get(ItemRule, item.item_code)
+            seed_code = item.item_code
+            if rule and rule.harvest_code:
+                item = self.inventory.definition(rule.harvest_code)
+            if rule and self.economy.xp(player_id).level < rule.required_level:
+                raise AppError("LEVEL_LOCKED", "Required planting level not reached")
             if not item.growth_time_seconds or not (
                 item.category.endswith("_crop") or item.category == "rare_plant"
             ):
@@ -126,7 +134,7 @@ class FarmingService:
                     "OUT_OF_SEASON", "This crop cannot be planted in the current season"
                 )
             if settings.farm_consume_inventory:
-                self.inventory.remove_internal(player_id, item.item_code)
+                self.inventory.remove_internal(player_id, seed_code)
             tile = tile or self.repo.create(world.id, request.x, request.y)
             tile.is_tilled = (
                 True  # Old client has no till request; plant may till implicitly.
@@ -139,6 +147,9 @@ class FarmingService:
             if item.xp_reward:
                 self.economy.gain_internal(player_id, item.xp_reward)
             self.db.flush()
+            from app.modules.progression.service import ProgressionService
+
+            ProgressionService(self.db).record(player_id, "plant", now=now)
             result = PlantResponse(plot=tile_response(tile, state, now))
         return result
 
@@ -158,6 +169,12 @@ class FarmingService:
                     "This growth stage has already been watered",
                     409,
                 )
+            from app.modules.profile.models import PlayerProfile
+
+            profile = self.db.get(PlayerProfile, player_id)
+            if profile.water_charges <= 0:
+                raise AppError("EMPTY_BUCKET", "Refill your watering bucket")
+            profile.water_charges -= 1
             tile.is_watered, tile.watered_at = True, now
             self.db.flush()
             result = tile_response(tile, state, now)
@@ -191,6 +208,9 @@ class FarmingService:
             if xp_reward:
                 self.economy.gain_internal(player_id, xp_reward)
             self.db.flush()
+            from app.modules.progression.service import ProgressionService
+
+            ProgressionService(self.db).record(player_id, "harvest", now=now)
             result = HarvestResponse(
                 plot=tile_response(tile, state, now),
                 item_code=code,
@@ -198,3 +218,19 @@ class FarmingService:
                 quantity=1,
             )
         return result
+
+    def refill(self, player_id):
+        from app.modules.profile.models import PlayerProfile
+        from app.modules.realtime.service import RealtimeService
+        from app.modules.world.geometry import at_water
+
+        with transaction(self.db):
+            self.players.lock(player_id)
+            presence = RealtimeService(self.db).active(player_id)
+            if presence.room != "campus" or not at_water(presence.x, presence.y):
+                raise AppError(
+                    "WATER_SOURCE_REQUIRED", "Stand near a campus water source"
+                )
+            profile = self.db.get(PlayerProfile, player_id)
+            profile.water_charges = 20
+        return {"water_remaining": profile.water_charges}

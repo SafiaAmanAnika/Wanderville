@@ -1,3 +1,5 @@
+> Historical baseline documentation. For the current extension, see `BACKEND_UPDATE_GUIDE.md`, `SRS_BACKEND_AUDIT.md`, `NEW_API_REFERENCE.md`, and `database/REMAINING_FEATURES.md`. Existing legacy routes remain supported.
+
 # Core database relationships
 
 All player-owned foreign keys cascade on deletion. Item definitions are reference

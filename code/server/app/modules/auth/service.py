@@ -26,6 +26,9 @@ class AuthService:
     def _initialize_player(self, player):
         WorldRepository(self.db).create(player.id)
         EconomyRepository(self.db).create(player.id)
+        from app.modules.profile.service import ProfileService
+
+        ProfileService(self.db).initialize(player.id)
         if settings.starting_aura:
             EconomyService(self.db).change_internal(
                 player.id, settings.starting_aura, True, "starting_balance"
@@ -57,6 +60,13 @@ class AuthService:
         return raw
 
     def _login_result(self, player, now, ip):
+        from app.modules.progression.service import ProgressionService
+        from app.modules.profile.models import PlayerProfile
+
+        ProgressionService(self.db).login(player.id, now)
+        profile = self.db.get(PlayerProfile, player.id)
+        if profile:
+            profile.last_seen_at = now
         player.last_login_at, player.last_login_ip = now, ip
         player.failed_login_attempts, player.locked_until = 0, None
         refresh = self._refresh_token(player.id, now)

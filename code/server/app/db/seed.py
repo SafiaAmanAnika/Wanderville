@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 
 from app.db import model_registry  # noqa: F401
 from app.db.session import SessionLocal, transaction
@@ -26,12 +26,18 @@ def seed_reference_data(db):
         if db.get(WorldState, 1) is None:
             db.add(WorldState(id=1))
         db.flush()
+        from app.db.gameplay_seed import seed_gameplay
+
+        seed_gameplay(db)
 
 
 def main():
     with SessionLocal() as db:
         seed_reference_data(db)
-    print(f"Seeded {len(SEED_ITEMS)} item definitions and ensured global world state.")
+        count = db.scalar(select(func.count()).select_from(ItemDefinition))
+    print(
+        f"Seeded {count} item definitions and gameplay reference data; preserved world clock."
+    )
 
 
 if __name__ == "__main__":

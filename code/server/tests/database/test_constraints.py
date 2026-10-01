@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 import pytest
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.exc import IntegrityError
 
 from app.core.clock import utcnow
@@ -168,7 +168,7 @@ def test_player_delete_cascades_private_data_only(account, db):
         EconomyTransaction,
     ]:
         assert db.scalar(select(model)) is None, model.__tablename__
-    assert len(db.scalars(select(ItemDefinition)).all()) == 22
+    assert len(db.scalars(select(ItemDefinition)).all()) == 51
     assert db.get(WorldState, 1) is not None
 
 
@@ -185,12 +185,18 @@ def test_world_delete_cascades_tiles(account, db):
 
 def test_seeds_are_idempotent_and_preserve_clock(db):
     state = db.get(WorldState, 1)
-    original = state.season_started_at
+    original = (state.season_started_at, state.day_cycle_anchor_at, state.current_season,
+                state.weather, state.season_duration_minutes, state.day_night_cycle_minutes)
+    counts = {table.name: db.scalar(select(func.count()).select_from(table))
+              for table in Base.metadata.sorted_tables}
     seed_reference_data(db)
     seed_reference_data(db)
-    assert len(db.scalars(select(ItemDefinition)).all()) == 22
-    assert db.get(WorldState, 1).season_started_at == original
-    assert len(Base.metadata.tables) == 11
+    assert len(db.scalars(select(ItemDefinition)).all()) == 51
+    assert (state.season_started_at, state.day_cycle_anchor_at, state.current_season,
+            state.weather, state.season_duration_minutes, state.day_night_cycle_minutes) == original
+    assert {table.name: db.scalar(select(func.count()).select_from(table))
+            for table in Base.metadata.sorted_tables} == counts
+    assert len(Base.metadata.tables) == 41
 
 
 @pytest.mark.parametrize(

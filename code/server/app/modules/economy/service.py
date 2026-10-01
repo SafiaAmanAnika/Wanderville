@@ -84,8 +84,15 @@ class EconomyService:
         row = self.repo.experience(player_id)
         if row is None:
             raise NotFound("Player experience has not been initialized")
+        previous_level = row.level
         row.total_xp += amount
         row.level = progression(row.total_xp)[0]
+        if row.level > previous_level:
+            from app.modules.notifications.service import NotificationsService
+
+            NotificationsService(self.db).emit(
+                player_id, "level_up", f"Reached level {row.level}", "/economy/xp"
+            )
         self.db.flush()
         return row
 

@@ -1,0 +1,5690 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "WanderVille API",
+    "version": "2.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Signup",
+        "operationId": "signup_auth_signup_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_PlayerPublic_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login",
+        "operationId": "login_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_LoginResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/google": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Google",
+        "operationId": "google_auth_google_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_LoginResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Refresh",
+        "operationId": "refresh_auth_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_TokenResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Logout",
+        "operationId": "logout_auth_logout_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_NoneType_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/verify-email": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Verify Email",
+        "operationId": "verify_email_auth_verify_email_get",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512,
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_PlayerPublic_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/resend-verification": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Resend",
+        "operationId": "resend_auth_resend_verification_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_NoneType_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Forgot",
+        "operationId": "forgot_auth_forgot_password_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_NoneType_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Reset",
+        "operationId": "reset_auth_reset_password_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_NoneType_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/change-password": {
+      "put": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Change",
+        "operationId": "change_auth_change_password_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_NoneType_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Me",
+        "operationId": "me_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_PlayerPublic_"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/inventory/": {
+      "get": {
+        "tags": [
+          "inventory"
+        ],
+        "summary": "Inventory",
+        "operationId": "inventory_inventory__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_InventoryListResponse_"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/inventory/catalog": {
+      "get": {
+        "tags": [
+          "inventory"
+        ],
+        "summary": "Catalog",
+        "operationId": "catalog_inventory_catalog_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_list_ItemDefinitionResponse__"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/inventory/catalog/{season}": {
+      "get": {
+        "tags": [
+          "inventory"
+        ],
+        "summary": "Seasonal Catalog",
+        "operationId": "seasonal_catalog_inventory_catalog__season__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "season",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Season"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_list_ItemDefinitionResponse__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inventory/add": {
+      "post": {
+        "tags": [
+          "inventory"
+        ],
+        "summary": "Add",
+        "description": "Development compatibility endpoint. Disabled outside dev/test.",
+        "operationId": "add_inventory_add_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_InventoryItemResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/inventory/remove": {
+      "post": {
+        "tags": [
+          "inventory"
+        ],
+        "summary": "Remove",
+        "operationId": "remove_inventory_remove_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_Union_InventoryItemResponse__NoneType__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/inventory/use": {
+      "post": {
+        "tags": [
+          "inventory"
+        ],
+        "summary": "Use",
+        "operationId": "use_inventory_use_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_Union_InventoryItemResponse__NoneType__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/inventory/transfer": {
+      "post": {
+        "tags": [
+          "inventory"
+        ],
+        "summary": "Transfer",
+        "operationId": "transfer_inventory_transfer_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/economy/": {
+      "get": {
+        "tags": [
+          "economy"
+        ],
+        "summary": "Economy",
+        "operationId": "economy_economy__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_EconomyResponse_"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/economy/earn": {
+      "post": {
+        "tags": [
+          "economy"
+        ],
+        "summary": "Earn",
+        "description": "Development compatibility rewards only.",
+        "operationId": "earn_economy_earn_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_EconomyResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/economy/spend": {
+      "post": {
+        "tags": [
+          "economy"
+        ],
+        "summary": "Spend",
+        "operationId": "spend_economy_spend_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_EconomyResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/economy/xp": {
+      "get": {
+        "tags": [
+          "economy"
+        ],
+        "summary": "Xp",
+        "operationId": "xp_economy_xp_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_XPResponse_"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/economy/xp/gain": {
+      "post": {
+        "tags": [
+          "economy"
+        ],
+        "summary": "Gain",
+        "description": "Development compatibility rewards only.",
+        "operationId": "gain_economy_xp_gain_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/XPGainRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_XPResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/economy/transactions": {
+      "get": {
+        "tags": [
+          "economy"
+        ],
+        "summary": "History",
+        "operationId": "history_economy_transactions_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_list_TransactionResponse__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/world/me": {
+      "get": {
+        "tags": [
+          "world"
+        ],
+        "summary": "Mine",
+        "operationId": "mine_world_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_WorldPublic_"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/world/state": {
+      "get": {
+        "tags": [
+          "world"
+        ],
+        "summary": "State",
+        "operationId": "state_world_state_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_WorldStateResponse_"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/world/advance-season": {
+      "post": {
+        "tags": [
+          "world"
+        ],
+        "summary": "Advance",
+        "operationId": "advance_world_advance_season_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_WorldStateResponse_"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/world/tiles": {
+      "put": {
+        "tags": [
+          "world"
+        ],
+        "summary": "Retired",
+        "operationId": "retired_world_tiles_put",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/world/tile": {
+      "put": {
+        "tags": [
+          "world"
+        ],
+        "summary": "Retired",
+        "operationId": "retired_world_tile_put",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/farm/plots": {
+      "get": {
+        "tags": [
+          "farming"
+        ],
+        "summary": "Plots",
+        "operationId": "plots_farm_plots_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_FarmGridResponse_"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/farm/till": {
+      "post": {
+        "tags": [
+          "farming"
+        ],
+        "summary": "Till",
+        "operationId": "till_farm_till_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_FarmTileResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/farm/plant": {
+      "post": {
+        "tags": [
+          "farming"
+        ],
+        "summary": "Plant",
+        "operationId": "plant_farm_plant_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlantRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_PlantResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/farm/water": {
+      "post": {
+        "tags": [
+          "farming"
+        ],
+        "summary": "Water",
+        "operationId": "water_farm_water_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlotRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_FarmTileResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/farm/harvest": {
+      "post": {
+        "tags": [
+          "farming"
+        ],
+        "summary": "Harvest",
+        "operationId": "harvest_farm_harvest_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlotRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_HarvestResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/farm/refill": {
+      "post": {
+        "tags": [
+          "farming"
+        ],
+        "summary": "Refill",
+        "operationId": "refill_farm_refill_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/notifications": {
+      "get": {
+        "tags": [
+          "notifications"
+        ],
+        "summary": "Get Notifications",
+        "operationId": "get_notifications_notifications_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "before",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "exclusiveMinimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Before"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notifications/{notification_id}": {
+      "post": {
+        "tags": [
+          "notifications"
+        ],
+        "summary": "Post Notification Id",
+        "operationId": "post_notification_id_notifications__notification_id__post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "notification_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Notification Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile": {
+      "get": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Get Profile",
+        "operationId": "get_profile_profile_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Put Profile",
+        "operationId": "put_profile_profile_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/profile/save": {
+      "post": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Post Save",
+        "operationId": "post_save_profile_save_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/profile/heartbeat": {
+      "post": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Post Heartbeat",
+        "operationId": "post_heartbeat_profile_heartbeat_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/profile/tutorial": {
+      "post": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Post Tutorial",
+        "operationId": "post_tutorial_profile_tutorial_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TutorialRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/profile/hints/{feature}": {
+      "post": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Post Hints Feature",
+        "operationId": "post_hints_feature_profile_hints__feature__post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "feature",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "movement",
+                "farming",
+                "fishing",
+                "shop",
+                "pets",
+                "social"
+              ],
+              "type": "string",
+              "title": "Feature"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profile/feedback": {
+      "post": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Post Feedback",
+        "operationId": "post_feedback_profile_feedback_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/profile/delete-account": {
+      "post": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "Post Delete Account",
+        "operationId": "post_delete_account_profile_delete_account_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAccountRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/housing": {
+      "get": {
+        "tags": [
+          "housing"
+        ],
+        "summary": "Get Housing",
+        "operationId": "get_housing_housing_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/housing/upgrade": {
+      "post": {
+        "tags": [
+          "housing"
+        ],
+        "summary": "Post Upgrade",
+        "operationId": "post_upgrade_housing_upgrade_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpgradeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/housing/decorations": {
+      "post": {
+        "tags": [
+          "housing"
+        ],
+        "summary": "Post Decorations",
+        "operationId": "post_decorations_housing_decorations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecorationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/housing/decorations/{decoration_id}/remove": {
+      "post": {
+        "tags": [
+          "housing"
+        ],
+        "summary": "Post Decorations Decoration Id Remove",
+        "operationId": "post_decorations_decoration_id_remove_housing_decorations__decoration_id__remove_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "decoration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Decoration Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pets": {
+      "get": {
+        "tags": [
+          "pets"
+        ],
+        "summary": "Get Pets",
+        "operationId": "get_pets_pets_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/pets/actions": {
+      "post": {
+        "tags": [
+          "pets"
+        ],
+        "summary": "Post Actions",
+        "operationId": "post_actions_pets_actions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PetAction"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/shop": {
+      "get": {
+        "tags": [
+          "shop"
+        ],
+        "summary": "Get Shop",
+        "operationId": "get_shop_shop_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/shop/buy": {
+      "post": {
+        "tags": [
+          "shop"
+        ],
+        "summary": "Post Buy",
+        "operationId": "post_buy_shop_buy_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PurchaseRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/shop/sell": {
+      "post": {
+        "tags": [
+          "shop"
+        ],
+        "summary": "Post Sell",
+        "operationId": "post_sell_shop_sell_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/shop/collection": {
+      "get": {
+        "tags": [
+          "shop"
+        ],
+        "summary": "Get Collection",
+        "operationId": "get_collection_shop_collection_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "fish_only",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Fish Only"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/progression/goals": {
+      "get": {
+        "tags": [
+          "progression"
+        ],
+        "summary": "Get Goals",
+        "operationId": "get_goals_progression_goals_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/progression/statistics": {
+      "get": {
+        "tags": [
+          "progression"
+        ],
+        "summary": "Get Statistics",
+        "operationId": "get_statistics_progression_statistics_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/fishing/cast": {
+      "post": {
+        "tags": [
+          "fishing"
+        ],
+        "summary": "Post Cast",
+        "operationId": "post_cast_fishing_cast_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CastRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/fishing/catch": {
+      "post": {
+        "tags": [
+          "fishing"
+        ],
+        "summary": "Post Catch",
+        "operationId": "post_catch_fishing_catch_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/fishing/drops/{drop_id}/claim": {
+      "post": {
+        "tags": [
+          "fishing"
+        ],
+        "summary": "Post Drops Drop Id Claim",
+        "operationId": "post_drops_drop_id_claim_fishing_drops__drop_id__claim_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "drop_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Drop Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fishing/spots": {
+      "get": {
+        "tags": [
+          "fishing"
+        ],
+        "summary": "Get Spots",
+        "operationId": "get_spots_fishing_spots_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/fishing/drops": {
+      "get": {
+        "tags": [
+          "fishing"
+        ],
+        "summary": "Get Drops",
+        "operationId": "get_drops_fishing_drops_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/social/search": {
+      "get": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Get Search",
+        "operationId": "get_search_social_search_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 32,
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/social/friends": {
+      "get": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Get Friends",
+        "operationId": "get_friends_social_friends_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/social/requests": {
+      "get": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Get Requests",
+        "operationId": "get_requests_social_requests_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Post Requests",
+        "operationId": "post_requests_social_requests_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TargetRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/social/friends/{target_id}": {
+      "post": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Post Friends Target Id",
+        "operationId": "post_friends_target_id_social_friends__target_id__post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "target_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Target Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FriendAction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/social/blocks": {
+      "get": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Blocks",
+        "operationId": "blocks_social_blocks_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Post Blocks",
+        "operationId": "post_blocks_social_blocks_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TargetRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/social/blocks/{target_id}/remove": {
+      "post": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Post Blocks Target Id Remove",
+        "operationId": "post_blocks_target_id_remove_social_blocks__target_id__remove_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "target_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Target Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/social/gifts": {
+      "post": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Post Gifts",
+        "operationId": "post_gifts_social_gifts_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GiftRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Gifts",
+        "operationId": "gifts_social_gifts_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "before",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "exclusiveMinimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Before"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/social/gifts/{gift_id}/claim": {
+      "post": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Post Gifts Gift Id Claim",
+        "operationId": "post_gifts_gift_id_claim_social_gifts__gift_id__claim_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "gift_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Gift Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/social/trades": {
+      "get": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Trades",
+        "operationId": "trades_social_trades_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Post Trades",
+        "operationId": "post_trades_social_trades_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TradeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/social/trades/{trade_id}": {
+      "post": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Post Trades Trade Id",
+        "operationId": "post_trades_trade_id_social_trades__trade_id__post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "trade_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Trade Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TradeAction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/social/visit/{target_id}": {
+      "post": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Post Visit Target Id",
+        "operationId": "post_visit_target_id_social_visit__target_id__post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "target_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Target Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/social/invites": {
+      "get": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Invites",
+        "operationId": "invites_social_invites_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Post Invites",
+        "operationId": "post_invites_social_invites_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TargetRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/social/invites/{invite_id}/accept": {
+      "post": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Post Invites Invite Id Accept",
+        "operationId": "post_invites_invite_id_accept_social_invites__invite_id__accept_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "invite_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Invite Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/social/messages": {
+      "post": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Post Messages",
+        "operationId": "post_messages_social_messages_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/social/messages/{target_id}": {
+      "get": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Get Messages Target Id",
+        "operationId": "get_messages_target_id_social_messages__target_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "target_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Target Id"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "After"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/social/reports": {
+      "post": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Post Reports",
+        "operationId": "post_reports_social_reports_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/social/farms/{target_id}": {
+      "get": {
+        "tags": [
+          "social"
+        ],
+        "summary": "Farm",
+        "operationId": "farm_social_farms__target_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "target_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Target Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events": {
+      "get": {
+        "tags": [
+          "events"
+        ],
+        "summary": "Get Events",
+        "operationId": "get_events_events_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/events/{code}/claim": {
+      "post": {
+        "tags": [
+          "events"
+        ],
+        "summary": "Post Code Claim",
+        "operationId": "post_code_claim_events__code__claim_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Code"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/realtime/enter": {
+      "post": {
+        "tags": [
+          "realtime"
+        ],
+        "summary": "Enter",
+        "operationId": "enter_realtime_enter_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/realtime/move": {
+      "post": {
+        "tags": [
+          "realtime"
+        ],
+        "summary": "Move",
+        "operationId": "move_realtime_move_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/realtime/snapshot": {
+      "get": {
+        "tags": [
+          "realtime"
+        ],
+        "summary": "Snapshot",
+        "operationId": "snapshot_realtime_snapshot_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/realtime/chat": {
+      "post": {
+        "tags": [
+          "realtime"
+        ],
+        "summary": "Chat",
+        "operationId": "chat_realtime_chat_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NearbyChatRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/realtime/emote": {
+      "post": {
+        "tags": [
+          "realtime"
+        ],
+        "summary": "Emote",
+        "operationId": "emote_realtime_emote_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmoteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CastRequest": {
+        "properties": {
+          "spot_code": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Spot Code"
+          },
+          "rod_code": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Rod Code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "spot_code",
+          "rod_code"
+        ],
+        "title": "CastRequest"
+      },
+      "CatchRequest": {
+        "properties": {
+          "cast_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Cast Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cast_id"
+        ],
+        "title": "CatchRequest"
+      },
+      "ChangePasswordRequest": {
+        "properties": {
+          "new_password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "New Password"
+          },
+          "current_password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Current Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "new_password",
+          "current_password"
+        ],
+        "title": "ChangePasswordRequest"
+      },
+      "DecorationRequest": {
+        "properties": {
+          "item_code": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Item Code"
+          },
+          "x": {
+            "type": "integer",
+            "maximum": 32767.0,
+            "minimum": 0.0,
+            "title": "X"
+          },
+          "y": {
+            "type": "integer",
+            "maximum": 32767.0,
+            "minimum": 0.0,
+            "title": "Y"
+          }
+        },
+        "type": "object",
+        "required": [
+          "item_code",
+          "x",
+          "y"
+        ],
+        "title": "DecorationRequest"
+      },
+      "DeleteAccountRequest": {
+        "properties": {
+          "confirm_username": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 3,
+            "title": "Confirm Username"
+          },
+          "password": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Password"
+          },
+          "google_id_token": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 8192,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Google Id Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "confirm_username"
+        ],
+        "title": "DeleteAccountRequest"
+      },
+      "EconomyResponse": {
+        "properties": {
+          "player_id": {
+            "type": "integer",
+            "title": "Player Id"
+          },
+          "aura_balance": {
+            "type": "integer",
+            "title": "Aura Balance"
+          },
+          "taka_balance": {
+            "type": "integer",
+            "title": "Taka Balance"
+          },
+          "coin_balance": {
+            "type": "integer",
+            "const": 0,
+            "title": "Coin Balance",
+            "default": 0
+          },
+          "total_earned": {
+            "type": "integer",
+            "title": "Total Earned"
+          },
+          "total_spent": {
+            "type": "integer",
+            "title": "Total Spent"
+          }
+        },
+        "type": "object",
+        "required": [
+          "player_id",
+          "aura_balance",
+          "taka_balance",
+          "total_earned",
+          "total_spent"
+        ],
+        "title": "EconomyResponse"
+      },
+      "EmailRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "maxLength": 255,
+            "format": "email",
+            "title": "Email"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "title": "EmailRequest"
+      },
+      "EmoteRequest": {
+        "properties": {
+          "emote": {
+            "type": "string",
+            "enum": [
+              "wave",
+              "happy",
+              "sad",
+              "dance"
+            ],
+            "title": "Emote"
+          }
+        },
+        "type": "object",
+        "required": [
+          "emote"
+        ],
+        "title": "EmoteRequest"
+      },
+      "EnterRequest": {
+        "properties": {
+          "owner_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Id"
+          }
+        },
+        "type": "object",
+        "title": "EnterRequest"
+      },
+      "Envelope_EconomyResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/EconomyResponse"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[EconomyResponse]"
+      },
+      "Envelope_FarmGridResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/FarmGridResponse"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[FarmGridResponse]"
+      },
+      "Envelope_FarmTileResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/FarmTileResponse"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[FarmTileResponse]"
+      },
+      "Envelope_HarvestResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/HarvestResponse"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[HarvestResponse]"
+      },
+      "Envelope_InventoryItemResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/InventoryItemResponse"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[InventoryItemResponse]"
+      },
+      "Envelope_InventoryListResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/InventoryListResponse"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[InventoryListResponse]"
+      },
+      "Envelope_LoginResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/LoginResponse"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[LoginResponse]"
+      },
+      "Envelope_NoneType_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "type": "null",
+            "title": "Data"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[NoneType]"
+      },
+      "Envelope_PlantResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/PlantResponse"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[PlantResponse]"
+      },
+      "Envelope_PlayerPublic_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/PlayerPublic"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[PlayerPublic]"
+      },
+      "Envelope_TokenResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/TokenResponse"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[TokenResponse]"
+      },
+      "Envelope_Union_InventoryItemResponse__NoneType__": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InventoryItemResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[Union[InventoryItemResponse, NoneType]]"
+      },
+      "Envelope_WorldPublic_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/WorldPublic"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[WorldPublic]"
+      },
+      "Envelope_WorldStateResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/WorldStateResponse"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[WorldStateResponse]"
+      },
+      "Envelope_XPResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/XPResponse"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[XPResponse]"
+      },
+      "Envelope_dict_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Data"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[dict]"
+      },
+      "Envelope_list_ItemDefinitionResponse__": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ItemDefinitionResponse"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[list[ItemDefinitionResponse]]"
+      },
+      "Envelope_list_TransactionResponse__": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true,
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/TransactionResponse"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "OK"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "Envelope[list[TransactionResponse]]"
+      },
+      "FarmGridResponse": {
+        "properties": {
+          "plots": {
+            "items": {
+              "$ref": "#/components/schemas/FarmTileResponse"
+            },
+            "type": "array",
+            "title": "Plots"
+          },
+          "player_id": {
+            "type": "integer",
+            "title": "Player Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "plots",
+          "player_id"
+        ],
+        "title": "FarmGridResponse"
+      },
+      "FarmTileResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "x": {
+            "type": "integer",
+            "title": "X"
+          },
+          "y": {
+            "type": "integer",
+            "title": "Y"
+          },
+          "item_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Code"
+          },
+          "is_tilled": {
+            "type": "boolean",
+            "title": "Is Tilled"
+          },
+          "growth_progress_seconds": {
+            "type": "number",
+            "title": "Growth Progress Seconds"
+          },
+          "growth_stage": {
+            "type": "integer",
+            "title": "Growth Stage"
+          },
+          "is_watered": {
+            "type": "boolean",
+            "title": "Is Watered"
+          },
+          "planted_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planted At"
+          },
+          "ready": {
+            "type": "boolean",
+            "title": "Ready"
+          },
+          "crop_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crop Type",
+            "readOnly": true
+          },
+          "is_harvested": {
+            "type": "boolean",
+            "title": "Is Harvested",
+            "readOnly": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "x",
+          "y",
+          "item_code",
+          "is_tilled",
+          "growth_progress_seconds",
+          "growth_stage",
+          "is_watered",
+          "planted_at",
+          "ready",
+          "crop_type",
+          "is_harvested"
+        ],
+        "title": "FarmTileResponse"
+      },
+      "FeedbackRequest": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "pattern": ".*\\S.*",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "FeedbackRequest"
+      },
+      "FriendAction": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "accept",
+              "decline",
+              "remove"
+            ],
+            "title": "Action"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action"
+        ],
+        "title": "FriendAction"
+      },
+      "GiftRequest": {
+        "properties": {
+          "target_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Target Id"
+          },
+          "request_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 8,
+            "pattern": "^[a-zA-Z0-9_-]+$",
+            "title": "Request Id"
+          },
+          "item_code": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Item Code"
+          },
+          "quantity": {
+            "type": "integer",
+            "maximum": 99.0,
+            "minimum": 1.0,
+            "title": "Quantity",
+            "default": 1
+          }
+        },
+        "type": "object",
+        "required": [
+          "target_id",
+          "request_id",
+          "item_code"
+        ],
+        "title": "GiftRequest"
+      },
+      "GoogleRequest": {
+        "properties": {
+          "id_token": {
+            "type": "string",
+            "maxLength": 8192,
+            "minLength": 1,
+            "title": "Id Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id_token"
+        ],
+        "title": "GoogleRequest"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HarvestResponse": {
+        "properties": {
+          "plot": {
+            "$ref": "#/components/schemas/FarmTileResponse"
+          },
+          "item_code": {
+            "type": "string",
+            "title": "Item Code"
+          },
+          "crop_type": {
+            "type": "string",
+            "title": "Crop Type"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "plot",
+          "item_code",
+          "crop_type",
+          "quantity"
+        ],
+        "title": "HarvestResponse"
+      },
+      "InventoryItemResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "player_id": {
+            "type": "integer",
+            "title": "Player Id"
+          },
+          "item_code": {
+            "type": "string",
+            "title": "Item Code"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          },
+          "slot_index": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slot Index"
+          },
+          "location": {
+            "type": "string",
+            "title": "Location"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "item": {
+            "$ref": "#/components/schemas/ItemDefinitionResponse"
+          },
+          "item_type": {
+            "type": "string",
+            "title": "Item Type",
+            "description": "Deprecated output alias for older backend tools.",
+            "readOnly": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "player_id",
+          "item_code",
+          "quantity",
+          "slot_index",
+          "location",
+          "created_at",
+          "updated_at",
+          "item",
+          "item_type"
+        ],
+        "title": "InventoryItemResponse"
+      },
+      "InventoryListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/InventoryItemResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total_items": {
+            "type": "integer",
+            "title": "Total Items"
+          },
+          "total_quantity": {
+            "type": "integer",
+            "title": "Total Quantity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total_items",
+          "total_quantity"
+        ],
+        "title": "InventoryListResponse"
+      },
+      "ItemDefinitionResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "item_code": {
+            "type": "string",
+            "title": "Item Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "max_stack": {
+            "type": "integer",
+            "title": "Max Stack"
+          },
+          "sell_value": {
+            "type": "integer",
+            "title": "Sell Value"
+          },
+          "buy_value": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buy Value"
+          },
+          "growth_time_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Growth Time Seconds"
+          },
+          "season": {
+            "type": "string",
+            "title": "Season"
+          },
+          "xp_reward": {
+            "type": "integer",
+            "title": "Xp Reward"
+          },
+          "rarity": {
+            "type": "string",
+            "title": "Rarity"
+          },
+          "tradable": {
+            "type": "boolean",
+            "title": "Tradable"
+          },
+          "giftable": {
+            "type": "boolean",
+            "title": "Giftable"
+          },
+          "usable": {
+            "type": "boolean",
+            "title": "Usable"
+          },
+          "placeable": {
+            "type": "boolean",
+            "title": "Placeable"
+          },
+          "icon_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon Path"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "item_code",
+          "name",
+          "category",
+          "max_stack",
+          "sell_value",
+          "buy_value",
+          "growth_time_seconds",
+          "season",
+          "xp_reward",
+          "rarity",
+          "tradable",
+          "giftable",
+          "usable",
+          "placeable",
+          "icon_path",
+          "description"
+        ],
+        "title": "ItemDefinitionResponse"
+      },
+      "ItemRequest": {
+        "properties": {
+          "confirmed": {
+            "type": "boolean",
+            "title": "Confirmed",
+            "default": false
+          },
+          "item_code": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Item Code"
+          },
+          "quantity": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Quantity",
+            "default": 1
+          },
+          "location": {
+            "type": "string",
+            "const": "inventory",
+            "title": "Location",
+            "default": "inventory"
+          }
+        },
+        "type": "object",
+        "required": [
+          "item_code"
+        ],
+        "title": "ItemRequest"
+      },
+      "LoginRequest": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 3,
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "LoginRequest"
+      },
+      "LoginResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "player": {
+            "$ref": "#/components/schemas/PlayerPublic"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "refresh_token",
+          "player"
+        ],
+        "title": "LoginResponse"
+      },
+      "MessageRequest": {
+        "properties": {
+          "target_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Target Id"
+          },
+          "body": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "pattern": ".*\\S.*",
+            "title": "Body"
+          }
+        },
+        "type": "object",
+        "required": [
+          "target_id",
+          "body"
+        ],
+        "title": "MessageRequest"
+      },
+      "MoveRequest": {
+        "properties": {
+          "x": {
+            "type": "number",
+            "maximum": 100000.0,
+            "minimum": -100000.0,
+            "title": "X"
+          },
+          "y": {
+            "type": "number",
+            "maximum": 100000.0,
+            "minimum": -100000.0,
+            "title": "Y"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Sequence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "x",
+          "y",
+          "sequence"
+        ],
+        "title": "MoveRequest"
+      },
+      "NearbyChatRequest": {
+        "properties": {
+          "body": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "pattern": ".*\\S.*",
+            "title": "Body"
+          }
+        },
+        "type": "object",
+        "required": [
+          "body"
+        ],
+        "title": "NearbyChatRequest"
+      },
+      "NotificationUpdate": {
+        "properties": {
+          "dismiss": {
+            "type": "boolean",
+            "title": "Dismiss",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "NotificationUpdate"
+      },
+      "PetAction": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "rename",
+              "feed",
+              "pet",
+              "accessory",
+              "fetch_start",
+              "fetch_finish"
+            ],
+            "title": "Action"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32,
+                "minLength": 1,
+                "pattern": ".*\\S.*"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "item_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action"
+        ],
+        "title": "PetAction"
+      },
+      "PlantRequest": {
+        "properties": {
+          "x": {
+            "type": "integer",
+            "maximum": 32767.0,
+            "minimum": 0.0,
+            "title": "X"
+          },
+          "y": {
+            "type": "integer",
+            "maximum": 32767.0,
+            "minimum": 0.0,
+            "title": "Y"
+          },
+          "item_code": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Item Code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "x",
+          "y",
+          "item_code"
+        ],
+        "title": "PlantRequest"
+      },
+      "PlantResponse": {
+        "properties": {
+          "plot": {
+            "$ref": "#/components/schemas/FarmTileResponse"
+          },
+          "water_remaining": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Water Remaining"
+          }
+        },
+        "type": "object",
+        "required": [
+          "plot"
+        ],
+        "title": "PlantResponse"
+      },
+      "PlayerPublic": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "email_verified": {
+            "type": "boolean",
+            "title": "Email Verified"
+          },
+          "avatar_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avatar Url"
+          },
+          "oauth_provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Oauth Provider"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "position_x": {
+            "type": "integer",
+            "title": "Position X",
+            "default": 0
+          },
+          "position_y": {
+            "type": "integer",
+            "title": "Position Y",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "username",
+          "display_name",
+          "email",
+          "email_verified",
+          "avatar_url",
+          "oauth_provider",
+          "created_at",
+          "is_active"
+        ],
+        "title": "PlayerPublic"
+      },
+      "PlotRequest": {
+        "properties": {
+          "plot_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Plot Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "plot_id"
+        ],
+        "title": "PlotRequest"
+      },
+      "ProfileUpdate": {
+        "properties": {
+          "display_name": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": ".*\\S.*",
+            "title": "Display Name"
+          },
+          "character_code": {
+            "type": "string",
+            "enum": [
+              "catto",
+              "girl",
+              "player1"
+            ],
+            "title": "Character Code"
+          },
+          "map_code": {
+            "type": "string",
+            "const": "campus",
+            "title": "Map Code"
+          },
+          "status_message": {
+            "type": "string",
+            "maxLength": 140,
+            "title": "Status Message"
+          },
+          "music_volume": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Music Volume"
+          },
+          "effects_volume": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Effects Volume"
+          },
+          "fullscreen": {
+            "type": "boolean",
+            "title": "Fullscreen"
+          }
+        },
+        "type": "object",
+        "title": "ProfileUpdate"
+      },
+      "PurchaseRequest": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 8,
+            "pattern": "^[a-zA-Z0-9_-]+$",
+            "title": "Request Id"
+          },
+          "item_code": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Item Code"
+          },
+          "quantity": {
+            "type": "integer",
+            "maximum": 99.0,
+            "minimum": 1.0,
+            "title": "Quantity",
+            "default": 1
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id",
+          "item_code"
+        ],
+        "title": "PurchaseRequest"
+      },
+      "RefreshRequest": {
+        "properties": {
+          "refresh_token": {
+            "type": "string",
+            "maxLength": 512,
+            "minLength": 1,
+            "title": "Refresh Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "refresh_token"
+        ],
+        "title": "RefreshRequest"
+      },
+      "ReportRequest": {
+        "properties": {
+          "target_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Target Id"
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "harassment",
+              "cheating",
+              "spam",
+              "other"
+            ],
+            "title": "Reason"
+          },
+          "details": {
+            "type": "string",
+            "maxLength": 1000,
+            "title": "Details",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "target_id",
+          "reason"
+        ],
+        "title": "ReportRequest"
+      },
+      "ResetRequest": {
+        "properties": {
+          "new_password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "New Password"
+          },
+          "token": {
+            "type": "string",
+            "maxLength": 512,
+            "minLength": 1,
+            "title": "Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "new_password",
+          "token"
+        ],
+        "title": "ResetRequest"
+      },
+      "SignupRequest": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 3,
+            "title": "Username"
+          },
+          "email": {
+            "type": "string",
+            "maxLength": 255,
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "Password"
+          },
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "email",
+          "password"
+        ],
+        "title": "SignupRequest"
+      },
+      "TargetRequest": {
+        "properties": {
+          "target_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Target Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "target_id"
+        ],
+        "title": "TargetRequest"
+      },
+      "TileRequest": {
+        "properties": {
+          "x": {
+            "type": "integer",
+            "maximum": 32767.0,
+            "minimum": 0.0,
+            "title": "X"
+          },
+          "y": {
+            "type": "integer",
+            "maximum": 32767.0,
+            "minimum": 0.0,
+            "title": "Y"
+          }
+        },
+        "type": "object",
+        "required": [
+          "x",
+          "y"
+        ],
+        "title": "TileRequest"
+      },
+      "TokenResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "refresh_token"
+        ],
+        "title": "TokenResponse"
+      },
+      "TradeAction": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "accept",
+              "decline",
+              "cancel"
+            ],
+            "title": "Action"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action"
+        ],
+        "title": "TradeAction"
+      },
+      "TradeRequest": {
+        "properties": {
+          "target_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Target Id"
+          },
+          "request_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 8,
+            "pattern": "^[a-zA-Z0-9_-]+$",
+            "title": "Request Id"
+          },
+          "offered_code": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Offered Code"
+          },
+          "offered_quantity": {
+            "type": "integer",
+            "maximum": 99.0,
+            "minimum": 1.0,
+            "title": "Offered Quantity",
+            "default": 1
+          },
+          "wanted_code": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Wanted Code"
+          },
+          "wanted_quantity": {
+            "type": "integer",
+            "maximum": 99.0,
+            "minimum": 1.0,
+            "title": "Wanted Quantity",
+            "default": 1
+          }
+        },
+        "type": "object",
+        "required": [
+          "target_id",
+          "request_id",
+          "offered_code",
+          "wanted_code"
+        ],
+        "title": "TradeRequest"
+      },
+      "TransactionRequest": {
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Amount"
+          },
+          "currency_type": {
+            "type": "string",
+            "enum": [
+              "taka",
+              "aura"
+            ],
+            "title": "Currency Type",
+            "default": "taka"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "amount"
+        ],
+        "title": "TransactionRequest"
+      },
+      "TransactionResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "amount": {
+            "type": "integer",
+            "title": "Amount"
+          },
+          "transaction_type": {
+            "type": "string",
+            "title": "Transaction Type"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "amount",
+          "transaction_type",
+          "reason",
+          "created_at"
+        ],
+        "title": "TransactionResponse"
+      },
+      "TransferRequest": {
+        "properties": {
+          "confirmed": {
+            "type": "boolean",
+            "title": "Confirmed",
+            "default": false
+          },
+          "item_code": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Item Code"
+          },
+          "quantity": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Quantity",
+            "default": 1
+          },
+          "location": {
+            "type": "string",
+            "const": "inventory",
+            "title": "Location",
+            "default": "inventory"
+          },
+          "to_player_username": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 3,
+            "title": "To Player Username"
+          }
+        },
+        "type": "object",
+        "required": [
+          "item_code",
+          "to_player_username"
+        ],
+        "title": "TransferRequest"
+      },
+      "TutorialRequest": {
+        "properties": {
+          "expected_step": {
+            "type": "integer",
+            "maximum": 3.0,
+            "minimum": 0.0,
+            "title": "Expected Step",
+            "default": 0
+          },
+          "skip": {
+            "type": "boolean",
+            "title": "Skip",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "TutorialRequest"
+      },
+      "UpgradeRequest": {
+        "properties": {
+          "expected_tier": {
+            "type": "integer",
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Expected Tier"
+          }
+        },
+        "type": "object",
+        "required": [
+          "expected_tier"
+        ],
+        "title": "UpgradeRequest"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WorldPublic": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "owner_id": {
+            "type": "integer",
+            "title": "Owner Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "tiles": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Tiles"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "owner_id",
+          "name",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "WorldPublic"
+      },
+      "WorldStateResponse": {
+        "properties": {
+          "current_season": {
+            "type": "string",
+            "title": "Current Season"
+          },
+          "season_start_time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Season Start Time"
+          },
+          "season_duration_minutes": {
+            "type": "integer",
+            "title": "Season Duration Minutes"
+          },
+          "day_night_cycle_minutes": {
+            "type": "integer",
+            "title": "Day Night Cycle Minutes"
+          },
+          "current_time_of_day": {
+            "type": "number",
+            "title": "Current Time Of Day"
+          },
+          "is_raining": {
+            "type": "boolean",
+            "title": "Is Raining"
+          },
+          "weather": {
+            "type": "string",
+            "title": "Weather"
+          }
+        },
+        "type": "object",
+        "required": [
+          "current_season",
+          "season_start_time",
+          "season_duration_minutes",
+          "day_night_cycle_minutes",
+          "current_time_of_day",
+          "is_raining",
+          "weather"
+        ],
+        "title": "WorldStateResponse"
+      },
+      "XPGainRequest": {
+        "properties": {
+          "xp_amount": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Xp Amount"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "xp_amount"
+        ],
+        "title": "XPGainRequest"
+      },
+      "XPResponse": {
+        "properties": {
+          "player_id": {
+            "type": "integer",
+            "title": "Player Id"
+          },
+          "current_xp": {
+            "type": "integer",
+            "title": "Current Xp"
+          },
+          "total_xp": {
+            "type": "integer",
+            "title": "Total Xp"
+          },
+          "level": {
+            "type": "integer",
+            "title": "Level"
+          },
+          "xp_to_next_level": {
+            "type": "integer",
+            "title": "Xp To Next Level"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "type": "object",
+        "required": [
+          "player_id",
+          "current_xp",
+          "total_xp",
+          "level",
+          "xp_to_next_level"
+        ],
+        "title": "XPResponse"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

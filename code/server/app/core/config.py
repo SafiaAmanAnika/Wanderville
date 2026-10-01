@@ -39,6 +39,9 @@ class Settings(BaseSettings):
     farm_autumn_growth_rate: float = Field(0.9, gt=0, le=10)
     farm_winter_growth_rate: float = Field(0.75, gt=0, le=10)
     dev_allow_world_mutation: bool = False
+    max_move_speed: float = Field(3000, gt=0)
+    chat_blocked_words: str = "damn,shit,fuck"
+    inventory_partition_slots: int = Field(30, ge=1, le=1000)
 
     @property
     def is_development(self) -> bool:

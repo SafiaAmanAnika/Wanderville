@@ -12,3 +12,4 @@ venv*/
 *.sqlite*
 .coverage
 htmlcov/
+.verification/

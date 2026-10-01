@@ -18,6 +18,16 @@ from app.modules.economy.router import router as economy_router
 from app.modules.farming.router import router as farming_router
 from app.modules.inventory.router import router as inventory_router
 from app.modules.world.router import router as world_router
+from app.modules.notifications.router import router as notifications_router
+from app.modules.profile.router import router as profile_router
+from app.modules.housing.router import router as housing_router
+from app.modules.pets.router import router as pets_router
+from app.modules.shop.router import router as shop_router
+from app.modules.progression.router import router as progression_router
+from app.modules.fishing.router import router as fishing_router
+from app.modules.social.router import router as social_router
+from app.modules.realtime.router import router as realtime_router
+from app.modules.events.router import router as events_router
 
 
 @asynccontextmanager
@@ -98,6 +108,16 @@ def create_app():
         economy_router,
         world_router,
         farming_router,
+        notifications_router,
+        profile_router,
+        housing_router,
+        pets_router,
+        shop_router,
+        progression_router,
+        fishing_router,
+        social_router,
+        events_router,
+        realtime_router,
     ):
         app.include_router(router)
     return app

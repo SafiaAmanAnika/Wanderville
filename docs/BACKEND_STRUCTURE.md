@@ -79,4 +79,4 @@ can retry; it logs a generic delivery failure without account or token details.
 - [SQLAlchemy transaction/session guidance](https://docs.sqlalchemy.org/en/20/orm/session_basics.html)
 - [Google backend ID-token verification](https://developers.google.com/identity/sign-in/web/backend-auth)
 
-The complete final file inventory is in `IMPLEMENTATION_REPORT.md`.
+Current gameplay modules and deployment instructions are documented in `BACKEND_UPDATE_GUIDE.md`; validation evidence is in `VERIFICATION_RESULTS.md`.

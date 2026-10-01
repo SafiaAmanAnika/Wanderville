@@ -1,3 +1,5 @@
+> Historical baseline documentation. For the current extension, see `BACKEND_UPDATE_GUIDE.md`, `SRS_BACKEND_AUDIT.md`, `NEW_API_REFERENCE.md`, and `database/REMAINING_FEATURES.md`. Existing legacy routes remain supported.
+
 # Stable Godot API contract
 
 All normal JSON successes have `success: true`, `data`, and `message`. Controlled

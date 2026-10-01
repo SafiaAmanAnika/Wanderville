@@ -14,7 +14,7 @@
 
 [node name="Map" parent="." unique_id=2061458601 instance=ExtResource("1_5a7ea")]
 texture_filter = 1
-position = Vector2(-23, 705)
+position = Vector2(86, 626)
 
 [node name="girl" parent="." unique_id=332949648 instance=ExtResource("6_5ukr8")]
 position = Vector2(7377.9995, -891)

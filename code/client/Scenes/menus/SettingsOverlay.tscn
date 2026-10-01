@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://crqpxuqul8co3"]
+[gd_scene format=3 uid="uid://crqpxuqul8co3"]
 
 [ext_resource type="Script" uid="uid://bfi315d8viba2" path="res://Scripts/menus/settings_overlay.gd" id="1"]
 [ext_resource type="Script" path="res://Scripts/components/wood_panel.gd" id="2"]

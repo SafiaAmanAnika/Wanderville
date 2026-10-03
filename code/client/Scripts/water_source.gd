@@ -2,6 +2,7 @@ extends Area2D
 
 @export var refill_amount: int = 1
 var player_in_range: bool = false
+var _refilling := false
 
 func _ready() -> void:
 	var panel: Panel = $PromptLayer/Panel
@@ -71,5 +72,20 @@ func _input(event: InputEvent) -> void:
 	if GameState.water_drops >= GameState.MAX_WATER:
 		$PromptLayer/prompt.text = "Water already full!"
 		print("Water already full!")
+		return
+	if Global.is_logged_in():
+		if _refilling or not GameState.backend_ready:
+			return
+		_refilling = true
+		var response: Dictionary = await APIClient.refill_water()
+		_refilling = false
+		if bool(response.get("ok", false)):
+			var data: Variant = APIClient.data_of(response)
+			GameState.water_drops = int(data.get("water_remaining", 0))
+			GameState.water_changed.emit(GameState.water_drops)
+			$PromptLayer/prompt.text = "Water refilled!"
+		else:
+			$PromptLayer/prompt.text = APIClient.error_text(response)
+			GameState.report_error(response)
 		return
 	GameState.add_water(refill_amount)

@@ -3,6 +3,7 @@ extends Node
 var token: String = ""
 var refresh_token: String = ""
 var player_id: int = 0
+var session_generation: int = 0
 var username: String = ""
 var display_name: String = ""
 var email: String = ""
@@ -45,6 +46,11 @@ func has_completed_setup() -> bool:
 
 
 func set_session(new_token: String, player: Dictionary, new_refresh: String = "") -> void:
+	session_generation += 1
+	if player_id != int(player.get("id", 0)):
+		selected_character = ""
+		selected_world_id = ""
+		GameState.reset()
 	token = new_token
 	if new_refresh != "":
 		refresh_token = new_refresh
@@ -89,6 +95,9 @@ func load_session() -> bool:
 
 
 func clear_session() -> void:
+	session_generation += 1
+	APIClient.realtime.clear_session()
+	GameState.reset()
 	token = ""
 	refresh_token = ""
 	player_id = 0

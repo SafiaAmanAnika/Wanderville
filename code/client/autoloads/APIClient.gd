@@ -5,12 +5,19 @@ extends Node
 const DEFAULT_BASE_URL := "http://127.0.0.1:8000"
 
 var base_url: String = DEFAULT_BASE_URL
-var _http: HTTPRequest
+signal session_expired
+signal refresh_finished(success: bool)
+var _refreshing := false
+var realtime: Node
 
 
 func _ready() -> void:
-	_http = HTTPRequest.new()
-	add_child(_http)
+	var configured := OS.get_environment("WANDERVILLE_API_URL")
+	if configured != "":
+		base_url = configured.rstrip("/")
+	realtime = preload("res://autoloads/RealtimeClient.gd").new()
+	realtime.name = "RealtimeClient"
+	add_child(realtime)
 
 
 # ── Auth endpoints ──────────────────────────────────────────────────
@@ -239,39 +246,127 @@ func harvest_crop(token: String, plot_id: int) -> Dictionary:
 
 # ── HTTP internals ──────────────────────────────────────────────────
 
+func data_of(response: Dictionary) -> Variant:
+	var body: Variant = response.get("body")
+	return body.get("data") if body is Dictionary else null
+
+
+func error_text(response: Dictionary) -> String:
+	var body: Variant = response.get("body")
+	if body is Dictionary:
+		return str(body.get("message", body.get("detail", "Request failed")))
+	return str(response.get("message", "Cannot reach the server. Please try again."))
+
+
+func authenticated(method: int, path: String, body: Variant = null) -> Dictionary:
+	return await _request_json(method, path, body, {"Authorization": "Bearer " + Global.token})
+
+
+func get_profile() -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_GET, "/profile")
+
+
+func update_profile(values: Dictionary) -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_PUT, "/profile", values)
+
+
+func till_tile(x: int, y: int) -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_POST, "/farm/till", {"x": x, "y": y})
+
+
+func refill_water() -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_POST, "/farm/refill")
+
+
+func send_direct_message(target_id: int, message: String) -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_POST, "/social/messages", {"target_id": target_id, "body": message})
+
+
+func get_direct_messages(target_id: int, after: int = 0) -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_GET, "/social/messages/%d?after=%d" % [target_id, after])
+
+
+func search_players(query: String) -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_GET, "/social/search?q=" + query.uri_encode())
+
+
+func get_friends() -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_GET, "/social/friends")
+
+
+func get_private_farm(target_id: int) -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_GET, "/social/farms/%d" % target_id)
+
+
+func send_nearby_chat(message: String) -> bool:
+	return realtime.send_nearby_chat(message)
+
+
+func send_emote(emote: String) -> bool:
+	return realtime.send_emote(emote)
+
+
+func logout() -> Dictionary:
+	realtime.stop()
+	var result := await _request_once(HTTPClient.METHOD_POST, "/auth/logout", {"refresh_token": Global.refresh_token}, {})
+	Global.clear_session()
+	return result
+
+
+func refresh_session() -> bool:
+	if _refreshing:
+		return await refresh_finished
+	if Global.refresh_token == "":
+		return false
+	_refreshing = true
+	var old_refresh := Global.refresh_token
+	var result := await _request_once(HTTPClient.METHOD_POST, "/auth/refresh", {"refresh_token": old_refresh}, {})
+	var data: Variant = data_of(result)
+	var success := bool(result.get("ok", false)) and data is Dictionary and Global.refresh_token == old_refresh
+	if success:
+		Global.token = str(data.get("access_token", ""))
+		Global.refresh_token = str(data.get("refresh_token", ""))
+		Global.save_session()
+	_refreshing = false
+	refresh_finished.emit(success)
+	return success
+
+
 func _request_json(method: int, path: String, body: Variant, extra_headers: Dictionary) -> Dictionary:
-	var url := base_url.rstrip("/") + path
+	var headers := extra_headers.duplicate()
+	var session_id := Global.player_id
+	var session_generation := Global.session_generation
+	var used_token := Global.token
+	if headers.has("Authorization") and used_token != "":
+		headers["Authorization"] = "Bearer " + used_token
+	var result := await _request_once(method, path, body, headers)
+	if int(result.get("status_code", 0)) == 401 and headers.has("Authorization") and Global.player_id == session_id and Global.session_generation == session_generation:
+		var renewed := Global.token != used_token and Global.token != ""
+		if not renewed:
+			renewed = await refresh_session()
+		if renewed and Global.player_id == session_id and Global.session_generation == session_generation:
+			headers["Authorization"] = "Bearer " + Global.token
+			return await _request_once(method, path, body, headers)
+		session_expired.emit()
+	return result
+
+
+func _request_once(method: int, path: String, body: Variant, extra_headers: Dictionary) -> Dictionary:
+	var http := HTTPRequest.new()
+	http.timeout = 15.0
+	add_child(http)
 	var headers: PackedStringArray = ["Content-Type: application/json", "Accept: application/json"]
-	for k in extra_headers.keys():
-		headers.append("%s: %s" % [str(k), str(extra_headers[k])])
-
-	var payload := ""
-	if body != null:
-		payload = JSON.stringify(body)
-
-	var err := _http.request(url, headers, method, payload)
+	for key in extra_headers:
+		headers.append("%s: %s" % [key, extra_headers[key]])
+	var payload := "" if body == null else JSON.stringify(body)
+	var err := http.request(base_url.rstrip("/") + path, headers, method, payload)
 	if err != OK:
-		return {
-			"ok": false,
-			"status_code": 0,
-			"error": "REQUEST_FAILED",
-			"message": "HTTPRequest.request failed: %s" % str(err),
-			"body": null,
-		}
-
-	var result: Array = await _http.request_completed
-	var response_code := int(result[1])
-	var response_bytes: PackedByteArray = result[3]
-	var response_text := response_bytes.get_string_from_utf8()
-
-	var parsed: Variant = null
-	if response_text != "":
-		parsed = JSON.parse_string(response_text)
-
-	var is_ok := response_code >= 200 and response_code < 300
-	return {
-		"ok": is_ok,
-		"status_code": response_code,
-		"body": parsed,
-		"raw_text": response_text,
-	}
+		http.queue_free()
+		return {"ok": false, "status_code": 0, "message": "Unable to start request", "body": null}
+	var response: Array = await http.request_completed
+	http.queue_free()
+	var status := int(response[1])
+	var bytes: PackedByteArray = response[3]
+	var parsed: Variant = JSON.parse_string(bytes.get_string_from_utf8())
+	var succeeded := int(response[0]) == HTTPRequest.RESULT_SUCCESS and status >= 200 and status < 300 and parsed is Dictionary
+	return {"ok": succeeded, "status_code": status, "body": parsed}

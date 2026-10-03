@@ -15,5 +15,5 @@ func _on_world_pressed() -> void:
 
 
 func _on_logout_pressed() -> void:
-	Global.clear_session()
+	await APIClient.logout()
 	SceneManager.goto_login()

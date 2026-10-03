@@ -83,10 +83,16 @@ func _on_confirm() -> void:
 		if cid == "":
 			_status_label.text = "Create New coming soon!"
 			return
+		_confirm_button.disabled = true
+		var response: Dictionary = await APIClient.update_profile({"character_code": "player1"})
+		_confirm_button.disabled = false
+		if not bool(response.get("ok", false)):
+			_status_label.text = APIClient.error_text(response)
+			return
 		Global.selected_character = cid
 		Global.selected_world_id = ""
 		Global.save_session()
-		SceneManager.goto_map_selection()
+		SceneManager.goto_map_showcase()
 
 
 func _on_back() -> void:

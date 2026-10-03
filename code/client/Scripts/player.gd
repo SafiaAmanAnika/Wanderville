@@ -8,7 +8,7 @@ const SPEED = 300.0
 
 func _physics_process(delta):
 	# FREEZE WHEN MENU IS OPEN
-	if GameState.menu_open:
+	if GameState.menu_open or (Global.is_logged_in() and not APIClient.realtime.connected):
 		velocity = Vector2.ZERO
 		anim.stop()
 		return

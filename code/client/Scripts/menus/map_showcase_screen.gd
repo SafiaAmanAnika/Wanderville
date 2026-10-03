@@ -204,7 +204,14 @@ func _show_world_info(world: Dictionary) -> void:
 func _on_enter_world() -> void:
 	if _selected_world_id == "":
 		return
+	_enter_button.disabled = true
+	var response: Dictionary = await APIClient.update_profile({"map_code": "campus"})
+	_enter_button.disabled = false
+	if not bool(response.get("ok", false)):
+		_status_label.text = APIClient.error_text(response)
+		return
 	Global.selected_world_id = _selected_world_id
+	Global.save_session()
 	SceneManager.goto_world()
 
 

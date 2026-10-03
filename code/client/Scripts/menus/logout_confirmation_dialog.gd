@@ -48,7 +48,8 @@ func _hide_dialog() -> void:
 
 
 func _on_confirm() -> void:
-	Global.clear_session()
+	_confirm_btn.disabled = true
+	await APIClient.logout()
 	SceneManager.goto_title()
 
 

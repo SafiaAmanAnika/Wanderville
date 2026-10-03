@@ -101,11 +101,19 @@ func _show_welcome_and_load() -> void:
 	bar_tween.tween_interval(0.2)
 	bar_tween.tween_property(_loading_bar, "value", 60.0, 0.3)
 
-	await APIClient.me(Global.token)
+	var response: Dictionary = await APIClient.me(Global.token)
+	if not bool(response.get("ok", false)):
+		bar_tween.kill()
+		if int(response.get("status_code", 0)) == 401:
+			Global.clear_session()
+		SceneManager.goto_login()
+		return
 	bar_tween.kill()
 	_loading_bar.value = 80.0
 
-	await GameState.load_from_backend()
+	if not await GameState.load_from_backend():
+		SceneManager.goto_login()
+		return
 	_loading_bar.value = 100.0
 	_loading_label.text = "Ready!"
 

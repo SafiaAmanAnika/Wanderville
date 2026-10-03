@@ -1,0 +1,90 @@
+{
+  "protected_client_files_unchanged": 1079,
+  "changes": [
+    {
+      "path": "code/client/autoloads/RealtimeClient.gd",
+      "previous_sha256": null,
+      "sha256": "719d21a347c367211f6cfd67826a0f58bb938b55be89d4aa59446b59932c9769"
+    },
+    {
+      "path": "code/client/autoloads/APIClient.gd",
+      "previous_sha256": "12e1b8113f35584b28933a3b6ef7800d90443e1079be29812113b50b23125e2c",
+      "sha256": "9e25dd68da3f31d15191d6a83a185b299172521099bdcf794baeacea2cfcd0cb"
+    },
+    {
+      "path": "code/client/autoloads/GameState.gd",
+      "previous_sha256": "d1adfebe34807af215e464e2b6731f7f49b57b25e78030f7509e13f6f3daabff",
+      "sha256": "282532f34a82eecbaa8299f3fb00df76034063a4e7f152266875cd75d8d26678"
+    },
+    {
+      "path": "code/client/autoloads/Global.gd",
+      "previous_sha256": "23ae4af50759ee093eca0e34d8b409d14ff5799018d1e4113e9ce129a3722384",
+      "sha256": "abe4341a328b762beb8d96b1f6cfbe74fefdf42ad899243b08a34e9e03a516a9"
+    },
+    {
+      "path": "code/client/Scripts/farm_controller.gd",
+      "previous_sha256": "7a8edf5d28b1a4105ef40e285b97c7aef1afe6eaf353f79931f79bfe97ec0077",
+      "sha256": "928dbe2c15bb2ee28f156bc538001ca9003b803c57cb2769be2af83aa506bd74"
+    },
+    {
+      "path": "code/client/Scripts/weather_fx_manager.gd",
+      "previous_sha256": "2fc824234e4352bb67173e48b04c8347361df951043e208185a34776e6d5f398",
+      "sha256": "d680f90842571f92de97682d680bc95aaec14e77625b9942757f39d6111b441d"
+    },
+    {
+      "path": "code/client/Scripts/water_source.gd",
+      "previous_sha256": "ec88029c2892a40e40f02a21e79baa1531bc6f34441cf641329593edc231a04f",
+      "sha256": "0c178b5a1aded647b21ee53c49d889e92fcff514117dc64a55d69152a38f0e6c"
+    },
+    {
+      "path": "code/client/Scripts/player.gd",
+      "previous_sha256": "7b9456f92f6a8e9682fb7d064d763599c6b6fd4db94c06a3c1c2466bcbc824d7",
+      "sha256": "cf5f0fa5246f93bf2edaf879afde63e7edf70e6b8f117eba89c798987661a521"
+    },
+    {
+      "path": "code/client/Scripts/day_and_night_cycle.gd",
+      "previous_sha256": "7acdb845a375c4ee87f1512188dde93a55ab7301007b8077b4601fd74e915f13",
+      "sha256": "9b857125384d8024ab87e8699afa9842b48daf6b92e68456473f879d6f4a1f20"
+    },
+    {
+      "path": "code/client/Scripts/weather_manager.gd",
+      "previous_sha256": "7657e52fdaf58baecf6e936f8a4b312c38d33f0951bad80fe9cc473e082b9729",
+      "sha256": "9fb0185603fb837bb6161c582423c5dfd7c0ccfd2992bed342b7a6fd1dd4b619"
+    },
+    {
+      "path": "code/client/Scripts/menus/login_scene.gd",
+      "previous_sha256": "9db3b61b9b2cbcfabc4fe5d607e07d879de27cf463490453a88cbad85d10e9cb",
+      "sha256": "faf424d4bab4366b99cae4cb1ce49204f0673f5cb20704f144388e4372398b6d"
+    },
+    {
+      "path": "code/client/Scripts/menus/map_showcase_screen.gd",
+      "previous_sha256": "b4322d2f874f39597ee584aeb0c7eda42367b02c305a2bcb9ca2c60e7336d4f6",
+      "sha256": "0d377283d2b38ce7d86ed4503bf0ff55dc773d351a4aa17549ba3d23cff3241b"
+    },
+    {
+      "path": "code/client/Scripts/menus/title_screen.gd",
+      "previous_sha256": "817043e67de6553418cd5afe06d374a0c9113d5dc3da5b52dbdf35e801a6daf2",
+      "sha256": "77e7694ebdc978e6bd6ffbf152b6b5608574264f8c9a9f3076b7d10e54bc1b56"
+    },
+    {
+      "path": "code/client/Scripts/menus/main_menu.gd",
+      "previous_sha256": "495ff6133413c537dc67b92b594a32d7e9ab49082da1219aa825a869d25d1fcd",
+      "sha256": "ed57e1bcb23be307b4786a938d6b502fb2d3f1817f649565219fe4ba05ded32b"
+    },
+    {
+      "path": "code/client/Scripts/menus/settings_overlay.gd",
+      "previous_sha256": "41bebe96c5c232e43c02f8170b7d98739fafc0d66e232a93528fbf5369188057",
+      "sha256": "d4a86c332ccf2fb3673cda4c00e448d31550ab57a8b99fb4df922a3321733f31"
+    },
+    {
+      "path": "code/client/Scripts/menus/character_select_screen.gd",
+      "previous_sha256": "ea3283e6c83d0f6b87fde30ad46cc52c836895b5d4cf2ba79cd7cd720760cd4b",
+      "sha256": "3ae50b59a88b8519f49f0bd28cb6697ba9b3a0b30cb07e00534261123d553b05"
+    },
+    {
+      "path": "code/client/Scripts/menus/logout_confirmation_dialog.gd",
+      "previous_sha256": "385c4251338a2bfa3f377973cc6a4733cb9156daa430c14d6a6a6690e20b0de4",
+      "sha256": "e2d6c70f90a92f6fd99dac66c3550561b68bdf903437a05f222752484967bf05"
+    }
+  ]
+}

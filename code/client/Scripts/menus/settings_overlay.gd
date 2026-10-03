@@ -120,6 +120,13 @@ func _on_remember_toggled(toggled: bool) -> void:
 
 
 func _on_close() -> void:
+	if Global.is_logged_in():
+		_close_button.disabled = true
+		var response: Dictionary = await APIClient.update_profile({"music_volume": roundi(AudioManager.music_volume), "effects_volume": roundi(AudioManager.sfx_volume)})
+		_close_button.disabled = false
+		if not bool(response.get("ok", false)):
+			GameState.report_error(response)
+			return
 	_kill_tween()
 	_tween = create_tween().set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_CUBIC)
 	_tween.tween_property(self, "modulate:a", 0.0, 0.25)

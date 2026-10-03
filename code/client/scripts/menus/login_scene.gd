@@ -45,10 +45,16 @@ func _ready() -> void:
 		_set_busy(true)
 		var me_res := await APIClient.me(Global.token)
 		if bool(me_res.get("ok", false)):
+			if not await GameState.load_from_backend():
+				_loading_label.text = " "
+				_error_label.text = GameState.last_error
+				_set_busy(false)
+				return
 			SceneManager.goto_post_login()
 			return
 		else:
-			Global.clear_session()
+			if int(me_res.get("status_code", 0)) == 401:
+				Global.clear_session()
 			_loading_label.text = " "
 			_set_busy(false)
 
@@ -131,7 +137,11 @@ func _on_login() -> void:
 		return
 
 	_loading_label.text = "Loading..."
-	await GameState.load_from_backend()
+	if not await GameState.load_from_backend():
+		_error_label.text = GameState.last_error
+		_loading_label.text = " "
+		_set_busy(false)
+		return
 	await get_tree().create_timer(1.0).timeout
 	SceneManager.goto_post_login()
 

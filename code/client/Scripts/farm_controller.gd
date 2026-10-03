@@ -20,6 +20,7 @@ func _get_tile_visual_size() -> Vector2:
 
 const GROWTH_STAGES = 4
 
+var _backend_busy := false
 var active_crops: Dictionary = {}
 var tilled_tiles: Dictionary = {}
 
@@ -33,9 +34,11 @@ func _ready():
 	if farm_layer:
 		print("FarmLayer tile_set exists: ", farm_layer.tile_set != null)
 	seed_picker.seed_selected.connect(_on_seed_selected)
+	GameState.farm_updated.connect(_apply_server_plots)
+	_apply_server_plots(GameState.farm_plots)
 
 func _input(event):
-	if GameState.menu_open:
+	if GameState.menu_open or _backend_busy or (Global.is_logged_in() and not GameState.backend_ready):
 		return
 
 	var player = get_tree().get_first_node_in_group("player")
@@ -47,6 +50,9 @@ func _input(event):
 
 	# --- DRAG CROP (hold M) ---
 	if event.is_action_pressed("move_crop"):
+		if Global.is_logged_in():
+			GameState.report_error({"message": "Crop relocation is not supported by the server yet."})
+			return
 		if not _dragging:
 			# PICK UP - find nearest crop
 			var nearest_key: String = ""
@@ -136,9 +142,17 @@ func _process(_delta):
 		# Carry the crop above the player
 		visual.global_position = player.global_position + Vector2(0, -32)
 func _till(tile_pos: Vector2i):
+	if Global.is_logged_in():
+		await _server_action("till", tile_pos, _key(tile_pos))
+		return
+	_draw_soil(tile_pos)
+
+func _draw_soil(tile_pos: Vector2i):
 	print(">>> TILLING <<<")
 	var key = _key(tile_pos)
 	tilled_tiles[key] = true
+	if get_node_or_null("Soil_" + key) != null:
+		return
 	var soil = Sprite2D.new()
 	soil.name = "Soil_" + key
 	soil.texture = SOIL_TEXTURE
@@ -165,6 +179,9 @@ func _plant(tile_pos: Vector2i, key: String):
 	seed_picker.show_menu()
 
 func _on_seed_selected(seed_name: String) -> void:
+	if Global.is_logged_in():
+		await _server_action("plant", _pending_tile_pos, _pending_key, seed_name.trim_suffix("_seed"))
+		return
 	GameState.seed_inventory[seed_name] -= 1
 	GameState.seed_changed.emit(seed_name)
 	active_crops[_pending_key] = {
@@ -177,6 +194,9 @@ func _on_seed_selected(seed_name: String) -> void:
 	_sfx("plant")
 
 func _water(tile_pos: Vector2i, key: String):
+	if Global.is_logged_in():
+		await _server_action("water", tile_pos, key)
+		return
 	if not GameState.spend_water(1):
 		print("NO WATER")
 		return
@@ -190,6 +210,9 @@ func _water(tile_pos: Vector2i, key: String):
 	_sfx("water")
 
 func _harvest(tile_pos: Vector2i, key: String):
+	if Global.is_logged_in():
+		await _server_action("harvest", tile_pos, key)
+		return
 	print(">>> HARVESTED: ", active_crops[key].type, " <<<")
 	var visual = get_node_or_null("CropVisual_" + key)
 	if visual:
@@ -202,9 +225,11 @@ func _spawn_crop_visual(tile_pos: Vector2i, crop_type: String) -> void:
 	var key = _key(tile_pos)
 	var old = get_node_or_null("CropVisual_" + key)
 	if old:
+		remove_child(old)
 		old.queue_free()
 	var soil = get_node_or_null("Soil_" + key)
 	if soil:
+		remove_child(soil)
 		soil.queue_free()
 	var path = "res://Scenes/crops/%s.tscn" % crop_type
 	if not ResourceLoader.exists(path):
@@ -235,6 +260,8 @@ func _spawn_crop_visual(tile_pos: Vector2i, crop_type: String) -> void:
 				node.scale = 1.5 * _get_tile_visual_size() / (frame_size * anim_scale)
 
 func _on_crop_fully_grown(key: String) -> void:
+	if Global.is_logged_in():
+		return
 	if active_crops.has(key):
 		active_crops[key].stage = GROWTH_STAGES
 		print(">>> FULLY GROWN: ", active_crops[key].type)
@@ -265,3 +292,72 @@ func _str_to_vec(s: String) -> Vector2i:
 
 func _sfx(name: String):
 	pass
+
+
+func _server_action(action: String, tile: Vector2i, key: String, seed: String = "") -> void:
+	if _backend_busy or not GameState.backend_ready:
+		return
+	_backend_busy = true
+	var owner := Global.player_id
+	var response: Dictionary
+	match action:
+		"till":
+			response = await APIClient.till_tile(tile.x, tile.y)
+		"plant":
+			response = await APIClient.plant_crop(Global.token, tile.x, tile.y, seed.trim_suffix("_seed"))
+		"water":
+			response = await APIClient.water_crop(Global.token, int(active_crops[key]["plot_id"]))
+		"harvest":
+			response = await APIClient.harvest_crop(Global.token, int(active_crops[key]["plot_id"]))
+	_backend_busy = false
+	if owner != Global.player_id:
+		return
+	if bool(response.get("ok", false)):
+		var data: Variant = APIClient.data_of(response)
+		if data is Dictionary:
+			var plot: Dictionary = data.get("plot", data)
+			_apply_plot(plot)
+		_sfx(action)
+	else:
+		GameState.report_error(response)
+	await GameState.refresh_gameplay()
+
+
+func _apply_server_plots(plots: Array) -> void:
+	if _backend_busy:
+		return
+	for plot in plots:
+		_apply_plot(plot)
+
+
+func _apply_plot(plot: Dictionary) -> void:
+	var tile := Vector2i(int(plot.get("x", 0)), int(plot.get("y", 0)))
+	var key := _key(tile)
+	if not _is_in_farm_area(tile):
+		return
+	var code: Variant = plot.get("item_code")
+	if code == null or str(code) == "":
+		var old := get_node_or_null("CropVisual_" + key)
+		if old != null:
+			remove_child(old)
+			old.queue_free()
+		active_crops.erase(key)
+		if bool(plot.get("is_tilled", false)):
+			_draw_soil(tile)
+		return
+	tilled_tiles[key] = true
+	if not active_crops.has(key) or active_crops[key].type != str(code):
+		_spawn_crop_visual(tile, str(code))
+	var stage := int(plot.get("growth_stage", 0))
+	active_crops[key] = {"type": str(code), "stage": GROWTH_STAGES if bool(plot.get("ready", false)) else stage,
+		"watered": bool(plot.get("is_watered", false)), "plot_id": int(plot["id"])}
+	var visual := get_node_or_null("CropVisual_" + key)
+	if visual != null:
+		var anim := visual.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+		if anim != null:
+			var last_frame := anim.sprite_frames.get_frame_count("default") - 1
+			anim.frame = clampi(roundi(float(stage) / 3.0 * last_frame), 0, last_frame)
+			if bool(plot.get("is_watered", false)) and anim.has_method("water"):
+				anim.water()
+			anim.set_process(false)
+			anim.stop()

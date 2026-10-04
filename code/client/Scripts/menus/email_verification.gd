@@ -134,8 +134,10 @@ func _on_resend() -> void:
 	_resend_btn.text = "Sending..."
 	_loading_label.text = " "
 
-	var _res: Dictionary = await APIClient.resend_verification(e)
+	var res: Dictionary = await APIClient.resend_verification(e)
 
 	_resend_btn.disabled = false
 	_resend_btn.text = "Resend Verification Email"
-	_loading_label.text = "If that email is registered, a new verification link has been sent."
+	_loading_label.text = "Verification email requested. If it does not arrive, ask the server owner to check email delivery."
+	if not res.get("ok", false):
+		_loading_label.text = APIClient.error_text(res)

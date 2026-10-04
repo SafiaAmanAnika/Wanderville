@@ -1,0 +1,210 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://Scripts/world_hud.gd" id="1"]
+[ext_resource type="Script" path="res://Scripts/components/wood_panel.gd" id="2"]
+[ext_resource type="Script" path="res://Scripts/components/wood_button.gd" id="3"]
+[ext_resource type="PackedScene" path="res://Scenes/social_panel.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://Scenes/menus/SettingsOverlay.tscn" id="5"]
+
+[node name="WorldHUD" type="CanvasLayer"]
+layer = 6
+script = ExtResource("1")
+
+[node name="Screen" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Outside" type="ColorRect" parent="Screen"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.05, 0.03, 0.01, 0.2)
+
+[node name="PanelArea" type="PanelContainer" parent="Screen"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -640.0
+offset_top = 90.0
+offset_right = -16.0
+offset_bottom = -24.0
+grow_horizontal = 0
+script = ExtResource("2")
+
+[node name="Scroll" type="ScrollContainer" parent="Screen/PanelArea"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Contents" type="VBoxContainer" parent="Screen/PanelArea/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="Heading" type="Label" parent="Screen/PanelArea/Scroll/Contents"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SocialPanel" parent="Screen/PanelArea/Scroll/Contents" instance=ExtResource("4")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 390)
+layout_mode = 2
+
+[node name="Inventory" type="VBoxContainer" parent="Screen/PanelArea/Scroll/Contents"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Category" type="OptionButton" parent="Screen/PanelArea/Scroll/Contents/Inventory"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Capacity" type="Label" parent="Screen/PanelArea/Scroll/Contents/Inventory"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="Items" type="ItemList" parent="Screen/PanelArea/Scroll/Contents/Inventory"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 220)
+layout_mode = 2
+max_columns = 4
+same_column_width = true
+fixed_column_width = 120
+icon_mode = 0
+fixed_icon_size = Vector2i(48, 48)
+max_text_lines = 3
+
+[node name="ItemDetails" type="Label" parent="Screen/PanelArea/Scroll/Contents/Inventory"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 60)
+autowrap_mode = 3
+
+[node name="InventoryRefresh" type="Button" parent="Screen/PanelArea/Scroll/Contents/Inventory"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Refresh inventory / retry"
+script = ExtResource("3")
+
+[node name="Notifications" type="VBoxContainer" parent="Screen/PanelArea/Scroll/Contents"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Inbox" type="ItemList" parent="Screen/PanelArea/Scroll/Contents/Notifications"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 220)
+layout_mode = 2
+
+[node name="NoticeDetails" type="Label" parent="Screen/PanelArea/Scroll/Contents/Notifications"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 70)
+autowrap_mode = 3
+text = "Select a notification to view it and mark it read."
+
+[node name="NoticeActions" type="HBoxContainer" parent="Screen/PanelArea/Scroll/Contents/Notifications"]
+layout_mode = 2
+
+[node name="Dismiss" type="Button" parent="Screen/PanelArea/Scroll/Contents/Notifications/NoticeActions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Dismiss"
+disabled = true
+script = ExtResource("3")
+
+[node name="More" type="Button" parent="Screen/PanelArea/Scroll/Contents/Notifications/NoticeActions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Older"
+script = ExtResource("3")
+
+[node name="NoticeRefresh" type="Button" parent="Screen/PanelArea/Scroll/Contents/Notifications/NoticeActions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Refresh"
+script = ExtResource("3")
+
+[node name="Status" type="Label" parent="Screen/PanelArea/Scroll/Contents"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="Settings" parent="Screen" instance=ExtResource("5")]
+unique_name_in_owner = true
+
+[node name="Top" type="MarginContainer" parent="Screen"]
+layout_mode = 1
+anchor_right = 1.0
+offset_left = 120.0
+offset_top = 12.0
+offset_right = -16.0
+mouse_filter = 2
+
+[node name="Row" type="HBoxContainer" parent="Screen/Top"]
+layout_mode = 2
+theme_override_constants/separation = 8
+mouse_filter = 2
+
+[node name="Counters" type="VBoxContainer" parent="Screen/Top/Row"]
+layout_mode = 2
+custom_minimum_size = Vector2(330, 0)
+mouse_filter = 2
+
+[node name="Balance" type="Label" parent="Screen/Top/Row/Counters"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Aura —  •  Level —"
+
+[node name="XP" type="ProgressBar" parent="Screen/Top/Row/Counters"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 10)
+layout_mode = 2
+show_percentage = false
+mouse_filter = 2
+
+[node name="WorldLabel" type="Label" parent="Screen/Top/Row/Counters"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Spacer" type="Control" parent="Screen/Top/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="SocialButton" type="Button" parent="Screen/Top/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 52)
+layout_mode = 2
+tooltip_text = "Social: nearby chat, friends, private messages"
+script = ExtResource("3")
+
+[node name="NoticeButton" type="Button" parent="Screen/Top/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 52)
+layout_mode = 2
+tooltip_text = "Notifications"
+script = ExtResource("3")
+
+[node name="BagButton" type="Button" parent="Screen/Top/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 52)
+layout_mode = 2
+tooltip_text = "Inventory"
+script = ExtResource("3")
+
+[node name="SettingsButton" type="Button" parent="Screen/Top/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 52)
+layout_mode = 2
+tooltip_text = "Settings and logout"
+script = ExtResource("3")

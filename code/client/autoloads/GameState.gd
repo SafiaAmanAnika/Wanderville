@@ -5,14 +5,15 @@ var water_drops := 0
 var farm_zone_tilled := false
 var crop_tiles: Dictionary = {}
 var menu_open := false
+var social_open := false
 var farm_mode := "none"
 var selected_seed := ""
 var seed_inventory: Dictionary = {}
-var plantable_codes: Dictionary = {}
-var catalog: Array = []
 var inventory: Array = []
+var inventory_summary: Dictionary = {}
 var profile: Dictionary = {}
 var economy: Dictionary = {}
+var experience: Dictionary = {}
 var world_state: Dictionary = {}
 var farm_plots: Array = []
 var backend_ready := false
@@ -30,22 +31,35 @@ signal farm_updated(plots: Array)
 signal world_updated(state: Dictionary)
 signal inventory_updated(items: Array)
 signal backend_error(message: String)
+signal gameplay_refreshed
+signal economy_updated(data: Dictionary)
+signal experience_updated(data: Dictionary)
 
 
 func reset() -> void:
-	backend_ready = false
 	_loading = false
+	_refreshing = false
+	gameplay_refreshed.emit()
+	data_loaded.emit(false)
+	_poll_elapsed = 0.0
+	backend_ready = false
 	seed_inventory.clear()
-	plantable_codes.clear()
-	catalog.clear()
 	inventory.clear()
+	inventory_summary.clear()
+	inventory_updated.emit(inventory)
 	farm_plots.clear()
 	crop_tiles.clear()
 	profile.clear()
 	economy.clear()
+	experience.clear()
+	economy_updated.emit(economy)
+	experience_updated.emit(experience)
 	world_state.clear()
 	water_drops = 0
 	menu_open = false
+	social_open = false
+	farm_mode = "none"
+	farm_zone_tilled = false
 	selected_seed = ""
 	water_changed.emit(0)
 
@@ -63,27 +77,22 @@ func load_from_backend() -> bool:
 		return false
 	_loading = true
 	backend_ready = false
-	var owner := Global.player_id
-	var generation := Global.session_generation
+	var version := Global.session_version
 	var success := true
 	var requests: Array = [
 		["/profile", "profile"], ["/world/me", "own_world"],
-		["/economy/", "economy"], ["/inventory/catalog", "catalog"],
-		["/inventory/", "inventory"], ["/world/state", "world"], ["/farm/plots", "farm"]
+		["/economy/", "economy"], ["/inventory/", "inventory"],
+		["/world/state", "world"], ["/farm/plots", "farm"], ["/economy/xp", "experience"]
 	]
 	for request in requests:
 		var response: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_GET, request[0])
-		if owner != Global.player_id or generation != Global.session_generation:
-			success = false
-			break
+		if version != Global.session_version:
+			return false
 		if not bool(response.get("ok", false)):
 			report_error(response)
 			success = false
 			break
 		var data: Variant = APIClient.data_of(response)
-		if request[1] == "catalog" and data is Array:
-			_apply_data(request[1], data)
-			continue
 		if not data is Dictionary:
 			success = false
 			last_error = "Server returned incomplete game data."
@@ -108,25 +117,22 @@ func _apply_data(kind: String, data: Dictionary) -> void:
 			AudioManager.set_sfx_volume(float(data.get("effects_volume", 80)))
 			Global.save_session()
 		"own_world":
-			Global.selected_world_id = str(data.get("id", ""))
+			Global.selected_world_id = str(data.get("id", "")) if profile.get("map_code") == "campus" else ""
 			Global.save_session()
-		"catalog":
-			catalog = data
-			plantable_codes.clear()
-			for item in catalog:
-				var code := str(item.get("item_code", ""))
-				var category := str(item.get("category", ""))
-				if category.ends_with("_crop") or category == "rare_plant":
-					plantable_codes[code] = true
 		"economy":
 			economy = data
+			economy_updated.emit(data)
+		"experience":
+			experience = data
+			experience_updated.emit(data)
 		"inventory":
+			inventory_summary = data
 			inventory = data.get("items", [])
 			seed_inventory.clear()
 			for item in inventory:
 				var code := str(item.get("item_code", ""))
-				var crop := code.trim_suffix("_seed")
-				if plantable_codes.has(crop) or code.ends_with("_seed"):
+				if code.ends_with("_seed"):
+					var crop := code.trim_suffix("_seed")
 					seed_inventory[crop] = int(seed_inventory.get(crop, 0)) + int(item.get("quantity", 0))
 			inventory_updated.emit(inventory)
 			seed_changed.emit(selected_seed)
@@ -158,15 +164,18 @@ func _process(delta: float) -> void:
 
 
 func refresh_gameplay() -> void:
-	if _refreshing:
+	var version := Global.session_version
+	while _refreshing:
+		await gameplay_refreshed
+		if version != Global.session_version:
+			return
+	if not Global.is_logged_in():
 		return
 	_refreshing = true
-	var owner := Global.player_id
-	var generation := Global.session_generation
-	for request in [["/farm/plots", "farm"], ["/profile", "bucket"], ["/world/state", "world"], ["/inventory/", "inventory"], ["/economy/", "economy"]]:
+	for request in [["/farm/plots", "farm"], ["/profile", "bucket"], ["/world/state", "world"], ["/inventory/", "inventory"], ["/economy/", "economy"], ["/economy/xp", "experience"]]:
 		var response: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_GET, request[0])
-		if owner != Global.player_id or generation != Global.session_generation:
-			break
+		if version != Global.session_version:
+			return
 		var data: Variant = APIClient.data_of(response)
 		if not bool(response.get("ok", false)) or not data is Dictionary:
 			report_error(response)
@@ -177,6 +186,7 @@ func refresh_gameplay() -> void:
 		else:
 			_apply_data(request[1], data)
 	_refreshing = false
+	gameplay_refreshed.emit()
 
 
 func spend_water(amount: int) -> bool:

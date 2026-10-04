@@ -38,7 +38,7 @@ func _ready():
 	_apply_server_plots(GameState.farm_plots)
 
 func _input(event):
-	if GameState.menu_open or _backend_busy or (Global.is_logged_in() and not GameState.backend_ready):
+	if GameState.menu_open or GameState.social_open or _backend_busy or (Global.is_logged_in() and not GameState.backend_ready):
 		return
 
 	var player = get_tree().get_first_node_in_group("player")
@@ -50,9 +50,6 @@ func _input(event):
 
 	# --- DRAG CROP (hold M) ---
 	if event.is_action_pressed("move_crop"):
-		if Global.is_logged_in():
-			GameState.report_error({"message": "Crop relocation is not supported by the server yet."})
-			return
 		if not _dragging:
 			# PICK UP - find nearest crop
 			var nearest_key: String = ""
@@ -68,11 +65,12 @@ func _input(event):
 				return
 			_drag_key = nearest_key
 			_drag_crop = active_crops[nearest_key].duplicate()
-			active_crops.erase(nearest_key)
+			if not Global.is_logged_in():
+				active_crops.erase(nearest_key)
 			var visual = get_node_or_null("CropVisual_" + nearest_key)
 			if visual:
 				visual.z_index = VISUAL_Z_INDEX + 5
-				var body = visual.get_node_or_null("StaticBody2D")
+				var body = visual.get_node_or_null("StaticBody2D/CollisionShape2D")
 				if body:
 					body.set_deferred("disabled", true)
 			_dragging = true
@@ -81,6 +79,9 @@ func _input(event):
 			# DROP - place at current player tile
 			var drop_tile = _get_tile_pos(player.global_position)
 			var drop_key = _key(drop_tile)
+			if Global.is_logged_in():
+				await _relocate(drop_tile)
+				return
 			var visual = get_node_or_null("CropVisual_" + _drag_key)
 			if _is_in_farm_area(drop_tile) and tilled_tiles.has(drop_key) and not active_crops.has(drop_key):
 				if visual:
@@ -166,21 +167,13 @@ func _draw_soil(tile_pos: Vector2i):
 	_sfx("till")
 
 func _plant(tile_pos: Vector2i, key: String):
-	var has_seeds := false
-	for s in GameState.seed_inventory:
-		if GameState.seed_inventory[s] > 0:
-			has_seeds = true
-			break
-	if not has_seeds:
-		print("NO SEEDS AVAILABLE")
-		return
 	_pending_tile_pos = tile_pos
 	_pending_key = key
 	seed_picker.show_menu()
 
 func _on_seed_selected(seed_name: String) -> void:
 	if Global.is_logged_in():
-		await _server_action("plant", _pending_tile_pos, _pending_key, seed_name.trim_suffix("_seed"))
+		await _server_action("plant", _pending_tile_pos, _pending_key, seed_name)
 		return
 	GameState.seed_inventory[seed_name] -= 1
 	GameState.seed_changed.emit(seed_name)
@@ -298,19 +291,19 @@ func _server_action(action: String, tile: Vector2i, key: String, seed: String = 
 	if _backend_busy or not GameState.backend_ready:
 		return
 	_backend_busy = true
-	var owner := Global.player_id
+	var version := Global.session_version
 	var response: Dictionary
 	match action:
 		"till":
 			response = await APIClient.till_tile(tile.x, tile.y)
 		"plant":
-			response = await APIClient.plant_crop(Global.token, tile.x, tile.y, seed.trim_suffix("_seed"))
+			response = await APIClient.plant_crop(Global.token, tile.x, tile.y, seed + "_seed")
 		"water":
 			response = await APIClient.water_crop(Global.token, int(active_crops[key]["plot_id"]))
 		"harvest":
 			response = await APIClient.harvest_crop(Global.token, int(active_crops[key]["plot_id"]))
 	_backend_busy = false
-	if owner != Global.player_id:
+	if version != Global.session_version:
 		return
 	if bool(response.get("ok", false)):
 		var data: Variant = APIClient.data_of(response)
@@ -324,7 +317,7 @@ func _server_action(action: String, tile: Vector2i, key: String, seed: String = 
 
 
 func _apply_server_plots(plots: Array) -> void:
-	if _backend_busy:
+	if _backend_busy or _dragging:
 		return
 	for plot in plots:
 		_apply_plot(plot)
@@ -355,9 +348,35 @@ func _apply_plot(plot: Dictionary) -> void:
 	if visual != null:
 		var anim := visual.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
 		if anim != null:
-			var last_frame := anim.sprite_frames.get_frame_count("default") - 1
-			anim.frame = clampi(roundi(float(stage) / 3.0 * last_frame), 0, last_frame)
-			if bool(plot.get("is_watered", false)) and anim.has_method("water"):
-				anim.water()
 			anim.set_process(false)
 			anim.stop()
+			var last_frame := anim.sprite_frames.get_frame_count("default") - 1
+			var visual_frame: Variant = plot.get("visual_frame")
+			anim.frame = clampi(int(visual_frame) if visual_frame != null else roundi(float(stage) / 3.0 * last_frame), 0, last_frame)
+
+
+func _relocate(tile: Vector2i) -> void:
+	_backend_busy = true
+	var version := Global.session_version
+	var old_key := _drag_key
+	var response: Dictionary = await APIClient.relocate_crop(int(_drag_crop["plot_id"]), tile)
+	_backend_busy = false
+	_dragging = false
+	_drag_key = ""
+	_drag_crop = {}
+	if version != Global.session_version:
+		return
+	var visual := get_node_or_null("CropVisual_" + old_key)
+	if visual != null:
+		visual.global_position = _tile_to_world(_str_to_vec(old_key))
+		visual.z_index = VISUAL_Z_INDEX
+		var collision := visual.get_node_or_null("StaticBody2D/CollisionShape2D")
+		if collision:
+			collision.set_deferred("disabled", false)
+	if response.get("ok", false):
+		var data: Dictionary = APIClient.data_of(response)
+		_apply_plot(data["source"])
+		_apply_plot(data["plot"])
+	else:
+		GameState.report_error(response)
+	await GameState.refresh_gameplay()

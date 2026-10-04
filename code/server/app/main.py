@@ -1,7 +1,8 @@
 import logging
+import asyncio
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -13,6 +14,7 @@ from app.core.exceptions import AppError
 from app.core.logging import configure_logging, request_logging
 from app.core.responses import Envelope, ErrorResponse, success
 from app.db import model_registry  # noqa: F401
+from app.db.session import get_db
 from app.modules.auth.router import router as auth_router
 from app.modules.economy.router import router as economy_router
 from app.modules.farming.router import router as farming_router
@@ -34,7 +36,36 @@ from app.modules.events.router import router as events_router
 async def lifespan(_app):
     configure_logging()
     # Migrations and reference seeding are explicit commands, never startup work.
-    yield
+    stop = asyncio.Event()
+    task = asyncio.create_task(_world_worker(stop)) if settings.world_worker_enabled else None
+    try:
+        yield
+    finally:
+        stop.set()
+        if task:
+            await task
+
+
+async def _world_worker(stop):
+    """Optional single-service hobby deployment; no network keep-alive traffic."""
+    from app.db.session import SessionLocal
+    from app.modules.world.worker import tick
+
+    cursor = 0
+    def run_batch(after_id):
+        with SessionLocal() as db:
+            return tick(db, after_id=after_id)
+
+    while not stop.is_set():
+        try:
+            cursor = await asyncio.to_thread(run_batch, cursor)
+        except Exception as exc:
+            logging.getLogger("wanderville").error("World worker failed: %s", type(exc).__name__)
+            cursor = 0
+        try:
+            await asyncio.wait_for(stop.wait(), timeout=1 if cursor else 30)
+        except TimeoutError:
+            pass
 
 
 def error(status, code, message):
@@ -101,6 +132,19 @@ def create_app():
     @app.get("/health", response_model=Envelope[dict], tags=["health"])
     def health():
         return success({"status": "ok"})
+
+    @app.get("/ready", response_model=Envelope[dict], tags=["health"])
+    def ready(db=Depends(get_db)):
+        from sqlalchemy import text
+        from app.core.exceptions import AppError
+
+        db.execute(text("SELECT 1"))
+        revision = db.scalar(text("SELECT version_num FROM alembic_version"))
+        seeded = db.scalar(text("SELECT count(*) FROM item_definitions i JOIN item_rules r ON r.item_code = i.item_code WHERE i.item_code = 'wheat_seed'"))
+        clock_ready = db.scalar(text("SELECT count(*) FROM world_state WHERE id = 1"))
+        if revision != "0004_boolean_defaults" or not seeded or not clock_ready:
+            raise AppError("DATABASE_NOT_READY", "Run database migrations and reference seeding", 503)
+        return success({"status": "ready", "database": "connected"})
 
     for router in (
         auth_router,

@@ -11,11 +11,17 @@ from app.modules.farming.schemas import (
     PlantRequest,
     PlantResponse,
     PlotRequest,
+    RelocateRequest,
     TileRequest,
 )
 from app.modules.farming.service import FarmingService
 
 router = APIRouter(prefix="/farm", tags=["farming"])
+
+
+@router.post("/relocate")
+def relocate(payload: RelocateRequest, player_id: int = Depends(get_current_player_id), db: Session = Depends(get_db)):
+    return success(FarmingService(db).relocate(player_id, payload), "Crop relocated")
 
 
 @router.get("/plots", response_model=Envelope[FarmGridResponse])

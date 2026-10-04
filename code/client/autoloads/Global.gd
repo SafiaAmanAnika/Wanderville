@@ -1,9 +1,11 @@
 extends Node
 
+signal session_changed
+
 var token: String = ""
+var session_version := 0
 var refresh_token: String = ""
 var player_id: int = 0
-var session_generation: int = 0
 var username: String = ""
 var display_name: String = ""
 var email: String = ""
@@ -46,19 +48,19 @@ func has_completed_setup() -> bool:
 
 
 func set_session(new_token: String, player: Dictionary, new_refresh: String = "") -> void:
-	session_generation += 1
-	if player_id != int(player.get("id", 0)):
-		selected_character = ""
-		selected_world_id = ""
-		GameState.reset()
+	session_version += 1
+	APIClient.realtime.clear_session()
+	selected_character = ""
+	selected_world_id = ""
+	GameState.reset()
 	token = new_token
-	if new_refresh != "":
-		refresh_token = new_refresh
+	refresh_token = new_refresh
 	player_id = int(player.get("id", 0))
 	username = str(player.get("username", ""))
 	display_name = str(player.get("display_name", ""))
 	email = str(player.get("email", ""))
 	save_session()
+	session_changed.emit()
 
 
 func save_session() -> void:
@@ -80,6 +82,9 @@ func load_session() -> bool:
 	var err := cfg.load(AUTH_FILE)
 	if err != OK:
 		return false
+	if not bool(cfg.get_value("auth", "remember_device", true)):
+		return false
+	session_version += 1
 	token = str(cfg.get_value("auth", "token", ""))
 	refresh_token = str(cfg.get_value("auth", "refresh_token", ""))
 	player_id = int(cfg.get_value("auth", "player_id", 0))
@@ -91,11 +96,12 @@ func load_session() -> bool:
 	selected_world_id = str(cfg.get_value("auth", "selected_world_id", ""))
 	if not remember_device:
 		return false
+	session_changed.emit()
 	return is_logged_in()
 
 
 func clear_session() -> void:
-	session_generation += 1
+	session_version += 1
 	APIClient.realtime.clear_session()
 	GameState.reset()
 	token = ""
@@ -110,6 +116,7 @@ func clear_session() -> void:
 	var dir := DirAccess.open("user://")
 	if dir:
 		dir.remove(AUTH_FILE)
+	session_changed.emit()
 
 
 func parse_deep_link() -> void:

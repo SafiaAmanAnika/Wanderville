@@ -25,6 +25,10 @@ class PlotRequest(BaseModel):
     plot_id: int = Field(gt=0, strict=True)
 
 
+class RelocateRequest(TileRequest):
+    plot_id: int = Field(gt=0, strict=True)
+
+
 class FarmTileResponse(BaseModel):
     id: int
     x: int
@@ -36,6 +40,7 @@ class FarmTileResponse(BaseModel):
     is_watered: bool
     planted_at: datetime | None
     ready: bool
+    visual_frame: int | None = None
 
     @computed_field
     @property

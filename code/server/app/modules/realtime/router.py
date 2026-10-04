@@ -12,6 +12,8 @@ from app.modules.realtime.schemas import (
 from app.modules.realtime.service import RealtimeService
 
 router = APIRouter(prefix="/realtime", tags=["realtime"])
+# One Uvicorn worker owns the sockets. A replaced socket cannot expire its successor.
+_socket_owners = {}
 
 
 @router.post("/enter")
@@ -122,6 +124,11 @@ async def websocket_endpoint(websocket: WebSocket, db: Session = Depends(get_db)
     from starlette.concurrency import run_in_threadpool
     from starlette.websockets import WebSocketDisconnect
 
+    from app.modules.auth.service import AuthService
+    from app.core.exceptions import AppError
+
+    owner = object()
+    pid = None
     await websocket.accept()
     try:
         raw = await asyncio.wait_for(socket_text(websocket), timeout=10)
@@ -139,12 +146,21 @@ async def websocket_endpoint(websocket: WebSocket, db: Session = Depends(get_db)
             await websocket.close(code=1008)
             return
         token = first["token"]
+        try:
+            player = await run_in_threadpool(AuthService(db).authenticate, token)
+            pid = player.id
+            _socket_owners[pid] = owner
+        except AppError:
+            pass
         reply = await run_in_threadpool(socket_step, db, token, {"type": "enter"})
         await websocket.send_json(reply)
         if reply.get("type") == "error":
             await websocket.close(code=1008)
             return
         while True:
+            if pid is not None and _socket_owners.get(pid) is not owner:
+                await websocket.close(code=1008)
+                return
             try:
                 raw = await asyncio.wait_for(socket_text(websocket), timeout=0.2)
                 if raw is None:
@@ -168,3 +184,7 @@ async def websocket_endpoint(websocket: WebSocket, db: Session = Depends(get_db)
         return
     except (asyncio.TimeoutError, ValueError):
         await websocket.close(code=1008)
+    finally:
+        if pid is not None and _socket_owners.get(pid) is owner:
+            _socket_owners.pop(pid, None)
+            await run_in_threadpool(RealtimeService(db).leave, pid)

@@ -22,12 +22,12 @@ class RealtimeService:
                 SocialService(self.db).allowed(pid, owner_id)
             room = f"farm:{owner_id}" if owner_id else "campus"
             row = self.repo.get(Presence, pid, False)
-            # Reconnect within 60 seconds preserves the last position and sequence.
+            # Re-entering the same room restores the saved position and sequence.
             if (
                 row
                 and row.room == room
-                and (utcnow() - as_utc(row.updated_at)).total_seconds() < 60
             ):
+                row.updated_at = utcnow()
                 return public(row)
             values = dict(
                 room=room,
@@ -54,6 +54,17 @@ class RealtimeService:
             if owner != pid:
                 SocialService(self.db).allowed(pid, owner)
         return row
+
+    def leave(self, pid):
+        with transaction(self.db):
+            PlayerRepository(self.db).lock(pid)
+            row = self.repo.get(Presence, pid, False)
+            if row:
+                # Retain position for storage but expire its visible presence.
+                row.updated_at = utcnow() - timedelta(seconds=61)
+            profile = self.db.get(PlayerProfile, pid)
+            if profile:
+                profile.last_seen_at = utcnow()
 
     def move(self, pid, request):
         with transaction(self.db):

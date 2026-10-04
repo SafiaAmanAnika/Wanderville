@@ -25,11 +25,25 @@ class InventoryService:
         return item
 
     def list(self, player_id):
+        from sqlalchemy import select
+        from app.modules.shop.models import ItemRule
+
         rows = self.repo.list(player_id)
+        rules = dict(self.db.execute(select(ItemRule.item_code, ItemRule.partition)).all())
+        counts = {name: 0 for name in sorted(set(rules.values()))}
+        items = []
+        for row in rows:
+            item = InventoryItemResponse.model_validate(row)
+            item.partition = rules.get(row.item_code)
+            if item.partition:
+                counts[item.partition] += 1
+            items.append(item)
         return InventoryListResponse(
-            items=[InventoryItemResponse.model_validate(r) for r in rows],
+            items=items,
             total_items=len(rows),
             total_quantity=sum(r.quantity for r in rows),
+            partition_capacity=settings.inventory_partition_slots,
+            partitions=counts,
         )
 
     def catalog(self, season=None):

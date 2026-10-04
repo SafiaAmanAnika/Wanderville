@@ -26,7 +26,30 @@ def google_request():
     return Request(session=requests.Session())
 
 
-def verify_google(raw):
+def exchange_code(payload):
+    if not settings.google_client_id:
+        raise AppError("GOOGLE_NOT_CONFIGURED", "Configure a Google Desktop app client ID on the server", 503)
+    values = {
+        "client_id": settings.google_client_id,
+        "code": payload.code,
+        "code_verifier": payload.code_verifier,
+        "redirect_uri": payload.redirect_uri,
+        "grant_type": "authorization_code",
+    }
+    if settings.google_client_secret:
+        values["client_secret"] = settings.google_client_secret
+    try:
+        response = requests.post("https://oauth2.googleapis.com/token", data=values, timeout=10)
+        response.raise_for_status()
+        raw = response.json().get("id_token")
+        if not isinstance(raw, str) or not raw:
+            raise ValueError("Missing identity token")
+        return raw
+    except (requests.RequestException, ValueError) as exc:
+        raise AppError("GOOGLE_EXCHANGE_FAILED", "Google sign-in could not finish. Check the server's Desktop app credentials and try again.", 401) from exc
+
+
+def verify_google(raw, expected_nonce=None):
     if not settings.google_client_id:
         raise AppError("GOOGLE_NOT_CONFIGURED", "Google sign-in is not configured", 503)
     try:
@@ -49,6 +72,8 @@ def verify_google(raw):
         raise AppError(
             "INVALID_GOOGLE_TOKEN", "Google token must include a verified email", 401
         )
+    if expected_nonce is not None and claims.get("nonce") != expected_nonce:
+        raise AppError("INVALID_GOOGLE_TOKEN", "Google sign-in session does not match", 401)
     email = claims["email"].lower()
     return GoogleIdentity(
         claims["sub"],

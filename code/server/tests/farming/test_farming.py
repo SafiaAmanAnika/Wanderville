@@ -29,9 +29,8 @@ def farm(client, account, db):
 
 def grow(farm):
     user, service, tile_id, now = farm
-    for _ in range(3):
-        service.water(user.id, tile_id, now)
-        now += timedelta(seconds=60)
+    service.water(user.id, tile_id, now)
+    now += timedelta(seconds=18)
     return now
 
 
@@ -79,7 +78,7 @@ def test_plant_validation_consumption_xp_and_ownership(farm, client, account, db
     )
 
 
-def test_water_once_per_stage_and_dry_growth_pause(farm, db):
+def test_scene_crop_waits_for_water_then_grows_continuously(farm, db):
     user, service, tile_id, now = farm
     assert service.list(user.id, now + timedelta(days=2)).plots[0].growth_stage == 0
     watered = service.water(user.id, tile_id, now + timedelta(days=2))
@@ -88,11 +87,11 @@ def test_water_once_per_stage_and_dry_growth_pause(farm, db):
         service.water(user.id, tile_id, now + timedelta(days=2, seconds=1))
     assert exc.value.code == "FARM_ALREADY_WATERED"
     projected = service.list(user.id, now + timedelta(days=3)).plots[0]
-    assert projected.growth_stage == 1 and not projected.is_watered
-    assert projected.growth_progress_seconds == 15
+    assert projected.ready and projected.visual_frame == 4
+    assert projected.growth_progress_seconds == 18
     assert (
         service.list(user.id, now + timedelta(days=4)).plots[0].growth_progress_seconds
-        == 15
+        == 18
     )
     assert not db.dirty  # GET projections do not write or commit.
 
@@ -138,6 +137,12 @@ def test_harvest_reward_failure_rolls_back_everything(farm, db, monkeypatch):
 
 def test_season_changes_growth_speed(farm, db):
     user, service, tile_id, now = farm
+    # Crops without a supplied Godot scene retain their catalog/season rules.
+    from app.modules.inventory.models import ItemDefinition
+    tile = db.get(FarmTile, tile_id)
+    tile.crop_item_code = "corn"
+    tile.item = db.scalar(select(ItemDefinition).where(ItemDefinition.item_code == "corn"))
+    db.commit()
     service.water(user.id, tile_id, now)
     assert service.list(user.id, now + timedelta(seconds=4)).plots[
         0

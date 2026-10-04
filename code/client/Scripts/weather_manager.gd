@@ -14,6 +14,10 @@ var days_in_season: int = 0
 var days_per_season: int = 7
 
 func _ready() -> void:
+	var effects := get_node_or_null("../WeatherFXManager")
+	if effects and effects.get_script() == null:
+		effects.set_script(load("res://Scripts/weather_fx_manager.gd"))
+		effects.initialize()
 	GameState.world_updated.connect(_apply_world)
 	_apply_world(GameState.world_state)
 	season_changed.emit(current_season)

@@ -102,6 +102,10 @@ func _on_login() -> void:
 	_error_label.text = " "
 
 	var res: Dictionary = await APIClient.login(u, p)
+	await _finish_login(res)
+
+
+func _finish_login(res: Dictionary) -> void:
 
 	if not bool(res.get("ok", false)):
 		_set_busy(false)
@@ -151,13 +155,8 @@ func _on_google() -> void:
 	_loading_label.text = "Opening Google Sign-In..."
 	_error_label.text = " "
 
-	var url := APIClient.base_url + "/auth/google/redirect"
-	OS.shell_open(url)
-
-	await get_tree().create_timer(3.0).timeout
-	_set_busy(false)
-	_loading_label.text = " "
-	_error_label.text = "Please complete Google Sign-In in your browser, then open the game from the link provided."
+	var response: Dictionary = await APIClient.google_browser_login()
+	await _finish_login(response)
 
 
 func _handle_login_error(res: Dictionary) -> void:
@@ -199,4 +198,4 @@ func _format_error(res: Dictionary) -> String:
 		if err != "":
 			return err
 	var status_code := int(res.get("status_code", 0))
-	return "Request failed (HTTP %d)." % status_code
+	return APIClient.error_text(res) if status_code == 0 else "Request failed (HTTP %d)." % status_code

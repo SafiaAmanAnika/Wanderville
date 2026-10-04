@@ -49,6 +49,25 @@ class GoogleRequest(BaseModel):
     id_token: str = Field(min_length=1, max_length=8192)
 
 
+class GoogleCodeRequest(BaseModel):
+    code: str = Field(min_length=1, max_length=4096)
+    code_verifier: str = Field(min_length=43, max_length=128, pattern=r"^[A-Za-z0-9._~-]+$")
+    redirect_uri: str = Field(max_length=256)
+    nonce: str = Field(min_length=32, max_length=128)
+
+    @field_validator("redirect_uri")
+    @classmethod
+    def loopback_callback(cls, value):
+        from urllib.parse import urlsplit
+
+        url = urlsplit(value)
+        if (url.scheme != "http" or url.hostname != "127.0.0.1"
+                or not url.port or url.username or url.password
+                or url.path != "/oauth/callback" or url.query or url.fragment):
+            raise ValueError("Use the desktop loopback callback")
+        return value
+
+
 class EmailRequest(BaseModel):
     email: EmailStr = Field(max_length=255)
 

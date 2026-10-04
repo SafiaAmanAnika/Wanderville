@@ -470,7 +470,7 @@ def test_tutorial_refill_and_account_delete(client, account, db):
     lake_presence(db, a.id)
     db.get(PlayerProfile, a.id).water_charges = 0
     db.commit()
-    assert data(client.post("/farm/refill", headers=a.headers))["water_remaining"] == 20
+    assert data(client.post("/farm/refill", headers=a.headers))["water_remaining"] == 1
     assert (
         client.post(
             "/profile/delete-account",

@@ -114,7 +114,7 @@ def test_reconnect_emote_and_private_room_expiry(client, account, db):
     assert service.enter(a.id)["x"] == 7400
     row.updated_at = utcnow() - timedelta(seconds=61)
     db.commit()
-    assert service.enter(a.id)["x"] == 7377
+    assert service.enter(a.id)["x"] == 7400  # Reconnect restores persisted position.
     assert client.post("/realtime/enter", headers=a.headers,
                        json={"owner_id": b.id}).status_code == 403
     friends(client, a, b)

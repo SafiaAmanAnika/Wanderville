@@ -1,0 +1,33 @@
+extends SceneTree
+
+func _initialize() -> void:
+	call_deferred("_run")
+
+func _run() -> void:
+	root.get_node("APIClient").base_url = "http://127.0.0.1:1"
+	var failures := 0
+	for folder in ["res://Scripts", "res://autoloads"]:
+		failures += _scripts(folder)
+	for path in ["res://Scenes/world_hud.tscn", "res://Scenes/seed_picker_menu.tscn", "res://Scenes/social_panel.tscn", "res://Scenes/player1.tscn", "res://Scenes/menus/LoginScene.tscn", "res://Scenes/menus/SignupScene.tscn", "res://Scenes/menus/EmailVerificationScene.tscn"]:
+		var scene := load(path) as PackedScene
+		if scene == null:
+			failures += 1
+			continue
+		var instance := scene.instantiate()
+		root.add_child(instance)
+		await process_frame
+		instance.queue_free()
+		await process_frame
+	print("CLIENT_LOAD_CHECK failures=", failures)
+	quit(failures)
+
+func _scripts(folder: String) -> int:
+	var failures := 0
+	for file in DirAccess.get_files_at(folder):
+		if file.ends_with(".gd"):
+			var script := load(folder.path_join(file)) as GDScript
+			if script == null or not script.can_instantiate():
+				failures += 1
+	for child in DirAccess.get_directories_at(folder):
+		failures += _scripts(folder.path_join(child))
+	return failures

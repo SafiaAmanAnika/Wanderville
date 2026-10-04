@@ -56,6 +56,7 @@ class InventoryItemResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
     item: ItemDefinitionResponse
+    partition: str | None = None
 
     @computed_field
     @property
@@ -68,3 +69,5 @@ class InventoryListResponse(BaseModel):
     items: list[InventoryItemResponse]
     total_items: int
     total_quantity: int
+    partition_capacity: int
+    partitions: dict[str, int]

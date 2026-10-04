@@ -63,7 +63,7 @@ func _on_body_exited(body: Node2D) -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("collect_water"):
 		print("Q pressed")
-	if GameState.menu_open:
+	if GameState.menu_open or GameState.social_open:
 		return
 	if not player_in_range:
 		return
@@ -77,8 +77,11 @@ func _input(event: InputEvent) -> void:
 		if _refilling or not GameState.backend_ready:
 			return
 		_refilling = true
+		var version := Global.session_version
 		var response: Dictionary = await APIClient.refill_water()
 		_refilling = false
+		if version != Global.session_version:
+			return
 		if bool(response.get("ok", false)):
 			var data: Variant = APIClient.data_of(response)
 			GameState.water_drops = int(data.get("water_remaining", 0))
@@ -87,5 +90,6 @@ func _input(event: InputEvent) -> void:
 		else:
 			$PromptLayer/prompt.text = APIClient.error_text(response)
 			GameState.report_error(response)
+			await GameState.refresh_gameplay()
 		return
 	GameState.add_water(refill_amount)

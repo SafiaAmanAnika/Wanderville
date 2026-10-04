@@ -10,8 +10,8 @@ func _ready() -> void:
 
 
 func _on_world_pressed() -> void:
-	# TODO: Load the actual game world scene
-	print("Loading world... (not implemented yet)")
+	if await GameState.load_from_backend():
+		SceneManager.goto_post_login()
 
 
 func _on_logout_pressed() -> void:

@@ -52,6 +52,14 @@ class SocialService:
         self.players, self.inventory = PlayerRepository(db), InventoryService(db)
         self.alerts = NotificationsService(db)
 
+    def online_ids(self, ids):
+        from app.modules.realtime.models import Presence
+
+        return set(self.db.scalars(select(Presence.player_id).where(
+            Presence.player_id.in_(ids),
+            Presence.updated_at > utcnow() - timedelta(seconds=60),
+        )))
+
     def pair(self, a, b):
         if a == b:
             raise AppError("SELF_INTERACTION", "Cannot target yourself")
@@ -160,16 +168,13 @@ class SocialService:
             .order_by(Player.username)
             .limit(limit)
         ).all()
+        online = self.online_ids([p.id for p, _ in rows])
         return [
             {
                 "id": p.id,
                 "username": p.username,
                 "display_name": p.display_name,
-                "online": bool(
-                    s
-                    and s.last_seen_at
-                    and (utcnow() - as_utc(s.last_seen_at)).total_seconds() < 60
-                ),
+                "online": p.id in online,
             }
             for p, s in rows
         ]
@@ -189,6 +194,7 @@ class SocialService:
             .outerjoin(PlayerExperience, PlayerExperience.player_id == Player.id)
             .where(Player.id.in_(ids))
         ).all()
+        online = self.online_ids(ids)
         data = {
             p.id: {
                 "id": p.id,
@@ -196,11 +202,7 @@ class SocialService:
                 "display_name": p.display_name,
                 "status_message": s.status_message if s else "",
                 "last_online": s.last_seen_at if s else None,
-                "online": bool(
-                    s
-                    and s.last_seen_at
-                    and (utcnow() - as_utc(s.last_seen_at)).total_seconds() < 60
-                ),
+                "online": p.id in online,
                 "house_tier": h.tier if h else 1,
                 "level": x.level if x else 1,
             }

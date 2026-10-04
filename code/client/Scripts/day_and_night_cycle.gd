@@ -3,14 +3,14 @@ class_name DayAndNightCycle
 
 signal changeDayTime(dayTime: DAY_STATE)
 
-@onready var animation_player: AnimationPlayer = $AnimationPlayer
-@onready var weather_manager = $"../WeatherManager"
+@onready var animation_player: AnimationPlayer = get_node_or_null("AnimationPlayer")
+@onready var weather_manager = get_node_or_null("../Map/WeatherManager")
 
 enum DAY_STATE { NOON, EVENING }
 var dayTime: DAY_STATE = DAY_STATE.NOON
 
-const DAY_LENGTH: float = 30.0   # 30 minutes in seconds
-const NIGHT_LENGTH: float = 10.0  # 10 minutes in seconds
+const DAY_LENGTH: float = 1800.0
+const NIGHT_LENGTH: float = 600.0
 const CYCLE_LENGTH: float = DAY_LENGTH + NIGHT_LENGTH  # 2400.0 = 40 minutes
 
 var time_elapsed: float = 0.0
@@ -18,7 +18,7 @@ var time_elapsed: float = 0.0
 func _ready() -> void:
 	add_to_group("DayAndNightCycle")
 	
-	if animation_player.has_animation(animation_player.current_animation):
+	if animation_player and animation_player.has_animation(animation_player.current_animation):
 		animation_player.pause()
 
 
@@ -34,6 +34,18 @@ func _update_day_state() -> void:
 		changeDayTime.emit(dayTime)
 
 func _update_animation() -> void:
+	if not animation_player or animation_player.current_animation.is_empty():
+		var phase := time_elapsed / CYCLE_LENGTH
+		var night := Color(0.34, 0.40, 0.62)
+		if phase < 0.65:
+			color = Color.WHITE
+		elif phase < 0.75:
+			color = Color.WHITE.lerp(night, (phase - 0.65) / 0.10)
+		elif phase < 0.95:
+			color = night
+		else:
+			color = night.lerp(Color.WHITE, (phase - 0.95) / 0.05)
+		return
 	var anim_length := animation_player.current_animation_length
 	if anim_length <= 0.0:
 		return
@@ -50,15 +62,8 @@ func _process(delta: float) -> void:
 
 	if time_elapsed >= CYCLE_LENGTH:
 		time_elapsed -= CYCLE_LENGTH
-		weather_manager.on_new_day()
+		if weather_manager:
+			weather_manager.on_new_day()
 
-	var was_day := dayTime == DAY_STATE.NOON
 	_update_day_state()
-	if was_day && dayTime == DAY_STATE.EVENING:
-		print("NIGHT STARTED at time_elapsed=", time_elapsed)
-
-	var anim_length := animation_player.current_animation_length
-	if anim_length > 0.0:
-		var progress := time_elapsed / CYCLE_LENGTH
-		print("progress=", progress, " seek_to=", progress * anim_length, " anim_length=", anim_length)
-		animation_player.seek(progress * anim_length, true)
+	_update_animation()

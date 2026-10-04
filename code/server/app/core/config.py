@@ -1,7 +1,8 @@
 from pathlib import Path
 from typing import Literal
+import os
 
-from pydantic import Field, model_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 SERVER_ROOT = Path(__file__).resolve().parents[2]
@@ -19,13 +20,17 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = Field(15, gt=0)
     refresh_token_expire_days: int = Field(30, gt=0)
     google_client_id: str = ""
+    google_client_secret: str = ""
+    email_delivery: Literal["auto", "file", "smtp", "brevo"] = "auto"
+    brevo_api_key: str = ""
+    world_worker_enabled: bool = False
     smtp_host: str = "localhost"
     smtp_port: int = Field(1025, ge=1, le=65535)
     smtp_user: str = ""
     smtp_password: str = ""
     smtp_starttls: bool = True
     email_from: str = "noreply@wanderville.example"
-    email_base_url: str = "http://localhost:8000"
+    email_base_url: str = Field(default_factory=lambda: os.getenv("RENDER_EXTERNAL_URL", "http://localhost:8000"))
     email_verification_expire_minutes: int = Field(60, gt=0)
     password_reset_expire_minutes: int = Field(30, gt=0)
     max_login_attempts: int = Field(5, gt=0)
@@ -43,6 +48,13 @@ class Settings(BaseSettings):
     chat_blocked_words: str = "damn,shit,fuck"
     inventory_partition_slots: int = Field(30, ge=1, le=1000)
 
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def normalize_postgres_url(cls, value):
+        if isinstance(value, str) and value.startswith("postgres://"):
+            return value.replace("postgres://", "postgresql+psycopg2://", 1)
+        return value
+
     @property
     def is_development(self) -> bool:
         return self.wanderville_env in {"dev", "test"}
@@ -56,6 +68,8 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def production_policy(self):
         if not self.is_development:
+            if self.email_delivery == "file":
+                raise ValueError("File email delivery is development-only")
             secret = self.jwt_secret_key.lower()
             if len(secret) < 32 or any(
                 word in secret
@@ -83,10 +97,12 @@ class Settings(BaseSettings):
                 raise ValueError(
                     "World mutation compatibility switch is development-only"
                 )
-            if not self.email_base_url.startswith("https://") or not self.smtp_starttls:
+            if not self.email_base_url.startswith("https://") or (self.email_delivery != "brevo" and not self.smtp_starttls):
                 raise ValueError(
                     "Production email requires HTTPS links and SMTP STARTTLS"
                 )
+            if self.email_delivery == "brevo" and not self.brevo_api_key:
+                raise ValueError("Set BREVO_API_KEY for Brevo delivery")
         return self
 
 

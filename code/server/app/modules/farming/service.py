@@ -16,6 +16,30 @@ from app.modules.inventory.service import InventoryService
 from app.modules.players.repository import PlayerRepository
 from app.modules.world.service import WorldService, growth_seconds_between
 
+# CropVisual.gd defaults and the supplied scenes: frame 0 waits for water,
+# frame 1 starts immediately; the last frame is harvestable upon entry.
+SCENE_DURATIONS = {
+    code: (5.0, 6.0, 7.0)
+    for code in ("paddy", "wheat", "sugarcane", "sweet_corn", "bell_pepper", "green_bean", "pumpkin", "turnip")
+}
+SCENE_DURATIONS["potato"] = (5.0, 6.0, 7.0, 4.0)
+
+
+def scene_frame(code, progress, watered, ready=False):
+    durations = SCENE_DURATIONS.get(code)
+    if durations is None:
+        return None
+    if ready:
+        return len(durations) + 1
+    if not watered:
+        return 0
+    frame, boundary = 1, 0.0
+    for duration in durations:
+        boundary += duration
+        if progress >= boundary:
+            frame += 1
+    return frame
+
 
 @dataclass(frozen=True)
 class Growth:
@@ -36,6 +60,13 @@ def evaluate_growth(tile, state, now):
         tile.growth_stage,
         tile.is_watered,
     )
+    if tile.crop_item_code in SCENE_DURATIONS:
+        duration = sum(SCENE_DURATIONS[tile.crop_item_code])
+        if watered and stage < 3:
+            elapsed = max(0.0, (as_utc(now) - as_utc(tile.last_growth_update_at)).total_seconds())
+            progress = min(duration, progress + elapsed)
+            stage = min(3, int(progress / duration * 3))
+        return Growth(progress, stage, watered)
     if watered and stage < 3:
         target = tile.item.growth_time_seconds * (stage + 1) / 3
         elapsed = growth_seconds_between(state, tile.last_growth_update_at, now)
@@ -58,6 +89,7 @@ def tile_response(tile, state, now):
         is_watered=growth.watered,
         planted_at=as_utc(tile.planted_at) if tile.planted_at else None,
         ready=bool(tile.crop_item_code) and growth.stage == 3,
+        visual_frame=scene_frame(tile.crop_item_code, growth.progress, growth.watered, growth.stage == 3),
     )
 
 
@@ -94,6 +126,7 @@ class FarmingService:
         )
 
     def till(self, player_id, request, now=None):
+        self._coordinate(request)
         now = now or utcnow()
         with transaction(self.db):
             self.players.lock(player_id)
@@ -107,6 +140,7 @@ class FarmingService:
         return result
 
     def plant(self, player_id, request, now=None):
+        self._coordinate(request)
         now = now or utcnow()
         with transaction(self.db):
             self.players.lock(player_id)
@@ -232,5 +266,33 @@ class FarmingService:
                     "WATER_SOURCE_REQUIRED", "Stand near a campus water source"
                 )
             profile = self.db.get(PlayerProfile, player_id)
-            profile.water_charges = 20
+            profile.water_charges = min(20, profile.water_charges + 1)
         return {"water_remaining": profile.water_charges}
+
+    @staticmethod
+    def _coordinate(request):
+        # world.tscn exports 150px tiles within the existing controller bounds.
+        if not (0 <= request.x <= 16 and 0 <= request.y <= 20):
+            raise AppError("OUTSIDE_FARM", "Choose a tile inside the existing farm area")
+
+    def relocate(self, player_id, request, now=None):
+        self._coordinate(request)
+        now = now or utcnow()
+        with transaction(self.db):
+            self.players.lock(player_id)
+            source = self._owned(player_id, request.plot_id)
+            target = self.repo.coordinate(source.world_id, request.x, request.y)
+            if source is target or not source.crop_item_code:
+                raise AppError("FARM_EMPTY", "Choose a planted crop and a different tile")
+            if target is None or not target.is_tilled or target.crop_item_code:
+                raise AppError("FARM_DESTINATION", "Move to an empty tilled tile", 409)
+            state = self.world.raw_state()
+            self._persist_growth(source, state, now)
+            for field in ("crop_item_code", "item", "planted_at", "last_growth_update_at", "watered_at", "growth_progress_seconds", "growth_stage", "is_watered"):
+                setattr(target, field, getattr(source, field))
+            source.crop_item_code = source.item = None
+            source.planted_at = source.last_growth_update_at = source.watered_at = None
+            source.growth_progress_seconds, source.growth_stage, source.is_watered = 0.0, 0, False
+            self.db.flush()
+            result = {"source": tile_response(source, state, now), "plot": tile_response(target, state, now)}
+        return result

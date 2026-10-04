@@ -1,5 +1,7 @@
 extends Control
 
+signal closed
+
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
 const BG_TEXTURE := preload("res://Assets/background/bg.png")
 
@@ -13,6 +15,8 @@ const BG_TEXTURE := preload("res://Assets/background/bg.png")
 @onready var _panel: PanelContainer = $Center/Panel
 
 var _tween: Tween
+var _saving := false
+var _logout_dialog: Control
 
 
 func _ready() -> void:
@@ -27,6 +31,11 @@ func _ready() -> void:
 	_sfx_slider.value_changed.connect(_on_sfx_changed)
 	_remember_check.toggled.connect(_on_remember_toggled)
 	_close_button.pressed.connect(_on_close)
+	WoodPanel.apply_status_label(%SaveStatus)
+	%LogoutButton.visible = Global.is_logged_in()
+	_logout_dialog = preload("res://Scenes/menus/LogoutConfirmationDialog.tscn").instantiate()
+	add_child(_logout_dialog)
+	%LogoutButton.pressed.connect(func() -> void: _logout_dialog.show_dialog())
 
 
 func _apply_panel_style() -> void:
@@ -96,6 +105,8 @@ func _check_font(check: CheckBox, size: int) -> void:
 
 
 func show_overlay() -> void:
+	%LogoutButton.visible = Global.is_logged_in()
+	%SaveStatus.text = ""
 	visible = true
 	modulate.a = 0.0
 	_panel.scale = Vector2(0.92, 0.92)
@@ -120,18 +131,27 @@ func _on_remember_toggled(toggled: bool) -> void:
 
 
 func _on_close() -> void:
+	await request_close()
+
+
+func request_close() -> bool:
+	if _saving or _logout_dialog.visible:
+		return false
+	_saving = true
 	if Global.is_logged_in():
 		_close_button.disabled = true
 		var response: Dictionary = await APIClient.update_profile({"music_volume": roundi(AudioManager.music_volume), "effects_volume": roundi(AudioManager.sfx_volume)})
 		_close_button.disabled = false
 		if not bool(response.get("ok", false)):
+			%SaveStatus.text = APIClient.error_text(response)
 			GameState.report_error(response)
-			return
+			_saving = false
+			return false
+	_saving = false
 	_kill_tween()
-	_tween = create_tween().set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_CUBIC)
-	_tween.tween_property(self, "modulate:a", 0.0, 0.25)
-	_tween.parallel().tween_property(_panel, "scale", Vector2(0.92, 0.92), 0.25)
-	_tween.tween_callback(func() -> void: visible = false)
+	visible = false
+	closed.emit()
+	return true
 
 
 func _kill_tween() -> void:

@@ -63,9 +63,8 @@ def test_no_double_harvest(account, session_factory, db):
     now = utcnow()
     service = FarmingService(db)
     tile = service.plant(user.id, PlantRequest(x=1, y=2, item_code="wheat"), now).plot
-    for _ in range(3):
-        service.water(user.id, tile.id, now)
-        now += timedelta(seconds=60)
+    service.water(user.id, tile.id, now)
+    now += timedelta(seconds=18)
     result = concurrent(
         session_factory,
         lambda session, _: FarmingService(session).harvest(user.id, tile.id, now),

@@ -211,6 +211,13 @@ func _on_create() -> void:
 		var body_v: Variant = res.get("body")
 		if typeof(body_v) == TYPE_DICTIONARY:
 			var err_code := str(body_v.get("error", ""))
+			if err_code == "EMAIL_DELIVERY_FAILED":
+				Global.email = e
+				_form_panel.hide()
+				_success_panel.show()
+				_success_message.text = APIClient.error_text(res)
+				WoodPanel.play_entrance(_success_panel)
+				return
 			if err_code == "USERNAME_TAKEN":
 				_mark_field_error(_username)
 				_username.grab_focus()
@@ -235,6 +242,10 @@ func _show_success_panel(user_email: String) -> void:
 	_success_panel.show()
 	_success_message.text = "We sent a verification link to:\n%s\n\nPlease check your email and verify your account before logging in." % user_email
 	WoodPanel.play_entrance(_success_panel)
+	var config: Dictionary = await APIClient.auth_config()
+	var data: Variant = APIClient.data_of(config)
+	if data is Dictionary and data.get("email_delivery") == "file":
+		_success_message.text = "Account created for:\n%s\n\nThis development server saves verification emails locally. Open the newest .eml in code/server/.dev-mail, follow its link, then return to Log In." % user_email
 
 
 func _on_go_to_login() -> void:
@@ -250,13 +261,16 @@ func _on_resend() -> void:
 	_resend_btn.disabled = true
 	_resend_btn.text = "Sending..."
 
-	var _res: Dictionary = await APIClient.resend_verification(e)
+	var res: Dictionary = await APIClient.resend_verification(e)
 
 	_resend_btn.disabled = false
 	_resend_btn.text = "Resend Verification Email"
+	if not res.get("ok", false):
+		_success_message.text = APIClient.error_text(res)
+		return
 
 	SceneManager.goto_email_verification(
-		"If that email is registered, a new verification link has been sent.",
+		"A verification email was requested. Check your inbox; if it does not arrive, ask the server owner to check email delivery.",
 		true
 	)
 

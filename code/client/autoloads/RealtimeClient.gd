@@ -4,6 +4,7 @@ signal connection_changed(connected: bool)
 signal snapshot_received(snapshot: Dictionary)
 signal nearby_message_received(message: Dictionary)
 signal direct_message_received(message: Dictionary)
+signal conversation_polled(target_id: int)
 signal request_failed(message: String)
 
 var connected := false
@@ -23,6 +24,9 @@ var _watched_conversations: Dictionary = {}
 var _chat_elapsed := 0.0
 var _chat_polling := false
 var _owner := 0
+var _version := -1
+var _retry_delay := 1.0
+var _conversation_versions: Dictionary = {}
 
 
 func _in_world() -> bool:
@@ -38,13 +42,20 @@ func stop() -> void:
 	_pending_sequence = 0
 	_correct_position = true
 	players.clear()
-	_seen_messages.clear()
 	_set_connected(false)
+	snapshot_received.emit({"players": [], "messages": []})
 
 
 func clear_session() -> void:
 	stop()
 	_watched_conversations.clear()
+	_conversation_versions.clear()
+	_seen_messages.clear()
+	_version = Global.session_version
+	_retry_delay = 1.0
+	_retry_elapsed = 0.0
+	_refreshing = false
+	_chat_polling = false
 	_owner = 0
 
 
@@ -63,16 +74,22 @@ func _connect_socket() -> void:
 	_connection_elapsed = 0.0
 	_last_packet_elapsed = 0.0
 	if _socket.connect_to_url(url + "/realtime/ws") != OK:
-		stop()
-		_retry_elapsed = 2.0
+		_schedule_reconnect()
+
+
+func _schedule_reconnect() -> void:
+	stop()
+	_retry_elapsed = _retry_delay + randf_range(0.0, 0.3)
+	_retry_delay = minf(_retry_delay * 2.0, 15.0)
 
 
 func _process(delta: float) -> void:
 	if not _in_world():
 		if _socket != null:
 			stop()
+		_watched_conversations.clear()
 		return
-	if _owner != Global.player_id:
+	if _version != Global.session_version:
 		clear_session()
 		_owner = Global.player_id
 	if _refreshing:
@@ -87,8 +104,7 @@ func _process(delta: float) -> void:
 	_last_packet_elapsed += delta
 	var state := _socket.get_ready_state()
 	if state == WebSocketPeer.STATE_CLOSED or _last_packet_elapsed > 12.0:
-		stop()
-		_retry_elapsed = 2.0
+		_schedule_reconnect()
 		return
 	if state != WebSocketPeer.STATE_OPEN:
 		return
@@ -125,7 +141,7 @@ func _handle_packet(packet: Dictionary) -> void:
 			stop()
 			_retry_elapsed = 10.0
 		elif packet.get("error") == "SESSION_EXPIRED":
-			stop()
+			_schedule_reconnect()
 		else:
 			_pending_sequence = 0
 			_correct_position = true
@@ -147,14 +163,15 @@ func _handle_packet(packet: Dictionary) -> void:
 					player.global_position = Vector2(float(entry["x"]), float(entry["y"]))
 					_sequence = accepted
 					_correct_position = false
+					_retry_delay = 1.0
 					_set_connected(true)
-	var active_ids: Dictionary = {}
 	for message in data.get("messages", []):
 		var id := int(message.get("id", 0))
-		active_ids[id] = true
 		if not _seen_messages.has(id):
+			_seen_messages[id] = true
 			nearby_message_received.emit(message)
-	_seen_messages = active_ids
+	while _seen_messages.size() > 512:
+		_seen_messages.erase(_seen_messages.keys()[0])
 	snapshot_received.emit(data)
 
 
@@ -162,8 +179,11 @@ func _reauthenticate() -> void:
 	if _refreshing:
 		return
 	_refreshing = true
+	var version := Global.session_version
 	stop()
 	var success: bool = await APIClient.refresh_session()
+	if version != Global.session_version:
+		return
 	_refreshing = false
 	_retry_elapsed = 0.0 if success else 10.0
 	if not success:
@@ -185,25 +205,33 @@ func send_emote(emote: String) -> bool:
 
 
 func watch_conversation(target_id: int, after: int = 0) -> void:
+	_conversation_versions[target_id] = int(_conversation_versions.get(target_id, 0)) + 1
 	_watched_conversations[target_id] = after
 
 
 func unwatch_conversation(target_id: int) -> void:
+	_conversation_versions[target_id] = int(_conversation_versions.get(target_id, 0)) + 1
 	_watched_conversations.erase(target_id)
 
 
 func _poll_direct_messages() -> void:
 	_chat_polling = true
-	var owner := Global.player_id
+	var version := Global.session_version
 	for target in _watched_conversations.keys():
+		var conversation_version := int(_conversation_versions.get(target, 0))
 		var response: Dictionary = await APIClient.get_direct_messages(target, int(_watched_conversations.get(target, 0)))
-		if owner != Global.player_id:
-			break
-		if not _watched_conversations.has(target):
+		if version != Global.session_version:
+			return
+		if not _watched_conversations.has(target) or conversation_version != int(_conversation_versions.get(target, 0)) or not _in_world():
 			continue
 		var messages: Variant = APIClient.data_of(response)
 		if bool(response.get("ok", false)) and messages is Array:
 			for message in messages:
 				_watched_conversations[target] = maxi(int(_watched_conversations[target]), int(message["id"]))
 				direct_message_received.emit(message)
+			conversation_polled.emit(target)
+		else:
+			request_failed.emit(APIClient.error_text(response))
+			if int(response.get("status_code", 0)) in [403, 404]:
+				unwatch_conversation(target)
 	_chat_polling = false

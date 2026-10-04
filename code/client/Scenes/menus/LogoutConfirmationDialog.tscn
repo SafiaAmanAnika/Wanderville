@@ -57,7 +57,7 @@ custom_minimum_size = Vector2(0, 4)
 unique_name_in_owner = true
 layout_mode = 2
 text = "Are you sure you want to log out?
-Your progress will be saved."
+Confirmed progress is already saved."
 horizontal_alignment = 1
 autowrap_mode = 2
 
@@ -72,14 +72,14 @@ theme_override_constants/separation = 16
 
 [node name="ConfirmBtn" type="Button" parent="Center/Panel/VBox/Buttons"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(320, 52)
+custom_minimum_size = Vector2(150, 52)
 layout_mode = 2
 text = "Yes"
 script = ExtResource("3")
 
 [node name="CancelBtn" type="Button" parent="Center/Panel/VBox/Buttons"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(320, 52)
+custom_minimum_size = Vector2(150, 52)
 layout_mode = 2
 text = "No"
 script = ExtResource("3")

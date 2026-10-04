@@ -9,6 +9,7 @@ from app.modules.auth.schemas import (
     ChangePasswordRequest,
     EmailRequest,
     GoogleRequest,
+    GoogleCodeRequest,
     LoginRequest,
     LoginResponse,
     RefreshRequest,
@@ -20,6 +21,25 @@ from app.modules.auth.service import AuthService
 from app.modules.players.schemas import PlayerPublic
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+@router.get("/config")
+def auth_config():
+    from app.core.config import settings
+
+    local_mail = settings.email_delivery == "file" or (
+        settings.email_delivery == "auto" and settings.is_development
+    )
+    return success({"google_client_id": settings.google_client_id, "email_delivery": "file" if local_mail else ("brevo" if settings.email_delivery == "brevo" else "smtp")})
+
+
+@router.post("/google/code", response_model=Envelope[LoginResponse], dependencies=[Depends(rate_limit(10))])
+def google_code(payload: GoogleCodeRequest, request: Request, db: Session = Depends(get_db)):
+    from app.modules.auth.oauth import exchange_code
+
+    return success(AuthService(db).google_login(
+        exchange_code(payload), request.client.host if request.client else None, payload.nonce
+    ), "Google authentication successful")
 
 
 @router.post(
@@ -82,9 +102,29 @@ def logout(payload: RefreshRequest, db: Session = Depends(get_db)):
     dependencies=[Depends(rate_limit(10))],
 )
 def verify_email(
+    request: Request,
     token: str = Query(min_length=1, max_length=512), db: Session = Depends(get_db)
 ):
-    return success(AuthService(db).verify_email(token), "Email verified successfully")
+    from app.core.exceptions import AppError
+    from app.modules.auth.pages import account_page
+
+    browser = "text/html" in request.headers.get("accept", "")
+    try:
+        player = AuthService(db).verify_email(token)
+    except AppError as exc:
+        if browser:
+            return account_page("Email verification", exc.message)
+        raise
+    if browser:
+        return account_page("Email verified", "Your account is ready. Return to Wanderville and log in.")
+    return success(player, "Email verified successfully")
+
+
+@router.get("/reset-password", include_in_schema=False)
+def reset_password_page():
+    from app.modules.auth.pages import reset_page
+
+    return reset_page()
 
 
 @router.post(
@@ -95,7 +135,7 @@ def verify_email(
 def resend(payload: EmailRequest, db: Session = Depends(get_db)):
     AuthService(db).request_email(payload.email, "email_verification")
     return success(
-        message="If that email is registered and unverified, a new verification email has been sent."
+        message="Verification email requested. If the address is registered and unverified, check its inbox."
     )
 
 
@@ -107,7 +147,7 @@ def resend(payload: EmailRequest, db: Session = Depends(get_db)):
 def forgot(payload: EmailRequest, db: Session = Depends(get_db)):
     AuthService(db).request_email(payload.email, "password_reset")
     return success(
-        message="If that email is registered, a password reset link has been sent."
+        message="Password reset requested. If the address is eligible, check its inbox."
     )
 
 

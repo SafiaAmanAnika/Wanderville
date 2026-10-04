@@ -11,13 +11,22 @@ def test_all_apiclient_routes_exist():
     requests = re.findall(
         r'HTTPClient.METHOD_(GET|POST|PUT),\s*"([^"?]+)', api.read_text()
     )
-    assert len(requests) == 23
+    assert len(requests) >= 23  # Extensions must not remove the original contract.
     routes = {
         (method, route.path)
         for route in app.routes
         for method in getattr(route, "methods", [])
     }
-    assert set(requests) <= routes
+    def matches(method, path):
+        for server_method, server_path in routes:
+            pattern = re.sub(r"\{[^}]+\}", r"[^/]+", server_path)
+            if method == server_method and re.fullmatch(pattern, path):
+                return True
+        return False
+
+    assert all(matches(method, path) for method, path in requests), [
+        (method, path) for method, path in requests if not matches(method, path)
+    ]
 
 
 def test_login_player_and_token_shape(client, account):

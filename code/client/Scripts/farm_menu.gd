@@ -43,6 +43,8 @@ func close():
 	selected_index = 0
 
 func _process(_delta):
+	if GameState.social_open:
+		return
 	if not visible:
 		# Seed cycling when in sow mode outside menu
 		if GameState.farm_mode == "sow":
@@ -145,6 +147,6 @@ func _update_sow_hint():
 	var count = GameState.seed_inventory.get(seed, 0)
 	hint_label.text = "Seed: %s (%d)  |  ↑↓ to change  |  Click to plant" % [seed, count]
 
-func _on_seed_changed():
+func _on_seed_changed(_seed: String = ""):
 	if GameState.farm_mode == "sow" and not visible:
 		_update_sow_hint()

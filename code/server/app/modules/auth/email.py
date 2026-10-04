@@ -2,6 +2,7 @@ import logging
 import os
 import smtplib
 import ssl
+import requests
 from email.message import EmailMessage
 from uuid import uuid4
 
@@ -19,9 +20,11 @@ def send_account_email(address, username, raw_token, kind):
         text = f"Hi {username},\nOpen {settings.email_base_url.rstrip('/')}/auth/verify-email?token={raw_token}\nThis link expires in {settings.email_verification_expire_minutes} minutes."
     else:
         message["Subject"] = "Reset your WanderVille password"
-        text = f"Hi {username},\nOpen the game with wanderville://reset-password?token={raw_token}\nOr submit this token and your new_password to POST /auth/reset-password.\nToken: {raw_token}\nExpires in {settings.password_reset_expire_minutes} minutes."
+        text = f"Hi {username},\nOpen {settings.email_base_url.rstrip('/')}/auth/reset-password?token={raw_token}\nExpires in {settings.password_reset_expire_minutes} minutes."
     message.set_content(text)
-    if settings.is_development:
+    if settings.email_delivery == "file" or (
+        settings.email_delivery == "auto" and settings.is_development
+    ):
         directory = SERVER_ROOT / ".dev-mail"
         directory.mkdir(mode=0o700, exist_ok=True)
         path = directory / f"{uuid4().hex}.eml"
@@ -29,6 +32,20 @@ def send_account_email(address, username, raw_token, kind):
         with os.fdopen(fd, "wb") as output:
             output.write(message.as_bytes())
         logger.info("Development email saved to the private .dev-mail directory")
+        return
+    if settings.email_delivery == "brevo":
+        response = requests.post(
+            "https://api.brevo.com/v3/smtp/email",
+            headers={"api-key": settings.brevo_api_key},
+            json={
+                "sender": {"email": settings.email_from, "name": "WanderVille"},
+                "to": [{"email": address}],
+                "subject": str(message["Subject"]),
+                "textContent": text,
+            },
+            timeout=10,
+        )
+        response.raise_for_status()
         return
     with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=10) as smtp:
         if settings.smtp_starttls:
@@ -41,7 +58,9 @@ def send_account_email(address, username, raw_token, kind):
 def deliver_safely(*args):
     try:
         send_account_email(*args)
-    except (OSError, smtplib.SMTPException):
+        return True
+    except (OSError, smtplib.SMTPException, requests.RequestException):
         # Email is external to the database transaction. Resend can retry delivery.
         # Keep forgot/reset responses indistinguishable for registered addresses.
         logger.error("Account email delivery failed; retry with the resend endpoint")
+        return False

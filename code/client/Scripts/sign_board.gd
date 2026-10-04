@@ -9,7 +9,7 @@ func _ready():
 	body_exited.connect(_on_body_exited)
 
 func _process(_delta):
-	if player_near and (Input.is_action_just_pressed("interact") or Input.is_action_just_pressed("ui_accept")) and not GameState.menu_open:
+	if player_near and (Input.is_action_just_pressed("interact") or Input.is_action_just_pressed("ui_accept")) and not GameState.menu_open and not GameState.social_open:
 		open_menu()
 
 func _on_body_entered(body: Node2D):

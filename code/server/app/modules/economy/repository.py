@@ -1,4 +1,5 @@
 from sqlalchemy import select
+from app.core.config import settings
 
 from app.modules.economy.models import (
     EconomyTransaction,
@@ -19,7 +20,9 @@ class EconomyRepository:
 
     def create(self, player_id):
         self.db.add_all(
-            [PlayerEconomy(player_id=player_id), PlayerExperience(player_id=player_id)]
+            [PlayerEconomy(player_id=player_id), PlayerExperience(
+                player_id=player_id, inventory_base_capacity=settings.inventory_partition_slots
+            )]
         )
         self.db.flush()
 

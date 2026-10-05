@@ -57,6 +57,29 @@ def test_no_double_spend(account, session_factory, db):
     assert EconomyService(db).get(user.id).aura_balance == 0
 
 
+def test_starter_claim_is_once_under_concurrency(account, session_factory, db):
+    from app.modules.shop.service import ShopService, STARTER_ITEMS
+
+    user = account()
+    assert concurrent(session_factory, lambda session, _: ShopService(session).claim_starter(user.id)) == ['ok', 'ok']
+    db.expire_all()
+    rows = InventoryService(db).repo.list(user.id)
+    assert {r.item_code: r.quantity for r in rows} == STARTER_ITEMS
+
+
+def test_replayed_sale_is_once_under_concurrency(account, session_factory, db):
+    from app.modules.shop.service import ShopService
+    from app.modules.shop.schemas import SaleRequest
+
+    user = account()
+    InventoryService(db).add_compatibility(user.id, ItemRequest(item_code='wheat', quantity=3))
+    request = SaleRequest(item_code='wheat', quantity=2, request_id='concurrent_sale')
+    assert concurrent(session_factory, lambda session, _: ShopService(session).sell(user.id, request)) == ['ok', 'ok']
+    db.expire_all()
+    assert InventoryService(db).repo.stack(user.id, 'wheat').quantity == 1
+    assert EconomyService(db).get(user.id).aura_balance == 34
+
+
 def test_no_double_harvest(account, session_factory, db):
     user = account()
     InventoryService(db).add_compatibility(user.id, ItemRequest(item_code="wheat"))
@@ -125,6 +148,41 @@ def test_duplicate_planting_consumes_one_seed(account, session_factory, db):
     assert sorted(result) == ["FARM_PLOT_OCCUPIED", "ok"]
     db.expire_all()
     assert InventoryService(db).list(user.id).total_quantity == 1
+    assert EconomyService(db).xp(user.id).total_xp == 1
+
+
+def test_first_bonus_is_once_for_simultaneous_same_species_harvests(account, session_factory, db):
+    from app.modules.inventory.models import PlayerFirstHarvest
+
+    user = account()
+    InventoryService(db).add_compatibility(user.id, ItemRequest(item_code="wheat_seed", quantity=2))
+    now = utcnow()
+    farm = FarmingService(db)
+    plots = [farm.plant(user.id, PlantRequest(x=index + 1, y=2, item_code="wheat_seed"), now).plot for index in range(2)]
+    for plot in plots:
+        farm.water(user.id, plot.id, now)
+    result = concurrent(session_factory, lambda session, index: FarmingService(session).harvest(
+        user.id, plots[index].id, now + timedelta(seconds=18)))
+    assert result == ["ok", "ok"]
+    db.expire_all()
+    assert InventoryService(db).repo.stack(user.id, "wheat").quantity == 2
+    assert EconomyService(db).xp(user.id).total_xp == 2 + 5 + 5 + 15
+    assert len(list(db.scalars(select(PlayerFirstHarvest)))) == 1
+
+
+def test_simultaneous_level_crossing_pays_aura_once(account, session_factory, db):
+    from app.modules.economy.models import PlayerLevelReward
+    from app.modules.economy.schemas import XPGainRequest
+
+    user = account()
+    EconomyService(db).gain_compatibility(user.id, XPGainRequest(xp_amount=79))
+    result = concurrent(session_factory, lambda session, _: EconomyService(session).gain_compatibility(
+        user.id, XPGainRequest(xp_amount=1)))
+    assert result == ["ok", "ok"]
+    db.expire_all()
+    assert EconomyService(db).xp(user.id).total_xp == 81
+    assert EconomyService(db).get(user.id).aura_balance == 35
+    assert len(list(db.scalars(select(PlayerLevelReward)))) == 1
 
 
 def test_simultaneous_purchase_is_idempotent(account, session_factory, db):
@@ -133,15 +191,15 @@ def test_simultaneous_purchase_is_idempotent(account, session_factory, db):
 
     user = account()
     request = PurchaseRequest(
-        request_id="parallel_purchase", item_code="basic_rod", quantity=1
+        request_id="parallel_purchase", item_code="wheat_seed", quantity=1
     )
     results = concurrent(
         session_factory, lambda session, _: ShopService(session).buy(user.id, request)
     )
     assert results == ["ok", "ok"]
     db.expire_all()
-    assert InventoryService(db).repo.stack(user.id, "basic_rod").quantity == 1
-    assert EconomyService(db).get(user.id).aura_balance == 0
+    assert InventoryService(db).repo.stack(user.id, "wheat_seed").quantity == 1
+    assert EconomyService(db).get(user.id).aura_balance == 4
 
 
 def test_simultaneous_gift_claim_has_one_winner(account, session_factory, db):

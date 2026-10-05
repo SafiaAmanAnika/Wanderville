@@ -21,8 +21,16 @@ class Settings(BaseSettings):
     refresh_token_expire_days: int = Field(30, gt=0)
     google_client_id: str = ""
     google_client_secret: str = ""
-    email_delivery: Literal["auto", "file", "smtp", "brevo"] = "auto"
+    email_delivery: Literal["auto", "file", "smtp", "brevo", "gmail_api"] = "auto"
     brevo_api_key: str = ""
+    # Sending through Google's HTTPS API with a stored refresh token avoids the
+    # outbound SMTP block on free hosting and needs no purchased domain. These
+    # are the sender mailbox's own credentials, deliberately separate from the
+    # Google sign-in client below: players' sign-in grants no mail permission.
+    gmail_sender_email: str = ""
+    gmail_client_id: str = ""
+    gmail_client_secret: str = ""
+    gmail_refresh_token: str = ""
     world_worker_enabled: bool = False
     smtp_host: str = "localhost"
     smtp_port: int = Field(1025, ge=1, le=65535)
@@ -46,11 +54,22 @@ class Settings(BaseSettings):
     dev_allow_world_mutation: bool = False
     max_move_speed: float = Field(3000, gt=0)
     chat_blocked_words: str = "damn,shit,fuck"
+    # Base shared slot pool; each level adds its own increment on top.
     inventory_partition_slots: int = Field(30, ge=1, le=1000)
+    # Balancing choice: no planting XP existed before, so it defaults to a
+    # small flat rate and stays separate from each crop's harvest reward.
+    farm_plant_xp: int = Field(1, ge=0, le=1000)
 
-    @field_validator("database_url", mode="before")
+    @field_validator("*", mode="before")
     @classmethod
-    def normalize_postgres_url(cls, value):
+    def normalize_raw_values(cls, value):
+        # Values written by scripts/configure_auth.py are dotenv-quoted, and a
+        # secret copied out of the dashboard or a .env file can arrive with its
+        # quotes still attached. Those literal quotes are not part of the
+        # credential, and Google rejects a quoted client ID outright.
+        if isinstance(value, str) and len(value) >= 2:
+            if value[0] == value[-1] and value[0] in "'\"":
+                value = value[1:-1]
         if isinstance(value, str) and value.startswith("postgres://"):
             return value.replace("postgres://", "postgresql+psycopg2://", 1)
         return value
@@ -64,6 +83,19 @@ class Settings(BaseSettings):
         return [
             value.strip() for value in self.cors_origins.split(",") if value.strip()
         ]
+
+    @property
+    def database_target(self) -> str:
+        """Connection target without the password, safe to log when connecting fails.
+
+        A placeholder DATABASE_URL otherwise boots successfully and only reveals
+        itself as an OperationalError long after startup.
+        """
+        url = self.database_url
+        _, _, remainder = url.partition("://")
+        credentials, _, location = remainder.rpartition("@")
+        user = credentials.partition(":")[0] if credentials else ""
+        return f"{user + '@' if user else ''}{location}"
 
     @model_validator(mode="after")
     def production_policy(self):
@@ -97,12 +129,34 @@ class Settings(BaseSettings):
                 raise ValueError(
                     "World mutation compatibility switch is development-only"
                 )
-            if not self.email_base_url.startswith("https://") or (self.email_delivery != "brevo" and not self.smtp_starttls):
+            https_delivery = self.email_delivery in {"brevo", "gmail_api"}
+            if not self.email_base_url.startswith("https://") or (
+                not https_delivery and not self.smtp_starttls
+            ):
                 raise ValueError(
                     "Production email requires HTTPS links and SMTP STARTTLS"
                 )
             if self.email_delivery == "brevo" and not self.brevo_api_key:
                 raise ValueError("Set BREVO_API_KEY for Brevo delivery")
+            if self.email_delivery == "gmail_api":
+                missing = [
+                    name
+                    for name, value in (
+                        ("GMAIL_SENDER_EMAIL", self.gmail_sender_email),
+                        ("GMAIL_CLIENT_ID", self.gmail_client_id),
+                        ("GMAIL_CLIENT_SECRET", self.gmail_client_secret),
+                        ("GMAIL_REFRESH_TOKEN", self.gmail_refresh_token),
+                    )
+                    if not value
+                ]
+                if missing:
+                    raise ValueError(
+                        "Gmail API delivery requires " + ", ".join(missing)
+                    )
+                if "@" not in self.gmail_sender_email:
+                    raise ValueError(
+                        "GMAIL_SENDER_EMAIL must be the verified sender mailbox"
+                    )
         return self
 
 

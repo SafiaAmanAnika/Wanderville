@@ -12,6 +12,31 @@ var _refresh_version := -1
 var realtime: Node
 
 
+func pending_shop() -> Dictionary:
+	var config := ConfigFile.new()
+	if config.load("user://shop_pending.cfg") != OK:
+		return {}
+	var value: Variant = config.get_value(_shop_account_key(), "transaction", {})
+	return value if value is Dictionary else {}
+
+
+func save_pending_shop(value: Dictionary) -> bool:
+	# Persist before submission, so closing the panel or restarting cannot turn
+	# an uncertain request into a second charge with a different request ID.
+	var config := ConfigFile.new()
+	config.load("user://shop_pending.cfg")
+	if value.is_empty():
+		if config.has_section(_shop_account_key()):
+			config.erase_section(_shop_account_key())
+	else:
+		config.set_value(_shop_account_key(), "transaction", value)
+	return config.save("user://shop_pending.cfg") == OK
+
+
+func _shop_account_key() -> String:
+	return base_url.sha256_text() + "_" + str(Global.player_id)
+
+
 func _ready() -> void:
 	var configured := OS.get_environment("WANDERVILLE_API_URL")
 	if configured == "":

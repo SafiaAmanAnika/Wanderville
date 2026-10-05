@@ -36,6 +36,9 @@ class ItemDefinitionResponse(BaseModel):
     growth_time_seconds: int | None
     season: str
     xp_reward: int
+    # None for items that are never harvested (seeds, rods, pet items).
+    harvest_category: str | None = None
+    harvest_xp: int = 0
     rarity: str
     tradable: bool
     giftable: bool
@@ -57,6 +60,12 @@ class InventoryItemResponse(BaseModel):
     updated_at: datetime
     item: ItemDefinitionResponse
     partition: str | None = None
+    required_level: int = 1
+    harvest_code: str | None = None
+    # Lifted out of `item` so the seed picker and HUD can read one flat row.
+    max_stack: int = 99
+    harvest_category: str | None = None
+    harvest_xp: int = 0
 
     @computed_field
     @property
@@ -69,5 +78,9 @@ class InventoryListResponse(BaseModel):
     items: list[InventoryItemResponse]
     total_items: int
     total_quantity: int
-    partition_capacity: int
-    partitions: dict[str, int]
+    # One shared pool: capacity grows with level, never per category.
+    capacity: int
+    used_slots: int
+    base_capacity: int
+    level_slots: int
+    max_stack: int = 99

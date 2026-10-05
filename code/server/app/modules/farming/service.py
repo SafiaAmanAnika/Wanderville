@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from app.core.clock import as_utc, utcnow
 from app.core.config import settings
 from app.core.exceptions import AppError, NotFound
+from app.core.progression import FIRST_HARVEST_XP
 from app.db.session import transaction
 from app.modules.economy.service import EconomyService
 from app.modules.farming.repository import FarmingRepository
@@ -116,6 +117,16 @@ class FarmingService:
             raise NotFound("Farm tile not found")
         return tile
 
+    def _first_harvest_bonus(self, player_id, crop_code):
+        """Claim the one-time bonus for a crop species; 0 if already claimed."""
+        from app.modules.inventory.models import PlayerFirstHarvest
+
+        if self.db.get(PlayerFirstHarvest, (player_id, crop_code)) is not None:
+            return 0
+        self.db.add(PlayerFirstHarvest(player_id=player_id, item_code=crop_code))
+        self.db.flush()
+        return FIRST_HARVEST_XP
+
     def _persist_growth(self, tile, state, now):
         result = evaluate_growth(tile, state, now)
         tile.growth_progress_seconds = result.progress
@@ -178,8 +189,8 @@ class FarmingService:
             tile.planted_at = tile.last_growth_update_at = now
             tile.growth_progress_seconds, tile.growth_stage = 0.0, 0
             tile.is_watered, tile.watered_at = False, None
-            if item.xp_reward:
-                self.economy.gain_internal(player_id, item.xp_reward)
+            if settings.farm_plant_xp > 0:
+                self.economy.gain_internal(player_id, settings.farm_plant_xp)
             self.db.flush()
             from app.modules.progression.service import ProgressionService
 
@@ -228,7 +239,7 @@ class FarmingService:
             self._persist_growth(tile, state, now)
             if tile.growth_stage < 3:
                 raise AppError("FARM_NOT_READY", "This crop is not fully grown")
-            code, xp_reward = tile.crop_item_code, tile.item.xp_reward
+            code, harvest_xp = tile.crop_item_code, tile.item.harvest_xp
             # Clear first so injected reward failures test rollback of farm state too.
             tile.crop_item_code, tile.item = None, None
             tile.is_tilled = False  # harvest clears the soil too
@@ -240,8 +251,9 @@ class FarmingService:
             )
             self.db.flush()
             self.inventory.add_internal(player_id, code)
-            if xp_reward:
-                self.economy.gain_internal(player_id, xp_reward)
+            earned = harvest_xp + self._first_harvest_bonus(player_id, code)
+            if earned:
+                self.economy.gain_internal(player_id, earned)
             self.db.flush()
             from app.modules.progression.service import ProgressionService
 

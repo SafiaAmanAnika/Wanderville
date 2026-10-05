@@ -50,10 +50,45 @@ func _drawn_size() -> Vector2:
 
 
 func _ready():
+	print("=== FARM CONTROLLER READY ===")
+	print("FarmLayer exists: ", farm_layer != null)
+	if farm_layer:
+		print("FarmLayer tile_set exists: ", farm_layer.tile_set != null)
 	seed_picker.seed_selected.connect(_on_seed_selected)
+	_diag("seed_picker connected")
 	GameState.farm_updated.connect(_apply_server_plots)
-	_make_cursor()
 	_apply_server_plots(GameState.farm_plots)
+	_diag("apply_server_plots returned")
+
+
+func _diag(msg: String) -> void:
+	print("[FARMDIAG] %s" % msg)
+
+
+func _diag_dump_plots(plots: Array) -> void:
+	_diag("plots is Array=%s size=%d" % [plots is Array, plots.size()])
+	if plots.is_empty():
+		return
+	var xs := []
+	var ys := []
+	var keys := {}
+	var bad := 0
+	for plot in plots:
+		if not (plot is Dictionary):
+			bad += 1
+			continue
+		var px := int(plot.get("x", 0))
+		var py := int(plot.get("y", 0))
+		xs.append(px)
+		ys.append(py)
+		for k in plot.keys():
+			keys[k] = true
+		if not _is_in_farm_area(Vector2i(px, py)):
+			bad += 1
+	if not xs.is_empty():
+		_diag("x range=[%d..%d] y range=[%d..%d] outside_farm_area=%d" % [
+			xs.min(), xs.max(), ys.min(), ys.max(), bad])
+	_diag("plot keys=%s" % str(keys.keys()))
 
 
 # ─── Input ───────────────────────────────────────────────────────────
@@ -435,6 +470,7 @@ func _apply_server_plots(plots: Array) -> void:
 	if _backend_busy or _dragging:
 		return
 	for plot in plots:
+		_diag("applying plot %s" % str(plot))
 		_apply_plot(plot)
 
 
@@ -455,6 +491,7 @@ func _apply_plot(plot: Dictionary) -> void:
 		return
 	tilled_tiles[key] = true
 	if not active_crops.has(key) or active_crops[key].type != str(code):
+		_diag("spawn crop visual key=%s code=%s" % [key, str(code)])
 		_spawn_crop_visual(tile, str(code))
 	var stage := int(plot.get("growth_stage", 0))
 	active_crops[key] = {"type": str(code), "stage": GROWTH_STAGES if bool(plot.get("ready", false)) else stage,

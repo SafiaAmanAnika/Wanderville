@@ -63,3 +63,20 @@ class Purchase(Base):
     quantity: Mapped[int] = mapped_column(Integer)
     unit_price: Mapped[int] = mapped_column(Integer)
     game_day: Mapped[int] = mapped_column(Integer)
+
+
+class StarterGrant(Base):
+    __tablename__ = "starter_grants"
+    player_id: Mapped[int] = mapped_column(ForeignKey("players.id", ondelete="CASCADE"), primary_key=True)
+    grant_code: Mapped[str] = mapped_column(String(32), primary_key=True)
+    claimed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Sale(Base):
+    __tablename__ = "shop_sales"
+    __table_args__ = (CheckConstraint("quantity > 0 AND unit_price > 0", name="sale_values"),)
+    player_id: Mapped[int] = mapped_column(ForeignKey("players.id", ondelete="CASCADE"), primary_key=True)
+    request_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    item_code: Mapped[str] = mapped_column(ForeignKey("item_definitions.item_code"))
+    quantity: Mapped[int] = mapped_column(Integer)
+    unit_price: Mapped[int] = mapped_column(Integer)

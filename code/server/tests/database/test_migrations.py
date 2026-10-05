@@ -84,10 +84,13 @@ def test_upgrade_backfills_existing_accounts_without_losing_inventory(migration_
         connection.execute(text("INSERT INTO farm_tiles (world_id,x,y,crop_item_code,planted_at,last_growth_update_at) VALUES (9,2,3,'old_item',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)"))
         preserved = {}
         for table in ("players", "player_economy", "player_experience", "item_definitions", "inventory_items", "player_worlds", "farm_tiles"):
-            preserved[table] = connection.execute(text(f"SELECT * FROM {table}")).all()
+            # Later migrations add columns; only the pre-upgrade columns must
+            # survive with identical values.
+            columns = [c["name"] for c in inspect(connection).get_columns(table)]
+            preserved[table] = (columns, connection.execute(text(f"SELECT {','.join(columns)} FROM {table}")).all())
         command.upgrade(cfg, "head")
-        for table, rows in preserved.items():
-            assert connection.execute(text(f"SELECT * FROM {table}")).all() == rows
+        for table, (columns, rows) in preserved.items():
+            assert connection.execute(text(f"SELECT {','.join(columns)} FROM {table}")).all() == rows
         command.check(cfg)
         assert (
             connection.scalar(
@@ -134,3 +137,26 @@ def test_worker_cli_bootstraps_models_in_a_fresh_process(tmp_path):
             timeout=30,
         )
         assert result.returncode == 0, result.stderr
+
+
+def test_progression_migration_preserves_legacy_capacity_and_marks_historical_rewards(migration_engine):
+    cfg = Config(str(Path(__file__).resolve().parents[2] / "alembic.ini"))
+    with migration_engine.begin() as connection:
+        cfg.attributes["connection"] = connection
+        command.upgrade(cfg, "0005_shop_receipts")
+        for player_id, xp, old_level in ((1, 250, 2), (2, 3000, 7), (3, 0, 1)):
+            connection.execute(text("INSERT INTO players (id,username,display_name) VALUES (:id,:name,:name)"),
+                               {"id": player_id, "name": f"old_{player_id}"})
+            connection.execute(text("INSERT INTO player_economy (player_id,aura_balance) VALUES (:id,123)"), {"id": player_id})
+            connection.execute(text("INSERT INTO player_experience (player_id,total_xp,level) VALUES (:id,:xp,:level)"),
+                               {"id": player_id, "xp": xp, "level": old_level})
+        command.upgrade(cfg, "head")
+        assert connection.execute(text("SELECT player_id,total_xp,level,inventory_base_capacity FROM player_experience ORDER BY player_id")).all() == [
+            (1, 250, 3, 180), (2, 3000, 10, 180), (3, 0, 1, 180)]
+        assert connection.execute(text("SELECT player_id,level,aura FROM player_level_rewards ORDER BY player_id,level")).all() == [
+            (1, 2, 0), (2, 2, 0), (2, 10, 0)]
+        assert connection.execute(text("SELECT aura_balance FROM player_economy")).scalars().all() == [123, 123, 123]
+        assert connection.scalar(text("SELECT count(*) FROM economy_transactions")) == 0
+        command.upgrade(cfg, "head")
+        assert connection.scalar(text("SELECT count(*) FROM player_level_rewards")) == 3
+        command.check(cfg)

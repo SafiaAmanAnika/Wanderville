@@ -3,6 +3,7 @@ from datetime import timedelta
 from app.core.clock import as_utc, utcnow
 from app.core.exceptions import AppError, NotFound
 from app.core.gameplay import public
+from app.core.progression import FISH_XP_BY_ITEM
 from app.db.session import transaction
 from app.modules.fishing.models import FishingSpot, FishingSession, GroundDrop
 from app.modules.fishing.repository import FishingRepository
@@ -102,13 +103,7 @@ class FishingService:
                     spot_code=row.spot_code,
                     expires_at=now + timedelta(minutes=5),
                 )
-            xp = (
-                25
-                if row.item_code == "lake_pearl"
-                else 20
-                if row.item_code == "golden_carp"
-                else 8
-            )
+            xp = FISH_XP_BY_ITEM[row.item_code]
             EconomyService(self.db).gain_internal(player_id, xp)
             ProgressionService(self.db).record(player_id, "catch", now=now)
         return {

@@ -1,14 +1,20 @@
 from datetime import timedelta
 
 import pytest
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app.core.clock import utcnow
 from app.core.exceptions import AppError
+from app.core.progression import (
+    DEFAULT_PLANT_XP,
+    FIRST_HARVEST_XP,
+    HARVEST_XP,
+)
 from app.modules.economy.service import EconomyService
 from app.modules.farming.models import FarmTile
 from app.modules.farming.schemas import PlantRequest, TileRequest
 from app.modules.farming.service import FarmingService
+from app.modules.inventory.models import PlayerFirstHarvest
 from app.modules.inventory.service import InventoryService
 from app.modules.world.models import WorldState
 
@@ -37,13 +43,16 @@ def grow(farm):
 def test_plant_validation_consumption_xp_and_ownership(farm, client, account, db):
     user, service, tile_id, now = farm
     assert InventoryService(db).list(user.id).total_quantity == 4
-    assert EconomyService(db).xp(user.id).total_xp == 5
+    # Planting pays the flat DEFAULT_PLANT_XP, not the crop's harvest value.
+    assert EconomyService(db).xp(user.id).total_xp == DEFAULT_PLANT_XP
     with pytest.raises(AppError) as occupied:
         service.plant(user.id, PlantRequest(x=3, y=4, item_code="wheat"), now)
     assert occupied.value.code == "FARM_PLOT_OCCUPIED"
     for code, expected in [
         ("unknown", "INVALID_ITEM"),
-        ("potato", "OUT_OF_SEASON"),
+        # Potato is a level 4 seasonal crop, so a level 1 player is stopped
+        # by the level lock before the season is ever considered.
+        ("potato", "LEVEL_LOCKED"),
         ("paddy", "INSUFFICIENT_INVENTORY"),
     ]:
         with pytest.raises(AppError) as exc:
@@ -107,7 +116,10 @@ def test_ready_harvest_rewards_reuse_and_double_harvest(farm, db):
     assert result.item_code == "wheat" and result.quantity == 1
     assert result.plot.item_code is None and not result.plot.is_tilled
     assert InventoryService(db).list(user.id).total_quantity == 5
-    assert EconomyService(db).xp(user.id).total_xp == 10
+    # Wheat is a common crop (5 XP) and this is its first harvest (+15 once).
+    assert EconomyService(db).xp(user.id).total_xp == (
+        DEFAULT_PLANT_XP + HARVEST_XP["common"] + FIRST_HARVEST_XP
+    )
     with pytest.raises(AppError) as again:
         service.harvest(user.id, tile_id, now)
     assert again.value.code == "FARM_EMPTY"
@@ -117,6 +129,42 @@ def test_ready_harvest_rewards_reuse_and_double_harvest(farm, db):
     ).plot
     assert replanted.id == tile_id and replanted.growth_stage == 0
     assert len(db.scalars(select(FarmTile)).all()) == 1
+
+
+def test_first_harvest_bonus_is_paid_once_per_species(farm, db):
+    user, service, tile_id, now = farm
+
+    def harvest(at):
+        service.harvest(user.id, tile_id, at)
+        return EconomyService(db).xp(user.id).total_xp
+
+    def replant(at):
+        return service.plant(
+            user.id, PlantRequest(x=3, y=4, crop_type="wheat"), at
+        ).plot
+
+    now = grow(farm)
+    first = harvest(now)
+    # Wheat is a common crop, so this is plant XP + common XP + the once-only
+    # first-harvest bonus for the species.
+    assert first == DEFAULT_PLANT_XP + HARVEST_XP["common"] + FIRST_HARVEST_XP
+
+    replant(now)
+    now += timedelta(seconds=120)
+    service.water(user.id, tile_id, now)
+    now += timedelta(seconds=60)
+    second = harvest(now)
+    # The second harvest pays plant + common XP only; the bonus is spent once.
+    assert second == first + DEFAULT_PLANT_XP + HARVEST_XP["common"]
+    assert EconomyService(db).xp(user.id).level == 1
+    assert (
+        db.scalar(
+            select(func.count())
+            .select_from(PlayerFirstHarvest)
+            .where(PlayerFirstHarvest.player_id == user.id)
+        )
+        == 1
+    )
 
 
 def test_harvest_reward_failure_rolls_back_everything(farm, db, monkeypatch):
@@ -134,6 +182,33 @@ def test_harvest_reward_failure_rolls_back_everything(farm, db, monkeypatch):
     assert db.get(FarmTile, tile_id).crop_item_code == "wheat"
     assert InventoryService(db).list(user.id).total_quantity == 4
     assert EconomyService(db).xp(user.id).total_xp == before_xp
+
+
+def test_full_inventory_keeps_mature_crop_and_first_bonus_available(farm, db):
+    from app.modules.inventory.models import ItemDefinition
+    from app.modules.inventory.schemas import ItemRequest
+
+    user, service, tile_id, _ = farm
+    now = grow(farm)
+    inventory = InventoryService(db)
+    inventory.add_compatibility(user.id, ItemRequest(item_code="wheat", quantity=95))
+    codes = [code for code in db.scalars(select(ItemDefinition.item_code)) if code != "wheat"]
+    for code in codes[:inventory.capacity(user.id) - 1]:
+        inventory.add_internal(user.id, code)
+    db.commit()
+    before_xp = EconomyService(db).xp(user.id).total_xp
+    with pytest.raises(AppError) as failure:
+        service.harvest(user.id, tile_id, now)
+    assert failure.value.code == "INVENTORY_FULL"
+    db.expire_all()
+    assert service.list(user.id, now).plots[0].ready
+    assert db.get(FarmTile, tile_id).crop_item_code == "wheat"
+    assert db.get(PlayerFirstHarvest, (user.id, "wheat")) is None
+    assert EconomyService(db).xp(user.id).total_xp == before_xp
+    inventory.remove(user.id, ItemRequest(item_code="wheat", quantity=1))
+    service.harvest(user.id, tile_id, now)
+    assert inventory.repo.stack(user.id, "wheat").quantity == 99
+    assert EconomyService(db).xp(user.id).total_xp == before_xp + 20
 
 
 def test_season_changes_growth_speed(farm, db):

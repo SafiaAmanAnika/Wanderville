@@ -25,7 +25,22 @@ class InventoryRepository:
             self.db.scalars(
                 select(InventoryItem)
                 .where(InventoryItem.player_id == player_id)
-                .order_by(InventoryItem.item_code)
+                .order_by(InventoryItem.item_code, InventoryItem.stack_no)
+            )
+        )
+
+    def stacks(self, player_id, code, location="inventory"):
+        """Every stack of one item, in stable creation order."""
+        return list(
+            self.db.scalars(
+                select(InventoryItem)
+                .where(
+                    InventoryItem.player_id == player_id,
+                    InventoryItem.item_code == code,
+                    InventoryItem.location == location,
+                )
+                .order_by(InventoryItem.stack_no)
+                .execution_options(populate_existing=True)
             )
         )
 
@@ -37,12 +52,20 @@ class InventoryRepository:
                 InventoryItem.item_code == code,
                 InventoryItem.location == location,
             )
+            .order_by(InventoryItem.stack_no)
             .execution_options(populate_existing=True)
         )
 
-    def add(self, player_id, code, quantity, location):
+    def used_slots(self, player_id):
+        return len(self.list(player_id))
+
+    def add(self, player_id, code, quantity, location, stack_no=0):
         row = InventoryItem(
-            player_id=player_id, item_code=code, quantity=quantity, location=location
+            player_id=player_id,
+            item_code=code,
+            quantity=quantity,
+            location=location,
+            stack_no=stack_no,
         )
         self.db.add(row)
         self.db.flush()

@@ -32,6 +32,10 @@ window/size/viewport_width=1578
 window/size/viewport_height=997
 window/stretch/mode="canvas_items"
 
+[network]
+
+wanderville_api_url="https://wanderville-api.onrender.com"
+
 [input]
 
 interact={

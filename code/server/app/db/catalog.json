@@ -6,7 +6,9 @@
     "growth_time_seconds": 30,
     "sell_value": 10,
     "xp_reward": 5,
-    "season": "all"
+    "season": "all",
+    "harvest_category": "common",
+    "harvest_xp": 5
   },
   {
     "item_code": "wheat",
@@ -15,7 +17,9 @@
     "growth_time_seconds": 45,
     "sell_value": 12,
     "xp_reward": 5,
-    "season": "all"
+    "season": "all",
+    "harvest_category": "common",
+    "harvest_xp": 5
   },
   {
     "item_code": "sugarcane",
@@ -24,7 +28,9 @@
     "growth_time_seconds": 50,
     "sell_value": 15,
     "xp_reward": 5,
-    "season": "all"
+    "season": "all",
+    "harvest_category": "common",
+    "harvest_xp": 5
   },
   {
     "item_code": "corn",
@@ -33,7 +39,9 @@
     "growth_time_seconds": 170,
     "sell_value": 20,
     "xp_reward": 8,
-    "season": "summer"
+    "season": "summer",
+    "harvest_category": "common",
+    "harvest_xp": 5
   },
   {
     "item_code": "cotton",
@@ -42,7 +50,9 @@
     "growth_time_seconds": 140,
     "sell_value": 18,
     "xp_reward": 8,
-    "season": "summer"
+    "season": "summer",
+    "harvest_category": "common",
+    "harvest_xp": 5
   },
   {
     "item_code": "sweet_corn",
@@ -51,7 +61,9 @@
     "growth_time_seconds": 180,
     "sell_value": 25,
     "xp_reward": 10,
-    "season": "summer"
+    "season": "summer",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
   },
   {
     "item_code": "bell_pepper",
@@ -60,7 +72,9 @@
     "growth_time_seconds": 150,
     "sell_value": 22,
     "xp_reward": 10,
-    "season": "summer"
+    "season": "summer",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
   },
   {
     "item_code": "green_bean",
@@ -69,7 +83,9 @@
     "growth_time_seconds": 120,
     "sell_value": 18,
     "xp_reward": 10,
-    "season": "summer"
+    "season": "summer",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
   },
   {
     "item_code": "pumpkin",
@@ -78,7 +94,9 @@
     "growth_time_seconds": 200,
     "sell_value": 30,
     "xp_reward": 10,
-    "season": "autumn"
+    "season": "autumn",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
   },
   {
     "item_code": "apple",
@@ -87,7 +105,9 @@
     "growth_time_seconds": 300,
     "sell_value": 35,
     "xp_reward": 10,
-    "season": "autumn"
+    "season": "autumn",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
   },
   {
     "item_code": "turnip",
@@ -96,7 +116,9 @@
     "growth_time_seconds": 140,
     "sell_value": 15,
     "xp_reward": 10,
-    "season": "autumn"
+    "season": "autumn",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
   },
   {
     "item_code": "potato",
@@ -105,7 +127,9 @@
     "growth_time_seconds": 220,
     "sell_value": 20,
     "xp_reward": 10,
-    "season": "winter"
+    "season": "winter",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
   },
   {
     "item_code": "carrot",
@@ -114,7 +138,9 @@
     "growth_time_seconds": 160,
     "sell_value": 16,
     "xp_reward": 10,
-    "season": "winter"
+    "season": "winter",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
   },
   {
     "item_code": "cabbage",
@@ -123,7 +149,9 @@
     "growth_time_seconds": 190,
     "sell_value": 18,
     "xp_reward": 10,
-    "season": "winter"
+    "season": "winter",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
   },
   {
     "item_code": "strawberry",
@@ -132,7 +160,9 @@
     "growth_time_seconds": 240,
     "sell_value": 28,
     "xp_reward": 10,
-    "season": "winter"
+    "season": "winter",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
   },
   {
     "item_code": "lettuce",
@@ -141,7 +171,9 @@
     "growth_time_seconds": 100,
     "sell_value": 14,
     "xp_reward": 10,
-    "season": "spring"
+    "season": "spring",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
   },
   {
     "item_code": "pea",
@@ -150,7 +182,9 @@
     "growth_time_seconds": 130,
     "sell_value": 16,
     "xp_reward": 10,
-    "season": "spring"
+    "season": "spring",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
   },
   {
     "item_code": "radish",
@@ -159,7 +193,9 @@
     "growth_time_seconds": 90,
     "sell_value": 12,
     "xp_reward": 10,
-    "season": "spring"
+    "season": "spring",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
   },
   {
     "item_code": "moonflower",
@@ -169,7 +205,9 @@
     "sell_value": 100,
     "xp_reward": 30,
     "season": "all",
-    "rarity": "rare"
+    "rarity": "rare",
+    "harvest_category": "rare",
+    "harvest_xp": 20
   },
   {
     "item_code": "rivermint",
@@ -179,7 +217,9 @@
     "sell_value": 80,
     "xp_reward": 25,
     "season": "all",
-    "rarity": "rare"
+    "rarity": "rare",
+    "harvest_category": "rare",
+    "harvest_xp": 20
   },
   {
     "item_code": "sunbloom",
@@ -189,7 +229,9 @@
     "sell_value": 90,
     "xp_reward": 25,
     "season": "all",
-    "rarity": "rare"
+    "rarity": "rare",
+    "harvest_category": "rare",
+    "harvest_xp": 20
   },
   {
     "item_code": "ancient_grain",
@@ -199,6 +241,8 @@
     "sell_value": 120,
     "xp_reward": 30,
     "season": "all",
-    "rarity": "epic"
+    "rarity": "epic",
+    "harvest_category": "magical",
+    "harvest_xp": 30
   }
 ]

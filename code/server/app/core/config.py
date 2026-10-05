@@ -60,9 +60,16 @@ class Settings(BaseSettings):
     # small flat rate and stays separate from each crop's harvest reward.
     farm_plant_xp: int = Field(1, ge=0, le=1000)
 
-    @field_validator("database_url", mode="before")
+    @field_validator("*", mode="before")
     @classmethod
-    def normalize_postgres_url(cls, value):
+    def normalize_raw_values(cls, value):
+        # Values written by scripts/configure_auth.py are dotenv-quoted, and a
+        # secret copied out of the dashboard or a .env file can arrive with its
+        # quotes still attached. Those literal quotes are not part of the
+        # credential, and Google rejects a quoted client ID outright.
+        if isinstance(value, str) and len(value) >= 2:
+            if value[0] == value[-1] and value[0] in "'\"":
+                value = value[1:-1]
         if isinstance(value, str) and value.startswith("postgres://"):
             return value.replace("postgres://", "postgresql+psycopg2://", 1)
         return value

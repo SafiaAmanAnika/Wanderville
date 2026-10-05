@@ -61,3 +61,13 @@ def test_gmail_api_delivery_requires_complete_credentials():
     # A plain HTTP link would send verification tokens in the clear.
     with pytest.raises(ValidationError):
         gmail(email_base_url="http://wanderville.example")
+
+
+def test_quotes_transcribed_with_a_secret_are_not_part_of_it(monkeypatch):
+    # Copying a value out of .env or the Render dashboard can carry the dotenv
+    # quotes along; Google then rejects the quoted client ID.
+    monkeypatch.setenv("GOOGLE_CLIENT_ID", "'desktop-client.apps.googleusercontent.com'")
+    monkeypatch.setenv("DATABASE_URL", "'postgres://user:pw@host/db'")
+    settings = Settings(_env_file=None)
+    assert settings.google_client_id == "desktop-client.apps.googleusercontent.com"
+    assert settings.database_url == "postgresql+psycopg2://user:pw@host/db"

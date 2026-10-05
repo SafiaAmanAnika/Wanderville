@@ -1,5 +1,6 @@
 import logging
 import asyncio
+import re
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
@@ -36,6 +37,12 @@ from app.modules.events.router import router as events_router
 async def lifespan(_app):
     configure_logging()
     # Migrations and reference seeding are explicit commands, never startup work.
+    logging.getLogger("wanderville").info(
+        "Starting %s against %s, delivery=%s",
+        settings.wanderville_env,
+        settings.database_target,
+        settings.email_delivery,
+    )
     stop = asyncio.Event()
     task = asyncio.create_task(_world_worker(stop)) if settings.world_worker_enabled else None
     try:
@@ -60,7 +67,12 @@ async def _world_worker(stop):
         try:
             cursor = await asyncio.to_thread(run_batch, cursor)
         except Exception as exc:
-            logging.getLogger("wanderville").error("World worker failed: %s", type(exc).__name__)
+            logging.getLogger("wanderville").error(
+                "World worker failed against %s: %s: %s",
+                settings.database_target,
+                type(exc).__name__,
+                re.sub(r"://[^@\s]*@", "://***@", str(exc))[:300],
+            )
             cursor = 0
         try:
             await asyncio.wait_for(stop.wait(), timeout=1 if cursor else 30)
@@ -115,8 +127,14 @@ def create_app():
 
     @app.exception_handler(SQLAlchemyError)
     async def database_error(_request, exc):
+        # The type name alone cannot distinguish a bad host, bad credentials or a
+        # missing schema, and none of these strings may carry the password.
+        detail = re.sub(r"://[^@\s]*@", "://***@", str(getattr(exc, "orig", exc)))
         logging.getLogger("wanderville").error(
-            "Database operation failed: %s", type(exc).__name__
+            "Database operation failed against %s: %s: %s",
+            settings.database_target,
+            type(exc).__name__,
+            detail[:300],
         )
         return error(
             503, "DATABASE_UNAVAILABLE", "Database operation could not be completed"

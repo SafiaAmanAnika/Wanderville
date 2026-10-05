@@ -84,6 +84,19 @@ class Settings(BaseSettings):
             value.strip() for value in self.cors_origins.split(",") if value.strip()
         ]
 
+    @property
+    def database_target(self) -> str:
+        """Connection target without the password, safe to log when connecting fails.
+
+        A placeholder DATABASE_URL otherwise boots successfully and only reveals
+        itself as an OperationalError long after startup.
+        """
+        url = self.database_url
+        _, _, remainder = url.partition("://")
+        credentials, _, location = remainder.rpartition("@")
+        user = credentials.partition(":")[0] if credentials else ""
+        return f"{user + '@' if user else ''}{location}"
+
     @model_validator(mode="after")
     def production_policy(self):
         if not self.is_development:

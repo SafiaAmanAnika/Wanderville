@@ -63,6 +63,16 @@ def test_gmail_api_delivery_requires_complete_credentials():
         gmail(email_base_url="http://wanderville.example")
 
 
+def test_database_target_never_contains_the_password():
+    settings = Settings(
+        _env_file=None,
+        database_url="postgresql+psycopg2://owner:npg_SECRET@host.example:5432/db?sslmode=require",
+    )
+    assert settings.database_target == "owner@host.example:5432/db?sslmode=require"
+    assert "SECRET" not in settings.database_target
+    assert Settings(_env_file=None, database_url="sqlite:///./local.db").database_target.endswith("local.db")
+
+
 def test_quotes_transcribed_with_a_secret_are_not_part_of_it(monkeypatch):
     # Copying a value out of .env or the Render dashboard can carry the dotenv
     # quotes along; Google then rejects the quoted client ID.

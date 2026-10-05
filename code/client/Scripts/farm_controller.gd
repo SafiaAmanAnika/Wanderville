@@ -57,6 +57,7 @@ func _ready():
 	seed_picker.seed_selected.connect(_on_seed_selected)
 	_diag("seed_picker connected")
 	GameState.farm_updated.connect(_apply_server_plots)
+	_make_cursor()   # the hover outline; _process() uses it every frame
 	_apply_server_plots(GameState.farm_plots)
 	_diag("apply_server_plots returned")
 
@@ -150,6 +151,8 @@ func _make_cursor() -> void:
 
 
 func _process(_delta):
+	if _cursor == null:
+		return
 	var tile := _hover_tile()
 	var on_farm := _is_in_farm_area(tile) and not GameState.menu_open and not GameState.social_open
 	_cursor.visible = on_farm or _dragging

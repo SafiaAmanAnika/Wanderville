@@ -58,6 +58,7 @@ def _capture_loopback_code(values, state):
             received["code"] = (query.get("code") or [""])[0]
             received["state"] = (query.get("state") or [""])[0]
             received["error"] = (query.get("error") or [""])[0]
+            received["error_description"] = (query.get("error_description") or [""])[0]
             body = b"<p>WanderVille is done. You can close this tab.</p>"
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -104,8 +105,18 @@ def _capture_loopback_code(values, state):
     webbrowser.open(authorize)
     thread.join(timeout=180)
     server.server_close()
+    if received.get("error"):
+        # Google's own wording is more actionable than anything we could write,
+        # and 403 access_denied almost always means the consent screen is in
+        # Testing mode without this account listed as a test user.
+        detail = received.get("error_description") or received["error"]
+        raise SystemExit(f"Google refused the request: {detail}\nNothing was written.")
     if not received.get("code"):
-        raise SystemExit("No authorization code was returned; nothing was written.")
+        raise SystemExit(
+            "No authorization code was returned within 180s. Re-run and approve "
+            "in the browser; if the page did not open, paste the printed URL "
+            "yourself. Nothing was written."
+        )
     if received.get("state") != state:
         raise SystemExit("Authorization state did not match; nothing was written.")
     return received["code"], verifier, redirect_uri

@@ -1,5 +1,6 @@
 from app.core.exceptions import AppError, NotFound
 from app.core.gameplay import public
+from app.core.progression import HOUSE_UPGRADE_XP
 from app.db.session import transaction
 from app.modules.housing.models import HouseTier, PlayerHouse, Decoration
 from app.modules.housing.repository import HousingRepository
@@ -41,6 +42,7 @@ class HousingService:
                 raise AppError("LEVEL_LOCKED", "Required level has not been reached")
             if tier.cost:
                 economy.change_internal(player_id, tier.cost, False, "house_upgrade")
+            economy.gain_internal(player_id, HOUSE_UPGRADE_XP)
             house.tier = tier.tier
         return public(house)
 

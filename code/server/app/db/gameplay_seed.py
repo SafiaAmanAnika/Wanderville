@@ -1,6 +1,7 @@
 """Reviewed gameplay defaults; balancing values are not prescribed by the SRS."""
 
 from sqlalchemy import select
+from app.core.progression import FISH_XP_BY_ITEM, unlock_level
 from app.modules.inventory.models import ItemDefinition
 from app.modules.shop.models import ItemRule, CollectionEntry
 from app.modules.housing.models import HouseTier
@@ -33,29 +34,42 @@ def seed_gameplay(db):
                 item_code=crop.item_code,
                 partition="crops",
                 pet_food=crop.rarity == "common",
+                required_level=unlock_level(crop.item_code),
             ),
         )
         code = f"{crop.item_code}_seed"
         old = db.scalar(select(ItemDefinition).where(ItemDefinition.item_code == code))
+        values = dict(
+            item_code=code,
+            name=f"{crop.name} Seeds",
+            category="seed",
+            max_stack=99,
+            buy_value=max(2, crop.sell_value // 2),
+            sell_value=1,
+            season=crop.season,
+            rarity=crop.rarity,
+            description=f"Plant to grow {crop.name}.",
+            # A seed is not a harvest: only the crop it grows pays harvest XP.
+            harvest_category=None,
+            harvest_xp=0,
+        )
         if old is None:
-            db.add(
-                ItemDefinition(
-                    item_code=code,
-                    name=f"{crop.name} Seeds",
-                    category="seed",
-                    max_stack=99,
-                    buy_value=max(2, crop.sell_value // 2),
-                    sell_value=1,
-                    season=crop.season,
-                    rarity=crop.rarity,
-                    description=f"Plant to grow {crop.name}.",
-                )
-            )
+            db.add(ItemDefinition(**values))
             db.flush()
+        else:
+            # Re-seed so an existing row stops claiming a harvest category.
+            for field, value in values.items():
+                setattr(old, field, value)
         upsert(
             ItemRule,
             code,
-            dict(item_code=code, partition="seeds", harvest_code=crop.item_code),
+            dict(
+                item_code=code,
+                partition="seeds",
+                harvest_code=crop.item_code,
+                # A seed can never be planted before the crop it grows.
+                required_level=unlock_level(crop.item_code),
+            ),
         )
     definitions = [
         ("river_carp", "River Carp", "fish", None, 12, "common", "fish", {}),
@@ -130,7 +144,23 @@ def seed_gameplay(db):
                 )
             )
             db.flush()
-        upsert(ItemRule, code, dict(item_code=code, partition=partition, **flags))
+        upsert(
+            ItemRule,
+            code,
+            dict(
+                item_code=code,
+                partition=partition,
+                required_level=unlock_level(code),
+                **flags,
+            ),
+        )
+    # Catalog-driven harvest XP also covers fish and gathered rare materials.
+    for code, xp in FISH_XP_BY_ITEM.items():
+        definition = db.scalar(
+            select(ItemDefinition).where(ItemDefinition.item_code == code)
+        )
+        if definition is not None:
+            definition.harvest_xp = xp
     for tier, name, cost, level in [
         (1, "Starter House", 0, 1),
         (2, "Cozy Cottage", 100, 2),

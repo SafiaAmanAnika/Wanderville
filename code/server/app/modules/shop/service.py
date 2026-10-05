@@ -1,14 +1,26 @@
 from sqlalchemy import select
 from app.core.exceptions import AppError
 from app.core.gameplay import game_day, public
+from app.core.progression import SELL_XP_PER_UNIT, sells_for_xp
 from app.db.session import transaction
-from app.modules.shop.models import ItemRule, Purchase, CollectionEntry
+from app.modules.shop.models import ItemRule, Purchase, Sale, StarterGrant, CollectionEntry
 from app.modules.shop.repository import ShopRepository
 from app.modules.inventory.models import ItemDefinition
 from app.modules.inventory.service import InventoryService
 from app.modules.economy.service import EconomyService
 from app.modules.players.repository import PlayerRepository
 from app.modules.progression.service import ProgressionService
+
+# Recovered from b310eae:code/client/autoloads/GameState.gd (pre-integration).
+ORIGINAL_SEEDS = (
+    "paddy", "wheat", "sugarcane", "sweet_corn", "bell_pepper", "green_bean",
+    "pumpkin", "apple", "turnip", "potato", "carrot", "cabbage", "strawberry",
+    "lettuce", "pea", "radish", "moonflower", "rivermint", "sunbloom", "ancient_grain",
+)
+STARTER_CODE = "original_seeds_v1"
+# Balancing choice: two level-one all-season seeds at a workable quantity, so the
+# first planting works without overwhelming the shared slot pool.
+STARTER_ITEMS = {"paddy_seed": 5, "wheat_seed": 5}
 
 
 class ShopService:
@@ -31,12 +43,15 @@ class ShopService:
         ).all()
         return {
             "game_day": day,
+            "starter": self.starter_status(player_id),
             "items": [
                 {
                     **public(i),
                     "required_level": r.required_level,
                     "locked": level < r.required_level,
                     "in_stock": self.available(i, day),
+                    "partition": r.partition,
+                    "harvest_code": r.harvest_code,
                 }
                 for i, r in rows
             ],
@@ -82,6 +97,13 @@ class ShopService:
     def sell(self, player_id, request):
         with transaction(self.db):
             PlayerRepository(self.db).lock(player_id)
+            request_id = getattr(request, "request_id", None)
+            if request_id:
+                old = self.db.get(Sale, (player_id, request_id))
+                if old:
+                    if (old.item_code, old.quantity) != (request.item_code, request.quantity):
+                        raise AppError("IDEMPOTENCY_CONFLICT", "Request ID was used for another sale", 409)
+                    return {"aura_earned": old.unit_price * old.quantity, "quantity": old.quantity}
             item = self.inventory.definition(request.item_code)
             if item.sell_value <= 0:
                 raise AppError("NOT_SELLABLE", "This item has no sell value")
@@ -89,12 +111,39 @@ class ShopService:
             self.economy.change_internal(
                 player_id, item.sell_value * request.quantity, True, "item_sale"
             )
-            self.economy.gain_internal(player_id, 2)
+            # Only gathered produce pays XP; store stock cannot be resold for XP.
+            if sells_for_xp(item.category):
+                self.economy.gain_internal(
+                    player_id, SELL_XP_PER_UNIT * request.quantity
+                )
             ProgressionService(self.db).record(player_id, "sell")
+            if request_id:
+                self.db.add(Sale(player_id=player_id, request_id=request_id, item_code=item.item_code,
+                                 quantity=request.quantity, unit_price=item.sell_value))
         return {
             "aura_earned": item.sell_value * request.quantity,
             "quantity": request.quantity,
         }
+
+    def transaction_status(self, player_id, request_id, action):
+        row = self.db.get(Purchase if action == "buy" else Sale, (player_id, request_id))
+        return {"found": row is not None, "receipt": public(row) if row else None}
+
+    def starter_status(self, player_id):
+        grant = self.db.get(StarterGrant, (player_id, STARTER_CODE))
+        return {"grant_code": STARTER_CODE, "claimed": grant is not None, "items": STARTER_ITEMS}
+
+    def claim_starter(self, player_id):
+        # Explicit opt-in for both new and existing accounts. Empty inventory is
+        # never an eligibility signal. The durable marker survives consumption.
+        with transaction(self.db):
+            PlayerRepository(self.db).lock(player_id)
+            if self.db.get(StarterGrant, (player_id, STARTER_CODE)):
+                return {**self.starter_status(player_id), "already_claimed": True}
+            for code, quantity in STARTER_ITEMS.items():
+                self.inventory.add_internal(player_id, code, quantity)
+            self.db.add(StarterGrant(player_id=player_id, grant_code=STARTER_CODE))
+        return {"grant_code": STARTER_CODE, "claimed": True, "already_claimed": False, "items": STARTER_ITEMS}
 
     def collection(self, player_id, fish_only=False):
         rows = self.db.execute(

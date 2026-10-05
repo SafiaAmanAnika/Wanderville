@@ -1,6 +1,8 @@
 from app.core.config import settings
 from app.core.exceptions import AppError, Forbidden, NotFound
+from app.core.progression import effective_capacity, level_for_xp, slot_capacity
 from app.db.session import transaction
+from app.modules.economy.repository import EconomyRepository
 from app.modules.inventory.repository import InventoryRepository
 from app.modules.inventory.schemas import (
     InventoryItemResponse,
@@ -17,6 +19,7 @@ class InventoryService:
             InventoryRepository(db),
             PlayerRepository(db),
         )
+        self.economy_repo = EconomyRepository(db)
 
     def definition(self, code):
         item = self.repo.definition(code)
@@ -24,26 +27,53 @@ class InventoryService:
             raise AppError("INVALID_ITEM", "Item does not exist in the catalog")
         return item
 
-    def list(self, player_id):
+    def level(self, player_id):
+        """Current level, falling back to level 1 before XP exists."""
+        experience = self.economy_repo.experience(player_id)
+        if experience is None:
+            return 1
+        return level_for_xp(experience.total_xp).level
+
+    def capacity(self, player_id):
+        """Shared slot pool: base capacity plus level increments, never below
+        what the player already fills."""
+        used = self.repo.used_slots(player_id)
+        return effective_capacity(self.level(player_id), used, self.base_capacity(player_id))
+
+    def base_capacity(self, player_id):
+        experience = self.economy_repo.experience(player_id)
+        return experience.inventory_base_capacity if experience else settings.inventory_partition_slots
+
+    def response_for(self, row):
+        """One row payload, with the harvest fields lifted out of `item`."""
         from sqlalchemy import select
         from app.modules.shop.models import ItemRule
 
+        result = InventoryItemResponse.model_validate(row)
+        result.max_stack = row.item.max_stack
+        result.harvest_category = row.item.harvest_category
+        result.harvest_xp = row.item.harvest_xp
+        rule = self.db.scalar(
+            select(ItemRule).where(ItemRule.item_code == row.item_code)
+        )
+        if rule:
+            result.partition = rule.partition
+            result.required_level = rule.required_level
+            result.harvest_code = rule.harvest_code
+        return result
+
+    def list(self, player_id):
         rows = self.repo.list(player_id)
-        rules = dict(self.db.execute(select(ItemRule.item_code, ItemRule.partition)).all())
-        counts = {name: 0 for name in sorted(set(rules.values()))}
-        items = []
-        for row in rows:
-            item = InventoryItemResponse.model_validate(row)
-            item.partition = rules.get(row.item_code)
-            if item.partition:
-                counts[item.partition] += 1
-            items.append(item)
+        items = [self.response_for(row) for row in rows]
+        level = self.level(player_id)
         return InventoryListResponse(
             items=items,
             total_items=len(rows),
             total_quantity=sum(r.quantity for r in rows),
-            partition_capacity=settings.inventory_partition_slots,
-            partitions=counts,
+            capacity=self.capacity(player_id),
+            used_slots=len(rows),
+            base_capacity=self.base_capacity(player_id),
+            level_slots=slot_capacity(level, 0),
         )
 
     def catalog(self, season=None):
@@ -63,61 +93,83 @@ class InventoryService:
             raise AppError("INVALID_LOCATION", "Only inventory storage is supported")
 
     def add_internal(self, player_id, code, quantity=1, location="inventory"):
-        """Caller owns transaction and player locks. Never commits."""
+        """Caller owns transaction and player locks. Never commits.
+
+        Fills existing partial stacks first, then opens new ones. Every new
+        stack costs one slot from the shared pool.
+        """
         self.validate_quantity(quantity, location)
         item = self.definition(code)
-        row = self.repo.stack(player_id, code, location)
-        if (row.quantity if row else 0) + quantity > item.max_stack:
-            raise AppError("INVENTORY_FULL", "Item stack capacity would be exceeded")
-        from sqlalchemy import func, select
-        from app.modules.shop.models import ItemRule, CollectionEntry
-        from app.modules.inventory.models import InventoryItem
+        from app.modules.shop.models import CollectionEntry
 
-        rule = self.db.get(ItemRule, code)
-        if row is None and rule:
-            count = self.db.scalar(
-                select(func.count())
-                .select_from(InventoryItem)
-                .join(ItemRule, ItemRule.item_code == InventoryItem.item_code)
-                .where(
-                    InventoryItem.player_id == player_id,
-                    ItemRule.partition == rule.partition,
-                )
+        remaining = quantity
+        touched = None
+        for row in self.repo.stacks(player_id, code, location):
+            if remaining <= 0:
+                break
+            room = item.max_stack - row.quantity
+            if room <= 0:
+                continue
+            moved = min(room, remaining)
+            row.quantity += moved
+            remaining -= moved
+            touched = row
+        self.db.flush()
+        if remaining:
+            used = self.repo.used_slots(player_id)
+            capacity = effective_capacity(
+                self.level(player_id), used, self.base_capacity(player_id)
             )
-            if count >= settings.inventory_partition_slots:
-                raise AppError("INVENTORY_FULL", "Inventory partition is full")
-        if row:
-            row.quantity += quantity
-            self.db.flush()
-        else:
-            row = self.repo.add(player_id, code, quantity, location)
+            slots_needed = -(-remaining // item.max_stack)
+            if used + slots_needed > capacity:
+                raise AppError(
+                    "INVENTORY_FULL",
+                    "Inventory slots are full; sell or deliver an item to free one",
+                )
+            stack_no = max(
+                (row.stack_no for row in self.repo.stacks(player_id, code, location)),
+                default=-1,
+            )
+            for _ in range(slots_needed):
+                stack_no += 1
+                touched = self.repo.add(
+                    player_id, code, min(remaining, item.max_stack), location, stack_no
+                )
+                remaining -= touched.quantity
         if self.db.get(CollectionEntry, (player_id, code)) is None:
             self.db.add(CollectionEntry(player_id=player_id, item_code=code))
             self.db.flush()
-        return row
+        return touched
 
     def remove_internal(self, player_id, code, quantity=1, location="inventory"):
         self.validate_quantity(quantity, location)
         self.definition(code)
-        row = self.repo.stack(player_id, code, location)
-        if not row or row.quantity < quantity:
+        stacks = self.repo.stacks(player_id, code, location)
+        if sum(row.quantity for row in stacks) < quantity:
             raise AppError("INSUFFICIENT_INVENTORY", "Not enough items in inventory")
-        if row.quantity == quantity:
-            from app.modules.pets.models import PlayerPet
+        remaining = quantity
+        last = None
+        for row in stacks:
+            if remaining <= 0:
+                break
+            taken = min(row.quantity, remaining)
+            row.quantity -= taken
+            remaining -= taken
+            last = row
+            if row.quantity == 0:
+                from app.modules.pets.models import PlayerPet
 
-            pet = self.db.get(PlayerPet, player_id)
-            if pet and pet.accessory_code == code:
-                pet.accessory_code = None
-            self.repo.delete(row)
-            return None
-        row.quantity -= quantity
+                pet = self.db.get(PlayerPet, player_id)
+                if pet and pet.accessory_code == code and sum(s.quantity for s in stacks) == 0:
+                    pet.accessory_code = None
+                self.repo.delete(row)
         self.db.flush()
-        return row
+        return last if last is not None and last.quantity > 0 else None
 
     def has_item(self, player_id, code, quantity=1):
         self.validate_quantity(quantity, "inventory")
-        row = self.repo.stack(player_id, code)
-        return row is not None and row.quantity >= quantity
+        rows = self.repo.stacks(player_id, code)
+        return sum(row.quantity for row in rows) >= quantity
 
     def add_compatibility(self, player_id, request):
         if not settings.is_development:
@@ -127,7 +179,7 @@ class InventoryService:
             row = self.add_internal(
                 player_id, request.item_code, request.quantity, request.location
             )
-            result = InventoryItemResponse.model_validate(row)
+            result = self.response_for(row)
         return result
 
     def remove(self, player_id, request, use=False):
@@ -148,7 +200,7 @@ class InventoryService:
             row = self.remove_internal(
                 player_id, request.item_code, request.quantity, request.location
             )
-            result = InventoryItemResponse.model_validate(row) if row else None
+            result = self.response_for(row) if row else None
         return result
 
     def transfer(self, player_id, request):

@@ -5,6 +5,12 @@ import pytest
 from app.core.clock import utcnow
 from app.core.exceptions import AppError
 from app.core.config import settings
+from app.core.progression import (
+    FISH_XP_BY_ITEM,
+    LEVEL_AURA_REWARDS,
+    SELL_XP_PER_UNIT,
+    slot_capacity,
+)
 from app.modules.economy.service import EconomyService
 from app.modules.inventory.service import InventoryService
 from app.modules.players.repository import PlayerRepository
@@ -38,6 +44,38 @@ def funds(client, user, amount=1000):
     data(client.post("/economy/earn", headers=user.headers, json={"amount": amount}))
 
 
+def fill_slots(db, user, exclude=()):
+    """Occupy every slot the player's level allows with distinct stacks."""
+    from sqlalchemy import select as _select
+
+    from app.modules.inventory.models import InventoryItem, ItemDefinition
+
+    service = InventoryService(db)
+    capacity = service.capacity(user.id)
+    rows = list(
+        db.execute(
+            _select(InventoryItem.item_code, InventoryItem.stack_no).where(
+                InventoryItem.player_id == user.id
+            )
+        )
+    )
+    owned = {code for code, _ in rows}
+    codes = [
+        code
+        for code in db.scalars(
+            _select(ItemDefinition.item_code).order_by(ItemDefinition.item_code)
+        )
+        if code not in owned and code not in set(exclude)
+    ]
+    room = capacity - len(rows)
+    assert len(codes) >= room, "catalog too small to fill the inventory"
+    for code in codes[:room]:
+        service.add_internal(user.id, code)
+    db.commit()
+    assert service.list(user.id).used_slots == capacity
+    return service
+
+
 def befriend(client, a, b):
     data(client.post("/social/requests", headers=a.headers, json={"target_id": b.id}))
     data(
@@ -47,17 +85,26 @@ def befriend(client, a, b):
     )
 
 
-def test_purchase_idempotency_and_rollback(client, account, db):
+def test_purchase_idempotency_and_rollback(client, account, db, reach_level):
     a = account()
     funds(client, a)
+    reach_level(a, 5)
     request = {"request_id": "purchase_01", "item_code": "basic_rod", "quantity": 1}
     first = data(client.post("/shop/buy", headers=a.headers, json=request))
     assert data(client.post("/shop/buy", headers=a.headers, json=request)) == first
     assert InventoryService(db).repo.stack(a.id, "basic_rod").quantity == 1
-    assert EconomyService(db).get(a.id).aura_balance == 1000
+    # Levelling to 5 paid the one-off level 2 Aura reward on the way up.
+    assert (
+        EconomyService(db).get(a.id).aura_balance == 1000 + LEVEL_AURA_REWARDS[2]
+    )
     request["quantity"] = 2
     assert client.post("/shop/buy", headers=a.headers, json=request).status_code == 409
+    # Fill the first rod stack, then a second one: levels widen the shared pool
+    # instead of capping an item at a single row.
     add(client, a, "basic_rod", 98)
+    add(client, a, "basic_rod", 99)
+    assert InventoryService(db).list(a.id).used_slots == 2
+    fill_slots(db, a, exclude=("basic_rod",))
     before = EconomyService(db).get(a.id).aura_balance
     request.update(request_id="purchase_02", quantity=1)
     assert (
@@ -68,7 +115,43 @@ def test_purchase_idempotency_and_rollback(client, account, db):
     assert EconomyService(db).get(a.id).aura_balance == before
 
 
-def test_sale_collection_and_partition_capacity(client, account, db, monkeypatch):
+def test_store_gear_is_locked_below_level_five(client, account, db, reach_level):
+    a = account()
+    funds(client, a)
+    assert (
+        client.post(
+            "/shop/buy",
+            headers=a.headers,
+            json={"request_id": "locked_rod", "item_code": "basic_rod", "quantity": 1},
+        ).json()["error"]
+        == "LEVEL_LOCKED"
+    )
+    reach_level(a, 5)
+    data(
+        client.post(
+            "/shop/buy",
+            headers=a.headers,
+            json={
+                "request_id": "unlocked_rod",
+                "item_code": "basic_rod",
+                "quantity": 1,
+            },
+        )
+    )
+    # Re-selling store stock pays Aura but never XP, so it cannot be farmed.
+    before = EconomyService(db).xp(a.id).total_xp
+    data(
+        client.post(
+            "/shop/sell",
+            headers=a.headers,
+            json={"item_code": "basic_rod", "quantity": 1},
+        )
+    )
+    assert EconomyService(db).xp(a.id).total_xp == before
+
+
+def test_sale_collection_and_shared_capacity(client, account, db, monkeypatch):
+    monkeypatch.setattr(settings, "inventory_partition_slots", 1)
     a = account()
     add(client, a, "river_carp", 2)
     assert data(client.get("/shop/collection?fish_only=true", headers=a.headers))[1][
@@ -88,11 +171,17 @@ def test_sale_collection_and_partition_capacity(client, account, db, monkeypatch
         for i in data(client.get("/shop/collection", headers=a.headers))
         if i["item_code"] == "river_carp"
     )["obtained"]
-    monkeypatch.setattr(settings, "inventory_partition_slots", 1)
-    add(client, a, "river_carp")
+    # Selling fish pays sale XP; the base pool is shared, not per category.
+    assert EconomyService(db).xp(a.id).total_xp == SELL_XP_PER_UNIT * 2
+    service = InventoryService(db)
+    # The base pool is now 1 and the level still adds its own increment.
+    assert service.capacity(a.id) == slot_capacity(1, base=1) == 4
+    for code in ("river_carp", "golden_carp", "lake_pearl", "moonflower"):
+        add(client, a, code)
+    assert InventoryService(db).list(a.id).used_slots == 4
     assert (
         client.post(
-            "/inventory/add", headers=a.headers, json={"item_code": "golden_carp"}
+            "/inventory/add", headers=a.headers, json={"item_code": "wheat"}
         ).json()["error"]
         == "INVENTORY_FULL"
     )
@@ -220,25 +309,46 @@ def test_gift_escrow_full_inventory_and_duplicate(client, account, db):
         client.post(f"/social/gifts/{gift['id']}/claim", headers=c.headers).status_code
         == 404
     )
-    assert (
-        client.post(f"/social/gifts/{gift['id']}/claim", headers=b.headers).json()[
-            "error"
-        ]
-        == "INVENTORY_FULL"
-    )
-    assert not db.get(Gift, gift["id"]).claimed
-    data(
-        client.post(
-            "/inventory/remove",
-            headers=b.headers,
-            json={"item_code": "wheat", "quantity": 2},
-        )
-    )
+    # b's wheat is one full stack but slots remain, so the gift is accepted
+    # by opening a second stack; capacity is only refused once it is full.
     data(client.post(f"/social/gifts/{gift['id']}/claim", headers=b.headers))
+    assert db.get(Gift, gift["id"]).claimed
     assert (
         client.post(f"/social/gifts/{gift['id']}/claim", headers=b.headers).status_code
         == 409
     )
+
+    add(client, a, "corn", 2)
+    second = data(
+        client.post(
+            "/social/gifts",
+            headers=a.headers,
+            json={
+                "target_id": b.id,
+                "item_code": "corn",
+                "quantity": 1,
+                "request_id": "gift_0002",
+            },
+        )
+    )
+    fill_slots(db, b, exclude=("corn",))
+    assert (
+        client.post(f"/social/gifts/{second['id']}/claim", headers=b.headers).json()[
+            "error"
+        ]
+        == "INVENTORY_FULL"
+    )
+    assert not db.get(Gift, second["id"]).claimed
+    # The gift stays in escrow until the receiver empties a whole stack.
+    data(
+        client.post(
+            "/inventory/remove",
+            headers=b.headers,
+            json={"item_code": "wheat", "quantity": 99},
+        )
+    )
+    data(client.post(f"/social/gifts/{second['id']}/claim", headers=b.headers))
+    assert db.get(Gift, second["id"]).claimed
 
 
 def test_trade_atomic_failure_and_acceptance(client, account, db):
@@ -317,8 +427,9 @@ def lake_presence(db, pid):
     db.commit()
 
 
-def test_fishing_timing_rewards_and_no_replay(client, account, db):
+def test_fishing_timing_rewards_and_no_replay(client, account, db, reach_level):
     a = account()
+    reach_level(a, 5)
     add(client, a, "basic_rod")
     lake_presence(db, a.id)
     service = FishingService(db)
@@ -330,13 +441,25 @@ def test_fishing_timing_rewards_and_no_replay(client, account, db):
     result = service.catch(
         a.id, cast["cast_id"], cast["bite_at"] + timedelta(seconds=1)
     )
-    assert result["caught"] and result["xp"] in (8, 20, 25)
+    assert result["caught"] and result["xp"] in FISH_XP_BY_ITEM.values()
     with pytest.raises(AppError):
         service.catch(a.id, cast["cast_id"], cast["bite_at"] + timedelta(seconds=1))
 
 
-def test_fishing_full_inventory_drop_and_expiry(client, account, db):
+def test_fishing_requires_level_five(client, account, db):
     a = account()
+    add(client, a, "basic_rod")
+    lake_presence(db, a.id)
+    with pytest.raises(AppError) as failure:
+        FishingService(db).cast(
+            a.id, CastRequest(spot_code="campus_lake", rod_code="basic_rod")
+        )
+    assert failure.value.code == "LEVEL_LOCKED"
+
+
+def test_fishing_full_inventory_drop_and_expiry(client, account, db, reach_level):
+    a = account()
+    reach_level(a, 5)
     add(client, a, "basic_rod")
     lake_presence(db, a.id)
     service = FishingService(db)
@@ -344,7 +467,9 @@ def test_fishing_full_inventory_drop_and_expiry(client, account, db):
         a.id, CastRequest(spot_code="campus_lake", rod_code="basic_rod")
     )
     code = db.get(FishingSession, a.id).item_code
-    add(client, a, code, 99)
+    # Every slot is taken by a different item, so the pending catch has nowhere
+    # to go even though it could otherwise share the item's own stack.
+    fill_slots(db, a, exclude=(code,))
     result = service.catch(a.id, cast["cast_id"], cast["bite_at"])
     drop = result["ground_drop"]
     assert drop
@@ -358,7 +483,7 @@ def test_fishing_full_inventory_drop_and_expiry(client, account, db):
         client.post(
             "/inventory/remove",
             headers=a.headers,
-            json={"item_code": code, "confirmed": True},
+            json={"item_code": "basic_rod", "quantity": 1, "confirmed": True},
         )
     )
     data(client.post(f"/fishing/drops/{drop['id']}/claim", headers=a.headers))
@@ -622,8 +747,9 @@ def test_streak_gap_and_daily_task_rollover(client, account, db):
     )
 
 
-def test_frozen_lake_and_missed_bite(client, account, db):
+def test_frozen_lake_and_missed_bite(client, account, db, reach_level):
     a = account()
+    reach_level(a, 5)
     add(client, a, "basic_rod")
     lake_presence(db, a.id)
     world = db.get(WorldState, 1)
@@ -640,6 +766,7 @@ def test_frozen_lake_and_missed_bite(client, account, db):
     )
     world.current_season = "summer"
     db.commit()
+    before_xp = EconomyService(db).xp(a.id).total_xp
     service = FishingService(db)
     cast = service.cast(
         a.id, CastRequest(spot_code="campus_lake", rod_code="basic_rod")
@@ -650,7 +777,7 @@ def test_frozen_lake_and_missed_bite(client, account, db):
         ]
         is False
     )
-    assert EconomyService(db).xp(a.id).total_xp == 0
+    assert EconomyService(db).xp(a.id).total_xp == before_xp
 
 
 def test_rare_discard_requires_confirmation(client, account):

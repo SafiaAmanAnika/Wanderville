@@ -84,6 +84,47 @@ from app.modules.notifications.service import NotificationsService
 from app.db.session import transaction
 from app.main import app
 from app.core.responses import success
+from fastapi.responses import JSONResponse
+from fastapi import Depends
+from app.modules.auth.dependencies import get_current_player_id
+from app.modules.economy.service import EconomyService
+from app.modules.players.repository import PlayerRepository
+@app.post("/integration/progress/{amount}")
+def progress(amount: int, pid: int = Depends(get_current_player_id)):
+    with SessionLocal() as db:
+        with transaction(db):
+            PlayerRepository(db).lock(pid)
+            EconomyService(db).gain_internal(pid, amount)
+        return success({})
+@app.post("/integration/stack-fixture")
+def stack_fixture(pid: int = Depends(get_current_player_id)):
+    with SessionLocal() as db:
+        InventoryService(db).add_compatibility(pid, ItemRequest(item_code="wheat_seed", quantity=100))
+        InventoryService(db).add_compatibility(pid, ItemRequest(item_code="potato_seed", quantity=2))
+    return success({})
+@app.post("/integration/fill-inventory")
+def fill_inventory(pid: int = Depends(get_current_player_id)):
+    with SessionLocal() as db:
+        with transaction(db):
+            PlayerRepository(db).lock(pid)
+            inventory = InventoryService(db)
+            summary = inventory.list(pid)
+            room = sum(99 - item.quantity for item in summary.items if item.item_code == "wheat_seed")
+            # Leave exactly three units of space in the last stack, no free slot.
+            inventory.add_internal(pid, "wheat_seed", room + (summary.capacity - summary.used_slots) * 99 - 3)
+        return success({})
+app.state.lose_shop_response = False
+@app.post("/integration/lose-next-shop-response")
+async def lose_response():
+    app.state.lose_shop_response = True
+    return success({})
+@app.middleware("http")
+async def simulate_lost_response(request, call_next):
+    response = await call_next(request)
+    if request.url.path == "/shop/buy" and response.status_code == 200 and app.state.lose_shop_response:
+        app.state.lose_shop_response = False
+        return JSONResponse(status_code=503, content={"message": "Fixture lost committed response"})
+    return response
 mail = []
 email.send_account_email = lambda *args: mail.append(args)
 with SessionLocal() as db:
@@ -164,6 +205,14 @@ if __name__ == "__main__":
                 process.terminate()
                 raise RuntimeError("Godot integration timed out; logs: " + str(run))
         result = {role: process.returncode for role, process in zip(roles, clients)}
+        if hud and all(value == 0 for value in result.values()):
+            # A new Godot process with the same isolated user directory proves
+            # restart persistence and reconciliation of a saved operation ID.
+            with (run / "restart.log").open("w", encoding="utf-8") as restart_log:
+                restarted = subprocess.Popen(arguments, env={**env, "WANDERVILLE_TEST_RESTART": "1"},
+                                             stdout=restart_log, stderr=subprocess.STDOUT, **options)
+                clients.append(restarted)
+                result["restart"] = restarted.wait(timeout=60)
         (run / "result.json").write_text(json.dumps(result, indent=2))
         print("GODOT_INTEGRATION", json.dumps(result), "artifacts:", run, flush=True)
         return 0 if all(value == 0 for value in result.values()) else 1

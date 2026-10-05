@@ -13,17 +13,25 @@ var _notice_unread := 0
 var _request_count := 0
 var _chat_unread := 0
 var _inventory_selection := ""
+var _toast_version := 0
+var _error_version := 0
 
 
 func _ready() -> void:
-	for label in [%Balance, %WorldLabel, %Capacity, %ItemDetails, %NoticeDetails, %Status]:
+	for label in [%Balance, %ProgressText, %WorldLabel, %Capacity, %ItemDetails, %NoticeDetails, %Status, %LevelToastText]:
 		WoodPanel.apply_status_label(label)
+	%Balance.add_theme_font_size_override("font_size", 18)
+	%ProgressText.add_theme_font_size_override("font_size", 16)
+	%WorldLabel.add_theme_font_size_override("font_size", 16)
+	%ToastClose.pressed.connect(func() -> void: %LevelToast.hide())
 	WoodPanel.apply_panel_title_style(%Heading)
 	for control in [%Items, %Inbox, %Category]:
 		control.add_theme_font_override("font", WoodPanel.PIXEL_FONT)
 		control.add_theme_font_size_override("font_size", 18)
 		control.add_theme_color_override("font_color", WoodPanel.TEXT_COLOR)
-	for pair in [[%SocialButton, "social"], [%NoticeButton, "notifications"], [%BagButton, "inventory"], [%SettingsButton, "settings"]]:
+	%Items.add_theme_stylebox_override("selected", WoodPanel.make_wood_card_selected_style())
+	%Items.add_theme_stylebox_override("selected_focus", WoodPanel.make_wood_card_selected_style())
+	for pair in [[%SocialButton, "social"], [%NoticeButton, "notifications"], [%BagButton, "inventory"], [%StoreButton, "store"], [%SettingsButton, "settings"]]:
 		var button: Button = pair[0]
 		var kind: String = pair[1]
 		button.pressed.connect(func() -> void: switch_panel(kind))
@@ -53,10 +61,14 @@ func _ready() -> void:
 	GameState.inventory_updated.connect(func(_items: Array) -> void: _render_inventory())
 	GameState.economy_updated.connect(func(_data: Dictionary) -> void: _counters())
 	GameState.experience_updated.connect(func(_data: Dictionary) -> void: _counters())
+	GameState.level_advanced.connect(_show_level_up)
+	GameState.backend_error.connect(_show_action_error)
+	WoodPanel.apply_error_label(%ActionError)
 	GameState.world_updated.connect(func(data: Dictionary) -> void:
 		%WorldLabel.text = "%s · %s" % [str(data.get("current_season", "")).capitalize(), str(data.get("weather", "")).capitalize()]
 	)
 	Global.session_changed.connect(_clear_account)
+	GameState.store_requested.connect(func() -> void: switch_panel("store"))
 	get_viewport().size_changed.connect(_resize)
 	_resize()
 	_counters()
@@ -89,10 +101,11 @@ func switch_panel(kind: String) -> void:
 	%SocialPanel.set_open(false)
 	active = next
 	%Outside.visible = active != ""
-	%PanelArea.visible = active in ["social", "inventory", "notifications"]
+	%PanelArea.visible = active in ["social", "inventory", "notifications", "store"]
 	%SocialPanel.visible = active == "social"
 	%Inventory.visible = active == "inventory"
 	%Notifications.visible = active == "notifications"
+	%Store.visible = active == "store"
 	%Status.text = ""
 	%Heading.text = active.capitalize()
 	GameState.social_open = active != ""
@@ -101,6 +114,7 @@ func switch_panel(kind: String) -> void:
 		"inventory": _refresh_inventory()
 		"notifications": refresh_notifications()
 		"settings": %Settings.show_overlay()
+		"store": %Store.open_store()
 	_switching = false
 
 
@@ -112,10 +126,54 @@ func _input(event: InputEvent) -> void:
 
 func _counters() -> void:
 	var xp: Dictionary = GameState.experience
-	%Balance.text = "Aura %d  ·  Level %d  ·  XP %d/%d" % [int(GameState.economy.get("aura_balance", 0)), int(xp.get("level", 1)), int(xp.get("current_xp", 0)), int(xp.get("xp_to_next_level", 0))]
-	%XP.max_value = maxf(1.0, float(xp.get("xp_to_next_level", 1)))
-	%XP.value = float(xp.get("current_xp", 0))
+	var level := int(xp.get("level", 1))
+	var maximum := bool(xp.get("max_level", false))
+	%Balance.text = "Aura %d\nLevel %d — %s" % [int(GameState.economy.get("aura_balance", 0)), level, xp.get("title", "Villager")]
+	%ProgressText.text = "Max level" if maximum else "%d / %d XP toward Level %d" % [int(xp.get("current_xp", 0)), int(xp.get("xp_span", 0)), level + 1]
+	%XP.max_value = 1.0 if maximum else maxf(1.0, float(xp.get("xp_span", 1)))
+	%XP.value = 1.0 if maximum else float(xp.get("current_xp", 0))
 	%XP.tooltip_text = "Total XP: %d" % int(xp.get("total_xp", 0))
+	%ProgressText.tooltip_text = %XP.tooltip_text
+
+
+func _show_level_up(previous: Dictionary, current: Dictionary) -> void:
+	var old_level := int(previous.get("level", 1))
+	var level := int(current.get("level", 1))
+	var gained_slots := int(current.get("slot_increment", 0)) - int(previous.get("slot_increment", 0))
+	var aura := 0
+	for reward in current.get("rewards", []):
+		if int(reward["level"]) > old_level and int(reward["level"]) <= level:
+			aura += int(reward.get("aura", 0))
+	var lines := PackedStringArray(["Level %d — %s" % [level, current.get("title", "")]])
+	if gained_slots > 0:
+		lines.append("+%d inventory slots" % gained_slots)
+	if aura > 0:
+		lines.append("+%d Aura awarded" % aura)
+	var unlocked := PackedStringArray()
+	for item in current.get("unlocked_items", []):
+		if int(item.get("required_level", 1)) > old_level:
+			unlocked.append(str(item["name"]))
+	if not unlocked.is_empty():
+		var preview := ", ".join(unlocked.slice(0, 3))
+		lines.append("Store unlocked: " + preview + (" (+%d more)" % (unlocked.size() - 3) if unlocked.size() > 3 else ""))
+	%LevelToastText.text = "\n".join(lines)
+	%LevelToastText.tooltip_text = ", ".join(unlocked)
+	%LevelToast.show()
+	_toast_version += 1
+	var version := _toast_version
+	await get_tree().create_timer(9.0).timeout
+	if version == _toast_version:
+		%LevelToast.hide()
+
+
+func _show_action_error(message: String) -> void:
+	%ActionError.text = message
+	%ActionError.show()
+	_error_version += 1
+	var version := _error_version
+	await get_tree().create_timer(8.0).timeout
+	if version == _error_version:
+		%ActionError.hide()
 
 
 func _refresh_inventory() -> void:
@@ -141,10 +199,11 @@ func _render_inventory(force := false) -> void:
 	if not force and snapshot == _inventory_snapshot:
 		return
 	_inventory_snapshot = snapshot
+	var scroll: float = %Items.get_v_scroll_bar().value
 	var category := "All" if %Category.item_count == 0 else str(%Category.get_item_metadata(%Category.selected))
 	%Category.clear()
-	for name in ["All"] + GameState.inventory_summary.get("partitions", {}).keys() + ["Other"]:
-		%Category.add_item(str(name).capitalize())
+	for name in ["All", "seeds", "crops", "fish", "rare_materials", "tools", "houses", "Other"]:
+		%Category.add_item("Materials" if name == "rare_materials" else ("Placeables" if name == "houses" else str(name).capitalize()))
 		%Category.set_item_metadata(%Category.item_count - 1, name)
 		if name == category:
 			%Category.select(%Category.item_count - 1)
@@ -160,18 +219,21 @@ func _render_inventory(force := false) -> void:
 		var item: Dictionary = row.get("item", {})
 		var index: int = %Items.add_item("%s\n×%d" % [item.get("name", row["item_code"]), row["quantity"]], WoodPanel.item_icon(row["item_code"]))
 		%Items.set_item_tooltip(index, _item_details(row))
-		if row["item_code"] == _inventory_selection:
+		if str(row["id"]) == _inventory_selection:
 			%Items.select(index)
 	%ItemDetails.text = "No items in this category." if _inventory_rows.is_empty() else "Select an item for details."
-	var counts: Dictionary = GameState.inventory_summary.get("partitions", {})
-	var capacity := int(GameState.inventory_summary.get("partition_capacity", 0))
-	%Capacity.text = "%d stacks · %d items" % [int(GameState.inventory_summary.get("total_items", 0)), int(GameState.inventory_summary.get("total_quantity", 0))]
+	var counts := {}
+	for stack in GameState.inventory:
+		var partition := str(stack.get("partition", "Other"))
+		counts[partition] = int(counts.get(partition, 0)) + 1
+	var capacity := int(GameState.inventory_summary.get("capacity", 0))
+	%Capacity.text = "%d / %d slots occupied · %d items" % [int(GameState.inventory_summary.get("used_slots", 0)), capacity, int(GameState.inventory_summary.get("total_quantity", 0))]
+	%Capacity.tooltip_text = "One shared inventory: %d preserved base + %d level slots." % [int(GameState.inventory_summary.get("base_capacity", 0)), int(GameState.inventory_summary.get("level_slots", 0))]
 	if counts.has(category):
-		%Capacity.text += " · %d/%d %s slots" % [int(counts[category]), capacity, category]
-	elif capacity > 0:
-		%Capacity.text += " · %d slots per partition" % capacity
+		%Capacity.text += "\nShowing %d stacks in this category" % int(counts[category])
 	if not %Items.get_selected_items().is_empty():
 		_select_item(%Items.get_selected_items()[0])
+	%Items.get_v_scroll_bar().set_deferred("value", scroll)
 
 
 func _item_details(row: Dictionary) -> String:
@@ -180,7 +242,7 @@ func _item_details(row: Dictionary) -> String:
 
 
 func _select_item(index: int) -> void:
-	_inventory_selection = _inventory_rows[index]["item_code"]
+	_inventory_selection = str(_inventory_rows[index]["id"])
 	%ItemDetails.text = _item_details(_inventory_rows[index])
 
 
@@ -282,6 +344,10 @@ func _update_notice(dismiss: bool) -> void:
 
 
 func _clear_account() -> void:
+	_toast_version += 1
+	_error_version += 1
+	%LevelToast.hide()
+	%ActionError.hide()
 	_notices.clear()
 	_inventory_rows.clear()
 	_inventory_snapshot = ""
@@ -329,6 +395,13 @@ func _draw_icon(button: Button, kind: String) -> void:
 			for i in 8:
 				var direction := Vector2.RIGHT.rotated(i * TAU / 8)
 				button.draw_line(c + direction * 9, c + direction * 14, ink, 3)
+		"store":
+			button.draw_rect(Rect2(c + Vector2(-12, -3), Vector2(24, 17)), ink, false, 2)
+			button.draw_line(c + Vector2(-15, -4), c + Vector2(15, -4), ink, 3)
+			button.draw_line(c + Vector2(-15, -4), c + Vector2(-10, -12), ink, 2)
+			button.draw_line(c + Vector2(-10, -12), c + Vector2(10, -12), ink, 2)
+			button.draw_line(c + Vector2(10, -12), c + Vector2(15, -4), ink, 2)
+			button.draw_rect(Rect2(c + Vector2(-3, 3), Vector2(7, 11)), ink, false, 2)
 	var count := _notice_unread if kind == "notifications" else (_request_count + _chat_unread if kind == "social" else 0)
 	if count > 0:
 		var corner := Vector2(button.size.x - 12, 12)

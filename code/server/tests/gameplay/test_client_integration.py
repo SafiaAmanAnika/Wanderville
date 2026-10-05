@@ -6,6 +6,7 @@ import pytest
 
 from app.core.clock import utcnow
 from app.core.config import settings
+from app.core.exceptions import AppError
 from app.modules.auth import email, oauth
 from app.modules.farming.schemas import PlantRequest, RelocateRequest, TileRequest
 from app.modules.farming.service import FarmingService, SCENE_DURATIONS
@@ -124,17 +125,56 @@ def test_brevo_delivery_uses_https_and_reports_failure(client, monkeypatch):
     assert not email.deliver_safely("reader@example.com", "Reader", "private-token", "email_verification")
 
 
-def test_inventory_exposes_actual_partition_capacity(client, account, db):
+def test_inventory_exposes_one_shared_capacity(client, account, db):
     from app.core.config import settings
+    from app.core.progression import BASE_INVENTORY_SLOTS
 
     user = account("hud_inventory")
     InventoryService(db).add_compatibility(user.id, ItemRequest(item_code="wheat_seed", quantity=3))
     InventoryService(db).add_compatibility(user.id, ItemRequest(item_code="wheat", quantity=2))
     data = client.get("/inventory/", headers=user.headers).json()["data"]
-    assert data["partition_capacity"] == settings.inventory_partition_slots
-    assert data["partitions"]["seeds"] == 1
-    assert data["partitions"]["crops"] == 1
+    # One pool for every category: no per-partition budget anywhere.
+    assert data["capacity"] == BASE_INVENTORY_SLOTS + 3
+    assert data["used_slots"] == 2
+    assert data["base_capacity"] == BASE_INVENTORY_SLOTS
+    assert data["level_slots"] == 3
+    assert "partition_capacity" not in data and "partitions" not in data
+    assert settings.inventory_partition_slots == BASE_INVENTORY_SLOTS
     assert {r["item_code"]: r["partition"] for r in data["items"]} == {"wheat_seed": "seeds", "wheat": "crops"}
+
+
+def test_capacity_grows_with_level_and_never_confiscates(client, account, db):
+    from sqlalchemy import select
+    from app.core.progression import slot_capacity
+    from app.modules.inventory.models import ItemDefinition
+
+    user = account("hud_capacity_growth")
+    assert client.post(
+        "/economy/xp/gain",
+        headers=user.headers,
+        json={"xp_amount": 180, "source": "test"},
+    ).json()["data"]["level"] == 3
+    data = client.get("/inventory/", headers=user.headers).json()["data"]
+    assert data["level_slots"] == slot_capacity(3) - 30
+    assert data["capacity"] == slot_capacity(3)
+    # Filling past the level 3 pool must not delete anything already owned.
+    codes = list(db.scalars(select(ItemDefinition.item_code).limit(40)))
+    inventory = InventoryService(db)
+    for code in codes[:35]:
+        inventory.add_internal(user.id, code)
+    db.commit()
+    grown = client.get("/inventory/", headers=user.headers).json()["data"]
+    assert grown["used_slots"] == 35
+    assert grown["capacity"] == slot_capacity(3)
+    rejected = None
+    for code in codes[35:]:
+        try:
+            inventory.add_internal(user.id, code)
+        except AppError as exc:
+            rejected = exc
+            break
+    assert rejected is not None and rejected.code == "INVENTORY_FULL"
+    assert client.get("/inventory/", headers=user.headers).json()["data"]["used_slots"] == 35
 
 
 def test_signup_delivery_failure_keeps_account_and_explains_resend(client, monkeypatch):
@@ -152,9 +192,16 @@ def test_signup_delivery_failure_keeps_account_and_explains_resend(client, monke
 
 
 @pytest.mark.parametrize("code,total,last_frame", [("wheat", 18, 4), ("potato", 22, 5)])
-def test_inspector_crop_timing_and_relocation_preserve_growth(client, account, db, code, total, last_frame):
+def test_inspector_crop_timing_and_relocation_preserve_growth(
+    client, account, db, reach_level, code, total, last_frame
+):
     user, other = account(), account("other_farmer")
+    from app.core.progression import unlock_level
     from app.modules.world.models import WorldState
+
+    # Seasonal crops only unlock at level 4, so the inspector timing check runs
+    # from a player who is actually allowed to plant this crop.
+    reach_level(user, unlock_level(code))
     db.get(WorldState, 1).current_season = "winter" if code == "potato" else "summer"
     db.commit()
     InventoryService(db).add_compatibility(user.id, ItemRequest(item_code=code + "_seed"))

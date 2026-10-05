@@ -46,7 +46,11 @@ class Settings(BaseSettings):
     dev_allow_world_mutation: bool = False
     max_move_speed: float = Field(3000, gt=0)
     chat_blocked_words: str = "damn,shit,fuck"
+    # Base shared slot pool; each level adds its own increment on top.
     inventory_partition_slots: int = Field(30, ge=1, le=1000)
+    # Balancing choice: no planting XP existed before, so it defaults to a
+    # small flat rate and stays separate from each crop's harvest reward.
+    farm_plant_xp: int = Field(1, ge=0, le=1000)
 
     @field_validator("database_url", mode="before")
     @classmethod

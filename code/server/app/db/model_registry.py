@@ -6,9 +6,14 @@ from app.modules.economy.models import (
     EconomyTransaction,
     PlayerEconomy,
     PlayerExperience,
+    PlayerLevelReward,
 )
 from app.modules.farming.models import FarmTile
-from app.modules.inventory.models import InventoryItem, ItemDefinition
+from app.modules.inventory.models import (
+    InventoryItem,
+    ItemDefinition,
+    PlayerFirstHarvest,
+)
 from app.modules.players.models import Player
 from app.modules.world.models import PlayerWorld, WorldState
 
@@ -20,9 +25,11 @@ __all__ = [
     "EconomyTransaction",
     "PlayerEconomy",
     "PlayerExperience",
+    "PlayerLevelReward",
     "FarmTile",
     "InventoryItem",
     "ItemDefinition",
+    "PlayerFirstHarvest",
     "PlayerWorld",
     "WorldState",
 ]
@@ -35,7 +42,7 @@ from app.modules.housing.models import HouseTier, PlayerHouse, Decoration  # noq
 
 from app.modules.pets.models import PlayerPet  # noqa: F401, E402
 
-from app.modules.shop.models import ItemRule, CollectionEntry, Purchase  # noqa: F401, E402
+from app.modules.shop.models import ItemRule, CollectionEntry, Purchase, Sale, StarterGrant  # noqa: F401, E402
 
 from app.modules.progression.models import (  # noqa: F401, E402
     GoalDefinition,

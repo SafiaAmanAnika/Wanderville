@@ -142,7 +142,7 @@ def create_app():
         revision = db.scalar(text("SELECT version_num FROM alembic_version"))
         seeded = db.scalar(text("SELECT count(*) FROM item_definitions i JOIN item_rules r ON r.item_code = i.item_code WHERE i.item_code = 'wheat_seed'"))
         clock_ready = db.scalar(text("SELECT count(*) FROM world_state WHERE id = 1"))
-        if revision != "0004_boolean_defaults" or not seeded or not clock_ready:
+        if revision != "0006_progression_and_stacks" or not seeded or not clock_ready:
             raise AppError("DATABASE_NOT_READY", "Run database migrations and reference seeding", 503)
         return success({"status": "ready", "database": "connected"})
 

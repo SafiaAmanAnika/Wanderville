@@ -1,18 +1,44 @@
 from app.core.config import settings
 from app.core.exceptions import AppError, Forbidden, NotFound
+from app.core.progression import (
+    LEVEL_AURA_REWARDS,
+    LEVELS,
+    MAX_LEVEL,
+    level_for_xp,
+    level_info,
+    xp_progress,
+)
 from app.db.session import transaction
+from app.modules.economy.models import PlayerLevelReward
 from app.modules.economy.repository import EconomyRepository
-from app.modules.economy.schemas import EconomyResponse, TransactionResponse, XPResponse
+from app.modules.economy.schemas import (
+    EconomyResponse,
+    LevelRewardResponse,
+    TransactionResponse,
+    XPResponse,
+)
 from app.modules.players.repository import PlayerRepository
 
 
 def progression(total_xp):
-    level, current, threshold = 1, total_xp, 100
-    while current >= threshold:
-        current -= threshold
-        level += 1
-        threshold = threshold * 3 // 2
-    return level, current, threshold
+    """Backwards-compatible tuple view of the shared level table."""
+    progress = xp_progress(total_xp)
+    return (
+        progress["level"],
+        progress["current_xp"],
+        progress["xp_to_next_level"] or progress["xp_span"],
+    )
+
+
+def _next_title(level):
+    """The title the next level promotes to, so the HUD can preview it."""
+    if level >= MAX_LEVEL:
+        return None, None
+    upcoming = level + 1
+    for row in LEVELS:
+        if row[0] >= upcoming and row[1] != level_info(level).title:
+            return row[1], row[0]
+    return None, None
 
 
 class EconomyService:
@@ -43,17 +69,59 @@ class EconomyService:
             total_spent=row.total_spent,
         )
 
+    def granted_rewards(self, player_id):
+        return {
+            row.level: row
+            for row in self.db.query(PlayerLevelReward).filter(
+                PlayerLevelReward.player_id == player_id
+            )
+        }
+
     def xp(self, player_id):
         row = self.repo.experience(player_id)
         if row is None:
             raise NotFound("Player experience has not been initialized")
-        level, current, threshold = progression(row.total_xp)
+        progress = xp_progress(row.total_xp)
+        info = level_info(progress["level"])
+        title, title_level = _next_title(info.level)
+        granted = self.granted_rewards(player_id)
+        from sqlalchemy import select
+        from app.modules.inventory.models import ItemDefinition
+        from app.modules.inventory.service import InventoryService
+        from app.modules.shop.models import ItemRule
+
+        unlocked = self.db.execute(
+            select(ItemDefinition.item_code, ItemDefinition.name, ItemRule.required_level)
+            .join(ItemRule, ItemRule.item_code == ItemDefinition.item_code)
+            .where(ItemDefinition.buy_value.is_not(None), ItemRule.required_level <= info.level)
+            .order_by(ItemRule.required_level, ItemDefinition.item_code)
+        ).mappings().all()
         return XPResponse(
             player_id=player_id,
-            current_xp=current,
             total_xp=row.total_xp,
-            level=level,
-            xp_to_next_level=threshold,
+            level=info.level,
+            title=info.title,
+            xp_span=info.span_to_next,
+            xp_floor=info.min_xp,
+            next_title=title,
+            next_title_level=title_level,
+            slot_increment=info.cumulative_slots,
+            slot_capacity=InventoryService(self.db).capacity(player_id),
+            unlocked_items=[dict(item) for item in unlocked],
+            rewards=[
+                LevelRewardResponse(
+                    level=reward.level,
+                    aura=reward.aura,
+                    # Each reward keeps its own level's title, so a jump from
+                    # level 1 to 10 does not relabel the level 2 payout.
+                    title=level_info(reward.level).title,
+                )
+                for _, reward in sorted(granted.items())
+            ],
+            **{
+                key: progress[key]
+                for key in ("current_xp", "xp_to_next_level", "max_level")
+            },
         )
 
     def change_internal(
@@ -79,14 +147,46 @@ class EconomyService:
         )
         return row
 
+    def grant_level_rewards_internal(self, player_id, previous_level, new_level):
+        """Pay every level crossed, once, even if XP jumps several levels."""
+        granted = self.granted_rewards(player_id)
+        paid = []
+        for level in range(previous_level + 1, min(new_level, MAX_LEVEL) + 1):
+            if level in granted or level not in LEVEL_AURA_REWARDS:
+                continue
+            aura = LEVEL_AURA_REWARDS[level]
+            self.db.add(
+                PlayerLevelReward(player_id=player_id, level=level, aura=aura)
+            )
+            granted[level] = True
+            paid.append(
+                LevelRewardResponse(
+                    level=level, aura=aura, title=level_info(level).title
+                )
+            )
+            if aura:
+                self.change_internal(
+                    player_id,
+                    aura,
+                    True,
+                    f"Level {level} reward",
+                    reference_type="level_reward",
+                    reference_id=str(level),
+                )
+        if paid:
+            self.db.flush()
+        return paid
+
     def gain_internal(self, player_id, amount):
         self.validate_amount(amount)
         row = self.repo.experience(player_id)
         if row is None:
             raise NotFound("Player experience has not been initialized")
-        previous_level = row.level
+        # Legacy entitlements/rewards are retained by the migration; the level
+        # itself always follows cumulative XP and is capped at ten.
+        previous_level = level_for_xp(row.total_xp).level
         row.total_xp += amount
-        row.level = progression(row.total_xp)[0]
+        row.level = level_for_xp(row.total_xp).level
         if row.level > previous_level:
             from app.modules.notifications.service import NotificationsService
 
@@ -94,7 +194,9 @@ class EconomyService:
                 player_id, "level_up", f"Reached level {row.level}", "/economy/xp"
             )
         self.db.flush()
-        return row
+        return self.grant_level_rewards_internal(
+            player_id, previous_level, row.level
+        )
 
     def change(self, player_id, request, earn):
         if earn and not settings.is_development:
@@ -110,8 +212,12 @@ class EconomyService:
             raise Forbidden("Arbitrary XP awards are development-only")
         with transaction(self.db):
             self.players.lock(player_id)
-            self.gain_internal(player_id, request.xp_amount)
+            paid = self.gain_internal(player_id, request.xp_amount)
             result = self.xp(player_id)
+        # `xp()` reports every reward ever granted; the caller that just earned
+        # XP needs only this call's payouts, so the HUD never re-announces a
+        # level it already celebrated.
+        result.rewards = paid
         return result
 
     def history(self, player_id, limit):

@@ -7,8 +7,10 @@ from starlette.websockets import WebSocketDisconnect
 
 from app.core.clock import utcnow
 from app.core.config import settings
+from app.core.progression import LEVEL_AURA_REWARDS
 from app.modules.economy.service import EconomyService
 from app.modules.fishing.models import GroundDrop
+from app.modules.inventory.models import ItemDefinition
 from app.modules.inventory.service import InventoryService
 from app.modules.notifications.models import Notification
 from app.modules.pets.models import PlayerPet
@@ -168,9 +170,12 @@ def test_pet_ownership_consumption_and_fetch_replay(client, account, db):
     assert client.post("/pets/actions", headers=user.headers, json={"action": "fetch_finish"}).json()["error"] == "FETCH_NOT_READY"
 
 
-def test_purchase_server_price_level_partition_and_balance(client, account, db, monkeypatch):
+def test_purchase_server_price_level_capacity_and_balance(client, account, db, monkeypatch):
     user = account()
     payload = {"item_code": "basic_rod", "quantity": 2, "request_id": "too_costly", "unit_price": 0}
+    # The level gate is checked before price, so unlock the rod first.
+    db.get(ItemRule, "basic_rod").required_level = 1
+    db.commit()
     assert client.post("/shop/buy", headers=user.headers, json=payload).json()["error"] == "INSUFFICIENT_FUNDS"
     assert EconomyService(db).get(user.id).aura_balance == 10
     assert InventoryService(db).repo.stack(user.id, "basic_rod") is None
@@ -180,9 +185,23 @@ def test_purchase_server_price_level_partition_and_balance(client, account, db, 
     assert client.post("/shop/buy", headers=user.headers, json=payload).json()["error"] == "LEVEL_LOCKED"
     db.get(ItemRule, "basic_rod").required_level = 1
     db.commit()
+    # A single shared pool: shrinking the base to 1 leaves only the level
+    # increments, so the occupied slots are what block the purchase.
     monkeypatch.setattr(settings, "inventory_partition_slots", 1)
-    add(client, user, "pet_biscuit")
-    payload["request_id"] = "partition_full"
+    service = InventoryService(db)
+    capacity = service.capacity(user.id)
+    codes = [
+        code
+        for code in db.scalars(
+            select(ItemDefinition.item_code).order_by(ItemDefinition.item_code)
+        )
+        if code != "basic_rod"
+    ]
+    for code in codes[:capacity]:
+        service.add_internal(user.id, code)
+    db.commit()
+    assert service.list(user.id).used_slots == capacity
+    payload["request_id"] = "capacity_full"
     assert client.post("/shop/buy", headers=user.headers, json=payload).json()["error"] == "INVENTORY_FULL"
     db.expire_all()
     assert EconomyService(db).get(user.id).aura_balance == 10
@@ -242,7 +261,8 @@ def test_house_insufficient_balance_rolls_back(client, account, db):
     assert client.post("/housing/upgrade", headers=user.headers,
                        json={"expected_tier": 1}).json()["error"] == "INSUFFICIENT_FUNDS"
     assert ok(client.get("/housing", headers=user.headers))["house"]["tier"] == 1
-    assert EconomyService(db).get(user.id).aura_balance == 10
+    # 100 XP crosses level 2, so the once-only level reward is already paid.
+    assert EconomyService(db).get(user.id).aura_balance == 10 + LEVEL_AURA_REWARDS[2]
 
 
 @pytest.mark.parametrize("delay,caught", [(2, True), (2.001, False)])

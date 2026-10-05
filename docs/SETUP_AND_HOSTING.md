@@ -1,6 +1,6 @@
 # Google login, email and shared hosting
 
-Updated 4 October 2026. Your current database is **local**, not publicly hosted. The read-only audit found PostgreSQL 18.6 at `127.0.0.1:5433`, database `wanderville_dev`, migration `0004_boolean_defaults`, 42 tables, and 22 catalog definitions. Fresh full seeding creates 51 definitions. No live data or credentials were changed.
+Gameplay setup updated 5 October 2026. After explicit authorization, local PostgreSQL `wanderville_dev` at `127.0.0.1:5433` was backed up, migrated to `0006_progression_and_stacks` and seeded with 51 catalog definitions, including 22 seed types. The API at `http://127.0.0.1:8000` passed `/health` and `/ready`; its integrated world worker is enabled for the running process. PostgreSQL runs as an automatic Windows service. Credentials were unchanged. This is local hosting; provider instructions below retain their previous verification date, 4 October.
 
 ## 1. Finish Google sign-in
 
@@ -73,7 +73,7 @@ An alternative database is [Supabase Free](https://supabase.com/pricing), but in
 1. **Neon:** create a Free project and PostgreSQL database. Choose a region close to your Render region. Copy its full PostgreSQL connection URI from Connect, retaining `sslmode=require`. Use the direct connection for this small single-process deployment. Put it only in server secrets, never in Godot or chat.
 2. **Brevo:** complete the sender/API-key steps above.
 3. **Google:** complete the Desktop client steps above. Use the same downloaded JSON's `client_id` and `client_secret` in Render.
-4. **Repository:** the changes must be committed and pushed to the GitHub repository you connect to Render. They are currently local, uncommitted changes; review and push them using your normal Git workflow. No push was performed for you.
+4. **Repository:** commit and push the version you intend to deploy to the GitHub repository/branch you connect to Render.
 5. **Render:** New → Blueprint → connect your repository/branch → use the root `render.yaml`. Confirm the plan is **Free** and there is **one web service**, then supply these prompted environment values:
 
 | Variable | Value |
@@ -118,7 +118,9 @@ After you create the accounts and deploy, share **only the public API URL**. Liv
 
 ## 5. Local startup and existing local database
 
-Run these only when you choose to update the configured local database's schema/reference data; they were not run on your existing database during this task:
+These commands were applied to the local database on 5 October after explicit authorization. They are retained here for subsequent startup/update sessions. The migration and seed commands are repeatable; do not launch a second API while port 8000 is occupied.
+
+Stop the old API and worker before updating. The current head is **`0006_progression_and_stacks`**; upgrading also applies `0005_shop_receipts` when needed. Migration 0006 adds crop harvest metadata, inventory stack numbers, first-harvest records and level-reward bookkeeping. Existing inventory quantities, balances, plots, account/social data and lifetime XP are retained. Reference seeding updates catalog metadata, seed mappings and required levels, preserving unrelated definitions and the running world clock; it does not grant player inventory or reset balances.
 
 ```powershell
 Set-Location D:\GitHubProjects\Wanderville\code\server
@@ -136,3 +138,55 @@ Set-Location D:\GitHubProjects\Wanderville\code\server
 ```
 
 Alternatively set `WORLD_WORKER_ENABLED=true` on the local API and run only Uvicorn. Do not also launch a standalone worker unnecessarily. Then run `code/client/project.godot`. The existing PostgreSQL service on port 5433 must be running.
+
+Check the restarted process with `Invoke-RestMethod http://127.0.0.1:8000/ready`. A successful `/health` alone does not confirm that migrations and reference data are current. Open the HUD Store button and use **Claim starter seeds (once)** for an account that has not already claimed the pack. The existing `original_seeds_v1` marker is retained, so upgrading never grants a second pack or replenishes consumed seeds. The complete grant and its marker commit together; lack of capacity rolls back both.
+
+## 6. Progression and inventory rules
+
+`app/core/progression.py` defines the level table and rewards; `app/db/catalog.json` plus the existing reference seeder define item metadata and unlocks. Godot reads authoritative API values. XP is cumulative, never spent on a level-up, and level is capped at ten while lifetime XP can continue growing.
+
+| Level | Title | Minimum lifetime XP | Slots added | Total added slots |
+| --- | --- | ---: | ---: | ---: |
+| 1 | Villager | 0 | 3 | 3 |
+| 2 | Villager | 80 | 3 | 6 |
+| 3 | Farmer | 180 | 3 | 9 |
+| 4 | Farmer | 320 | 3 | 12 |
+| 5 | Farmer | 500 | 5 | 17 |
+| 6 | Settler | 750 | 5 | 22 |
+| 7 | Settler | 1,050 | 5 | 27 |
+| 8 | Settler | 1,400 | 5 | 32 |
+| 9 | Landkeeper | 1,800 | 7 | 39 |
+| 10 | Landkeeper | 2,100 | 7 | 46 |
+
+One shared inventory pool covers all categories. Matching items fill existing partial stacks first, then open additional stacks up to the item's stack limit. Emptying a stack frees a slot. The API reports `used_slots` and `capacity`; filtering Seeds, Crops or another category changes neither. Full-inventory purchase/harvest failures do not deduct Aura, remove the mature crop or award harvest XP.
+
+**Capacity formula:** `preserved base capacity + cumulative level slot increments`, with a defensive floor at currently occupied stacks. New accounts preserve the existing configured base of 30 slots, giving totals **33, 36, 39, 42, 47, 52, 57, 62, 69, 76** at levels 1–10. Migration 0006 consolidates existing accounts' six old partitions into a permanent shared base of `max(6 × INVENTORY_PARTITION_SLOTS, occupied stacks)`—normally 180—giving **183–226** slots. The base is stored per player, so selling items, logging in or reseeding cannot remove it or reapply the expansion. Categories no longer receive independent level bonuses.
+
+**Existing-account reward policy:** migration recalculates the displayed level from unchanged lifetime XP. Levels 2 and 10 already eligible under either the old stored level or the new XP table receive zero-Aura bookkeeping markers, preventing uncertain historical payouts from being paid again. Existing balances/rewards remain intact; subsequent newly crossed eligible levels pay normally. It does not retroactively grant XP for historical harvests that were never tracked; the first successful harvest of each species after this update records its one-time bonus.
+
+**Starter balance choice:** 5 `paddy_seed` and 5 `wheat_seed`, two stacks, both level-one/all-season crops. Players who claimed the earlier 20-type pack retain those items and the same grant marker; they receive no replacement or second pack. Unclaimed accounts can opt into the new basic pack from the Store.
+
+| Item access | Required level |
+| --- | ---: |
+| Paddy and Wheat seeds | 1 |
+| Sugarcane, Corn and Cotton seeds | 2 |
+| Supported seasonal crop seeds | 4 |
+| Existing rod, pet goods and garden lantern | 5 |
+| Moonflower, Rivermint, Sunbloom and Ancient Grain seeds | 8 |
+
+Corn/Cotton retain their existing summer planting rule despite the earlier access level. Unlocking a seasonal seed does not override its season. The full mapping lives in the shared progression configuration and is copied into catalog rules by reference seeding.
+
+| Successful activity | XP |
+| --- | ---: |
+| Planting | 1 by default (`FARM_PLANT_XP`, new configurable balancing choice) |
+| Common / seasonal / rare / magical crop harvest | 5 / 10 / 20 / 30, one base category per species |
+| First successful harvest of each crop species | Additional 15, once per account and species |
+| Eligible produce, fish or gathered material sold | 5 per unit, independent of sale batch size |
+| Existing normal fish / rare fish / lake material catch | 8 / 20 / 25 |
+| Existing house upgrade | 20 |
+
+Seeds, tools and other store-resale goods grant no sale XP. Buying, receiving and viewing an item never claim first-harvest XP. The current catalog does not sell produce/fish/materials, preventing a buy-and-resell XP loop. Existing fishing/house services receive their awards; this update does not add new fishing zones or house interfaces.
+
+New configurable Aura rewards are **25 at level 2** and **100 at level 10**. A unique player/level record protects each payout; multi-level jumps process every newly crossed eligible level. Existing daily-login and achievement Aura rewards remain separate. The HUD describes supported item access and slot increases, without announcing absent factories, land expansions or other scrapped systems.
+
+Growing season and required level are checked separately when planting. Selling already-owned eligible produce stays available regardless of its growing season or unlock level. Store prices and rotating availability retain the previous rules. Purchases and sales preserve their request IDs while awaiting confirmation; receipt reconciliation and retry use the same ID, including after restart.

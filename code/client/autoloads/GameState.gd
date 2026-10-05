@@ -34,6 +34,8 @@ signal backend_error(message: String)
 signal gameplay_refreshed
 signal economy_updated(data: Dictionary)
 signal experience_updated(data: Dictionary)
+signal level_advanced(previous: Dictionary, current: Dictionary)
+signal store_requested
 
 
 func reset() -> void:
@@ -123,8 +125,11 @@ func _apply_data(kind: String, data: Dictionary) -> void:
 			economy = data
 			economy_updated.emit(data)
 		"experience":
+			var previous := experience
 			experience = data
 			experience_updated.emit(data)
+			if not _loading and not previous.is_empty() and int(data.get("level", 1)) > int(previous.get("level", 1)):
+				level_advanced.emit(previous, data)
 		"inventory":
 			inventory_summary = data
 			inventory = data.get("items", [])

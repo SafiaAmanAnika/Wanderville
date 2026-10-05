@@ -1,81 +1,79 @@
-# Integration verification — 4 October 2026
+# Gameplay integration verification — 5 October 2026
 
-This report supersedes the earlier script-only/October 1 reports. Work was done in the existing project and preserved prior uncommitted edits. No existing player database or credentials were changed. Nothing was deployed, committed, pushed, or emailed to another person.
+This update finishes the connected inventory, seed picker, Store, farming rewards and ten-level progression in the existing Godot project. It builds on the original integration and seed/store restoration already present in this checkout. The configured player database and credentials are outside the test scope; migrations are provided separately in the [setup guide](SETUP_AND_HOSTING.md#5-local-startup-and-existing-local-database).
 
-## Results and boundaries
+## Catalog and assets
 
-| Check | Result |
+The recovered source remains `b310eae:code/client/autoloads/GameState.gd`, whose later, complete inventory lists these 20 types. Every name maps to `<name>_seed` in inventory and `<name>` as harvested produce:
+
+| Recovered types | Access |
 | --- | --- |
-| Complete backend suite on fresh PostgreSQL 18 | **153 passed, 0 skipped**, one dependency deprecation warning, 108.43 seconds; fixture `postgres_3b425cbf` |
-| Final auth/inventory/readiness regressions | **13 passed**, one warning; disposable SQLite. Includes readiness rejection when required item rules are missing |
-| Python quality | Ruff, compilation and `pip check` passed |
-| Godot script and UI scene load | Godot 4.6.2; **0 failures**. Includes HUD, seed picker, social and auth scenes. An existing duplicate unique `VBox` warning remains in the signup scene |
-| Real two-client gameplay run | Fixture `client_ad0afc8f`: **Alice and Bob both exited 0**, all recorded checks passed. Real HTTP/WebSocket traffic, actual world/player/crop/controller scenes; headless, not a visual two-window test |
-| Final rendered HUD regression | Fixture `client_d63e8467`: **35 checks passed**, 0 failures, real disposable accounts/API/database. Native OpenGL renderer, supplied avatar artwork, lightweight UI test stage; screenshots at 1578×997 and 800×600 inspected |
-| Full-map repeatability | **Not fully verified.** Later two-client reruns failed with Godot native `alloc_static`/`mem_new` allocation errors and signal 11 while loading the existing world. Even a temporary test-only particle reduction did not resolve this; that workaround was removed. Last failure: `client_760103b1` |
-| Full rendered multiplayer world | Earlier attempt also failed natively. Do not treat the separate rendered HUD stage as proof that two full rendered game windows are stable |
-| Protected content | Git diff confirms no changes to `Assets/`, `Scenes/map.tscn`, `Scenes/crops/`, `Scenes/player1.tscn`, or `Scripts/crop_visual.gd`; no terrain, TileSets, collision geometry, coordinates or supplied animations were edited |
+| paddy, wheat | Level 1, all seasons |
+| sugarcane | Level 2, all seasons |
+| sweet_corn, bell_pepper, green_bean, pumpkin, apple, turnip, potato, carrot, cabbage, strawberry, lettuce, pea, radish | Level 4; each keeps its existing season |
+| moonflower, rivermint, sunbloom, ancient_grain | Level 8, all seasons; rotating store availability |
 
-All fixture artifacts are under `code/server/.verification/` (ignored by Git). Disposable processes/clusters were shut down; their files/logs remain for inspection. The final memory check showed about 3 GB physical and 3.4 GB virtual memory available after test cleanup. The native error explicitly reported allocation failure; a definitive engine-level cause was not established. The user's existing Godot/editor process was not terminated. Release memory before repeating the two-client command below. Existing invalid TileSet atlas entries also produce many warnings; their duplicates are suppressed only during resource loading in the test harness, without editing those assets.
+The earlier `49142eb` inventory included wheat/corn/cotton/tulip. Existing backend Corn/Cotton remain available at level 2 in summer; Tulip has no matching active crop definition and was not added. No broader concept-PDF catalog was invented.
 
-## What the checks exercised
+`WoodPanel.item_icon` explicitly maps Paddy, Wheat, Sugarcane, Sweet Corn, Bell Pepper, Green Bean, Pumpkin, Turnip and Potato to their existing crop scenes. Seeds use the initial SpriteFrames image; produce uses the final image. In particular, canonical `sweet_corn` uses the supplied scene rather than guessing a `sweetcorn` filename. Remaining types use one existing inventory-slot placeholder with the correct label. Original textures and growth frames are retained.
 
-The successful two-client run covered login and saved-state loading; coordinated concurrent token refresh; rejection of a stale request after signing back into the same account; authenticated WebSockets; local movement and stationary heartbeats; remote actor creation/interpolation targets; camera/input isolation; nearby filtering and duplicate prevention; friend search/request/accept/online status; private recipient/history delivery; blocking and removal of remote actors; reconnect; typing/input blocking; logout/socket/poll cleanup; and the actual farming controller's planting, one watering, timed visual frames, relocation, world reload, restored crop and harvest.
+Available scene/script history contained the backend shop, but no recoverable Godot store scene or interaction. The previous restoration therefore added the authorized compact wooden panel; this update extends that same panel. Open it through the **shopfront HUD button** or **Open store** in the existing seed picker. The globe remains Social; Settings retains logout.
 
-The final HUD run covered each icon/toggle; one main panel; Escape/outside-click closure and input flags; social drafts across tabs/closing; real inventory quantity, atlas-frame icons, placeholder and selected details; real unread count, 30-item page/cursor, selected-only read and dismissal; settings persistence and a deliberately unavailable-server failure that retains the panel with an error; the existing seed picker's images and cancellation; account cleanup; visible day/night tint; and all four season/precipitation combinations through the real weather attachment scripts. The expected connection warning in this run belongs to the intentional failed-save test.
+## Rules and player flow
 
-Tests mock Google token verification/exchange and SMTP/Brevo transport at the external provider boundary. They do **not** prove a live Google browser login or delivery to a real inbox. Those require the user's provider credentials. No sender account was connected automatically.
+- **Inventory:** category filters organize actual stacks and show one shared occupied/capacity counter. Selection exposes the name, stack quantity and relevant item metadata. Matching additions fill partial stacks before consuming another slot.
+- **Seed picker:** displays owned seed totals, separate level/season restrictions, existing artwork and a selected state. Cancellation preserves the pending tile without consuming a seed. The existing farming controller sends planting to the server and refreshes state after acceptance.
+- **Store:** Buy/Sell retain existing prices, stock and request IDs. Review the chosen quantity and Aura total before confirming. Changes refresh inventory, picker counts, balance and XP/capacity. Lost responses reconcile through saved receipts; retry uses the original ID, including after restart.
+- **Progression:** persistent level/title/XP/Aura HUD, within-level progress, maximum-level state and brief level-up feedback. The server defines thresholds, supported unlocks and awards. No missing factories, forest maps or land expansions are announced.
+- **Starter:** explicitly claim **5 Paddy Seeds + 5 Wheat Seeds once**, both level-one/all-season, occupying two stacks. Earlier `original_seeds_v1` claims remain claimed; existing items and balances are never replaced or replenished.
 
-## Database status
+The [progression reference](SETUP_AND_HOSTING.md#6-progression-and-inventory-rules) contains all ten thresholds, exact capacity and legacy migration policy, XP awards and item unlocks. New balance choices are **1 planting XP**, **25 Aura at level 2**, **100 Aura at level 10**, and the basic starter quantities above. Harvest XP is **5/10/20/30** for common/seasonal/rare/magical crops plus **15 once per species**. Eligible produced/collected units sell for **5 XP each**; seeds/tools do not grant sale XP. Existing fishing and house-service awards remain connected without adding new gameplay systems.
 
-The read-only audit used `SET TRANSACTION READ ONLY` and SELECTs. The configured database is PostgreSQL **18.6**, `wanderville_dev` on **127.0.0.1:5433**, migration **0004_boolean_defaults**, **42 tables**, and **22 item definitions**. This confirms a working local database connection, not public hosting. Fresh complete reference seeding in tests produces 51 definitions; the current local setup still needs its explicit reference-data update.
+## Fresh verification
 
-The existing local API answered `/health` 200. Its `/ready` request timed out during the audit, so that running process was not certified ready. The updated `/ready` implementation passed isolated tests and now rejects missing required gameplay seed rules as well as wrong migration/clock setup. Restart/update the local backend using the setup guide; no running user service was silently restarted.
+Results below must come from this progression implementation, not prior logs. Disposable databases and isolated Godot user directories are used.
 
-Google client ID and SMTP credentials were unset; the configured email host was local development SMTP and the sender was a placeholder. No public backend URL was supplied. Consequently, no live cloud database or friend's remote connection has yet been verified.
-
-## Changes, grouped by purpose
-
-| Files | Purpose |
+| Check | Current result |
 | --- | --- |
-| `Scenes/world_hud.tscn`, `Scripts/world_hud.gd` | One editable CanvasLayer HUD with icons, floating inventory/notification panels, authoritative counters and account cleanup |
-| `Scenes/social_panel.tscn`, `Scripts/social_panel.gd` | Social panel contained under the globe: nearby/private chat, friends/actions, preserved drafts, bounded history/polling and real received-message badges |
-| `Scripts/remote_players.gd` | Reuse supplied character visuals for remote presence; disable local controller/collision/camera and interpolate received motion |
-| `Scenes/world.tscn` | Only necessary attachment resources/nodes: WorldHUD, RemotePlayers, DayNight CanvasModulate; existing world nodes/transforms retained |
-| `Scenes/seed_picker_menu.tscn`, `Scripts/seed_picker_menu.gd`, `Scripts/components/wood_panel.gd` | Restyle the same seed picker, retain planting signal, add scrolling/restriction labels and supported seed purchases; share explicit artwork mapping/placeholder |
-| `Scenes/menus/SettingsOverlay.tscn`, `Scenes/menus/LogoutConfirmationDialog.tscn`, `Scripts/menus/settings_overlay.gd` | Reuse settings in-world, expose save failure, add existing logout confirmation, fit confirmation buttons in smaller windows |
-| `autoloads/APIClient.gd`, `GameState.gd`, `Global.gd`, `RealtimeClient.gd` | Browser OAuth/PKCE, safe concurrent HTTP/refresh, session versioning, shared authoritative state/signals, bounded reconnect/history polling and cleanup |
-| Existing login/signup/email-verification/main-menu/character/world-selection scripts | Complete existing navigation and profile/auth persistence; accurate development-mail and failure messages |
-| `Scripts/farm_controller.gd`, `water_source.gd`, `farm_menu.gd`, `player.gd`, `sign_board.gd` | Preserve existing interaction paths while validating/saving actions, reconciling uncertain responses and blocking gameplay during UI interaction |
-| `Scripts/day_and_night_cycle.gd`, `weather_manager.gd`, `weather_fx_manager.gd` | Attach the previously unused day/night/weather behavior, correct seconds, consume server time/seasons and avoid season signals overwriting precipitation |
-| Server `modules/auth/{oauth,email,pages,router,schemas,service}.py`, `core/config.py`, `.env.example` | Desktop Google code exchange/nonce verification, browser verification/reset pages, truthful delivery failures, explicit local/Gmail/Brevo delivery |
-| Server `modules/farming/{service,router,schemas}.py` | Preserve Inspector growth frames/timing and one-water behavior, refill amount and persistent validated relocation |
-| Server `modules/inventory/{service,schemas}.py` | Return existing partition names/counts and configured capacity for the HUD |
-| Server `modules/realtime/{router,service}.py`, `modules/social/service.py` | Socket ownership, offline/reconnect position consistency and online status based on live presence |
-| Server `main.py`, root `render.yaml` | Database readiness plus opt-in in-process existing worker; free web service with external Neon and HTTPS email |
-| Server/client tests, `scripts/verify_integration.py`, `docs/_audit_runtime.py` | Isolated PostgreSQL/API/Godot tests and read-only local status audit; updated contracts and intended farming expectations |
-| `scripts/configure_auth.py`, README, setup guide, this report, `.gitignore` | Safe private configuration helper, exact startup/provider steps, current evidence and exclusion of disposable environments/mail/logs |
+| Complete backend suite on disposable PostgreSQL | **225 passed**, one dependency deprecation warning, 143.23 seconds; `postgres_8abf679a/test-result.txt`. Cluster shutdown confirmed |
+| Migration preservation, threshold boundaries, multi-level jumps and concurrency | Included in the full PostgreSQL run; **17 additional SQLite migration/inventory checks passed** after the stable stack-ordering fix |
+| Godot script/UI scene load | **0 failures**, Godot 4.6.2; existing signup duplicate unique-name warning remains |
+| Actual rendered HUD, inventory, picker, Store and restart checks | **76 UI/gameplay checks + 6 separate-process restart checks passed**, fixture `client_22aea53b`; both processes exited 0. Screenshots at 800×600 inspected |
+| Python quality and Git whitespace | Ruff on application, tests, verification runner and new migrations passed; Git whitespace check passed |
+| Protected maps, geometry and supplied artwork diff | Empty. `map.tscn` matches HEAD; all three serialized terrain tile layers match pre-integration `b310eae`; no missing map resource paths |
 
-Godot-generated `.uid` files accompany new scripts. No new migration or replacement map/controller was needed.
+Backend tests cover every threshold below/at/above, level-ten persistence, once-only rewards/first harvest, multi-stack additions and full-capacity rollback, sale eligibility/replay, starter compatibility and route contracts. Rendered checks use the actual HUD, picker, store and farming controller with a lightweight background and FarmLayer in a disposable fixture, not the full map. They exercise crop growth using the unchanged scene timing, harvesting, selling, buying replacement seeds, authoritative level/title/progress, multi-level rewards, category filters and restarting in a separate Godot process.
 
-## Gameplay decisions and use
+The fixture can substitute HTTP 503 after a committed purchase to verify receipt reconciliation. It also checks a local pending-receipt file that cannot be cleared and a full inventory that still has room inside an existing stack. Fault routes and artificial XP/inventory setup exist only in the runner's generated disposable server. Existing daily-login and harvest-achievement Aura are preserved; balance assertions measure each action's delta so these rewards are accounted for.
 
-- **HUD:** top-right globe/social, bell/notifications, bag/inventory and gear/settings; click again, Escape, or outside to close. Save failures keep settings open. Small windows allow panel scrolling. Logout is in settings and requires the existing confirmation.
-- **Farming:** existing E interaction and K relocation continue through the same controller. One watering starts continuous scene growth. Five-frame supplied crops: 5+6+7 = 18 seconds to harvest; potato: 5+6+7+4 = 22 seconds. Inspector artwork/frame sequence is preserved. Season/level restrictions and server inventory still apply. Q adds one water unit up to capacity 20.
-- **Time:** day/night is now visibly wired; current authoritative default is 40 real minutes per cycle, with 30 minutes day and 10 minutes night. Seasons advance every **7 real days** under the existing backend defaults. Seasonal particle effects are connected; no seasonal terrain repainting was invented. Weather/timing boundary rules are also covered by backend tests.
-- **Data:** XP/level/threshold/Aura are server values. Login progression may award Aura; tests compare the actual server balance, not an invented zero. Harvest/purchase reconciliation refreshes gameplay state. Notification opening does not bulk-mark read.
-- **Privacy:** only the active private conversation is polled. The globe badge combines actual pending requests with received unread messages; it is not a promise of a global private-message inbox/read-receipt system.
+The intentional unavailable-server settings test produces a connection warning; the UI run also reports an ObjectDB cleanup warning at exit. Neither produced a failed assertion. Store day rollover refresh was reviewed in code and passed script loading; the test does not wait through a whole 40-minute game day. All disposable backend processes and the PostgreSQL cluster were shut down.
 
-## Reproduce
+## Files and activation
 
-From the repository root (PostgreSQL `bin` must be on PATH):
+| Area | Existing files extended / necessary additions |
+| --- | --- |
+| Shared rules/catalog | Server `app/core/progression.py`, `app/core/config.py`, `app/db/catalog.json`, `app/db/gameplay_seed.py` |
+| Atomic inventory/XP | Existing economy, inventory, farming, fishing, housing and shop models/services/schemas; model registry/readiness |
+| Migration | `migrations/versions/0006_progression_and_stacks.py`; retains the preceding `0005_shop_receipts_and_starter_grants.py` |
+| Godot UI/state | Existing `world_hud`, `seed_picker_menu`, `store_panel` scenes/scripts and autoload state/API; shared wooden components/art mappings |
+| Verification | Existing server tests, Godot HUD integration and disposable verification runner |
+| Guides | README, setup/hosting guide and this report |
+
+Stop the old backend/worker, run `python -m alembic upgrade head`, then `python -m app.db.seed`, and restart. Exact PowerShell commands are in [local startup](SETUP_AND_HOSTING.md#5-local-startup-and-existing-local-database). Reference seeding updates item metadata, never player inventory. This pass does not deploy a public backend, connect email credentials or silently migrate your configured database.
+
+## Remaining boundaries and prior evidence
+
+**Authorized local activation, 5 October:** separately from the disposable tests above, the user requested the database update and startup. A custom-format PostgreSQL backup was created and its archive verified at `code/server/.verification/local_activation_20261005T082631Z/before_migration.dump`. Migrations 0005/0006 and reference seeding completed. Before/after checks across 35 protected tables (excluding the intended level recalculation/new columns and reference-data updates) found no unexpected changes. The local API was restarted with its world worker enabled; `/health` and `/ready` returned HTTP 200. The existing account is active, email-verified and unlocked; read-only inventory, progression and shop service queries passed. No password was changed or end-to-end password login attempted. PostgreSQL remains running on port 5433, API on port 8000; this is not a public deployment.
+
+The prior restoration recorded 165 backend tests plus 51 rendered UI checks and five restart checks; those counts describe the previous code only. The older successful two-client run (`client_ad0afc8f`) covered real HTTP/WebSocket traffic and actual controller/crop scenes. Later full-world reruns failed with Godot native allocation errors; a lightweight rendered HUD stage cannot establish full-map multiplayer stability. Existing invalid atlas-entry warnings and unsupported crop artwork placeholders remain. Original one-watering Inspector timings and world day/night/seasons are preserved.
+
+The last configured-database audit (4 October) found local PostgreSQL at `127.0.0.1:5433`, migration `0004_boolean_defaults`, and an incompletely seeded catalog. That historical read-only check is not evidence of hosting or current readiness. Google/SMTP/Brevo tests mock provider boundaries; live browser sign-in, inbox delivery and a friend's public connection require the user's external setup and remain separate checks.
+
+To reproduce isolated runs from the repository root (PostgreSQL `bin` on PATH):
 
 ```powershell
 code/server/.venv312/Scripts/python.exe code/server/scripts/verify_integration.py --postgres
-code/server/.venv312/Scripts/python.exe code/server/scripts/verify_integration.py --godot 'E:/Downloads/Godot_v4.6.2-stable_win64.exe/Godot_v4.6.2-stable_win64.exe'
 code/server/.venv312/Scripts/python.exe code/server/scripts/verify_integration.py --godot 'E:/Downloads/Godot_v4.6.2-stable_win64.exe/Godot_v4.6.2-stable_win64.exe' --hud --render
 ```
 
-Run the two Godot commands separately with sufficient available memory. Each run creates independent fixture data and user directories; it never reuses the existing player's auth file. The PostgreSQL runner initializes a separate loopback cluster rather than using the application's configured database.
-
-For actual startup, Google/Gmail steps, free hosting and friends' configuration, use [SETUP_AND_HOSTING.md](SETUP_AND_HOSTING.md). Remaining external steps are creation/configuration of the provider accounts, deployment, a real Google authorization, an inbox delivery check, and a shared public connection check. Full-map rendered multiplayer stability remains unverified because of the native allocation failures above.
+The runner creates independent database/process fixtures and Godot user directories under ignored `code/server/.verification/`; it does not use the configured player's database or auth save. Run full-world multiplayer checks separately with sufficient available memory.

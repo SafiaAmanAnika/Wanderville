@@ -23,6 +23,7 @@ os.environ["DEV_ALLOW_WORLD_MUTATION"] = "false"
 os.environ["FARM_CONSUME_INVENTORY"] = "true"
 os.environ["STARTING_AURA"] = "0"
 
+from app.core import progression  # noqa: E402
 from app.core.config import settings  # noqa: E402
 from app.core.rate_limit import limiter  # noqa: E402
 from app.db.model_registry import Base  # noqa: E402
@@ -133,3 +134,25 @@ def account(client, mailbox):
         )
 
     return create
+
+
+@pytest.fixture
+def reach_level(client):
+    """Advance a player to an exact level through the real XP endpoint."""
+
+    def advance(user, level):
+        floor = progression.level_info(level).min_xp
+        current = client.get("/economy/xp", headers=user.headers).json()["data"]
+        gap = floor - current["total_xp"]
+        if gap > 0:
+            response = client.post(
+                "/economy/xp/gain",
+                headers=user.headers,
+                json={"xp_amount": gap, "source": "test"},
+            )
+            assert response.status_code == 200, response.text
+        data = client.get("/economy/xp", headers=user.headers).json()["data"]
+        assert data["level"] == level, data
+        return data
+
+    return advance

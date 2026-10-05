@@ -40,6 +40,7 @@ layout_mode = 2
 autowrap_mode = 3
 
 [node name="Scroll" type="ScrollContainer" parent="Screen/Center/Panel/VBoxContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 280)
 layout_mode = 2
 horizontal_scroll_mode = 0
@@ -52,7 +53,25 @@ columns = 2
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
 
-[node name="Cancel" type="Button" parent="Screen/Center/Panel/VBoxContainer"]
+[node name="Hint" type="Label" parent="Screen/Center/Panel/VBoxContainer"]
 unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="Actions" type="HBoxContainer" parent="Screen/Center/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Cancel" type="Button" parent="Screen/Center/Panel/VBoxContainer/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 text = "Cancel"
+script = ExtResource("3")
+
+[node name="Store" type="Button" parent="Screen/Center/Panel/VBoxContainer/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Open store"
 script = ExtResource("3")

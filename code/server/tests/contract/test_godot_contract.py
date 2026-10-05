@@ -3,7 +3,10 @@ from pathlib import Path
 
 import pytest
 
+from app.core.progression import HARVEST_XP, LEVEL_AURA_REWARDS
 from app.main import app
+from app.modules.inventory.schemas import ItemRequest
+from app.modules.inventory.service import InventoryService
 
 
 def test_all_apiclient_routes_exist():
@@ -105,6 +108,163 @@ def test_economy_exact_godot_payloads(client, account):
         client.get("/economy/xp", headers=user.headers).json()["data"]["total_xp"]
         == 110
     )
+
+
+def test_progression_payload_is_frozen_for_the_client(client, account):
+    """The HUD, seed picker and store all read these keys; do not rename them."""
+    user = account()
+    fresh = client.get("/economy/xp", headers=user.headers).json()["data"]
+    assert set(fresh) == {
+        "player_id",
+        "current_xp",
+        "total_xp",
+        "level",
+        "xp_to_next_level",
+        "xp_span",
+        "xp_floor",
+        "title",
+        "max_level",
+        "next_title",
+        "next_title_level",
+        "slot_increment",
+        "slot_capacity",
+        "rewards",
+        "unlocked_items",
+    }
+    assert fresh["level"] == 1
+    assert fresh["title"] == "Villager"
+    assert fresh["max_level"] is False
+    assert fresh["xp_floor"] == 0
+    assert fresh["xp_to_next_level"] == 80
+    assert fresh["xp_span"] == 80
+    assert fresh["slot_increment"] == 3
+    assert fresh["slot_capacity"] == 33
+    # Villager is shared by levels 1 and 2, so the previewed title is the next
+    # genuinely different one, at level 3.
+    assert fresh["next_title"] == "Farmer"
+    assert fresh["next_title_level"] == 3
+    assert fresh["rewards"] == []
+
+    crossed = client.post(
+        "/economy/xp/gain",
+        headers=user.headers,
+        json={"xp_amount": 180, "source": "test"},
+    ).json()["data"]
+    # Level 2 and level 3 crossed at once, so the level 2 payout is reported
+    # once and levels without a reward are not announced at all.
+    assert crossed["level"] == 3
+    assert crossed["title"] == "Farmer"
+    assert crossed["slot_capacity"] == 39
+    assert crossed["rewards"] == [
+        {"level": 2, "aura": LEVEL_AURA_REWARDS[2], "title": "Villager"}
+    ]
+
+    top = client.post(
+        "/economy/xp/gain",
+        headers=user.headers,
+        json={"xp_amount": 5000, "source": "test"},
+    ).json()["data"]
+    assert top["level"] == 10 and top["max_level"] is True
+    assert top["xp_to_next_level"] == 0
+    assert top["slot_capacity"] == 76
+    # Level 2 was already paid on the way up, so only level 10 is new here.
+    assert top["rewards"] == [
+        {"level": 10, "aura": LEVEL_AURA_REWARDS[10], "title": "Landkeeper"}
+    ]
+    history = client.get("/economy/xp", headers=user.headers).json()["data"]["rewards"]
+    assert history == [
+        {"level": 2, "aura": LEVEL_AURA_REWARDS[2], "title": "Villager"},
+        {"level": 10, "aura": LEVEL_AURA_REWARDS[10], "title": "Landkeeper"},
+    ]
+
+
+def test_inventory_capacity_payload_is_frozen_for_the_client(client, account, db):
+    user = account()
+    data = client.get("/inventory/", headers=user.headers).json()["data"]
+    assert set(data) == {
+        "items",
+        "total_items",
+        "total_quantity",
+        "capacity",
+        "used_slots",
+        "base_capacity",
+        "level_slots",
+        "max_stack",
+    }
+    assert data["capacity"] == data["base_capacity"] + data["level_slots"] == 33
+    assert data["used_slots"] == 0
+    InventoryService(db).add_compatibility(
+        user.id, ItemRequest(item_code="wheat", quantity=250)
+    )
+    data = client.get("/inventory/", headers=user.headers).json()["data"]
+    assert data["total_items"] == 3 and data["total_quantity"] == 250
+    assert data["used_slots"] == 3 and data["capacity"] == 33
+    row = data["items"][0]
+    # The seed picker reads required_level, harvest_code and harvest_category
+    # straight off each row, so these names are part of the client contract.
+    assert set(row) == {
+        "id",
+        "player_id",
+        "item_code",
+        "quantity",
+        "slot_index",
+        "location",
+        "item_type",
+        "partition",
+        "required_level",
+        "harvest_code",
+        "harvest_category",
+        "harvest_xp",
+        "item",
+        "max_stack",
+        "created_at",
+        "updated_at",
+    }
+    assert row["required_level"] == 1
+    assert row["harvest_category"] == "common"
+    assert row["harvest_xp"] == HARVEST_XP["common"]
+    assert row["harvest_code"] is None
+    assert row["max_stack"] == 99
+    # A level up widens the same pool rather than resetting it.
+    client.post(
+        "/economy/xp/gain", headers=user.headers, json={"xp_amount": 5000}
+    )
+    grown = client.get("/inventory/", headers=user.headers).json()["data"]
+    assert grown["capacity"] == 76
+    assert grown["used_slots"] == 3
+
+
+def test_seed_picker_payload_carries_unlock_and_harvest(client, account):
+    user = account()
+    rows = {
+        row["item_code"]: row
+        for row in client.get("/shop", headers=user.headers).json()["data"]["items"]
+    }
+    for code, level in (("wheat_seed", 1), ("potato_seed", 4), ("moonflower_seed", 8)):
+        assert rows[code]["required_level"] == level
+        assert rows[code]["harvest_code"] == code.removesuffix("_seed")
+        assert rows[code]["harvest_category"] is None
+    assert rows["basic_rod"]["required_level"] == 5
+
+    catalog = {
+        row["item_code"]: row
+        for row in client.get(
+            "/inventory/catalog", headers=user.headers
+        ).json()["data"]
+    }
+    for code, category in (
+        ("wheat", "common"),
+        ("corn", "common"),
+        ("potato", "seasonal"),
+        ("apple", "seasonal"),
+        ("moonflower", "rare"),
+        ("ancient_grain", "magical"),
+    ):
+        assert catalog[code]["harvest_category"] == category
+        assert catalog[code]["harvest_xp"] == HARVEST_XP[category]
+    assert catalog["wheat_seed"]["harvest_category"] is None
+    # Fish are caught, not harvested, so they carry no crop category at all.
+    assert catalog["river_carp"]["harvest_category"] is None
 
 
 def test_world_and_farm_exact_godot_payloads(client, account):

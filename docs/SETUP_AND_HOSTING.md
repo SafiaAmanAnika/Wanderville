@@ -80,7 +80,9 @@ An alternative database is [Supabase Free](https://supabase.com/pricing), but in
 
 ### Your account setup steps
 
-1. **Neon:** create a Free project and PostgreSQL database. Choose a region close to your Render region. Copy its full PostgreSQL connection URI from Connect, retaining `sslmode=require`. Use the direct connection for this small single-process deployment. Put it only in server secrets, never in Godot or chat.
+1. **Neon:** create a Free project and PostgreSQL database. **Match the region to `render.yaml`'s `region: singapore`, i.e. Neon Asia Pacific (Singapore).** Copy its full PostgreSQL connection URI from Connect, retaining `sslmode=require`. Use the direct connection for this small single-process deployment. Put it only in server secrets, never in Godot or chat.
+
+   A mismatched region is the single largest source of input lag here. With the API in Singapore and the database in `us-east-2`, every query crosses roughly 15,000 km, and each farm action pays that round trip several times over. The Neon hostname states its region, so verify it: `ep-...-<region>.aws.neon.tech` should read `c-6.ap-southeast-1` or similar, not `us-east-*`. Keep the `-pooler` hostname for the running service, since each request opens a short-lived session, but use the direct hostname for Alembic so migrations are not proxied.
 2. **Google:** complete the Desktop client steps above, then run `scripts\configure_auth.py --gmail-api` to obtain the sender's refresh token. Copy the four `GMAIL_*` values and `EMAIL_FROM` into Render.
 4. **Repository:** commit and push the version you intend to deploy to the GitHub repository/branch you connect to Render.
 5. **Render:** New → Blueprint → connect your repository/branch → use the root `render.yaml`. Confirm the plan is **Free** and there is **one web service**, then supply these prompted environment values:
@@ -97,6 +99,14 @@ An alternative database is [Supabase Free](https://supabase.com/pricing), but in
 | `GOOGLE_CLIENT_SECRET` | Desktop OAuth JSON's `client_secret` |
 
 The blueprint generates the JWT secret, selects Gmail HTTPS delivery, and enables the existing world worker inside the API process. `PYTHON_VERSION` is pinned to 3.12.12; do not raise it, because SQLAlchemy 2.0.36 fails while mapping `Optional[...]` annotations on Python 3.14 and the service will not start. `EMAIL_BASE_URL` defaults to Render's public `RENDER_EXTERNAL_URL`; set it explicitly to your HTTPS public API URL if using a custom hostname. The start command runs migrations and idempotent reference seeding, then Uvicorn. Use a **new empty Neon database** unless you have separately planned an existing-data migration.
+
+### Gameplay request latency
+
+Each farm action is one write plus a state refresh, so the number of round trips matters as much as their individual cost. `GET /state/bundle` returns the profile, farm grid, world state, inventory, economy, and experience sections in a single response, replacing six sequential reads that the client previously issued after every action. Every section is identical to its standalone endpoint, so `/farm/plots`, `/profile`, `/world/state`, `/inventory/`, `/economy/`, and `/economy/xp` remain available and unchanged.
+
+The bundle also samples the clock once and passes that timestamp to both crop growth and the world environment, so a single response cannot straddle a season boundary and report two disagreeing states.
+
+If input still feels slow after deploying this, check in order: the Neon region matches Render's, the response time of `GET /ready` (which includes a database query) rather than `/health` (which does not), and that the client is polling a bundle rather than the older per-section endpoints.
 
 Use **one Uvicorn worker and one instance**: realtime socket ownership is process-local. The embedded world worker runs while Render is awake; timed notifications/events are delayed while it sleeps. Time and crop growth derive from persisted timestamps and are projected again when the service wakes. This is not a keep-alive workaround.
 

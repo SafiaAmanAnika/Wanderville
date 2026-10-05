@@ -113,6 +113,27 @@ stacks leave all participating state unchanged. Water bucket quantity remains
 client-owned: the API neither invents a balance nor rejects watering for a bucket
 it cannot observe.
 
+## State bundle
+
+GET `/state/bundle` returns every gameplay section in one response:
+
+```
+{ "success": true, "data": {
+    "profile": {...},        // same as GET /profile
+    "farm": {...},           // same as GET /farm/plots
+    "world": {...},          // same as GET /world/state
+    "inventory": {...},      // same as GET /inventory/
+    "economy": {...},        // same as GET /economy/
+    "experience": {...} }, "message": "OK" }
+```
+
+Read-only: polling it never advances crop growth, spends water, or grants XP.
+Sections are byte-identical to their standalone endpoints, so this is additive
+and every individual route keeps working. It exists because a client that
+refreshes after each farm action would otherwise pay six sequential round trips
+per action. Growth and the world environment are sampled from one timestamp, so
+a single response cannot report two disagreeing clock states.
+
 ## Health
 
 GET `/health` returns `{ "success": true, "data": { "status": "ok" }, "message": "OK" }`

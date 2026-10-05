@@ -31,6 +31,7 @@ from app.modules.fishing.router import router as fishing_router
 from app.modules.social.router import router as social_router
 from app.modules.realtime.router import router as realtime_router
 from app.modules.events.router import router as events_router
+from app.modules.state.router import router as state_router
 
 
 @asynccontextmanager
@@ -180,6 +181,7 @@ def create_app():
         social_router,
         events_router,
         realtime_router,
+        state_router,
     ):
         app.include_router(router)
     return app

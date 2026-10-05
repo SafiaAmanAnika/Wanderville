@@ -177,19 +177,33 @@ func refresh_gameplay() -> void:
 	if not Global.is_logged_in():
 		return
 	_refreshing = true
-	for request in [["/farm/plots", "farm"], ["/profile", "bucket"], ["/world/state", "world"], ["/inventory/", "inventory"], ["/economy/", "economy"], ["/economy/xp", "experience"]]:
-		var response: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_GET, request[0])
-		if version != Global.session_version:
-			return
-		var data: Variant = APIClient.data_of(response)
-		if not bool(response.get("ok", false)) or not data is Dictionary:
+	# One round trip instead of six sequential reads. The bundle returns the
+	# same sections as /farm/plots, /profile, /world/state, /inventory/,
+	# /economy/ and /economy/xp, so the payloads applied below are unchanged.
+	var response: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_GET, "/state/bundle")
+	if version != Global.session_version:
+		_refreshing = false
+		return
+	var data: Variant = APIClient.data_of(response)
+	if not bool(response.get("ok", false)) or not data is Dictionary:
+		report_error(response)
+		_refreshing = false
+		gameplay_refreshed.emit()
+		return
+	for section in ["farm", "profile", "world", "inventory", "economy", "experience"]:
+		var payload: Variant = data.get(section)
+		if not payload is Dictionary:
 			report_error(response)
-			break
-		if request[1] == "bucket":
-			water_drops = int(data.get("water_charges", 0))
+			_refreshing = false
+			gameplay_refreshed.emit()
+			return
+		if section == "profile":
+			# refresh_gameplay only tracks the bucket here; the rest of the
+			# profile is applied once at sign-in by _apply_data("profile").
+			water_drops = int(payload.get("water_charges", 0))
 			water_changed.emit(water_drops)
 		else:
-			_apply_data(request[1], data)
+			_apply_data(section, payload)
 	_refreshing = false
 	gameplay_refreshed.emit()
 

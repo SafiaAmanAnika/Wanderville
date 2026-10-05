@@ -45,12 +45,22 @@ Set-Location D:\GitHubProjects\Wanderville\code\server
 
 It prompts for the sending address and app password with hidden input, then configures Gmail STARTTLS on port 587. Restart the backend. This lets the **server** automatically send verification/reset messages using that one sender; it does not sign every player into that sender's Gmail account. Creating the app password and enabling 2FA are account actions you must do in Google's website. Some managed/Advanced Protection accounts do not offer app passwords.
 
-**Recommended free-hosting option: Brevo HTTPS.** Render Free blocks SMTP ports, including Gmail's port 587. The backend therefore also supports Brevo's transactional HTTP API:
+**Free-hosting options.** Render Free blocks SMTP ports, including Gmail's port 587, so hosted delivery must go over HTTPS. Two HTTPS senders are implemented; neither needs a purchased domain.
+
+*Option A — Gmail HTTPS API (configured in `render.yaml`; no domain required).* The backend sends the already-built MIME message through Google's Gmail API using a stored refresh token:
+
+1. Complete the Desktop OAuth client in section 1. The same client is reused; only the sender mailbox's mail-sending grant is stored, and it grants players nothing.
+2. Run `.\.venv312\Scripts\python.exe scripts\configure_auth.py --gmail-api`. It prompts for the sender address, opens a one-time browser consent limited to `gmail.send`, captures the callback on a random loopback port, and writes `GMAIL_SENDER_EMAIL`, `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN` and `EMAIL_DELIVERY=gmail_api` to your local `.env`. The refresh token never appears in output. Restart the backend.
+3. Copy those four `GMAIL_*` values into Render's private environment settings. They are already declared in `render.yaml`.
+
+If Google returns no refresh token, revoke the app at [myaccount.google.com/permissions](https://myaccount.google.com/permissions) and rerun; the helper forces a fresh consent. Google's free sending quota applies to the mailbox. A revoked refresh token makes delivery fail through the normal resend path rather than breaking sign-in.
+
+*Option B — Brevo HTTPS.* Render Free's block does not affect Brevo's transactional HTTP API:
 
 1. Create a [Brevo Free account](https://www.brevo.com/).
 2. Add and verify a sender under Settings → Senders, Domains & Dedicated IPs. Finish any requested transactional-account activation. A verified Gmail sender may work, but Brevo can rewrite public-domain sender addresses for deliverability; a domain you own gives more control. See [Brevo sender requirements](https://help.brevo.com/hc/en-us/articles/35852083084178-Domain-setup-for-better-email-deliverability).
 3. In **SMTP & API → API Keys**, create an API key, not an SMTP key.
-4. For local testing, run `.\.venv312\Scripts\python.exe scripts\configure_auth.py --brevo`, enter the verified sender and hidden API key, and restart the backend. For cloud hosting, enter the values directly in Render's private environment settings below.
+4. For local testing, run `.\.venv312\Scripts\python.exe scripts\configure_auth.py --brevo`, enter the verified sender and hidden API key, and restart the backend. For cloud hosting, set `EMAIL_DELIVERY=brevo`, `BREVO_API_KEY` and `EMAIL_FROM` in Render's private environment settings.
 
 Verification and reset links open normal browser pages; no custom OS URL-handler installation is needed. Signup reports delivery failure honestly and allows resend. Forgot-password/resend responses stay generic to prevent account enumeration; inspect provider delivery logs if mail is missing. API acceptance is not a guarantee that a message reaches the recipient's inbox.
 
@@ -62,7 +72,7 @@ No provider promises that a free plan will exist forever. These are ongoing free
 | --- | --- | --- |
 | Python API + WebSockets | Render Free web service | Sleeps after 15 minutes idle; waking can take about a minute; 750 free instance hours per workspace/month and bandwidth/build quotas. [Render limits](https://render.com/docs/free) |
 | PostgreSQL | Neon Free | Quota-based persistent database; currently advertised 1 GB storage/project and 100 CU-hours/project/month. Compute scales to zero. Check the dashboard before creating it. [Neon announcement](https://neon.com/blog/neon-free-plan-1-gb-per-project) |
-| Verification/reset email | Brevo Free | No time limit, 300 email sends/day; sender/account approval required. [Brevo limits](https://help.brevo.com/hc/en-us/articles/208580669-FAQs-What-are-the-limits-of-the-Free-plan) |
+| Verification/reset email | Your own Gmail mailbox over the HTTPS API | No third-party account or domain. Gmail caps a free personal mailbox at roughly 500 messages/day. Or Brevo Free: no time limit, 300 sends/day, sender approval required. [Brevo limits](https://help.brevo.com/hc/en-us/articles/208580669-FAQs-What-are-the-limits-of-the-Free-plan) |
 
 Render Free PostgreSQL expires after 30 days, so **do not create that database**. The repository's `render.yaml` now declares only one free web service and uses external Neon. There are no paid database or worker resources in it. This setup suits a small friends/hobby game; it is not guaranteed always-on hosting.
 
@@ -71,20 +81,22 @@ An alternative database is [Supabase Free](https://supabase.com/pricing), but in
 ### Your account setup steps
 
 1. **Neon:** create a Free project and PostgreSQL database. Choose a region close to your Render region. Copy its full PostgreSQL connection URI from Connect, retaining `sslmode=require`. Use the direct connection for this small single-process deployment. Put it only in server secrets, never in Godot or chat.
-2. **Brevo:** complete the sender/API-key steps above.
-3. **Google:** complete the Desktop client steps above. Use the same downloaded JSON's `client_id` and `client_secret` in Render.
+2. **Google:** complete the Desktop client steps above, then run `scripts\configure_auth.py --gmail-api` to obtain the sender's refresh token. Copy the four `GMAIL_*` values and `EMAIL_FROM` into Render.
 4. **Repository:** commit and push the version you intend to deploy to the GitHub repository/branch you connect to Render.
 5. **Render:** New → Blueprint → connect your repository/branch → use the root `render.yaml`. Confirm the plan is **Free** and there is **one web service**, then supply these prompted environment values:
 
 | Variable | Value |
 | --- | --- |
 | `DATABASE_URL` | Neon PostgreSQL URI, including SSL parameters |
-| `BREVO_API_KEY` | Your private Brevo API key |
-| `EMAIL_FROM` | The sender address verified in Brevo |
+| `GMAIL_SENDER_EMAIL` | The Gmail mailbox that sends, e.g. `you@gmail.com` |
+| `GMAIL_CLIENT_ID` | Desktop OAuth JSON's `client_id` |
+| `GMAIL_CLIENT_SECRET` | Desktop OAuth JSON's `client_secret` |
+| `GMAIL_REFRESH_TOKEN` | The refresh token written by `configure_auth.py --gmail-api` |
+| `EMAIL_FROM` | The same sender address |
 | `GOOGLE_CLIENT_ID` | Desktop OAuth JSON's `client_id` |
 | `GOOGLE_CLIENT_SECRET` | Desktop OAuth JSON's `client_secret` |
 
-The blueprint generates the JWT secret, selects Brevo, and enables the existing world worker inside the API process. `EMAIL_BASE_URL` defaults to Render's public `RENDER_EXTERNAL_URL`; set it explicitly to your HTTPS public API URL if using a custom hostname. The start command runs migrations and idempotent reference seeding, then Uvicorn. Use a **new empty Neon database** unless you have separately planned an existing-data migration.
+The blueprint generates the JWT secret, selects Gmail HTTPS delivery, and enables the existing world worker inside the API process. `PYTHON_VERSION` is pinned to 3.12.12; do not raise it, because SQLAlchemy 2.0.36 fails while mapping `Optional[...]` annotations on Python 3.14 and the service will not start. `EMAIL_BASE_URL` defaults to Render's public `RENDER_EXTERNAL_URL`; set it explicitly to your HTTPS public API URL if using a custom hostname. The start command runs migrations and idempotent reference seeding, then Uvicorn. Use a **new empty Neon database** unless you have separately planned an existing-data migration.
 
 Use **one Uvicorn worker and one instance**: realtime socket ownership is process-local. The embedded world worker runs while Render is awake; timed notifications/events are delayed while it sleeps. Time and crop growth derive from persisted timestamps and are projected again when the service wakes. This is not a keep-alive workaround.
 

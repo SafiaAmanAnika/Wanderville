@@ -1,5 +1,7 @@
-# Ongoing free hobby service. External Neon PostgreSQL and Brevo accounts required.
-# Sleeps after inactivity; see docs/SETUP_AND_HOSTING.md for quotas and setup.
+# Ongoing free hobby service. External Neon PostgreSQL required.
+# Mail goes out over Google's HTTPS API, so no purchased domain is needed and
+# Render Free's SMTP block does not apply. Sleeps after inactivity;
+# see docs/SETUP_AND_HOSTING.md for quotas and setup.
 services:
   - type: web
     name: wanderville-api
@@ -21,8 +23,14 @@ services:
       - key: JWT_SECRET_KEY
         generateValue: true
       - key: EMAIL_DELIVERY
-        value: brevo
-      - key: BREVO_API_KEY
+        value: gmail_api
+      - key: GMAIL_SENDER_EMAIL
+        sync: false
+      - key: GMAIL_CLIENT_ID
+        sync: false
+      - key: GMAIL_CLIENT_SECRET
+        sync: false
+      - key: GMAIL_REFRESH_TOKEN
         sync: false
       - key: EMAIL_FROM
         sync: false

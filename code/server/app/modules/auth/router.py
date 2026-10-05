@@ -30,7 +30,17 @@ def auth_config():
     local_mail = settings.email_delivery == "file" or (
         settings.email_delivery == "auto" and settings.is_development
     )
-    return success({"google_client_id": settings.google_client_id, "email_delivery": "file" if local_mail else ("brevo" if settings.email_delivery == "brevo" else "smtp")})
+    # Clients only distinguish local file mail from real remote delivery.
+    delivery = (
+        "file"
+        if local_mail
+        else settings.email_delivery
+        if settings.email_delivery in {"brevo", "gmail_api"}
+        else "smtp"
+    )
+    return success(
+        {"google_client_id": settings.google_client_id, "email_delivery": delivery}
+    )
 
 
 @router.post("/google/code", response_model=Envelope[LoginResponse], dependencies=[Depends(rate_limit(10))])

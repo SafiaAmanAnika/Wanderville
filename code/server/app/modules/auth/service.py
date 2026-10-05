@@ -109,7 +109,7 @@ class AuthService:
                 "ACCOUNT_EXISTS", "Username or email is already registered", 409
             ) from exc
         if not email.deliver_safely(player.email, player.username, raw, "email_verification"):
-            raise AppError("EMAIL_DELIVERY_FAILED", "Your account was created, but the verification email could not be delivered. Ask the server owner to check SMTP settings, then use Resend Verification.", 503)
+            raise AppError("EMAIL_DELIVERY_FAILED", "Your account was created, but the verification email could not be delivered. Ask the server owner to check the mail provider settings, then use Resend Verification.", 503)
         return result
 
     def login(self, request, ip=None):

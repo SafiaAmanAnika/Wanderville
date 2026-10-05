@@ -125,6 +125,59 @@ def test_brevo_delivery_uses_https_and_reports_failure(client, monkeypatch):
     assert not email.deliver_safely("reader@example.com", "Reader", "private-token", "email_verification")
 
 
+def test_gmail_api_delivery_uses_https_and_caches_its_token(client, monkeypatch):
+    import base64
+    import importlib
+    import requests
+    from email import policy
+    from email.parser import BytesParser
+    from app.core.config import settings
+
+    original = importlib.reload(email).send_account_email
+    monkeypatch.setattr(email, "send_account_email", original)
+    email.reset_gmail_token_cache()
+    monkeypatch.setattr(settings, "email_delivery", "gmail_api")
+    monkeypatch.setattr(settings, "gmail_sender_email", "sender@gmail.com")
+    monkeypatch.setattr(settings, "gmail_client_id", "client-id")
+    monkeypatch.setattr(settings, "gmail_client_secret", "client-secret")
+    monkeypatch.setattr(settings, "gmail_refresh_token", "refresh-token")
+    calls = []
+
+    def post(url, **kwargs):
+        calls.append((url, kwargs))
+        if url == email.GMAIL_TOKEN_URL:
+            return SimpleNamespace(
+                raise_for_status=lambda: None,
+                json=lambda: {"access_token": "short-lived", "expires_in": 3600},
+            )
+        return SimpleNamespace(raise_for_status=lambda: None)
+
+    monkeypatch.setattr(email.requests, "post", post)
+    assert email.deliver_safely("reader@example.com", "Reader", "private-token", "email_verification")
+    assert email.deliver_safely("reader@example.com", "Reader", "private-token", "password_reset")
+    # One token exchange is reused by the second message.
+    assert [url for url, _ in calls].count(email.GMAIL_TOKEN_URL) == 1
+    assert calls[0][1]["data"]["grant_type"] == "refresh_token"
+    assert calls[0][1]["data"]["refresh_token"] == "refresh-token"
+    url, kwargs = calls[1]
+    assert url == "https://gmail.googleapis.com/gmail/v1/users/me/messages/send"
+    assert kwargs["headers"]["Authorization"] == "Bearer short-lived"
+    assert kwargs["timeout"] == 10
+    parsed = BytesParser(policy=policy.default).parsebytes(
+        base64.urlsafe_b64decode(kwargs["json"]["raw"])
+    )
+    assert parsed["From"] == "sender@gmail.com" and parsed["To"] == "reader@example.com"
+    assert "/auth/verify-email?token=private-token" in parsed.get_content()
+    assert client.get("/auth/config").json()["data"]["email_delivery"] == "gmail_api"
+
+    def unauthorized(*args, **kwargs):
+        raise requests.HTTPError("401 Client Error")
+
+    monkeypatch.setattr(email.requests, "post", unauthorized)
+    assert not email.deliver_safely("reader@example.com", "Reader", "private-token", "email_verification")
+    email.reset_gmail_token_cache()
+
+
 def test_inventory_exposes_one_shared_capacity(client, account, db):
     from app.core.config import settings
     from app.core.progression import BASE_INVENTORY_SLOTS

@@ -27,6 +27,23 @@ const AUTH_FILE := "user://auth.cfg"
 const CHARACTER_SCENES: Dictionary = {
 	"player1": "res://Scenes/player1.tscn",
 	"farmer_female": "res://Scenes/player1.tscn",
+	"girl_a": "res://Scenes/charagirlA.tscn",
+	"girl_b": "res://Scenes/charagirlB.tscn",
+	"girl_c": "res://Scenes/charagirlC.tscn",
+	"boy_a": "res://Scenes/charaboyA.tscn",
+	"boy_b": "res://Scenes/charaboyB.tscn",
+	"boy_c": "res://Scenes/charaboyC.tscn",
+}
+
+# Characters shown on the select screen. "folder" is only used for the card picture.
+const CHARACTERS: Dictionary = {
+	"farmer_female": {"name": "Female Farmer", "folder": ""},
+	"girl_a": {"name": "Girl A", "folder": "res://Assets/charas/CharacterA"},
+	"girl_b": {"name": "Girl B", "folder": "res://Assets/charas/CharacterB"},
+	"girl_c": {"name": "Girl C", "folder": "res://Assets/charas/CharacterC"},
+	"boy_a": {"name": "Boy A", "folder": "res://Assets/charas/CharacterA_Male"},
+	"boy_b": {"name": "Boy B", "folder": "res://Assets/charas/CharacterB_Male"},
+	"boy_c": {"name": "Boy C", "folder": "res://Assets/charas/CharacterC_Male"},
 }
 
 

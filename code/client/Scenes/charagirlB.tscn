@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://bxaiefrm3ppki"]
 
+[ext_resource type="Script" path="res://Scripts/chara_player.gd" id="chara_player_script"]
 [ext_resource type="Texture2D" uid="uid://detqfda8wrq0y" path="res://Assets/charas/CharacterB/fishing.png" id="1_m1ejj"]
 [ext_resource type="Texture2D" uid="uid://4kpp5lwl81c1" path="res://Assets/charas/CharacterB/hoe.png" id="2_3njf4"]
 [ext_resource type="Texture2D" uid="uid://chrbcygb3uayp" path="res://Assets/charas/CharacterB/idle.png" id="3_r8p73"]
@@ -1153,6 +1154,7 @@ animations = [{
 }]
 
 [node name="charagirlB" type="CharacterBody2D" unique_id=320058811]
+script = ExtResource("chara_player_script")
 scale = Vector2(0.3, 0.31)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1752885070]

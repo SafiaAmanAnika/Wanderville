@@ -1,4 +1,8 @@
 extends Node2D
+# Attached to the World scene. Swaps the default "girl" player for the character
+# chosen on the select screen (charagirlA, charaboyB, ...).
+
+const CHARA_SCALE := Vector2(1.18, 1.18)   # chara sheets are 448px; this matches the old girl's size
 
 
 func _ready() -> void:
@@ -6,36 +10,29 @@ func _ready() -> void:
 
 
 func spawn_selected_character() -> void:
-	var existing := get_node_or_null("girl")
-	var spawn_pos := Vector2(7377, -891)
-	var spawn_scale := Vector2(20, 20)
-	var camera: Node = null
+	var path: String = Global.CHARACTER_SCENES.get(Global.selected_character, "")
+	if path == "" or path.ends_with("player1.tscn"):
+		return   # nothing chosen (or the original girl) -> keep the girl already in the world
 
-	if existing:
-		spawn_pos = existing.position
-		spawn_scale = existing.scale
-		camera = existing.get_node_or_null("Camera2D")
-		if camera:
-			existing.remove_child(camera)
-		existing.queue_free()
+	var old := get_node_or_null("girl") as Node2D
+	if old == null:
+		return
+	var player := (load(path) as PackedScene).instantiate() as Node2D
+	player.position = old.position
+	player.scale = CHARA_SCALE
 
-	var scene: PackedScene = Global.get_character_scene(Global.selected_character)
-	var player := scene.instantiate()
-	player.name = "Player"
-	player.position = spawn_pos
-	player.scale = spawn_scale
-
+	# move the camera from the old girl to the new character
+	var camera := old.get_node_or_null("Camera2D")
 	if camera:
+		old.remove_child(camera)
+		camera.position = Vector2.ZERO
 		player.add_child(camera)
-	else:
-		_create_own_camera(player)
 
+	# remove the old girl, then give the new one the same name and place in the tree
+	var index := old.get_index()
+	old.remove_from_group("player")
+	old.name = "girl_old"
+	old.queue_free()
+	player.name = "girl"
 	add_child(player)
-
-
-func _create_own_camera(player: Node2D) -> void:
-	var cam := Camera2D.new()
-	cam.name = "Camera2D"
-	cam.position = Vector2(-10.15, -0.6)
-	cam.zoom = Vector2(0.3, 0.3)
-	player.add_child(cam)
+	move_child(player, index)

@@ -113,7 +113,12 @@ func _apply_data(kind: String, data: Dictionary) -> void:
 			water_drops = int(data.get("water_charges", 0))
 			water_changed.emit(water_drops)
 			var code: Variant = data.get("character_code")
-			Global.selected_character = "farmer_female" if code == "player1" or code == "girl" else ""
+			if code == "player1" or code == "girl":
+				Global.selected_character = "farmer_female"
+			elif Global.CHARACTERS.has(str(code)):
+				Global.selected_character = str(code)
+			else:
+				Global.selected_character = ""
 			Global.display_name = str(data.get("display_name", Global.display_name))
 			AudioManager.set_music_volume(float(data.get("music_volume", 80)))
 			AudioManager.set_sfx_volume(float(data.get("effects_volume", 80)))

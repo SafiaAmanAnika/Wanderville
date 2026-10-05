@@ -18,6 +18,8 @@ func _ready():
 		global_position = player.global_position + Vector2(50, 0)
 
 func _physics_process(delta: float) -> void:
+	if not is_instance_valid(player) or not player.is_in_group("player"):
+		player = get_tree().get_first_node_in_group("player")   # the chosen character replaced the old one
 	if player == null:
 		return
 

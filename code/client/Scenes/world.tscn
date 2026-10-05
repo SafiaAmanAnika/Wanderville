@@ -10,15 +10,14 @@
 [ext_resource type="Script" uid="uid://v0sfr2gwlupt" path="res://Scripts/HUD_waterAmount.gd" id="7_o06y3"]
 [ext_resource type="Script" uid="uid://dxcfeslajrfk0" path="res://Scripts/HUD_waterPanel.gd" id="8_k7acu"]
 [ext_resource type="PackedScene" path="res://Scenes/world_hud.tscn" id="9_social"]
-[ext_resource type="Script" path="res://Scripts/remote_players.gd" id="10_remote"]
-
-[ext_resource type="Script" path="res://Scripts/day_and_night_cycle.gd" id="11_cycle"]
+[ext_resource type="Script" uid="uid://dn30wkti03ron" path="res://Scripts/remote_players.gd" id="10_remote"]
+[ext_resource type="Script" uid="uid://bbsefjtcb4mad" path="res://Scripts/day_and_night_cycle.gd" id="11_cycle"]
 
 [node name="World" type="Node2D" unique_id=1971179881]
 
-[node name="WorldHUD" parent="." instance=ExtResource("9_social")]
+[node name="WorldHUD" parent="." unique_id=1841561272 instance=ExtResource("9_social")]
 
-[node name="RemotePlayers" type="Node2D" parent="."]
+[node name="RemotePlayers" type="Node2D" parent="." unique_id=1352013942]
 script = ExtResource("10_remote")
 
 [node name="Map" parent="." unique_id=2061458601 instance=ExtResource("1_5a7ea")]
@@ -65,5 +64,5 @@ offset_right = 40.0
 offset_bottom = 23.0
 script = ExtResource("7_o06y3")
 
-[node name="DayNight" type="CanvasModulate" parent="."]
+[node name="DayNight" type="CanvasModulate" parent="." unique_id=1293019844]
 script = ExtResource("11_cycle")

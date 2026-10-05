@@ -7,7 +7,7 @@ from app.core.clock import utcnow
 from app.core.exceptions import AppError
 from app.modules.economy.service import EconomyService
 from app.modules.farming.models import FarmTile
-from app.modules.farming.schemas import PlantRequest
+from app.modules.farming.schemas import PlantRequest, TileRequest
 from app.modules.farming.service import FarmingService
 from app.modules.inventory.service import InventoryService
 from app.modules.world.models import WorldState
@@ -105,12 +105,13 @@ def test_ready_harvest_rewards_reuse_and_double_harvest(farm, db):
     assert service.list(user.id, now).plots[0].ready
     result = service.harvest(user.id, tile_id, now)
     assert result.item_code == "wheat" and result.quantity == 1
-    assert result.plot.item_code is None and result.plot.is_tilled
+    assert result.plot.item_code is None and not result.plot.is_tilled
     assert InventoryService(db).list(user.id).total_quantity == 5
     assert EconomyService(db).xp(user.id).total_xp == 10
     with pytest.raises(AppError) as again:
         service.harvest(user.id, tile_id, now)
     assert again.value.code == "FARM_EMPTY"
+    service.till(user.id, TileRequest(x=3, y=4), now)
     replanted = service.plant(
         user.id, PlantRequest(x=3, y=4, crop_type="wheat"), now
     ).plot
@@ -153,3 +154,23 @@ def test_season_changes_growth_speed(farm, db):
     assert service.list(user.id, now + timedelta(seconds=4)).plots[
         0
     ].growth_progress_seconds == pytest.approx(3)
+
+
+def test_relocate_moves_whole_tile(farm, db):
+    from app.modules.farming.schemas import RelocateRequest, TileRequest
+
+    user, service, plot_id, start = farm
+    # crop + soil move together; old spot goes back to grass
+    moved = service.relocate(user.id, RelocateRequest(plot_id=plot_id, x=5, y=5), start)
+    assert moved["plot"].item_code == "wheat" and moved["plot"].is_tilled
+    assert moved["source"].item_code is None and moved["source"].is_tilled is False
+    # an empty soil tile can move onto grass ...
+    soil = service.till(user.id, TileRequest(x=1, y=1), start)
+    moved = service.relocate(user.id, RelocateRequest(plot_id=soil.id, x=2, y=2), start)
+    assert moved["plot"].is_tilled and not moved["source"].is_tilled
+    # ... but not onto other soil, and nothing can land on a crop
+    service.till(user.id, TileRequest(x=7, y=7), start)
+    with pytest.raises(AppError, match="already used"):
+        service.relocate(user.id, RelocateRequest(plot_id=moved["plot"].id, x=7, y=7), start)
+    with pytest.raises(AppError, match="already used"):
+        service.relocate(user.id, RelocateRequest(plot_id=moved["plot"].id, x=5, y=5), start)

@@ -210,3 +210,51 @@ func set_mode(mode: String) -> void:
 func set_seed(seed: String) -> void:
 	selected_seed = seed
 	seed_changed.emit(seed)
+
+
+# --- TEMP: dummy inventory for offline testing (remove later) ---
+const DUMMY_ITEMS := [
+	["river_carp", "River Carp", "fish", "fish", "common", 3],
+	["golden_carp", "Golden Carp", "fish", "fish", "rare", 1],
+	["pet_biscuit", "Pet Biscuit", "pet_food", "tools", "common", 10],
+	["garden_lantern", "Garden Lantern", "decoration", "houses", "common", 2],
+	["wheat_seed", "Wheat Seeds", "seed", "seeds", "common", 5],
+	["carrot", "Carrot", "crop", "crops", "common", 4],
+]
+
+
+func load_dummy_inventory() -> void:
+	inventory.clear()
+	var partitions := {}
+	var total := 0
+	for d in DUMMY_ITEMS:
+		inventory.append({
+			"item_code": d[0], "quantity": d[5], "partition": d[3],
+			"item": {"name": d[1], "category": d[2], "rarity": d[4], "max_stack": 99, "description": "Dummy item for testing."},
+		})
+		partitions[d[3]] = int(partitions.get(d[3], 0)) + 1
+		total += d[5]
+	inventory_summary = {"items": inventory, "total_items": inventory.size(), "total_quantity": total, "partition_capacity": 20, "partitions": partitions}
+	inventory_updated.emit(inventory)
+
+
+# TEMP offline test: put an item in the local inventory (no server)
+func add_item_offline(code: String, name: String, quantity := 1, partition := "crops") -> void:
+	var found := false
+	for row in inventory:
+		if row["item_code"] == code:
+			row["quantity"] = int(row["quantity"]) + quantity
+			found = true
+			break
+	if not found:
+		inventory.append({
+			"item_code": code, "quantity": quantity, "partition": partition,
+			"item": {"name": name, "category": "crop", "rarity": "common", "max_stack": 99, "description": "Harvested %s." % name},
+		})
+		var parts: Dictionary = inventory_summary.get("partitions", {})
+		parts[partition] = int(parts.get(partition, 0)) + 1
+		inventory_summary["partitions"] = parts
+	inventory_summary["items"] = inventory
+	inventory_summary["total_items"] = inventory.size()
+	inventory_summary["total_quantity"] = int(inventory_summary.get("total_quantity", 0)) + quantity
+	inventory_updated.emit(inventory)

@@ -60,6 +60,8 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(_resize)
 	_resize()
 	_counters()
+	if not Global.is_logged_in():
+		GameState.load_dummy_inventory()  # TEMP offline test
 	_render_inventory(true)
 	%WorldLabel.text = "%s · %s" % [str(GameState.world_state.get("current_season", "")).capitalize(), str(GameState.world_state.get("weather", "")).capitalize()]
 	var timer := Timer.new()
@@ -120,6 +122,10 @@ func _counters() -> void:
 
 func _refresh_inventory() -> void:
 	if _inventory_busy:
+		return
+	if not Global.is_logged_in():  # TEMP offline test
+		GameState.load_dummy_inventory()
+		%Status.text = ""
 		return
 	_inventory_busy = true
 	%InventoryRefresh.disabled = true

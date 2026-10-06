@@ -56,6 +56,7 @@ func _ready():
 		print("FarmLayer tile_set exists: ", farm_layer.tile_set != null)
 	seed_picker.seed_selected.connect(_on_seed_selected)
 	_diag("seed_picker connected")
+	_make_cursor()
 	GameState.farm_updated.connect(_apply_server_plots)
 	_apply_server_plots(GameState.farm_plots)
 	_diag("apply_server_plots returned")

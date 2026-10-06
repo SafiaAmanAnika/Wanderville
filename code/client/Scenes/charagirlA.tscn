@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://cc5egrmxcq77s"]
 
-[ext_resource type="Script" path="res://Scripts/chara_player.gd" id="chara_player_script"]
 [ext_resource type="Texture2D" uid="uid://c7rc3je2jajw2" path="res://Assets/charas/CharacterA/death.png" id="1_auc5l"]
 [ext_resource type="Texture2D" uid="uid://cm6l8phr5x57f" path="res://Assets/charas/CharacterA/fishing.png" id="3_xi7du"]
 [ext_resource type="Texture2D" uid="uid://bqfbpx13bwnuq" path="res://Assets/charas/CharacterA/hoe.png" id="4_g4a7u"]
 [ext_resource type="Texture2D" uid="uid://sjaoi6f7n8bf" path="res://Assets/charas/CharacterA/idle.png" id="5_p8qu3"]
 [ext_resource type="Texture2D" uid="uid://dmb70rsc52cor" path="res://Assets/charas/CharacterA/watering_can.png" id="6_abukh"]
+[ext_resource type="Script" uid="uid://c7c5cbi43rwjj" path="res://Scripts/chara_player.gd" id="chara_player_script"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1w44g"]
 atlas = ExtResource("1_auc5l")
@@ -1472,8 +1472,8 @@ animations = [{
 }]
 
 [node name="charagirlA" type="CharacterBody2D" unique_id=320058811]
-script = ExtResource("chara_player_script")
 scale = Vector2(0.3, 0.31)
+script = ExtResource("chara_player_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1752885070]
 sprite_frames = SubResource("SpriteFrames_45alr")

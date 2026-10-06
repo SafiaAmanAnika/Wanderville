@@ -253,7 +253,7 @@ func load_dummy_inventory() -> void:
 	var total := 0
 	for d in DUMMY_ITEMS:
 		inventory.append({
-			"item_code": d[0], "quantity": d[5], "partition": d[3],
+			"id": _next_offline_id(), "item_code": d[0], "quantity": d[5], "partition": d[3],
 			"item": {"name": d[1], "category": d[2], "rarity": d[4], "max_stack": 99, "description": "Dummy item for testing."},
 		})
 		partitions[d[3]] = int(partitions.get(d[3], 0)) + 1
@@ -263,7 +263,7 @@ func load_dummy_inventory() -> void:
 
 
 # TEMP offline test: put an item in the local inventory (no server)
-func add_item_offline(code: String, name: String, quantity := 1, partition := "crops") -> void:
+func add_item_offline(code: String, name: String, quantity := 1, partition := "crops", category := "crop") -> void:
 	var found := false
 	for row in inventory:
 		if row["item_code"] == code:
@@ -272,8 +272,8 @@ func add_item_offline(code: String, name: String, quantity := 1, partition := "c
 			break
 	if not found:
 		inventory.append({
-			"item_code": code, "quantity": quantity, "partition": partition,
-			"item": {"name": name, "category": "crop", "rarity": "common", "max_stack": 99, "description": "Harvested %s." % name},
+			"id": _next_offline_id(), "item_code": code, "quantity": quantity, "partition": partition,
+			"item": {"name": name, "category": category, "rarity": "common", "max_stack": 99, "description": ("Caught %s." if category == "fish" else "Harvested %s.") % name},
 		})
 		var parts: Dictionary = inventory_summary.get("partitions", {})
 		parts[partition] = int(parts.get(partition, 0)) + 1
@@ -282,3 +282,12 @@ func add_item_offline(code: String, name: String, quantity := 1, partition := "c
 	inventory_summary["total_items"] = inventory.size()
 	inventory_summary["total_quantity"] = int(inventory_summary.get("total_quantity", 0)) + quantity
 	inventory_updated.emit(inventory)
+
+
+# Offline items need an "id" like server items (the bag uses it to remember the selected row).
+# Negative numbers so they can never clash with real server ids.
+var _offline_id := 0
+
+func _next_offline_id() -> int:
+	_offline_id -= 1
+	return _offline_id

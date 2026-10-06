@@ -1,0 +1,152 @@
+[gd_scene format=3 uid="uid://l31oftja30wb"]
+
+[ext_resource type="Texture2D" uid="uid://pn7kc2lxubfk" path="res://Assets/fishes/bluegill.png" id="1_xi3mq"]
+[ext_resource type="Texture2D" uid="uid://d28gemqw5ex4d" path="res://Assets/fishes/carp.png" id="2_x10yf"]
+[ext_resource type="Texture2D" uid="uid://dlwi6f1rkv3mb" path="res://Assets/fishes/catfish.png" id="3_fp4gg"]
+[ext_resource type="Texture2D" uid="uid://6sp1wn27dv7m" path="res://Assets/fishes/koi.png" id="4_s4jlr"]
+[ext_resource type="Texture2D" uid="uid://co8df84hwe5i4" path="res://Assets/fishes/largemouth_bass.png" id="5_ubcp0"]
+[ext_resource type="Texture2D" uid="uid://b2g8huxus70dm" path="res://Assets/fishes/pufferfish.png" id="6_gal3l"]
+[ext_resource type="Texture2D" uid="uid://d2wfed10bsqbx" path="res://Assets/fishes/rainbow_trout.png" id="7_l7dj7"]
+[ext_resource type="Texture2D" uid="uid://umqpipttgw5e" path="res://Assets/fishes/salmon.png" id="8_yfio8"]
+[ext_resource type="Texture2D" uid="uid://cgy3c0iw805ro" path="res://Assets/fishes/seahorse.png" id="9_cxoi0"]
+[ext_resource type="Texture2D" uid="uid://b60lvyshtlmqp" path="res://Assets/fishes/sunfish.png" id="10_5im6g"]
+[ext_resource type="Script" uid="uid://6b4ctlkr11th" path="res://Scripts/fish.gd" id="fish_script"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bmivm"]
+atlas = ExtResource("1_xi3mq")
+region = Rect2(0, 0, 281, 190)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o1byq"]
+atlas = ExtResource("2_x10yf")
+region = Rect2(0, 0, 274, 219)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a44uo"]
+atlas = ExtResource("3_fp4gg")
+region = Rect2(0, 0, 320, 240)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6pi1g"]
+atlas = ExtResource("4_s4jlr")
+region = Rect2(0, 0, 304, 241)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gwbmf"]
+atlas = ExtResource("5_ubcp0")
+region = Rect2(0, 0, 303, 203)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_63rhd"]
+atlas = ExtResource("6_gal3l")
+region = Rect2(0, 0, 291, 244)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dj4j6"]
+atlas = ExtResource("7_l7dj7")
+region = Rect2(0, 0, 284, 206)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aewhq"]
+atlas = ExtResource("8_yfio8")
+region = Rect2(0, 0, 283, 211)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_38btx"]
+atlas = ExtResource("9_cxoi0")
+region = Rect2(0, 0, 220, 263)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2gb04"]
+atlas = ExtResource("10_5im6g")
+region = Rect2(0, 0, 312, 231)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xo74e"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bmivm")
+}],
+"loop": true,
+"name": &"bluegill",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o1byq")
+}],
+"loop": true,
+"name": &"carp",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a44uo")
+}],
+"loop": true,
+"name": &"catfish",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6pi1g")
+}],
+"loop": true,
+"name": &"koi",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gwbmf")
+}],
+"loop": true,
+"name": &"largemouth_bass",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_63rhd")
+}],
+"loop": true,
+"name": &"pufferfish",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dj4j6")
+}],
+"loop": true,
+"name": &"rainbow_trout",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aewhq")
+}],
+"loop": true,
+"name": &"salmon",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_38btx")
+}],
+"loop": true,
+"name": &"seahorse",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2gb04")
+}],
+"loop": true,
+"name": &"sunfish",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1404e"]
+radius = 15.132746
+
+[node name="Fish" type="CharacterBody2D" unique_id=1153422667]
+script = ExtResource("fish_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1961985876]
+position = Vector2(2, 2)
+scale = Vector2(0.2, 0.2)
+sprite_frames = SubResource("SpriteFrames_xo74e")
+animation = &"sunfish"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=308541312]
+position = Vector2(5, 4)
+shape = SubResource("CircleShape2D_1404e")

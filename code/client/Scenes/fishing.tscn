@@ -1,3 +1,87 @@
 [gd_scene format=3 uid="uid://b1s1qb5kfvvn"]
 
-[node name="Fishing" type="Node2D" unique_id=1086106608]
+[ext_resource type="Script" uid="uid://dm02ewxbg8o22" path="res://Scripts/fishing_game.gd" id="1_f6wi8"]
+[ext_resource type="Texture2D" uid="uid://d874clr263ii" path="res://Scenes/orangebox.png" id="1_i7yw2"]
+[ext_resource type="Texture2D" uid="uid://bv2o6qn4a1ulh" path="res://Assets/ui_stuffs/SlimSlider_Background.png" id="2_d4jer"]
+[ext_resource type="Texture2D" uid="uid://xtlhmwbermdt" path="res://Assets/ui_stuffs/fishgamebg.jpeg" id="2_f7mym"]
+[ext_resource type="Texture2D" uid="uid://c4sps0x5cs4wo" path="res://Assets/ui_stuffs/SlimSlider_Base.png" id="3_av1u1"]
+[ext_resource type="PackedScene" uid="uid://l31oftja30wb" path="res://Scenes/menus/fish.tscn" id="6_7hb1t"]
+[ext_resource type="PackedScene" uid="uid://dd7ie374xl1hp" path="res://Scenes/menus/target.tscn" id="7_lym3h"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3wlxj"]
+texture = ExtResource("1_i7yw2")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_aamv5"]
+texture = ExtResource("2_d4jer")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_f6wi8"]
+texture = ExtResource("3_av1u1")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_u71ao"]
+texture = ExtResource("2_f7mym")
+texture_margin_left = 1.0
+texture_margin_top = 2.0
+texture_margin_right = 1.0
+texture_margin_bottom = 1.0
+expand_margin_left = 1.0
+expand_margin_top = 1.0
+expand_margin_right = 1.0
+expand_margin_bottom = 1.0
+
+[node name="Fishing" type="CanvasLayer" unique_id=1780165834]
+process_mode = 3
+
+[node name="FishingGame" type="Control" parent="." unique_id=708267910]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -150.0
+offset_right = 150.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_f6wi8")
+
+[node name="PanelContainer" type="PanelContainer" parent="FishingGame" unique_id=702131021]
+layout_mode = 0
+offset_left = -639.0
+offset_top = -348.5
+offset_right = -196.0
+offset_bottom = 103.5
+theme_override_styles/panel = SubResource("StyleBoxTexture_3wlxj")
+
+[node name="MarginContainer" type="MarginContainer" parent="FishingGame/PanelContainer" unique_id=1928770606]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 26
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 26
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FishingGame/PanelContainer/MarginContainer" unique_id=1736337724]
+layout_mode = 2
+size_flags_stretch_ratio = 0.0
+
+[node name="MarginContainer" type="MarginContainer" parent="FishingGame/PanelContainer/MarginContainer/VBoxContainer" unique_id=1298197615]
+layout_mode = 2
+
+[node name="CatchBar" type="ProgressBar" parent="FishingGame/PanelContainer/MarginContainer/VBoxContainer" unique_id=1741562330]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxTexture_aamv5")
+theme_override_styles/fill = SubResource("StyleBoxTexture_f6wi8")
+show_percentage = false
+
+[node name="AquaContainer" type="PanelContainer" parent="FishingGame/PanelContainer/MarginContainer/VBoxContainer" unique_id=75318908]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxTexture_u71ao")
+
+[node name="Fish" parent="." unique_id=1153422667 instance=ExtResource("6_7hb1t")]
+
+[node name="Target" parent="." unique_id=2131309006 instance=ExtResource("7_lym3h")]

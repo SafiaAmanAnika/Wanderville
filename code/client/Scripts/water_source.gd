@@ -9,7 +9,7 @@ func _ready() -> void:
 	var label: Label = $PromptLayer/prompt
 
 	var screen_size := get_viewport_rect().size
-	var box_size := Vector2(260, 60)
+	var box_size := Vector2(560, 60)
 
 	panel.custom_minimum_size = box_size
 	panel.size = box_size
@@ -50,12 +50,17 @@ func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		player_in_range = true
 		$PromptLayer/prompt.text = "Press Q to collect water"
+		if body.has_method("set_near_water"):   # characters that can fish
+			body.set_near_water(true)
+			$PromptLayer/prompt.text = "Press Q to collect water | Press F to catch a fish"
 		$PromptLayer/Panel.visible = true
 		$PromptLayer/prompt.visible = true
 
 func _on_body_exited(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		player_in_range = false
+		if body.has_method("set_near_water"):
+			body.set_near_water(false)
 		$PromptLayer/Panel.visible = false
 		$PromptLayer/prompt.visible = false
 

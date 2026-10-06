@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://dd7ie374xl1hp"]
+
+[ext_resource type="Texture2D" uid="uid://dymlriyopaneu" path="res://Assets/ui_stuffs/clicky.png" id="1_dqb1v"]
+[ext_resource type="Script" uid="uid://cukvwvcivbnep" path="res://Scripts/target.gd" id="1_jh7k2"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jh7k2"]
+size = Vector2(46, 45)
+
+[node name="Target" type="Area2D" unique_id=2131309006]
+script = ExtResource("1_jh7k2")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=21577646]
+texture = ExtResource("1_dqb1v")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=431798051]
+position = Vector2(0, -0.5)
+shape = SubResource("RectangleShape2D_jh7k2")

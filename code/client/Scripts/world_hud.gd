@@ -20,6 +20,7 @@ var _error_version := 0
 func _ready() -> void:
 	for label in [%Balance, %ProgressText, %WorldLabel, %Capacity, %ItemDetails, %NoticeDetails, %Status, %LevelToastText]:
 		WoodPanel.apply_status_label(label)
+	%Capacity.visible = true   
 	%Balance.add_theme_font_size_override("font_size", 18)
 	%ProgressText.add_theme_font_size_override("font_size", 16)
 	%WorldLabel.add_theme_font_size_override("font_size", 16)

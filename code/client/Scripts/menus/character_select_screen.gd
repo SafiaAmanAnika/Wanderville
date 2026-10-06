@@ -2,6 +2,7 @@ extends Control
 
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
 const BG_TEXTURE := preload("res://Assets/background/bg.png")
+const CharaFrames := preload("res://Scripts/chara_frames.gd")
 
 @onready var _bg: TextureRect = %Background
 @onready var _grid: GridContainer = %CharacterGrid

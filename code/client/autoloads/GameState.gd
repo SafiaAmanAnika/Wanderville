@@ -306,9 +306,10 @@ func load_dummy_inventory() -> void:
 	inventory.clear()
 	var partitions := {}
 	var total := 0
-	for d in DUMMY_ITEMS:
+	for i in DUMMY_ITEMS.size():
+		var d: Array = DUMMY_ITEMS[i]
 		inventory.append({
-			"item_code": d[0], "quantity": d[5], "partition": d[3],
+			"id": i, "item_code": d[0], "quantity": d[5], "partition": d[3],
 			"item": {"name": d[1], "category": d[2], "rarity": d[4], "max_stack": 99, "description": "Dummy item for testing."},
 		})
 		partitions[d[3]] = int(partitions.get(d[3], 0)) + 1
@@ -327,7 +328,7 @@ func add_item_offline(code: String, name: String, quantity := 1, partition := "c
 			break
 	if not found:
 		inventory.append({
-			"item_code": code, "quantity": quantity, "partition": partition,
+			"id": "offline_" + code, "item_code": code, "quantity": quantity, "partition": partition,
 			"item": {"name": name, "category": "crop", "rarity": "common", "max_stack": 99, "description": "Harvested %s." % name},
 		})
 		var parts: Dictionary = inventory_summary.get("partitions", {})

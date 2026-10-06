@@ -96,6 +96,12 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Remember this device"
 
+[node name="ProfileButton" type="Button" parent="Center/Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Profile"
+script = ExtResource("3")
+
 [node name="Spacer3" type="Control" parent="Center/Panel/VBox"]
 layout_mode = 2
 custom_minimum_size = Vector2(0, 4)

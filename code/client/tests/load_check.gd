@@ -8,7 +8,7 @@ func _run() -> void:
 	var failures := 0
 	for folder in ["res://Scripts", "res://autoloads"]:
 		failures += _scripts(folder)
-	for path in ["res://Scenes/world_hud.tscn", "res://Scenes/seed_picker_menu.tscn", "res://Scenes/social_panel.tscn", "res://Scenes/player1.tscn", "res://Scenes/menus/LoginScene.tscn", "res://Scenes/menus/SignupScene.tscn", "res://Scenes/menus/EmailVerificationScene.tscn"]:
+	for path in ["res://Scenes/world_hud.tscn", "res://Scenes/seed_picker_menu.tscn", "res://Scenes/social_panel.tscn", "res://Scenes/player1.tscn", "res://Scenes/menus/LoginScene.tscn", "res://Scenes/menus/SignupScene.tscn", "res://Scenes/menus/EmailVerificationScene.tscn", "res://Scenes/menus/MainMenu.tscn", "res://Scenes/menus/ProfileScene.tscn", "res://Scenes/menus/CharacterSelectScreen.tscn", "res://Scenes/menus/SettingsOverlay.tscn"]:
 		var scene := load(path) as PackedScene
 		if scene == null:
 			failures += 1

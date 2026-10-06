@@ -1,5 +1,5 @@
 from typing import Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class TargetRequest(BaseModel):
@@ -35,3 +35,34 @@ class MessageRequest(TargetRequest):
 class ReportRequest(TargetRequest):
     reason: Literal["harassment", "cheating", "spam", "other"]
     details: str = Field("", max_length=1000)
+
+
+class FarmInviteRequest(BaseModel):
+    """Host names the one guest to invite.
+
+    ``guest_player_id`` and ``target_id`` are accepted as the same field so the
+    legacy ``/social/invites`` shape keeps working, but disagreement is
+    rejected rather than silently preferring one.
+    """
+
+    guest_player_id: int | None = Field(None, gt=0, strict=True)
+    target_id: int | None = Field(None, gt=0, strict=True)
+
+    @model_validator(mode="after")
+    def single_target(self):
+        if (
+            self.guest_player_id is None
+            and self.target_id is None
+        ):
+            raise ValueError("guest_player_id is required")
+        if (
+            self.guest_player_id is not None
+            and self.target_id is not None
+            and self.guest_player_id != self.target_id
+        ):
+            raise ValueError("guest_player_id and target_id must agree")
+        return self
+
+    @property
+    def guest(self) -> int:
+        return self.guest_player_id or self.target_id

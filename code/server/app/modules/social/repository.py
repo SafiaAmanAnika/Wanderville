@@ -1,6 +1,6 @@
 from sqlalchemy import or_
 from app.core.gameplay import Repository
-from app.modules.social.models import Gift, Trade, Invite, PlayerBlock
+from app.modules.social.models import Gift, Trade, PlayerBlock
 
 
 class SocialRepository(Repository):
@@ -17,14 +17,6 @@ class SocialRepository(Repository):
             Trade.status == "pending",
             limit=100,
             order=Trade.id.desc(),
-        )
-
-    def invites(self, player_id):
-        return self.list(
-            Invite,
-            or_(Invite.sender_id == player_id, Invite.receiver_id == player_id),
-            limit=100,
-            order=Invite.id.desc(),
         )
 
     def blocks(self, player_id):

@@ -10,10 +10,10 @@ from app.modules.social.models import (
     PlayerBlock,
     Gift,
     Trade,
-    Invite,
     DirectMessage,
     PlayerReport,
 )
+from app.modules.social.farm_visiting import FarmVisitService
 from app.modules.social.repository import SocialRepository
 from app.modules.players.models import Player
 from app.modules.players.repository import PlayerRepository
@@ -358,6 +358,12 @@ class SocialService:
         return public(row)
 
     def visit(self, player_id, target):
+        """Deprecated one-shot lookup retained for existing clients.
+
+        It only resolves the world id and read-only flag; it does not create a
+        visit session, so it grants no entry. New clients use the invitation
+        lifecycle in ``FarmVisitService``.
+        """
         with transaction(self.db):
             self.players.lock(player_id, target)
             self.allowed(player_id, target)
@@ -369,38 +375,10 @@ class SocialService:
         return result
 
     def invite(self, player_id, target):
-        with transaction(self.db):
-            self.players.lock(player_id, target)
-            self.allowed(player_id, target)
-            row = self.repo.add(
-                Invite,
-                sender_id=player_id,
-                receiver_id=target,
-                world_id=WorldService(self.db).own_world(player_id).id,
-                expires_at=utcnow() + timedelta(minutes=5),
-            )
-            self.alerts.emit(
-                target,
-                "invite",
-                "A friend invited you to their farm",
-                "/social/invites",
-            )
-        return public(row)
+        return FarmVisitService(self.db).invite(player_id, target)
 
     def accept_invite(self, player_id, invite_id):
-        with transaction(self.db):
-            row = self.repo.get(Invite, invite_id)
-            if row.receiver_id != player_id:
-                raise NotFound()
-            self.players.lock(player_id, row.sender_id)
-            row = self.repo.get(Invite, invite_id)
-            self.allowed(player_id, row.sender_id)
-            if row.accepted or as_utc(row.expires_at) <= utcnow():
-                raise AppError(
-                    "INVITE_EXPIRED", "Invite expired or was already accepted", 409
-                )
-            row.accepted = True
-        return {"world_id": row.world_id, "owner_id": row.sender_id, "read_only": True}
+        return FarmVisitService(self.db).accept(player_id, invite_id)
 
     def message(self, player_id, request):
         with transaction(self.db):
@@ -466,13 +444,21 @@ class SocialService:
         return [public(r) for r in self.repo.trades(player_id)]
 
     def invites(self, player_id):
-        return [public(r) for r in self.repo.invites(player_id)]
+        return FarmVisitService(self.db).inbox(player_id)
 
     def blocks(self, player_id):
         return [public(r) for r in self.repo.blocks(player_id)]
 
     def farm(self, player_id, target):
-        from app.modules.farming.service import FarmingService
+        """Read-only view of another player's farm.
 
-        self.allowed(player_id, target)
-        return FarmingService(self.db).list(target)
+        Requires an ACTIVE visit session to that host, not just friendship: a
+        player only sees a farm they were actually admitted to.
+        """
+        from app.modules.farming.service import FarmingService
+        from app.modules.world.access import resolve
+
+        session = resolve(self.db, player_id)
+        if not session.is_visitor or session.host_player_id != target:
+            raise Forbidden("Accept a farm invitation before viewing this farm")
+        return FarmingService(self.db).list_world(player_id, session.current_world_id)

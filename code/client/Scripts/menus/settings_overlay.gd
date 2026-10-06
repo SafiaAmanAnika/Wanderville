@@ -33,6 +33,8 @@ func _ready() -> void:
 	_close_button.pressed.connect(_on_close)
 	WoodPanel.apply_status_label(%SaveStatus)
 	%LogoutButton.visible = Global.is_logged_in()
+	%ProfileButton.visible = Global.is_logged_in()
+	%ProfileButton.pressed.connect(_on_profile)
 	_logout_dialog = preload("res://Scenes/menus/LogoutConfirmationDialog.tscn").instantiate()
 	add_child(_logout_dialog)
 	%LogoutButton.pressed.connect(func() -> void: _logout_dialog.show_dialog())
@@ -106,6 +108,7 @@ func _check_font(check: CheckBox, size: int) -> void:
 
 func show_overlay() -> void:
 	%LogoutButton.visible = Global.is_logged_in()
+	%ProfileButton.visible = Global.is_logged_in()
 	%SaveStatus.text = ""
 	visible = true
 	modulate.a = 0.0
@@ -132,6 +135,11 @@ func _on_remember_toggled(toggled: bool) -> void:
 
 func _on_close() -> void:
 	await request_close()
+
+
+func _on_profile() -> void:
+	if await request_close():
+		SceneManager.goto_profile()
 
 
 func request_close() -> bool:

@@ -103,24 +103,96 @@ class Trade(Base):
     status: Mapped[str] = mapped_column(String(16), server_default="pending")
 
 
-class Invite(Base):
-    __tablename__ = "social_invites"
+class FarmInvitation(Base):
+    """A host's offer to let one specific guest stand inside their farm.
+
+    Lifecycle is an explicit state machine rather than a boolean so the guest's
+    inbox can distinguish "still waiting" from "already handled", and so an
+    unanswered offer can lapse to EXPIRED without being accepted later.
+    """
+
+    __tablename__ = "farm_invitations"
     __table_args__ = (
-        CheckConstraint("sender_id <> receiver_id", name="not_self"),
-        Index("ix_invite_receiver_expiry", "receiver_id", "expires_at"),
+        CheckConstraint("host_player_id <> invited_player_id", name="not_self"),
+        CheckConstraint("expires_at > created_at", name="expiry_order"),
+        CheckConstraint(
+            "status IN ('PENDING','ACCEPTED','DECLINED','EXPIRED','CANCELLED')",
+            name="status",
+        ),
+        # One active offer per host/guest/world. NULL once resolved, and SQL
+        # treats NULLs as distinct, so this blocks duplicate spam without
+        # blocking a legitimate re-invite after the old one is resolved.
+        UniqueConstraint("active_key", name="uq_farm_invitations_active"),
+        Index("ix_farm_invitations_guest_status", "invited_player_id", "status", "id"),
+        Index("ix_farm_invitations_host_status", "host_player_id", "status"),
+        Index("ix_farm_invitations_expiry", "expires_at"),
     )
     id: Mapped[int] = mapped_column(primary_key=True)
-    sender_id: Mapped[int] = mapped_column(
-        ForeignKey("players.id", ondelete="CASCADE"), index=True
+    host_player_id: Mapped[int] = mapped_column(
+        ForeignKey("players.id", ondelete="CASCADE")
     )
-    receiver_id: Mapped[int] = mapped_column(
+    invited_player_id: Mapped[int] = mapped_column(
         ForeignKey("players.id", ondelete="CASCADE")
     )
     world_id: Mapped[int] = mapped_column(
         ForeignKey("player_worlds.id", ondelete="CASCADE")
     )
+    status: Mapped[str] = mapped_column(String(16), server_default="PENDING")
+    active_key: Mapped[str | None] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    accepted: Mapped[bool] = mapped_column(Boolean, server_default=false())
+    responded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class FarmVisitSession(Base):
+    """Temporary occupancy of a farm by one visitor.
+
+    Only ``status == 'ACTIVE'`` rows hold a slot. Every exit path (leave,
+    disconnect, kick, stale sweep) flips the status rather than deleting the row
+    so the visit remains auditable, and ``active_visitor_key`` is set to NULL at
+    the same time so the visitor can be admitted elsewhere immediately.
+    """
+
+    __tablename__ = "farm_visit_sessions"
+    __table_args__ = (
+        CheckConstraint(
+            "host_player_id <> visitor_player_id", name="not_self"
+        ),
+        CheckConstraint("ended_at IS NULL OR ended_at >= started_at", name="end_order"),
+        CheckConstraint(
+            "status IN ('ACTIVE','LEFT','DISCONNECTED','KICKED','EXPIRED')",
+            name="status",
+        ),
+        # Database-level guarantee that a player occupies at most one visitor
+        # slot, independent of application-level locking.
+        UniqueConstraint(
+            "active_visitor_key", name="uq_farm_visit_sessions_active_visitor"
+        ),
+        Index("ix_farm_visit_sessions_world_status", "world_id", "status"),
+        Index("ix_farm_visit_sessions_visitor", "visitor_player_id", "status"),
+        Index("ix_farm_visit_sessions_heartbeat", "status", "last_seen_at"),
+    )
+    id: Mapped[int] = mapped_column(primary_key=True)
+    world_id: Mapped[int] = mapped_column(
+        ForeignKey("player_worlds.id", ondelete="CASCADE")
+    )
+    host_player_id: Mapped[int] = mapped_column(
+        ForeignKey("players.id", ondelete="CASCADE")
+    )
+    visitor_player_id: Mapped[int] = mapped_column(
+        ForeignKey("players.id", ondelete="CASCADE")
+    )
+    status: Mapped[str] = mapped_column(String(16), server_default="ACTIVE")
+    active_visitor_key: Mapped[int | None] = mapped_column(Integer)
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    last_seen_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class DirectMessage(Base):

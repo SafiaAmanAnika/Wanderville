@@ -2,6 +2,14 @@ extends VBoxContainer
 
 signal attention_changed(count: int)
 
+const MENU_REMOVE := 0
+const MENU_INVITE := 1
+const MENU_BLOCK := 2
+const MENU_VISITORS := 3
+const MENU_DECLINE := 4
+const MENU_BACK := 5
+const VIEW_INVITATIONS := 4
+
 @onready var panel: PanelContainer = %Panel
 @onready var chat: VBoxContainer = %Chat
 @onready var friends: VBoxContainer = %Friends
@@ -26,6 +34,9 @@ var _draft_key := "nearby"
 var _unread := 0
 var _unread_channels: Dictionary = {}
 var _session := -1
+# "people" is the view's own list; "visitor" is the temporary occupancy list a
+# host opens to eject somebody. The label and the primary action follow it.
+var _people_kind := "people"
 
 
 func _ready() -> void:
@@ -45,8 +56,8 @@ func _ready() -> void:
 	mode.item_selected.connect(_mode_changed)
 	people.item_selected.connect(func(_index: int) -> void: _actions())
 	%Primary.pressed.connect(_primary)
-	%Decline.pressed.connect(func() -> void: _act("decline"))
-	%More.get_popup().id_pressed.connect(func(id: int) -> void: _act("remove" if id == 0 else "block"))
+	%Decline.pressed.connect(_decline)
+	%More.get_popup().id_pressed.connect(_menu_action)
 	APIClient.realtime.nearby_message_received.connect(_nearby_message)
 	APIClient.realtime.direct_message_received.connect(_direct_message)
 	APIClient.realtime.conversation_polled.connect(func(target: int) -> void:
@@ -129,6 +140,7 @@ func _process(delta: float) -> void:
 func _view_changed(_index: int) -> void:
 	_revision += 1
 	_loading = false
+	_people_kind = "people"
 	%SearchRow.visible = view.selected == 2
 	_rows.clear()
 	people.clear()
@@ -139,7 +151,14 @@ func _view_changed(_index: int) -> void:
 func _load_people() -> void:
 	if _loading or not panel.visible or not friends.visible:
 		return
-	var paths := ["/social/friends", "/social/requests", "/social/search?q=" + str(%Search.text).strip_edges().uri_encode(), "/social/blocks"]
+	_people_kind = "people"
+	var paths := [
+		"/social/friends",
+		"/social/requests",
+		"/social/search?q=" + str(%Search.text).strip_edges().uri_encode(),
+		"/social/blocks",
+		"/farm/visiting/invitations",
+	]
 	if view.selected == 2 and str(%Search.text).strip_edges().length() < 2:
 		status.text = "Enter at least two username characters."
 		return
@@ -159,6 +178,18 @@ func _load_people() -> void:
 	for row in _rows:
 		var id := int(row.get("id", row.get("blocked_id", 0)))
 		row["id"] = id
+		if view.selected == 4:
+			# An invitation is identified by its own id, not the host's, and the
+			# host is named explicitly by the server so the guest knows who is
+			# asking them into their farm.
+			people.add_item(
+				str(row.get("host_username", "Player"))
+				+ "  ·  "
+				+ str(row.get("world_name", ""))
+			)
+			if id == selected_id:
+				people.select(people.item_count - 1)
+			continue
 		var username := str(row.get("username", _names.get(id, "Player %d" % id)))
 		_names[id] = username
 		var suffix := "online" if row.get("online", false) else "offline"
@@ -168,6 +199,8 @@ func _load_people() -> void:
 		if id == selected_id:
 			people.select(people.item_count - 1)
 	status.text = "No players here yet." if _rows.is_empty() else "Select a player."
+	if view.selected == 4 and not _rows.is_empty():
+		status.text = "Select an invitation."
 	_actions()
 
 
@@ -178,22 +211,71 @@ func _selected() -> Dictionary:
 
 func _actions() -> void:
 	var row := _selected()
+	var visitors := _people_kind == "visitor"
+	var invitations := view.selected == VIEW_INVITATIONS
 	var incoming := view.selected == 1 and int(row.get("requested_by", 0)) != Global.player_id
-	%Primary.text = ["Message", "Accept" if incoming else "Cancel", "Add friend", "Unblock"][view.selected]
+	if visitors:
+		%Primary.text = "Remove visitor"
+	elif invitations:
+		%Primary.text = "Visit farm"
+	elif view.selected == 3:
+		%Primary.text = "Unblock"
+	else:
+		%Primary.text = ["Message", "Accept" if incoming else "Cancel", "Add friend", "Unblock"][view.selected]
 	%Primary.disabled = row.is_empty() or _acting
-	%Decline.visible = incoming and not row.is_empty()
+	%Decline.visible = (incoming or invitations) and not visitors and not row.is_empty()
 	%Decline.disabled = _acting
-	%More.disabled = row.is_empty() or view.selected == 3 or _acting
+	%More.disabled = row.is_empty() or ((view.selected == 3 or visitors) and not invitations) or _acting
 	var popup: PopupMenu = %More.get_popup()
 	popup.clear()
-	if view.selected == 0:
-		popup.add_item("Remove friend", 0)
-	popup.add_item("Block player", 1)
+	if visitors:
+		popup.add_item("Back to friends", MENU_BACK)
+	elif invitations:
+		popup.add_item("Decline invitation", MENU_DECLINE)
+	elif view.selected == 0:
+		popup.add_item("Remove friend", MENU_REMOVE)
+		# Only friends can be invited; being merely searchable is not enough.
+		popup.add_item("Invite to my farm", MENU_INVITE)
+	if not visitors and not invitations and view.selected != 3:
+		popup.add_item("Block player", MENU_BLOCK)
+	# A visitor always gets an explicit way out; a host can open the occupancy
+	# list to eject whoever is standing in their farm.
+	popup.add_item("Leave this farm" if GameState.read_only else "Visitors in my farm", MENU_VISITORS)
+
+
+func _menu_action(id: int) -> void:
+	match id:
+		MENU_REMOVE:
+			_act("remove")
+		MENU_BLOCK:
+			_act("block")
+		MENU_INVITE:
+			_act("invite_farm")
+		MENU_VISITORS:
+			_farm_visitors()
+		MENU_DECLINE:
+			_invitation_action("decline")
+		MENU_BACK:
+			_back_to_people()
+
+
+func _back_to_people() -> void:
+	_people_kind = "people"
+	people.clear()
+	_rows.clear()
+	_actions()
+	await _load_people()
 
 
 func _primary() -> void:
 	var row := _selected()
 	if row.is_empty() or _acting:
+		return
+	if _people_kind == "visitor":
+		_remove_visitor()
+		return
+	if view.selected == VIEW_INVITATIONS:
+		_invitation_action("accept")
 		return
 	if view.selected == 0:
 		_stop_watch()
@@ -206,9 +288,66 @@ func _primary() -> void:
 		_act(action if view.selected == 1 else ("request" if view.selected == 2 else "unblock"))
 
 
+func _decline() -> void:
+	# The same button declines a friend request and an unanswered farm
+	# invitation, depending on which list is open.
+	if view.selected == VIEW_INVITATIONS:
+		_invitation_action("decline")
+	else:
+		_act("decline")
+
+
+func _invitation_action(action: String) -> void:
+	var row := _selected()
+	if row.is_empty() or _acting:
+		return
+	var invitation_id := int(row["id"])
+	_acting = true
+	_actions()
+	var response: Dictionary
+	match action:
+		"accept":
+			response = await APIClient.accept_farm_invitation(invitation_id)
+		_:
+			response = await APIClient.decline_farm_invitation(invitation_id)
+	_acting = false
+	if response.get("stale", false):
+		return
+	if not bool(response.get("ok", false)):
+		status.text = APIClient.error_text(response)
+		_actions()
+		return
+	var data: Variant = APIClient.data_of(response)
+	if action == "accept" and data is Dictionary:
+		# The accept payload describes the new visit, but only /farm/visiting/
+		# session is the authoritative owned/current pair, so the session is
+		# re-read rather than guessed from the accept response.
+		GameState.apply_session(await _visit_session())
+		# Move the socket to the host's world before reloading, so the first
+		# snapshot rendered is the farm the player was just admitted to.
+		APIClient.realtime.enter_world(GameState.current_world_id())
+		await GameState.refresh_gameplay()
+		status.text = "You are visiting this farm. Everything here is read-only until you leave."
+	else:
+		status.text = "Invitation declined."
+	await _load_people()
+	_actions()
+
+
+func _visit_session() -> Dictionary:
+	var response: Dictionary = await APIClient.visit_session()
+	var data: Variant = APIClient.data_of(response)
+	return data if bool(response.get("ok", false)) and data is Dictionary else {}
+
+
 func _act(action: String) -> void:
 	var row := _selected()
 	if row.is_empty() or _acting:
+		return
+	if action == "invite_farm":
+		# Awaited so a caller that inspects the status line afterwards sees the
+		# answer to the request it just made instead of the one from before it.
+		await _invite_to_farm(int(row["id"]))
 		return
 	_acting = true
 	_actions()
@@ -238,6 +377,105 @@ func _act(action: String) -> void:
 		_nearby = _nearby.filter(func(item: Dictionary) -> bool: return int(item.get("sender_id", 0)) != target)
 	await _load_people()
 	status.text = "Updated." if response.get("ok", false) else APIClient.error_text(response)
+	_actions()
+
+
+func _invite_to_farm(target: int) -> void:
+	if _acting:
+		return
+	_acting = true
+	_actions()
+	var response: Dictionary = await APIClient.invite_to_farm(target)
+	_acting = false
+	if response.get("stale", false):
+		return
+	status.text = (
+		"Invitation sent. It lapses if they ignore it."
+		if bool(response.get("ok", false))
+		else APIClient.error_text(response)
+	)
+	_actions()
+
+
+func _farm_visitors() -> void:
+	if GameState.read_only:
+		_leave_farm()
+		return
+	if _acting:
+		return
+	_acting = true
+	_actions()
+	var response: Dictionary = await APIClient.farm_visitors()
+	_acting = false
+	if response.get("stale", false):
+		return
+	var data: Variant = APIClient.data_of(response)
+	if not bool(response.get("ok", false)) or not data is Dictionary:
+		status.text = APIClient.error_text(response)
+		_actions()
+		return
+	var visitors: Variant = data.get("visitors", [])
+	var count := int(data.get("visitor_count", 0))
+	var limit := int(data.get("visitor_limit", 0))
+	# Show the occupancy as a normal list so a specific visitor can be selected
+	# and removed, instead of naming them in a status line with no way to act.
+	_show_rows(visitors if visitors is Array else [], "visitor")
+	if count == 0:
+		status.text = "Nobody is visiting your farm (%d/%d)." % [count, limit]
+	else:
+		status.text = "%d/%d visiting. Select one to remove." % [count, limit]
+	_actions()
+
+
+func _show_rows(rows: Array, kind: String) -> void:
+	# Swap the list contents without going through the view loader, which would
+	# refetch friends and throw the selection away.
+	_revision += 1
+	_loading = false
+	_people_kind = kind
+	_rows = rows
+	people.clear()
+	for row in rows:
+		people.add_item(str(row.get("username", "Player")))
+	_actions()
+
+
+func _remove_visitor() -> void:
+	if _acting:
+		return
+	var row := _selected()
+	if row.is_empty():
+		return
+	_acting = true
+	_actions()
+	var response: Dictionary = await APIClient.remove_farm_visitor(int(row["visit_session_id"]))
+	_acting = false
+	if response.get("stale", false):
+		return
+	status.text = "Visitor removed." if bool(response.get("ok", false)) else APIClient.error_text(response)
+	await _farm_visitors()
+
+
+func _leave_farm() -> void:
+	if _acting:
+		return
+	_acting = true
+	_actions()
+	var response: Dictionary = await APIClient.leave_farm()
+	_acting = false
+	if response.get("stale", false):
+		return
+	if bool(response.get("ok", false)):
+		# Re-read the session first: the socket may only be told where to go back
+		# to once this client knows it is no longer visiting.
+		GameState.apply_session(await _visit_session())
+		# Move the socket back before anything is redrawn, so the host's farm is
+		# never left showing our avatar in it.
+		APIClient.realtime.restore_own_world()
+		await GameState.refresh_gameplay()
+		status.text = "You are back on your own farm."
+	else:
+		status.text = APIClient.error_text(response)
 	_actions()
 
 

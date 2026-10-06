@@ -5,7 +5,7 @@ from jose import jwt
 from sqlalchemy import event, func, select
 from starlette.websockets import WebSocketDisconnect
 
-from app.core.clock import utcnow
+from app.core.clock import as_utc, utcnow
 from app.core.config import settings
 from app.core.progression import LEVEL_AURA_REWARDS
 from app.modules.economy.service import EconomyService
@@ -18,7 +18,7 @@ from app.modules.realtime.models import Presence
 from app.modules.realtime.router import socket_step
 from app.modules.realtime.service import RealtimeService
 from app.modules.shop.models import ItemRule
-from app.modules.social.models import Invite
+from app.modules.social.models import FarmInvitation as Invite
 from app.modules.world.worker import tick
 
 
@@ -118,11 +118,21 @@ def test_reconnect_emote_and_private_room_expiry(client, account, db):
     db.commit()
     assert service.enter(a.id)["x"] == 7400  # Reconnect restores persisted position.
     assert client.post("/realtime/enter", headers=a.headers,
-                       json={"owner_id": b.id}).status_code == 403
+json={"owner_id": b.id}).status_code == 403
     friends(client, a, b)
+    # Friendship alone is not entry: only an accepted invitation admits a visitor.
+    assert client.post("/realtime/enter", headers=a.headers,
+                       json={"owner_id": b.id}).status_code == 403
+    invite = ok(client.post("/social/invites", headers=b.headers, json={"target_id": a.id}))
+    ok(client.post(f"/social/invites/{invite['id']}/accept", headers=a.headers))
     ok(client.post("/realtime/enter", headers=a.headers, json={"owner_id": b.id}))
+    service.enter(b.id, b.id)  # Host stands in the same world room as its visitor.
+    visible = ok(client.get("/realtime/snapshot", headers=a.headers))["players"]
+    assert any(p["player_id"] == b.id for p in visible)
     ok(client.post("/social/blocks", headers=b.headers, json={"target_id": a.id}))
-    assert client.get("/realtime/snapshot", headers=a.headers).status_code == 403
+    # A block hides the pair from each other without breaking the whole frame.
+    visible = ok(client.get("/realtime/snapshot", headers=a.headers))["players"]
+    assert not any(p["player_id"] == b.id for p in visible)
 
 
 def test_remove_unblock_trade_cancel_decline_and_missing_offer(client, account, db):
@@ -218,12 +228,11 @@ def test_drop_expiry_privacy_and_invite_notice_deduplication(client, account, db
     assert client.post(f"/fishing/drops/{drop.id}/claim", headers=b.headers).status_code == 404
     assert client.post(f"/fishing/drops/{drop.id}/claim", headers=a.headers).status_code == 409
     invite = ok(client.post("/social/invites", headers=a.headers, json={"target_id": b.id}))
-    db.get(Invite, invite["id"]).expires_at = utcnow() - timedelta(seconds=1)
-    db.commit()
-    tick(db)
-    tick(db)
+    # Drive the real sweep instead of rewriting expires_at, so the row keeps its
+    # "expires after it was created" invariant.
+    tick(db, now=as_utc(db.get(Invite, invite["id"]).expires_at) + timedelta(seconds=1))
     assert db.scalar(select(func.count()).select_from(Notification).where(
-        Notification.player_id == a.id, Notification.kind == "invite_expired")) == 1
+        Notification.player_id == b.id, Notification.kind == "farm_invitation_expired")) == 1
 
 
 def test_profile_cannot_write_progression_and_feedback_report_bounds(client, account, db):

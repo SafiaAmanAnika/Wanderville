@@ -46,3 +46,7 @@ Thumbs.db
 .vscode/
 
 CHANGES.md
+
+# Godot PNG import metadata (regenerated automatically by the editor)
+*.png.import
+

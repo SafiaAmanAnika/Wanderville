@@ -29,6 +29,7 @@ from app.modules.shop.router import router as shop_router
 from app.modules.progression.router import router as progression_router
 from app.modules.fishing.router import router as fishing_router
 from app.modules.social.router import router as social_router
+from app.modules.social.visit_router import router as farm_visit_router
 from app.modules.realtime.router import router as realtime_router
 from app.modules.events.router import router as events_router
 from app.modules.state.router import router as state_router
@@ -161,7 +162,7 @@ def create_app():
         revision = db.scalar(text("SELECT version_num FROM alembic_version"))
         seeded = db.scalar(text("SELECT count(*) FROM item_definitions i JOIN item_rules r ON r.item_code = i.item_code WHERE i.item_code = 'wheat_seed'"))
         clock_ready = db.scalar(text("SELECT count(*) FROM world_state WHERE id = 1"))
-        if revision != "0006_progression_and_stacks" or not seeded or not clock_ready:
+        if revision != "0007_farm_visiting" or not seeded or not clock_ready:
             raise AppError("DATABASE_NOT_READY", "Run database migrations and reference seeding", 503)
         return success({"status": "ready", "database": "connected"})
 
@@ -179,6 +180,7 @@ def create_app():
         progression_router,
         fishing_router,
         social_router,
+        farm_visit_router,
         events_router,
         realtime_router,
         state_router,

@@ -184,6 +184,7 @@ class AuthService:
         return result
 
     def logout(self, raw):
+        player_id = None
         with transaction(self.db):
             hashed = security.hash_token(raw)
             row = self.repo.refresh(hashed)
@@ -191,6 +192,14 @@ class AuthService:
                 self.players.lock(row.player_id)
                 row = self.repo.refresh(hashed, lock=True)
                 row.revoked_at = row.revoked_at or utcnow()
+                player_id = row.player_id
+        if player_id is not None:
+            # Signing out is an intentional departure, so release presence and any
+            # held visitor slots now instead of waiting for the socket to drop.
+            # Imported here because realtime depends on this module.
+            from app.modules.realtime.service import RealtimeService
+
+            RealtimeService(self.db).leave(player_id)
 
     def _locked_account_token(self, raw, kind, now):
         hashed = security.hash_token(raw)

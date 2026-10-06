@@ -40,6 +40,18 @@ class FarmingRepository:
             .execution_options(populate_existing=True)
         )
 
+    def by_world_tile(self, world_id, tile_id):
+        """Fetch a tile scoped by world only.
+
+        Callers must already have passed the ownership check; the world id comes
+        from the world row that check resolved, never from the request body.
+        """
+        return self.db.scalar(
+            select(FarmTile)
+            .where(FarmTile.world_id == world_id, FarmTile.id == tile_id)
+            .execution_options(populate_existing=True)
+        )
+
     def create(self, world_id, x, y):
         row = FarmTile(world_id=world_id, x=x, y=y)
         self.db.add(row)

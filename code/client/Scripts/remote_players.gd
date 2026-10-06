@@ -12,12 +12,19 @@ func _ready() -> void:
 
 func _connection(connected: bool) -> void:
 	if not connected:
+		if avatars.is_empty():
+			return
 		_snapshot({"players": []})
 
 
 func _snapshot(snapshot: Dictionary) -> void:
+	if not is_inside_tree():
+		return
+	var tree := get_tree()
+	if tree == null:
+		return
 	var visible_ids: Dictionary = {}
-	var local := get_tree().get_first_node_in_group("player") as Node2D
+	var local := tree.get_first_node_in_group("player") as Node2D
 	if local == null:
 		return
 	for entry in snapshot.get("players", []):

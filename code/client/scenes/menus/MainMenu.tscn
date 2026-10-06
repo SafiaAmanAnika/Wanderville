@@ -29,8 +29,12 @@ horizontal_alignment = 1
 
 [node name="Subtitle" type="Label" parent="Center/VBox"]
 layout_mode = 2
-text = "Main Menu (placeholder)"
+text = "Welcome back!"
 horizontal_alignment = 1
+
+[node name="ProfileButton" type="Button" parent="Center/VBox"]
+layout_mode = 2
+text = "Profile"
 
 [node name="WorldButton" type="Button" parent="Center/VBox"]
 layout_mode = 2

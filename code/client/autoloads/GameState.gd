@@ -16,6 +16,9 @@ var economy: Dictionary = {}
 var experience: Dictionary = {}
 var world_state: Dictionary = {}
 var farm_plots: Array = []
+var owned_world: Dictionary = {}
+var visit_session: Dictionary = {}
+var read_only := false
 var backend_ready := false
 var last_error := ""
 var _loading := false
@@ -30,6 +33,8 @@ signal data_loaded(success: bool)
 signal farm_updated(plots: Array)
 signal world_updated(state: Dictionary)
 signal inventory_updated(items: Array)
+signal session_updated(session: Dictionary)
+signal read_only_changed(value: bool)
 signal backend_error(message: String)
 signal gameplay_refreshed
 signal economy_updated(data: Dictionary)
@@ -57,6 +62,9 @@ func reset() -> void:
 	economy_updated.emit(economy)
 	experience_updated.emit(experience)
 	world_state.clear()
+	owned_world.clear()
+	visit_session.clear()
+	_set_read_only(false)
 	water_drops = 0
 	menu_open = false
 	social_open = false
@@ -84,7 +92,8 @@ func load_from_backend() -> bool:
 	var requests: Array = [
 		["/profile", "profile"], ["/world/me", "own_world"],
 		["/economy/", "economy"], ["/inventory/", "inventory"],
-		["/world/state", "world"], ["/farm/plots", "farm"], ["/economy/xp", "experience"]
+		["/world/state", "world"], ["/farm/plots", "farm"], ["/economy/xp", "experience"],
+		["/farm/visiting/session", "session"]
 	]
 	for request in requests:
 		var response: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_GET, request[0])
@@ -102,6 +111,12 @@ func load_from_backend() -> bool:
 		_apply_data(request[1], data)
 	_loading = false
 	backend_ready = success
+	if success:
+		# The socket has to open in the world this player actually belongs to:
+		# their own farm normally, or a host's farm while a visit is active. The
+		# call is a no-op if the socket is not connected yet, because the desired
+		# room is remembered and sent right after auth.
+		APIClient.realtime.enter_world(desired_world_id())
 	data_loaded.emit(success)
 	return success
 
@@ -124,8 +139,11 @@ func _apply_data(kind: String, data: Dictionary) -> void:
 			AudioManager.set_sfx_volume(float(data.get("effects_volume", 80)))
 			Global.save_session()
 		"own_world":
+			owned_world = data
 			Global.selected_world_id = str(data.get("id", "")) if profile.get("map_code") == "campus" else ""
 			Global.save_session()
+		"session":
+			apply_session(data)
 		"economy":
 			economy = data
 			economy_updated.emit(data)
@@ -155,6 +173,42 @@ func _apply_data(kind: String, data: Dictionary) -> void:
 			farm_updated.emit(farm_plots)
 
 
+func is_visiting() -> bool:
+	return str(visit_session.get("session_mode", "OWNER")) == "VISITOR"
+
+
+func owning_world_id() -> int:
+	return int(visit_session.get("owned_world_id", 0))
+
+
+func current_world_id() -> int:
+	return int(visit_session.get("current_world_id", owning_world_id()))
+
+
+func desired_world_id() -> int:
+	# Which world the socket should be standing in. The campus is where
+	# everybody lives by default, so a player who is not visiting stays there
+	# and only an accepted visit moves them into somebody else's world. Zero
+	# means the campus; the server derives the room from it.
+	return current_world_id() if is_visiting() else 0
+
+
+func apply_session(session: Dictionary) -> void:
+	visit_session = session
+	# The server is the only authority on where this player is standing and on
+	# whether they may write to the world. Read-only follows the session, never
+	# the UI, so a visitor can never mutate the host's farm by any path.
+	_set_read_only(is_visiting())
+	session_updated.emit(visit_session)
+
+
+func _set_read_only(value: bool) -> void:
+	if read_only == value:
+		return
+	read_only = value
+	read_only_changed.emit(read_only)
+
+
 func world_time_fraction() -> float:
 	var duration := float(world_state.get("day_night_cycle_minutes", 40)) * 60.0
 	var elapsed := Time.get_ticks_msec() / 1000.0 - _world_received_at
@@ -182,9 +236,10 @@ func refresh_gameplay() -> void:
 	if not Global.is_logged_in():
 		return
 	_refreshing = true
-	# One round trip instead of six sequential reads. The bundle returns the
+	# One round trip instead of seven sequential reads. The bundle returns the
 	# same sections as /farm/plots, /profile, /world/state, /inventory/,
-	# /economy/ and /economy/xp, so the payloads applied below are unchanged.
+	# /economy/, /economy/xp and /farm/visiting/session, so the payloads applied
+	# below are unchanged.
 	var response: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_GET, "/state/bundle")
 	if version != Global.session_version:
 		_refreshing = false
@@ -195,7 +250,7 @@ func refresh_gameplay() -> void:
 		_refreshing = false
 		gameplay_refreshed.emit()
 		return
-	for section in ["farm", "profile", "world", "inventory", "economy", "experience"]:
+	for section in ["farm", "profile", "world", "inventory", "economy", "experience", "session"]:
 		var payload: Variant = data.get(section)
 		if not payload is Dictionary:
 			report_error(response)
@@ -251,9 +306,10 @@ func load_dummy_inventory() -> void:
 	inventory.clear()
 	var partitions := {}
 	var total := 0
-	for d in DUMMY_ITEMS:
+	for i in DUMMY_ITEMS.size():
+		var d: Array = DUMMY_ITEMS[i]
 		inventory.append({
-			"id": _next_offline_id(), "item_code": d[0], "quantity": d[5], "partition": d[3],
+			"id": i, "item_code": d[0], "quantity": d[5], "partition": d[3],
 			"item": {"name": d[1], "category": d[2], "rarity": d[4], "max_stack": 99, "description": "Dummy item for testing."},
 		})
 		partitions[d[3]] = int(partitions.get(d[3], 0)) + 1

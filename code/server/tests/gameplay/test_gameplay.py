@@ -799,14 +799,17 @@ def test_rare_discard_requires_confirmation(client, account):
 
 
 def test_invites_messages_and_private_profiles(client, account, db):
-    from app.modules.social.models import Invite
+    from app.modules.social.models import FarmInvitation
 
     a, b = account(), account("second_user")
     befriend(client, a, b)
     invite = data(
         client.post("/social/invites", headers=a.headers, json={"target_id": b.id})
     )
-    row = db.get(Invite, invite["id"])
+    row = db.get(FarmInvitation, invite["id"])
+    # Age the whole offer rather than only expires_at, so the row keeps its
+    # "expires after it was created" invariant.
+    row.created_at = utcnow() - timedelta(days=1)
     row.expires_at = utcnow() - timedelta(seconds=1)
     db.commit()
     assert (

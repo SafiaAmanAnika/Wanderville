@@ -9,6 +9,7 @@ const MAP_SELECTION_SCENE := "res://Scenes/menus/MapSelectionScreen.tscn"
 const MAP_SHOWCASE_SCENE := "res://Scenes/menus/MapShowcaseScreen.tscn"
 const CHARACTER_SELECT_SCENE := "res://Scenes/menus/CharacterSelectScreen.tscn"
 const WORLD_SCENE := "res://Scenes/world.tscn"
+const PROFILE_SCENE := "res://Scenes/menus/ProfileScene.tscn"
 
 const FORGOT_PASSWORD_SCENE := "res://Scenes/menus/ForgotPasswordScene.tscn"
 const EMAIL_VERIFICATION_SCENE := "res://Scenes/menus/EmailVerificationScene.tscn"
@@ -135,6 +136,10 @@ func goto_map_showcase() -> void:
 
 func goto_character_select() -> void:
 	transition_to(CHARACTER_SELECT_SCENE, "Loading characters...")
+
+
+func goto_profile() -> void:
+	transition_to(PROFILE_SCENE, "Loading profile...")
 
 
 func goto_world() -> void:

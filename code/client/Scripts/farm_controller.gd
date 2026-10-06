@@ -56,6 +56,7 @@ func _ready():
 		print("FarmLayer tile_set exists: ", farm_layer.tile_set != null)
 	seed_picker.seed_selected.connect(_on_seed_selected)
 	_diag("seed_picker connected")
+	_make_cursor()
 	GameState.farm_updated.connect(_apply_server_plots)
 	_make_cursor()   # the hover outline; _process() uses it every frame
 	_apply_server_plots(GameState.farm_plots)
@@ -439,6 +440,13 @@ func _str_to_vec(s: String) -> Vector2i:
 # ─── Server sync ─────────────────────────────────────────────────────
 
 func _server_action(action: String, tile: Vector2i, key: String, seed: String = "") -> void:
+	# Every persistent farm write funnels through here, so a visitor standing in
+	# someone else's world is stopped in one place instead of at each control.
+	# The server refuses these too; this only avoids a pointless round trip and
+	# an error popup for an action the player is not allowed to make.
+	if GameState.read_only:
+		GameState.report_error({"body": {"message": "You are visiting this farm and cannot change it."}})
+		return
 	if _backend_busy or not GameState.backend_ready:
 		return
 	_backend_busy = true
@@ -509,6 +517,11 @@ func _apply_plot(plot: Dictionary) -> void:
 
 
 func _relocate(tile: Vector2i) -> void:
+	# Relocate writes to the host's tiles too, so it is gated like every other
+	# farm mutation rather than trusted because it starts from a drag gesture.
+	if GameState.read_only:
+		GameState.report_error({"body": {"message": "You are visiting this farm and cannot change it."}})
+		return
 	_backend_busy = true
 	var version := Global.session_version
 	var plot_id := int(_plot_ids.get(_drag_key, _drag_crop.get("plot_id", 0)))

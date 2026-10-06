@@ -268,12 +268,13 @@ def test_inspector_crop_timing_and_relocation_preserve_growth(
     farm.till(user.id, TileRequest(x=2, y=1), now)
     relocated = farm.relocate(user.id, RelocateRequest(plot_id=source.id, x=2, y=1), now + timedelta(seconds=11))
     assert relocated["source"].item_code is None
+    assert relocated["source"].is_tilled is False
     assert relocated["plot"].visual_frame == 3
     assert db.get(PlayerProfile, user.id).water_charges == 19
     plots = farm.list(user.id, now + timedelta(seconds=total)).plots
     assert plots[1].ready and plots[1].visual_frame == last_frame
     assert client.post("/farm/relocate", headers=other.headers, json={"plot_id": plots[1].id, "x": 1, "y": 1}).status_code == 404
-    assert client.post("/farm/relocate", headers=user.headers, json={"plot_id": plots[1].id, "x": 16, "y": 20}).status_code == 409
+    assert client.post("/farm/relocate", headers=user.headers, json={"plot_id": relocated["source"].id, "x": 16, "y": 20}).status_code == 409
     farm.harvest(user.id, plots[1].id, now + timedelta(seconds=total))
     assert db.get(PlayerProfile, user.id).water_charges == 19
 

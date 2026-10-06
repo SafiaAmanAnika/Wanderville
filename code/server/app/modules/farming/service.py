@@ -289,6 +289,7 @@ class FarmingService:
             code, harvest_xp = tile.crop_item_code, tile.item.harvest_xp
             # Clear first so injected reward failures test rollback of farm state too.
             tile.crop_item_code, tile.item = None, None
+            tile.is_tilled = False  # harvest clears the soil too
             tile.planted_at = tile.last_growth_update_at = tile.watered_at = None
             tile.growth_progress_seconds, tile.growth_stage, tile.is_watered = (
                 0.0,
@@ -336,23 +337,36 @@ class FarmingService:
             raise AppError("OUTSIDE_FARM", "Choose a tile inside the existing farm area")
 
     def relocate(self, player_id, request, now=None):
+        """Move a whole farm tile (soil + any crop) to a free spot in the farm.
+
+        The old spot turns back into grass. A crop may land on bare ground or on
+        empty soil; an empty soil tile may only land on bare ground.
+        """
         self._coordinate(request)
         now = now or utcnow()
         with transaction(self.db):
             self.players.lock(player_id)
             source = self._owned(player_id, request.plot_id)
+            if not source.is_tilled:
+                raise AppError("FARM_EMPTY", "There is no farm tile to move", 409)
             target = self.repo.coordinate(source.world_id, request.x, request.y)
-            if source is target or not source.crop_item_code:
-                raise AppError("FARM_EMPTY", "Choose a planted crop and a different tile")
-            if target is None or not target.is_tilled or target.crop_item_code:
-                raise AppError("FARM_DESTINATION", "Move to an empty tilled tile", 409)
+            if target is source:
+                raise AppError("FARM_DESTINATION", "Choose a different tile", 409)
+            if target is not None and (
+                target.crop_item_code or (target.is_tilled and not source.crop_item_code)
+            ):
+                raise AppError("FARM_DESTINATION", "That spot is already used", 409)
+            target = target or self.repo.create(source.world_id, request.x, request.y)
             state = self.world.raw_state()
-            self._persist_growth(source, state, now)
+            if source.crop_item_code:
+                self._persist_growth(source, state, now)
+            target.is_tilled = True
             for field in ("crop_item_code", "item", "planted_at", "last_growth_update_at", "watered_at", "growth_progress_seconds", "growth_stage", "is_watered"):
                 setattr(target, field, getattr(source, field))
             source.crop_item_code = source.item = None
             source.planted_at = source.last_growth_update_at = source.watered_at = None
             source.growth_progress_seconds, source.growth_stage, source.is_watered = 0.0, 0, False
+            source.is_tilled = False
             self.db.flush()
             result = {"source": tile_response(source, state, now), "plot": tile_response(target, state, now)}
         return result

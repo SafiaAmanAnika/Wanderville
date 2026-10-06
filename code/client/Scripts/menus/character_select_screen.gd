@@ -34,12 +34,12 @@ func _ready() -> void:
 func _populate_characters() -> void:
 	var portrait_farmer_female := preload("res://Assets/watering_plants_wat/female_farmer_character_pink_hair_with_ribbon_flor/animations/Running-79e518a9/south/frame_000.png")
 
-	_characters = [
-		{"id": "farmer_male", "name": "Male Farmer", "locked": true},
-		{"id": "farmer_female", "name": "Female Farmer", "portrait": portrait_farmer_female},
-		{"id": "explorer", "name": "Explorer", "locked": true},
-		{"id": "mage", "name": "Mage", "locked": true},
-	]
+	_characters = []
+	for id in Global.CHARACTERS:
+		var info: Dictionary = Global.CHARACTERS[id]
+		var folder: String = info["folder"]
+		var portrait: Texture2D = portrait_farmer_female if folder == "" else CharaFrames.portrait(folder)
+		_characters.append({"id": id, "name": info["name"], "portrait": portrait})
 
 
 func _build_grid() -> void:
@@ -83,12 +83,13 @@ func _on_confirm() -> void:
 		if cid == "":
 			_status_label.text = "Create New coming soon!"
 			return
-		_confirm_button.disabled = true
-		var response: Dictionary = await APIClient.update_profile({"character_code": "player1"})
-		_confirm_button.disabled = false
-		if not bool(response.get("ok", false)):
-			_status_label.text = APIClient.error_text(response)
-			return
+		if Global.is_logged_in():   # offline: just remember it locally
+			_confirm_button.disabled = true
+			var response: Dictionary = await APIClient.update_profile({"character_code": cid})
+			_confirm_button.disabled = false
+			if not bool(response.get("ok", false)):
+				_status_label.text = APIClient.error_text(response)
+				return
 		Global.selected_character = cid
 		Global.selected_world_id = ""
 		Global.save_session()

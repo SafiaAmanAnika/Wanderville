@@ -6,11 +6,15 @@ const SPEED = 300.0
 # --- Node references ---
 @onready var anim = $girl
 
+var _facing := "south"   # last direction moved, used for the idle pose
+
+
+
 func _physics_process(delta):
 	# FREEZE WHEN MENU IS OPEN
 	if GameState.menu_open or GameState.social_open or get_viewport().gui_get_focus_owner() is LineEdit or (Global.is_logged_in() and not APIClient.realtime.connected):
 		velocity = Vector2.ZERO
-		anim.stop()
+		_stand_still()
 		return
 	
 	# Get input
@@ -32,12 +36,23 @@ func _physics_process(delta):
 
 func _update_animation(input: Vector2):
 	if input == Vector2.ZERO:
-		# Player is standing still — stop animation
-		anim.stop()
+		_stand_still()
 		return
 	
 	# Play animation based on direction
-	anim.play(_get_direction_animation(input))
+	var run_anim := _get_direction_animation(input)
+	_facing = run_anim.trim_prefix("run_")
+	anim.play(run_anim)
+
+
+# New characters have idle animations; the old girl doesn't, so she just stops
+func _stand_still() -> void:
+	var idle := "idle_" + _facing
+	if anim.sprite_frames.has_animation(idle):
+		if anim.animation != idle:
+			anim.play(idle)
+	else:
+		anim.stop()
 
 func _get_direction_animation(input: Vector2) -> String:
 	var angle = input.angle()

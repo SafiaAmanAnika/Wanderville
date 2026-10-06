@@ -6,7 +6,10 @@ class ProfileUpdate(BaseModel):
     display_name: str = Field(
         default=None, min_length=1, max_length=64, pattern=r".*\S.*"
     )
-    character_code: Literal["catto", "girl", "player1"] = None
+    character_code: Literal[
+        "catto", "girl", "player1", "farmer_female",
+        "girl_a", "girl_b", "girl_c", "boy_a", "boy_b", "boy_c",
+    ] = None
     map_code: Literal["campus"] = None
     status_message: str = Field(default=None, max_length=140)
     music_volume: int = Field(default=None, ge=0, le=100, strict=True)

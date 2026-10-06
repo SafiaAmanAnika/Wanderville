@@ -1,5 +1,6 @@
 from datetime import timedelta
 from pathlib import Path
+from time import sleep
 from types import SimpleNamespace
 
 import pytest
@@ -295,7 +296,15 @@ def test_disconnect_updates_friend_presence_and_reconnect_restores_position(clie
         snapshot = socket.receive_json()["data"]
         own = next(p for p in snapshot["players"] if p["player_id"] == user.id)
         assert client.get("/social/friends", headers=other.headers).json()["data"][0]["online"]
-    assert not client.get("/social/friends", headers=other.headers).json()["data"][0]["online"]
+    # Closing the socket only queues the disconnect; the server releases presence and
+    # visit slots on its own thread, so wait for that instead of racing it.
+    online = True
+    for _ in range(200):
+        online = client.get("/social/friends", headers=other.headers).json()["data"][0]["online"]
+        if not online:
+            break
+        sleep(0.01)
+    assert not online
     with client.websocket_connect("/realtime/ws") as socket:
         socket.send_json({"type": "auth", "token": user.tokens["access_token"]})
         restored = socket.receive_json()["data"]["players"][0]

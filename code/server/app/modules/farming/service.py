@@ -15,6 +15,12 @@ from app.modules.farming.schemas import (
 )
 from app.modules.inventory.service import InventoryService
 from app.modules.players.repository import PlayerRepository
+from app.modules.world.access import (
+    MODE_VISITOR,
+    require_owner,
+    require_world_readable,
+    resolve,
+)
 from app.modules.world.service import WorldService, growth_seconds_between
 
 # CropVisual.gd defaults and the supplied scenes: frame 0 waits for water,
@@ -100,19 +106,60 @@ class FarmingService:
         self.players, self.world = PlayerRepository(db), WorldService(db)
         self.inventory, self.economy = InventoryService(db), EconomyService(db)
 
+    # ------------------------------------------------------------------ reads
+
     def list(self, player_id, now=None):
-        now, world, state = (
-            now or utcnow(),
-            self.world.own_world(player_id),
-            self.world.raw_state(),
-        )
+        """Farm grid for the world the caller is currently standing in.
+
+        This is the caller's *own* farm while ``session_mode`` is OWNER and the
+        *host's* farm while it is VISITOR, which is exactly what a visitor must
+        be shown. It is scoped by the resolved ``current_world_id``, never by
+        "whoever is logged in", so the two are not interchangeable.
+        """
+        now = now or utcnow()
+        session = resolve(self.db, player_id)
+        state = self.world.raw_state()
         return FarmGridResponse(
-            plots=[tile_response(r, state, now) for r in self.repo.list(world.id)],
+            plots=[
+                tile_response(r, state, now)
+                for r in self.repo.list(session.current_world_id)
+            ],
             player_id=player_id,
+            world_id=session.current_world_id,
+            session_mode=session.session_mode,
+            read_only=session.is_visitor,
         )
 
+    def list_world(self, player_id, world_id, now=None):
+        """Explicit read of one world, permitted only via an active visit."""
+        now = now or utcnow()
+        require_world_readable(self.db, player_id, world_id)
+        state = self.world.raw_state()
+        return FarmGridResponse(
+            plots=[
+                tile_response(r, state, now) for r in self.repo.list(world_id)
+            ],
+            player_id=player_id,
+            world_id=world_id,
+            session_mode=MODE_VISITOR,
+            read_only=True,
+        )
+
+    # -------------------------------------------------------------- mutations
+
+    def _owner_world(self, player_id):
+        """The one world this player is allowed to change.
+
+        Every mutating path funnels through here. ``require_owner`` compares the
+        authenticated player against the world's stored ``owner_id``, so a
+        visitor replaying a captured owner request is rejected on the server no
+        matter what they sent.
+        """
+        return require_owner(self.db, player_id)
+
     def _owned(self, player_id, tile_id):
-        tile = self.repo.owned(player_id, tile_id)
+        world = self._owner_world(player_id)
+        tile = self.repo.by_world_tile(world.id, tile_id)
         if tile is None:
             raise NotFound("Farm tile not found")
         return tile
@@ -141,7 +188,7 @@ class FarmingService:
         now = now or utcnow()
         with transaction(self.db):
             self.players.lock(player_id)
-            world, state = self.world.own_world(player_id), self.world.raw_state()
+            world, state = self._owner_world(player_id), self.world.raw_state()
             tile = self.repo.coordinate(
                 world.id, request.x, request.y
             ) or self.repo.create(world.id, request.x, request.y)
@@ -155,7 +202,7 @@ class FarmingService:
         now = now or utcnow()
         with transaction(self.db):
             self.players.lock(player_id)
-            world, state = self.world.own_world(player_id), self.world.raw_state()
+            world, state = self._owner_world(player_id), self.world.raw_state()
             tile = self.repo.coordinate(world.id, request.x, request.y)
             if tile and tile.crop_item_code:
                 raise AppError(
@@ -267,13 +314,14 @@ class FarmingService:
 
     def refill(self, player_id):
         from app.modules.profile.models import PlayerProfile
-        from app.modules.realtime.service import RealtimeService
+        from app.modules.realtime.service import CAMPUS_ROOM, RealtimeService
         from app.modules.world.geometry import at_water
 
         with transaction(self.db):
             self.players.lock(player_id)
+            self._owner_world(player_id)
             presence = RealtimeService(self.db).active(player_id)
-            if presence.room != "campus" or not at_water(presence.x, presence.y):
+            if presence.room != CAMPUS_ROOM or not at_water(presence.x, presence.y):
                 raise AppError(
                     "WATER_SOURCE_REQUIRED", "Stand near a campus water source"
                 )

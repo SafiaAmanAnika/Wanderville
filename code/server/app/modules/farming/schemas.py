@@ -56,6 +56,12 @@ class FarmTileResponse(BaseModel):
 class FarmGridResponse(BaseModel):
     plots: list[FarmTileResponse]
     player_id: int
+    # Which world these plots belong to, and whether they may be changed. The
+    # client renders from ``world_id`` and gates its UI on ``read_only``; neither
+    # is an authorisation decision, which stays on the server.
+    world_id: int
+    session_mode: str
+    read_only: bool
 
 
 class PlantResponse(BaseModel):

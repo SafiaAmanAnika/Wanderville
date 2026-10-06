@@ -314,6 +314,54 @@ func get_direct_messages(target_id: int, after: int = 0) -> Dictionary:
 	return await authenticated(HTTPClient.METHOD_GET, "/social/messages/%d?after=%d" % [target_id, after])
 
 
+# ── Farm visiting ───────────────────────────────────────────────────
+# Entry is invitation-only: friendship alone never moves the camera. Every call
+# here targets the session the server derives from the access token, so the
+# client can never name a world it does not belong in.
+
+func visit_session() -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_GET, "/farm/visiting/session")
+
+
+func visiting_state() -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_GET, "/farm/visiting/state")
+
+
+func farm_invitations(resolved: bool = false, as_host: bool = false) -> Dictionary:
+	return await authenticated(
+		HTTPClient.METHOD_GET,
+		"/farm/visiting/invitations?resolved=%s&as_host=%s" % [str(resolved).to_lower(), str(as_host).to_lower()]
+	)
+
+
+func invite_to_farm(target_id: int) -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_POST, "/farm/visiting/invitations", {"target_id": target_id})
+
+
+func accept_farm_invitation(invitation_id: int) -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_POST, "/farm/visiting/invitations/%d/accept" % invitation_id)
+
+
+func decline_farm_invitation(invitation_id: int) -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_POST, "/farm/visiting/invitations/%d/decline" % invitation_id)
+
+
+func cancel_farm_invitation(invitation_id: int) -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_DELETE, "/farm/visiting/invitations/%d" % invitation_id)
+
+
+func farm_visitors() -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_GET, "/farm/visiting/visitors")
+
+
+func remove_farm_visitor(visit_session_id: int) -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_DELETE, "/farm/visiting/visitors/%d" % visit_session_id)
+
+
+func leave_farm() -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_POST, "/farm/visiting/leave")
+
+
 func logout() -> Dictionary:
 	var old_refresh := Global.refresh_token
 	Global.clear_session()

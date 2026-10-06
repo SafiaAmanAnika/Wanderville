@@ -77,7 +77,7 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4")
 theme_override_font_sizes/font_size = 22
-item_count = 4
+item_count = 5
 selected = 0
 popup/item_0/text = "Friends"
 popup/item_0/id = 0
@@ -87,6 +87,8 @@ popup/item_2/text = "Search by username"
 popup/item_2/id = 2
 popup/item_3/text = "Blocked players"
 popup/item_3/id = 3
+popup/item_4/text = "Farm invitations"
+popup/item_4/id = 4
 
 [node name="SearchRow" type="HBoxContainer" parent="Dock/Panel/Body/Friends"]
 unique_name_in_owner = true

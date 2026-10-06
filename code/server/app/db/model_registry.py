@@ -58,7 +58,8 @@ from app.modules.social.models import (  # noqa: F401, E402
     PlayerBlock,
     Gift,
     Trade,
-    Invite,
+    FarmInvitation,
+    FarmVisitSession,
     DirectMessage,
     PlayerReport,
 )  # noqa: F401, E402

@@ -21,3 +21,7 @@ class StateBundleResponse(BaseModel):
     inventory: InventoryListResponse
     economy: EconomyResponse
     experience: XPResponse
+    # Resolved session: authenticatedPlayer / ownedWorld / currentWorld / mode /
+    # host. The client uses it to decide whether to show owner or visitor
+    # controls; the server never trusts it for authorization.
+    session: dict

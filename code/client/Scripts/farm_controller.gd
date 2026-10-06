@@ -323,6 +323,13 @@ func _sfx(name: String):
 
 
 func _server_action(action: String, tile: Vector2i, key: String, seed: String = "") -> void:
+	# Every persistent farm write funnels through here, so a visitor standing in
+	# someone else's world is stopped in one place instead of at each control.
+	# The server refuses these too; this only avoids a pointless round trip and
+	# an error popup for an action the player is not allowed to make.
+	if GameState.read_only:
+		GameState.report_error({"body": {"message": "You are visiting this farm and cannot change it."}})
+		return
 	if _backend_busy or not GameState.backend_ready:
 		return
 	_backend_busy = true
@@ -393,6 +400,11 @@ func _apply_plot(plot: Dictionary) -> void:
 
 
 func _relocate(tile: Vector2i) -> void:
+	# Relocate writes to the host's tiles too, so it is gated like every other
+	# farm mutation rather than trusted because it starts from a drag gesture.
+	if GameState.read_only:
+		GameState.report_error({"body": {"message": "You are visiting this farm and cannot change it."}})
+		return
 	_backend_busy = true
 	var version := Global.session_version
 	var old_key := _drag_key

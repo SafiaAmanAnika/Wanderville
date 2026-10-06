@@ -6,6 +6,8 @@ signal nearby_message_received(message: Dictionary)
 signal direct_message_received(message: Dictionary)
 signal conversation_polled(target_id: int)
 signal request_failed(message: String)
+signal visit_ended(message: String)
+signal room_changed(room: String)
 
 var connected := false
 var players: Array = []
@@ -27,6 +29,38 @@ var _owner := 0
 var _version := -1
 var _retry_delay := 1.0
 var _conversation_versions: Dictionary = {}
+var _room := ""
+# The world this client wants to be standing in. Zero means the shared campus;
+# otherwise it is the id of the world to enter, which the server re-derives
+# permission for. It is a request, never a claim: the server answers with the
+# room it actually put us in.
+var _wanted_owner_id := 0
+
+
+func _enter_payload() -> Dictionary:
+	# The campus is requested by omission: the server treats a missing owner_id
+	# as "no farm", and a literal 0 would fail validation.
+	return {} if _wanted_owner_id <= 0 else {"owner_id": _wanted_owner_id}
+
+
+func enter_world(owner_id: int) -> void:
+	# Switching rooms is a server-side decision: the socket has to re-enter with
+	# the world the player just resolved, and only an accepted invitation or
+	# ownership will be honoured.
+	if _wanted_owner_id == owner_id:
+		return
+	_wanted_owner_id = owner_id
+	_correct_position = true
+	_sequence = 0
+	_pending_sequence = 0
+	if connected:
+		_send("enter", _enter_payload())
+
+
+func restore_own_world() -> void:
+	# Back to where every non-visiting player belongs: the shared campus. The
+	# server has already closed the visit by the time this is called.
+	enter_world(GameState.desired_world_id())
 
 
 func _in_world() -> bool:
@@ -111,6 +145,11 @@ func _process(delta: float) -> void:
 	if not _auth_sent:
 		_socket.send_text(JSON.stringify({"type": "auth", "token": Global.token}))
 		_auth_sent = true
+		# The server opens the socket in the campus room by default. If this
+		# player belongs somewhere else right now, ask for it explicitly before
+		# the first frame is applied, so we never render the wrong world.
+		if _wanted_owner_id > 0:
+			_send("enter", _enter_payload())
 	while _socket != null and _socket.get_available_packet_count() > 0:
 		var packet: Variant = JSON.parse_string(_socket.get_packet().get_string_from_utf8())
 		_last_packet_elapsed = 0.0
@@ -134,13 +173,32 @@ func _process(delta: float) -> void:
 
 func _handle_packet(packet: Dictionary) -> void:
 	if packet.get("type") == "error":
+		var code := str(packet.get("error", ""))
+		if code == "VISIT_ENDED":
+			# The host kicked us, went offline, or the slot was swept. The campus
+			# is where every non-visiting player belongs, so that is where this
+			# puts us rather than a room whose permission may already be gone.
+			_wanted_owner_id = 0
+			_correct_position = true
+			_sequence = 0
+			_pending_sequence = 0
+			visit_ended.emit(str(packet.get("message", "Your visit has ended.")))
+			_send("enter", _enter_payload())
+			return
 		request_failed.emit(str(packet.get("message", "Realtime request failed")))
 		if int(packet.get("status", 0)) == 401:
 			_reauthenticate()
 		elif int(packet.get("status", 0)) == 403:
-			stop()
-			_retry_elapsed = 10.0
-		elif packet.get("error") == "SESSION_EXPIRED":
+			# The server refused the world we asked for, which happens when a
+			# visitor names a world that is not the one hosting them. The campus
+			# is the one room always open to everybody, so fall back there rather
+			# than trusting a local session that may already be stale.
+			if _wanted_owner_id != 0:
+				enter_world(0)
+			else:
+				_pending_sequence = 0
+				_correct_position = true
+		elif code == "SESSION_EXPIRED":
 			_schedule_reconnect()
 		else:
 			_pending_sequence = 0
@@ -151,6 +209,12 @@ func _handle_packet(packet: Dictionary) -> void:
 		return
 	var data: Dictionary = packet["data"]
 	players = data.get("players", [])
+	var room := str(data.get("room", _room))
+	if room != _room:
+		_room = room
+		room_changed.emit(_room)
+	if data.get("session") is Dictionary:
+		GameState.apply_session(data["session"])
 	for entry in players:
 		if int(entry.get("player_id", 0)) == Global.player_id:
 			var accepted := int(entry.get("sequence", 0))

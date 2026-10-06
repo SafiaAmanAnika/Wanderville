@@ -15,7 +15,7 @@ from app.modules.inventory.service import InventoryService
 from app.modules.profile.service import ProfileService
 from app.modules.world.service import WorldService
 
-SECTIONS = ["profile", "farm", "world", "inventory", "economy", "experience"]
+SECTIONS = ["profile", "farm", "world", "inventory", "economy", "experience", "session"]
 
 
 @pytest.fixture
@@ -61,6 +61,10 @@ def test_bundle_matches_each_standalone_endpoint(client, planted):
     assert data["inventory"] == get(client, user, "/inventory/")
     assert data["economy"] == get(client, user, "/economy/")
     assert data["experience"] == get(client, user, "/economy/xp")
+    assert data["session"] == get(client, user, "/farm/visiting/session")
+    assert data["session"]["session_mode"] == "OWNER"
+    assert data["session"]["current_world_id"] == data["session"]["owned_world_id"]
+    assert data["session"]["host_player_id"] is None
 
 
 def test_bundle_profile_carries_bucket_charges(client, planted):

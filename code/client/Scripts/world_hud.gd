@@ -65,21 +65,45 @@ func _ready() -> void:
 	GameState.backend_error.connect(_show_action_error)
 	WoodPanel.apply_error_label(%ActionError)
 	GameState.world_updated.connect(func(data: Dictionary) -> void:
-		%WorldLabel.text = "%s · %s" % [str(data.get("current_season", "")).capitalize(), str(data.get("weather", "")).capitalize()]
+		_world_label()
 	)
+	GameState.read_only_changed.connect(func(_value: bool) -> void: _world_label())
+	GameState.session_updated.connect(func(_session: Dictionary) -> void: _world_label())
+	# Being dropped from a visit changes which world every read must come from,
+	# so the reload is triggered by the event rather than waiting for the poll.
+	APIClient.realtime.visit_ended.connect(_visit_ended)
+	APIClient.realtime.room_changed.connect(func(_room: String) -> void: GameState.refresh_gameplay())
 	Global.session_changed.connect(_clear_account)
 	GameState.store_requested.connect(func() -> void: switch_panel("store"))
 	get_viewport().size_changed.connect(_resize)
 	_resize()
 	_counters()
 	_render_inventory(true)
-	%WorldLabel.text = "%s · %s" % [str(GameState.world_state.get("current_season", "")).capitalize(), str(GameState.world_state.get("weather", "")).capitalize()]
+	_world_label()
 	var timer := Timer.new()
 	timer.wait_time = 20.0
 	timer.timeout.connect(_refresh_badges)
 	add_child(timer)
 	timer.start()
 	_refresh_badges()
+
+
+func _world_label() -> void:
+	var state := "%s · %s" % [
+		str(GameState.world_state.get("current_season", "")).capitalize(),
+		str(GameState.world_state.get("weather", "")).capitalize(),
+	]
+	# While visiting, the world state on screen belongs to the host, so the label
+	# has to say so or the player reads another player's farm as their own.
+	%WorldLabel.text = ("Visiting · read-only · " + state) if GameState.read_only else state
+
+
+func _visit_ended(message: String) -> void:
+	_show_action_error(message)
+	_world_label()
+	# The session on this client still describes the visit that was just taken
+	# away, so the authoritative one is fetched before anything else reads it.
+	GameState.refresh_gameplay()
 
 
 func _resize() -> void:
@@ -369,6 +393,7 @@ func _clear_account() -> void:
 	%Outside.hide()
 	%SocialPanel.set_open(false)
 	GameState.social_open = false
+	_world_label()
 
 
 func _draw_icon(button: Button, kind: String) -> void:

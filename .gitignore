@@ -50,3 +50,6 @@ CHANGES.md
 # Godot PNG import metadata (regenerated automatically by the editor)
 *.png.import
 
+# Godot UID sidecar files (regenerated automatically by the editor)
+*.uid
+

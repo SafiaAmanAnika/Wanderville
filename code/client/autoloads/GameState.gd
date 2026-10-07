@@ -315,6 +315,9 @@ func load_dummy_inventory() -> void:
 		partitions[d[3]] = int(partitions.get(d[3], 0)) + 1
 		total += d[5]
 	inventory_summary = {"items": inventory, "total_items": inventory.size(), "total_quantity": total, "partition_capacity": 20, "partitions": partitions}
+	_rebuild_seed_inventory()
+	if not economy.has("aura_balance"):
+		change_aura_offline(100)   # TEMP: offline pocket money so Buy can be tested
 	inventory_updated.emit(inventory)
 
 
@@ -337,6 +340,7 @@ func add_item_offline(code: String, name: String, quantity := 1, partition := "c
 	inventory_summary["items"] = inventory
 	inventory_summary["total_items"] = inventory.size()
 	inventory_summary["total_quantity"] = int(inventory_summary.get("total_quantity", 0)) + quantity
+	_rebuild_seed_inventory()
 	inventory_updated.emit(inventory)
 
 
@@ -347,3 +351,41 @@ var _offline_id := 0
 func _next_offline_id() -> int:
 	_offline_id -= 1
 	return _offline_id
+
+
+# TEMP offline test: take items out of the local inventory. Returns false if you don't have enough.
+func remove_item_offline(code: String, quantity := 1) -> bool:
+	for row in inventory:
+		if row["item_code"] == code:
+			if int(row["quantity"]) < quantity:
+				return false
+			row["quantity"] = int(row["quantity"]) - quantity
+			if int(row["quantity"]) <= 0:
+				inventory.erase(row)
+			inventory_summary["items"] = inventory
+			inventory_summary["total_items"] = inventory.size()
+			inventory_summary["total_quantity"] = maxi(0, int(inventory_summary.get("total_quantity", 0)) - quantity)
+			_rebuild_seed_inventory()
+			inventory_updated.emit(inventory)
+			return true
+	return false
+
+
+# TEMP offline test: add (or spend, with a negative amount) Aura. Returns false if you can't afford it.
+func change_aura_offline(amount: int) -> bool:
+	var balance := int(economy.get("aura_balance", 0))
+	if balance + amount < 0:
+		return false
+	economy["aura_balance"] = balance + amount
+	economy_updated.emit(economy)
+	return true
+
+
+# seed_inventory ("wheat" -> 5) is what the farm uses for planting; keep it in sync with the bag
+func _rebuild_seed_inventory() -> void:
+	seed_inventory.clear()
+	for row in inventory:
+		var code := str(row["item_code"])
+		if code.ends_with("_seed"):
+			var crop := code.trim_suffix("_seed")
+			seed_inventory[crop] = int(seed_inventory.get(crop, 0)) + int(row["quantity"])

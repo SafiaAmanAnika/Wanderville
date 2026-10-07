@@ -32,6 +32,10 @@ var fishing := false         # true while the mini game is open
 func _ready() -> void:
 	add_to_group("player")
 	z_index = 2
+	# Top-down game: "floating" = no floor/gravity rules. The default ("grounded") treats
+	# slanted lake edges as floors and keeps snapping onto them -> the screen shakes.
+	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
+	_simplify_collision()
 	anim.sprite_frames = anim.sprite_frames.duplicate()   # own copy, so adding animations doesn't touch other scenes
 	if sheet_folder == "":
 		sheet_folder = _find_sheet_folder()
@@ -120,6 +124,17 @@ func _add_fish_key() -> void:
 	var key := InputEventKey.new()
 	key.physical_keycode = KEY_F
 	InputMap.action_add_event("fish", key)
+
+
+# The scenes' collision outline has a thin dent in it; pushing that dent against
+# a lake corner makes the body bounce back and forth. Use the same area without the dent
+# (the outer outline of the same points).
+func _simplify_collision() -> void:
+	var shape := get_node_or_null("CollisionPolygon2D") as CollisionPolygon2D
+	if shape and shape.polygon.size() > 4:
+		var hull := Geometry2D.convex_hull(shape.polygon)
+		hull.remove_at(hull.size() - 1)   # convex_hull repeats the first point at the end
+		shape.polygon = hull
 
 
 # ─── helpers ─────────────────────────────────────────────────────────

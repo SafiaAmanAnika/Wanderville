@@ -2,6 +2,8 @@ extends CanvasLayer
 
 signal seed_selected(seed_name: String)
 
+const MENU_SCRIPT := preload("res://Scripts/inventory/storage_menu.gd")
+
 @onready var panel: PanelContainer = %Panel
 @onready var grid: GridContainer = %Grid
 @onready var title: Label = %TitleLabel
@@ -13,9 +15,11 @@ func _ready() -> void:
 	WoodPanel.apply_panel_title_style(title)
 	WoodPanel.apply_status_label(%Hint)
 	%Cancel.pressed.connect(hide_menu)
-	%Store.pressed.connect(func() -> void:
+	%Storage.pressed.connect(func() -> void:
 		hide_menu()
-		GameState.store_requested.emit()
+		var menu := MENU_SCRIPT.new()
+		menu.start_section = "seeds"
+		get_tree().current_scene.add_child(menu)
 	)
 	$Screen/Outside.gui_input.connect(func(event: InputEvent) -> void:
 		if event is InputEventMouseButton and event.pressed:
@@ -103,8 +107,8 @@ func _render() -> void:
 			button.grab_focus()
 	%Scroll.set_deferred("scroll_vertical", scroll)
 	if grid.get_child_count() == 0:
-		title.text = "No seeds owned · Visit the store"
-		%Hint.text = "Claim starter seeds or buy more at the store."
+		title.text = "No seeds owned · Visit the storage house"
+		%Hint.text = "Claim starter seeds or buy more at the storage house."
 
 
 func hide_menu() -> void:

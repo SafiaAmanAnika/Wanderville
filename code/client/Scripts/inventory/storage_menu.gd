@@ -5,7 +5,7 @@ extends CanvasLayer
 #               crops (crates + barrel), seeds (shelf), fish (aquarium), misc (left crates)
 #               The aquarium shows up to 5 of the fish you have caught, swimming around.
 #  SECTION VIEW - slots for that section on the left, details of the clicked item on the
-#               right (icon, description, price) with Sell / Buy buttons under them.
+#               right (icon, description, price, amount with - / +) with Sell / Buy buttons.
 #  Esc: section -> room -> closed.
 
 signal closed
@@ -27,6 +27,8 @@ const SEASONS := ["summer", "autumn", "winter", "spring"]   # same order as weat
 # where bought items go in the offline bag: section -> [partition, category]
 const OFFLINE_KIND := {"crops": ["crops", "crop"], "seeds": ["seeds", "seed"], "fish": ["fish", "fish"], "misc": ["tools", "misc"]}
 
+var start_section := ""     # open this section right after building (set before add_child)
+
 var _scale := 1.0
 var _room: TextureRect
 var _tank: Control
@@ -34,6 +36,7 @@ var _section_view: PanelContainer
 var _section := ""          # open section ("" = room view)
 var _selected := ""         # selected item code
 var _busy := false
+var _qty := 1               # amount to buy / sell in one trade (1..99, server limit)
 
 # section view widgets
 var _title: Label
@@ -47,6 +50,9 @@ var _price: Label
 var _status: Label
 var _sell: Button
 var _buy: Button
+var _qty_less: Button
+var _qty_label: Label
+var _qty_more: Button
 
 
 func _ready() -> void:
@@ -62,6 +68,8 @@ func _ready() -> void:
 	_build_room(root)
 	_build_section_view(root)
 	_show_room()
+	if start_section != "" and SECTIONS.has(start_section):
+		_open_section(start_section)
 	GameState.inventory_updated.connect(func(_items: Array) -> void: _refresh())
 	GameState.economy_updated.connect(func(_data: Dictionary) -> void: _refresh())
 
@@ -267,6 +275,30 @@ func _build_section_view(root: Control) -> void:
 	details.add_child(gap)
 	_status = _dark_label(WoodPanel.SIZE_SMALL)
 	details.add_child(_status)
+	# amount to trade: - / + with the current amount between them
+	var qty_row := HBoxContainer.new()
+	qty_row.custom_minimum_size.x = 230
+	qty_row.size_flags_horizontal = Control.SIZE_SHRINK_END
+	qty_row.add_theme_constant_override("separation", 8)
+	details.add_child(qty_row)
+	var qty_word := _dark_label(WoodPanel.SIZE_SMALL)
+	qty_word.text = "Amount"
+	qty_word.autowrap_mode = TextServer.AUTOWRAP_OFF
+	qty_word.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	qty_word.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	qty_row.add_child(qty_word)
+	_qty_less = _small_button("-")
+	_qty_less.pressed.connect(_step_qty.bind(-1))
+	qty_row.add_child(_qty_less)
+	_qty_label = _dark_label(WoodPanel.SIZE_STATUS)
+	_qty_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	_qty_label.custom_minimum_size = Vector2(36, 0)
+	_qty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_qty_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	qty_row.add_child(_qty_label)
+	_qty_more = _small_button("+")
+	_qty_more.pressed.connect(_step_qty.bind(1))
+	qty_row.add_child(_qty_more)
 	# Sell / Buy on the right, under everything
 	var buttons := HBoxContainer.new()
 	buttons.alignment = BoxContainer.ALIGNMENT_END
@@ -283,6 +315,7 @@ func _build_section_view(root: Control) -> void:
 func _open_section(key: String) -> void:
 	_section = key
 	_selected = ""
+	_qty = 1
 	_status.text = ""
 	_room.visible = false
 	_section_view.visible = true
@@ -304,7 +337,7 @@ func _render_section() -> void:
 	if _section == "seeds":
 		title += " · " + _current_season().capitalize()
 	_title.text = title
-	_aura.text = "Aura %d" % int(GameState.economy.get("aura_balance", 0))
+	_aura.text = _aura_text()
 	for child in _grid.get_children():
 		child.queue_free()
 	var rows := _rows_in(_section)
@@ -338,6 +371,7 @@ func _make_slot(code: String, qty: int) -> Button:
 		slot.modulate = Color(1, 1, 1, 0.6)   # in-season seed you don't own yet
 	slot.pressed.connect(func() -> void:
 		_selected = code
+		_qty = 1
 		_status.text = ""
 		_render_section())
 	return slot
@@ -351,6 +385,8 @@ func _slot_style() -> StyleBoxFlat:
 
 func _render_details() -> void:
 	var has_item := _selected != ""
+	_qty_less.disabled = true
+	_qty_more.disabled = true
 	_sell.disabled = true
 	_buy.disabled = true
 	if not has_item:
@@ -359,9 +395,11 @@ func _render_details() -> void:
 		_info.text = ""
 		_desc.text = ""
 		_price.text = ""
+		_qty_label.text = ""
 		return
 	var item := _item(_selected)
 	var owned := _owned(_selected)
+	_qty = clampi(_qty, 1, 99)
 	_icon.texture = _icon_for(_selected)
 	_name.text = item["name"]
 	var info := "You have: %d" % owned
@@ -369,16 +407,46 @@ func _render_details() -> void:
 		info += "   ·   Season: %s" % str(item["season"]).capitalize()
 	_info.text = info
 	_desc.text = item["description"]
-	var lines := ["Sell price: %d Aura" % item["sell"] if item["sell"] > 0 else "Can't be sold"]
-	if item["buy"] > 0 and _can_buy_now(item):
-		lines.append("Buy price: %d Aura" % item["buy"])
-	elif item["buy"] > 0:
+	_qty_label.text = str(_qty)
+	var sell_each := int(item["sell"])
+	var buy_each := int(item["buy"])
+	var aura := int(GameState.economy.get("aura_balance", 0))
+	var can_buy_now := buy_each > 0 and _can_buy_now(item)
+	var lines := []
+	if sell_each > 0:
+		lines.append("Sell price: %d Aura each" % sell_each)
+	else:
+		lines.append("Can't be sold")
+	if can_buy_now:
+		lines.append("Buy price: %d Aura each" % buy_each)
+	elif buy_each > 0:
 		lines.append("Out of season - can't buy now")
 	else:
 		lines.append("Can't be bought here")
+	if not _busy and buy_each > 0 and buy_each * _qty > aura:
+		lines.append("Not enough Aura for ×%d" % _qty)
 	_price.text = "\n".join(lines)
-	_sell.disabled = _busy or owned <= 0 or item["sell"] <= 0
-	_buy.disabled = _busy or item["buy"] <= 0 or not _can_buy_now(item)
+	_sell.disabled = _busy or owned < _qty or sell_each <= 0
+	_buy.disabled = _busy or not can_buy_now or buy_each * _qty > aura
+	_qty_less.disabled = _busy or _qty <= 1
+	_qty_more.disabled = _busy or _qty >= 99
+
+
+# the - / + buttons move the trade amount, one step at a time
+func _step_qty(delta: int) -> void:
+	if _busy:
+		return
+	_qty = clampi(_qty + delta, 1, 99)
+	_render_details()
+
+
+# header: Aura plus how full the shared storage is
+func _aura_text() -> String:
+	var text := "Aura %d" % int(GameState.economy.get("aura_balance", 0))
+	var capacity := int(GameState.inventory_summary.get("capacity", 0))
+	if capacity > 0:
+		text += " · Slots %d/%d" % [int(GameState.inventory_summary.get("used_slots", 0)), capacity]
+	return text
 
 
 func _can_buy_now(item: Dictionary) -> bool:
@@ -394,35 +462,40 @@ func _trade(action: String) -> void:
 		return
 	var code := _selected
 	var item := _item(code)
+	var qty := _qty
 	if Global.is_logged_in():
-		await _trade_online(action, code, item)
+		await _trade_online(action, code, item, qty)
 	else:
-		_trade_offline(action, code, item)
+		_trade_offline(action, code, item, qty)
 
 
 # no server: change the local bag + Aura directly
-func _trade_offline(action: String, code: String, item: Dictionary) -> void:
+func _trade_offline(action: String, code: String, item: Dictionary, qty: int) -> void:
 	if action == "buy":
-		if not GameState.change_aura_offline(-int(item["buy"])):
+		var total := int(item["buy"]) * qty
+		if not GameState.change_aura_offline(-total):
 			_status.text = "Not enough Aura."
 			return
 		var kind: Array = OFFLINE_KIND[_section]
-		GameState.add_item_offline(code, item["name"], 1, kind[0], kind[1])
-		_status.text = "Bought 1 %s (-%d Aura)" % [item["name"], item["buy"]]
+		GameState.add_item_offline(code, item["name"], qty, kind[0], kind[1])
+		_status.text = "Bought ×%d %s (-%d Aura)" % [qty, item["name"], total]
 	else:
-		if not GameState.remove_item_offline(code, 1):
+		if not GameState.remove_item_offline(code, qty):
+			_status.text = "Not enough %s in storage." % item["name"]
 			return
-		GameState.change_aura_offline(int(item["sell"]))
-		_status.text = "Sold 1 %s (+%d Aura)" % [item["name"], item["sell"]]
+		var earned := int(item["sell"]) * qty
+		GameState.change_aura_offline(earned)
+		_status.text = "Sold ×%d %s (+%d Aura)" % [qty, item["name"], earned]
+	_qty = 1
 	_render_section()
 
 
 # logged in: ask the server, then reload the bag + Aura
-func _trade_online(action: String, code: String, item: Dictionary) -> void:
+func _trade_online(action: String, code: String, item: Dictionary, qty: int) -> void:
 	_busy = true
 	_render_details()
 	_status.text = "Please wait..."
-	var body := {"item_code": code, "quantity": 1, "request_id": Crypto.new().generate_random_bytes(16).hex_encode()}
+	var body := {"item_code": code, "quantity": qty, "request_id": Crypto.new().generate_random_bytes(16).hex_encode()}
 	if action == "sell":
 		body["confirmed"] = true
 	var response: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_POST, "/shop/" + action, body)
@@ -430,10 +503,11 @@ func _trade_online(action: String, code: String, item: Dictionary) -> void:
 		return
 	if response.get("ok", false):
 		await GameState.refresh_gameplay()
-		_status.text = ("Bought 1 %s" if action == "buy" else "Sold 1 %s") % item["name"]
+		_status.text = ("Bought ×%d %s" if action == "buy" else "Sold ×%d %s") % [qty, item["name"]]
 	else:
 		_status.text = APIClient.error_text(response)
 	_busy = false
+	_qty = 1
 	_render_section()
 
 
@@ -545,4 +619,12 @@ func _button(text: String) -> Button:
 	b.add_theme_stylebox_override("hover", hover)
 	b.add_theme_stylebox_override("pressed", hover)
 	b.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+	return b
+
+
+# compact +/- button for the amount row
+func _small_button(text: String) -> Button:
+	var b := _button(text)
+	b.custom_minimum_size = Vector2(36, 36)
+	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	return b

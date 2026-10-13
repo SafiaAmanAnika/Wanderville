@@ -1,0 +1,1239 @@
+[gd_resource type="TileSet" load_steps=233 format=3]
+
+[ext_resource type="Texture2D" path="res://Assets/house/spritesheets/puzzle_tiles_32.png" id="1_puzzle_tiles_32"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_core/plaster_horizontal.png" id="2_plaster_horizontal"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_core/plaster_vertical.png" id="3_plaster_vertical"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_corners/plaster_outer_top_left.png" id="4_plaster_outer_top_left"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_corners/plaster_outer_top_right.png" id="5_plaster_outer_top_right"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_corners/plaster_outer_bottom_left.png" id="6_plaster_outer_bottom_lef"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_corners/plaster_outer_bottom_right.png" id="7_plaster_outer_bottom_rig"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_corners/plaster_inner_top_left.png" id="8_plaster_inner_top_left"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_corners/plaster_inner_top_right.png" id="9_plaster_inner_top_right"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_corners/plaster_inner_bottom_left.png" id="10_plaster_inner_bottom_lef"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_corners/plaster_inner_bottom_right.png" id="11_plaster_inner_bottom_rig"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_core/plaster_cap_left.png" id="12_plaster_cap_left"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_core/plaster_cap_right.png" id="13_plaster_cap_right"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_core/plaster_cap_top.png" id="14_plaster_cap_top"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_core/plaster_cap_bottom.png" id="15_plaster_cap_bottom"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_junctions/plaster_t_up.png" id="16_plaster_t_up"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_junctions/plaster_t_down.png" id="17_plaster_t_down"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_junctions/plaster_t_left.png" id="18_plaster_t_left"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_junctions/plaster_t_right.png" id="19_plaster_t_right"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_junctions/plaster_four_way.png" id="20_plaster_four_way"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_posts/plaster_plain_post.png" id="21_plaster_plain_post"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_posts/plaster_decorated_post.png" id="22_plaster_decorated_post"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_posts/plaster_heavy_post.png" id="23_plaster_heavy_post"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_variations/plaster_horizontal_divider.png" id="24_plaster_horizontal_divid"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_variations/plaster_vertical_divider.png" id="25_plaster_vertical_divider"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_variations/plaster_half_height_divider.png" id="26_plaster_half_height_divi"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_variations/plaster_end_post_divider.png" id="27_plaster_end_post_divider"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/walls_variations/plaster_corner_divider.png" id="28_plaster_corner_divider"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_integrated/plaster_window_small.png" id="29_plaster_window_small"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_integrated/plaster_window_wide.png" id="30_plaster_window_wide"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_integrated/plaster_window_tall.png" id="31_plaster_window_tall"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_integrated/plaster_window_centered_upper.png" id="32_plaster_window_centered_"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_integrated/plaster_window_shuttered.png" id="33_plaster_window_shuttered"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_integrated/plaster_window_flower_box.png" id="34_plaster_window_flower_bo"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_integrated/plaster_window_multi_pane.png" id="35_plaster_window_multi_pan"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_integrated/plaster_window_frosted.png" id="36_plaster_window_frosted"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_integrated/plaster_window_round.png" id="37_plaster_window_round"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_integrated/plaster_window_arched.png" id="38_plaster_window_arched"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_integrated/plaster_window_lattice.png" id="39_plaster_window_lattice"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_integrated/plaster_window_empty.png" id="40_plaster_window_empty"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_integrated/plaster_window_half_height.png" id="41_plaster_window_half_heig"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/door_static/plaster_door_frame.png" id="42_plaster_door_frame"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_basic/window_small.png" id="43_window_small"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_basic/window_wide.png" id="44_window_wide"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_basic/window_tall.png" id="45_window_tall"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_basic/window_centered_upper.png" id="46_window_centered_upper"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_variations/window_shuttered.png" id="47_window_shuttered"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_variations/window_flower_box.png" id="48_window_flower_box"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_variations/window_multi_pane.png" id="49_window_multi_pane"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_variations/window_frosted.png" id="50_window_frosted"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_variations/window_round.png" id="51_window_round"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_variations/window_arched.png" id="52_window_arched"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_variations/window_lattice.png" id="53_window_lattice"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_variations/window_empty.png" id="54_window_empty"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_variations/window_half_height.png" id="55_window_half_height"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_frames/window_left_frame.png" id="56_window_left_frame"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_frames/window_right_frame.png" id="57_window_right_frame"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_frames/window_lintel.png" id="58_window_lintel"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_frames/window_sill.png" id="59_window_sill"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_frames/window_decorative_top.png" id="60_window_decorative_top"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_variations/window_flower_box_overlay.png" id="61_window_flower_box_overla"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/door_static/door_left_jamb.png" id="62_door_left_jamb"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/door_static/door_right_jamb.png" id="63_door_right_jamb"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/door_static/door_lintel.png" id="64_door_lintel"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/door_static/door_threshold.png" id="65_door_threshold"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/door_animation_5frames/door_pose_0.png" id="66_door_pose_0"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/door_leaves/door_leaf_0.png" id="67_door_leaf_0"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/door_animation_5frames/door_pose_1.png" id="68_door_pose_1"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/door_leaves/door_leaf_1.png" id="69_door_leaf_1"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/door_animation_5frames/door_pose_2.png" id="70_door_pose_2"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/door_leaves/door_leaf_2.png" id="71_door_leaf_2"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/door_animation_5frames/door_pose_3.png" id="72_door_pose_3"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/door_leaves/door_leaf_3.png" id="73_door_leaf_3"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/door_animation_5frames/door_pose_4.png" id="74_door_pose_4"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/door_leaves/door_leaf_4.png" id="75_door_leaf_4"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_overlays/window_small_glass_overlay.png" id="76_window_small_glass_overl"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_overlays/window_wide_glass_overlay.png" id="77_window_wide_glass_overla"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_overlays/window_tall_glass_overlay.png" id="78_window_tall_glass_overla"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_overlays/window_centered_upper_glass_overlay.png" id="79_window_centered_upper_gl"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_overlays/window_shuttered_glass_overlay.png" id="80_window_shuttered_glass_o"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_overlays/window_flower_box_glass_overlay.png" id="81_window_flower_box_glass_"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_overlays/window_multi_pane_glass_overlay.png" id="82_window_multi_pane_glass_"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_overlays/window_frosted_glass_overlay.png" id="83_window_frosted_glass_ove"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_overlays/window_round_glass_overlay.png" id="84_window_round_glass_overl"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_overlays/window_arched_glass_overlay.png" id="85_window_arched_glass_over"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_overlays/window_lattice_glass_overlay.png" id="86_window_lattice_glass_ove"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_overlays/window_empty_glass_overlay.png" id="87_window_empty_glass_overl"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_overlays/window_half_height_glass_overlay.png" id="88_window_half_height_glass"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_frames/plaster_window_mount_frame.png" id="89_plaster_window_mount_fra"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_borders/window_border_small.png" id="90_window_border_small"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_details/window_detail_small.png" id="91_window_detail_small"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_borders/window_border_wide.png" id="92_window_border_wide"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_details/window_detail_wide.png" id="93_window_detail_wide"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_borders/window_border_tall.png" id="94_window_border_tall"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_details/window_detail_tall.png" id="95_window_detail_tall"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_borders/window_border_centered_upper.png" id="96_window_border_centered_u"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_details/window_detail_centered_upper.png" id="97_window_detail_centered_u"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_borders/window_border_shuttered.png" id="98_window_border_shuttered"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_details/window_detail_shuttered.png" id="99_window_detail_shuttered"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_borders/window_border_flower_box.png" id="100_window_border_flower_box"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_details/window_detail_flower_box.png" id="101_window_detail_flower_box"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_borders/window_border_multi_pane.png" id="102_window_border_multi_pane"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_details/window_detail_multi_pane.png" id="103_window_detail_multi_pane"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_borders/window_border_frosted.png" id="104_window_border_frosted"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_details/window_detail_frosted.png" id="105_window_detail_frosted"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_borders/window_border_round.png" id="106_window_border_round"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_details/window_detail_round.png" id="107_window_detail_round"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_borders/window_border_arched.png" id="108_window_border_arched"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_details/window_detail_arched.png" id="109_window_detail_arched"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_borders/window_border_lattice.png" id="110_window_border_lattice"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_details/window_detail_lattice.png" id="111_window_detail_lattice"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_borders/window_border_empty.png" id="112_window_border_empty"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_borders/window_border_half_height.png" id="113_window_border_half_heigh"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_details/window_detail_half_height.png" id="114_window_detail_half_heigh"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_borders/window_surround.png" id="115_window_surround"]
+[ext_resource type="Texture2D" path="res://Assets/house/individual/windows_borders/window_wooden_strips.png" id="116_window_wooden_strips"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_blueprint"]
+resource_name = "house_blueprint"
+texture = ExtResource("1_puzzle_tiles_32")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+10:0/0 = 0
+11:0/0 = 0
+12:0/0 = 0
+13:0/0 = 0
+14:0/0 = 0
+15:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+5:1/0 = 0
+6:1/0 = 0
+7:1/0 = 0
+8:1/0 = 0
+9:1/0 = 0
+10:1/0 = 0
+11:1/0 = 0
+12:1/0 = 0
+13:1/0 = 0
+14:1/0 = 0
+15:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+5:2/0 = 0
+6:2/0 = 0
+7:2/0 = 0
+8:2/0 = 0
+9:2/0 = 0
+10:2/0 = 0
+11:2/0 = 0
+12:2/0 = 0
+13:2/0 = 0
+14:2/0 = 0
+15:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+4:3/0 = 0
+5:3/0 = 0
+6:3/0 = 0
+7:3/0 = 0
+8:3/0 = 0
+9:3/0 = 0
+10:3/0 = 0
+11:3/0 = 0
+12:3/0 = 0
+13:3/0 = 0
+14:3/0 = 0
+15:3/0 = 0
+0:4/0 = 0
+1:4/0 = 0
+2:4/0 = 0
+3:4/0 = 0
+4:4/0 = 0
+5:4/0 = 0
+6:4/0 = 0
+7:4/0 = 0
+8:4/0 = 0
+9:4/0 = 0
+10:4/0 = 0
+11:4/0 = 0
+12:4/0 = 0
+13:4/0 = 0
+14:4/0 = 0
+15:4/0 = 0
+0:5/0 = 0
+1:5/0 = 0
+2:5/0 = 0
+3:5/0 = 0
+4:5/0 = 0
+5:5/0 = 0
+6:5/0 = 0
+7:5/0 = 0
+8:5/0 = 0
+9:5/0 = 0
+10:5/0 = 0
+11:5/0 = 0
+12:5/0 = 0
+13:5/0 = 0
+14:5/0 = 0
+15:5/0 = 0
+0:6/0 = 0
+1:6/0 = 0
+2:6/0 = 0
+3:6/0 = 0
+4:6/0 = 0
+5:6/0 = 0
+6:6/0 = 0
+7:6/0 = 0
+8:6/0 = 0
+9:6/0 = 0
+10:6/0 = 0
+11:6/0 = 0
+12:6/0 = 0
+13:6/0 = 0
+14:6/0 = 0
+15:6/0 = 0
+0:7/0 = 0
+1:7/0 = 0
+2:7/0 = 0
+3:7/0 = 0
+4:7/0 = 0
+5:7/0 = 0
+6:7/0 = 0
+7:7/0 = 0
+8:7/0 = 0
+9:7/0 = 0
+10:7/0 = 0
+11:7/0 = 0
+12:7/0 = 0
+13:7/0 = 0
+14:7/0 = 0
+15:7/0 = 0
+0:8/0 = 0
+1:8/0 = 0
+2:8/0 = 0
+3:8/0 = 0
+4:8/0 = 0
+5:8/0 = 0
+6:8/0 = 0
+7:8/0 = 0
+8:8/0 = 0
+9:8/0 = 0
+10:8/0 = 0
+11:8/0 = 0
+12:8/0 = 0
+13:8/0 = 0
+14:8/0 = 0
+15:8/0 = 0
+0:9/0 = 0
+1:9/0 = 0
+2:9/0 = 0
+3:9/0 = 0
+4:9/0 = 0
+5:9/0 = 0
+6:9/0 = 0
+7:9/0 = 0
+8:9/0 = 0
+9:9/0 = 0
+10:9/0 = 0
+11:9/0 = 0
+12:9/0 = 0
+13:9/0 = 0
+14:9/0 = 0
+15:9/0 = 0
+0:10/0 = 0
+1:10/0 = 0
+2:10/0 = 0
+3:10/0 = 0
+4:10/0 = 0
+5:10/0 = 0
+6:10/0 = 0
+7:10/0 = 0
+8:10/0 = 0
+9:10/0 = 0
+10:10/0 = 0
+11:10/0 = 0
+12:10/0 = 0
+13:10/0 = 0
+14:10/0 = 0
+15:10/0 = 0
+0:11/0 = 0
+1:11/0 = 0
+2:11/0 = 0
+3:11/0 = 0
+4:11/0 = 0
+5:11/0 = 0
+6:11/0 = 0
+7:11/0 = 0
+8:11/0 = 0
+9:11/0 = 0
+10:11/0 = 0
+11:11/0 = 0
+12:11/0 = 0
+13:11/0 = 0
+14:11/0 = 0
+15:11/0 = 0
+0:12/0 = 0
+1:12/0 = 0
+2:12/0 = 0
+3:12/0 = 0
+4:12/0 = 0
+5:12/0 = 0
+6:12/0 = 0
+7:12/0 = 0
+8:12/0 = 0
+9:12/0 = 0
+10:12/0 = 0
+11:12/0 = 0
+12:12/0 = 0
+13:12/0 = 0
+14:12/0 = 0
+15:12/0 = 0
+0:13/0 = 0
+1:13/0 = 0
+2:13/0 = 0
+3:13/0 = 0
+4:13/0 = 0
+5:13/0 = 0
+6:13/0 = 0
+7:13/0 = 0
+8:13/0 = 0
+9:13/0 = 0
+10:13/0 = 0
+11:13/0 = 0
+12:13/0 = 0
+13:13/0 = 0
+14:13/0 = 0
+15:13/0 = 0
+0:14/0 = 0
+1:14/0 = 0
+2:14/0 = 0
+3:14/0 = 0
+4:14/0 = 0
+5:14/0 = 0
+6:14/0 = 0
+7:14/0 = 0
+8:14/0 = 0
+9:14/0 = 0
+10:14/0 = 0
+11:14/0 = 0
+12:14/0 = 0
+13:14/0 = 0
+14:14/0 = 0
+15:14/0 = 0
+0:15/0 = 0
+1:15/0 = 0
+2:15/0 = 0
+3:15/0 = 0
+4:15/0 = 0
+5:15/0 = 0
+6:15/0 = 0
+7:15/0 = 0
+8:15/0 = 0
+9:15/0 = 0
+10:15/0 = 0
+11:15/0 = 0
+12:15/0 = 0
+13:15/0 = 0
+14:15/0 = 0
+15:15/0 = 0
+0:16/0 = 0
+1:16/0 = 0
+2:16/0 = 0
+3:16/0 = 0
+4:16/0 = 0
+5:16/0 = 0
+6:16/0 = 0
+7:16/0 = 0
+8:16/0 = 0
+9:16/0 = 0
+10:16/0 = 0
+11:16/0 = 0
+12:16/0 = 0
+13:16/0 = 0
+14:16/0 = 0
+15:16/0 = 0
+0:17/0 = 0
+1:17/0 = 0
+2:17/0 = 0
+3:17/0 = 0
+4:17/0 = 0
+5:17/0 = 0
+6:17/0 = 0
+7:17/0 = 0
+8:17/0 = 0
+9:17/0 = 0
+10:17/0 = 0
+11:17/0 = 0
+12:17/0 = 0
+13:17/0 = 0
+14:17/0 = 0
+15:17/0 = 0
+0:18/0 = 0
+1:18/0 = 0
+2:18/0 = 0
+3:18/0 = 0
+4:18/0 = 0
+5:18/0 = 0
+6:18/0 = 0
+7:18/0 = 0
+8:18/0 = 0
+9:18/0 = 0
+10:18/0 = 0
+11:18/0 = 0
+12:18/0 = 0
+13:18/0 = 0
+14:18/0 = 0
+15:18/0 = 0
+0:19/0 = 0
+1:19/0 = 0
+2:19/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_horizontal"]
+resource_name = "plaster_horizontal"
+texture = ExtResource("2_plaster_horizontal")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_vertical"]
+resource_name = "plaster_vertical"
+texture = ExtResource("3_plaster_vertical")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_outer_top_left"]
+resource_name = "plaster_outer_top_left"
+texture = ExtResource("4_plaster_outer_top_left")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_outer_top_right"]
+resource_name = "plaster_outer_top_right"
+texture = ExtResource("5_plaster_outer_top_right")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_outer_bottom_left"]
+resource_name = "plaster_outer_bottom_left"
+texture = ExtResource("6_plaster_outer_bottom_lef")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_outer_bottom_right"]
+resource_name = "plaster_outer_bottom_right"
+texture = ExtResource("7_plaster_outer_bottom_rig")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_inner_top_left"]
+resource_name = "plaster_inner_top_left"
+texture = ExtResource("8_plaster_inner_top_left")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_inner_top_right"]
+resource_name = "plaster_inner_top_right"
+texture = ExtResource("9_plaster_inner_top_right")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_inner_bottom_left"]
+resource_name = "plaster_inner_bottom_left"
+texture = ExtResource("10_plaster_inner_bottom_lef")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_inner_bottom_right"]
+resource_name = "plaster_inner_bottom_right"
+texture = ExtResource("11_plaster_inner_bottom_rig")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_cap_left"]
+resource_name = "plaster_cap_left"
+texture = ExtResource("12_plaster_cap_left")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_cap_right"]
+resource_name = "plaster_cap_right"
+texture = ExtResource("13_plaster_cap_right")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_cap_top"]
+resource_name = "plaster_cap_top"
+texture = ExtResource("14_plaster_cap_top")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_cap_bottom"]
+resource_name = "plaster_cap_bottom"
+texture = ExtResource("15_plaster_cap_bottom")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_t_up"]
+resource_name = "plaster_t_up"
+texture = ExtResource("16_plaster_t_up")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_t_down"]
+resource_name = "plaster_t_down"
+texture = ExtResource("17_plaster_t_down")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_t_left"]
+resource_name = "plaster_t_left"
+texture = ExtResource("18_plaster_t_left")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_t_right"]
+resource_name = "plaster_t_right"
+texture = ExtResource("19_plaster_t_right")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_four_way"]
+resource_name = "plaster_four_way"
+texture = ExtResource("20_plaster_four_way")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_plain_post"]
+resource_name = "plaster_plain_post"
+texture = ExtResource("21_plaster_plain_post")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_decorated_post"]
+resource_name = "plaster_decorated_post"
+texture = ExtResource("22_plaster_decorated_post")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_heavy_post"]
+resource_name = "plaster_heavy_post"
+texture = ExtResource("23_plaster_heavy_post")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_horizontal_divider"]
+resource_name = "plaster_horizontal_divider"
+texture = ExtResource("24_plaster_horizontal_divid")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_vertical_divider"]
+resource_name = "plaster_vertical_divider"
+texture = ExtResource("25_plaster_vertical_divider")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_half_height_divider"]
+resource_name = "plaster_half_height_divider"
+texture = ExtResource("26_plaster_half_height_divi")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_end_post_divider"]
+resource_name = "plaster_end_post_divider"
+texture = ExtResource("27_plaster_end_post_divider")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_corner_divider"]
+resource_name = "plaster_corner_divider"
+texture = ExtResource("28_plaster_corner_divider")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_window_small"]
+resource_name = "plaster_window_small"
+texture = ExtResource("29_plaster_window_small")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_window_wide"]
+resource_name = "plaster_window_wide"
+texture = ExtResource("30_plaster_window_wide")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_window_tall"]
+resource_name = "plaster_window_tall"
+texture = ExtResource("31_plaster_window_tall")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_window_centered_upper"]
+resource_name = "plaster_window_centered_upper"
+texture = ExtResource("32_plaster_window_centered_")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_window_shuttered"]
+resource_name = "plaster_window_shuttered"
+texture = ExtResource("33_plaster_window_shuttered")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_window_flower_box"]
+resource_name = "plaster_window_flower_box"
+texture = ExtResource("34_plaster_window_flower_bo")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_window_multi_pane"]
+resource_name = "plaster_window_multi_pane"
+texture = ExtResource("35_plaster_window_multi_pan")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_window_frosted"]
+resource_name = "plaster_window_frosted"
+texture = ExtResource("36_plaster_window_frosted")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_window_round"]
+resource_name = "plaster_window_round"
+texture = ExtResource("37_plaster_window_round")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_window_arched"]
+resource_name = "plaster_window_arched"
+texture = ExtResource("38_plaster_window_arched")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_window_lattice"]
+resource_name = "plaster_window_lattice"
+texture = ExtResource("39_plaster_window_lattice")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_window_empty"]
+resource_name = "plaster_window_empty"
+texture = ExtResource("40_plaster_window_empty")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_window_half_height"]
+resource_name = "plaster_window_half_height"
+texture = ExtResource("41_plaster_window_half_heig")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_door_frame"]
+resource_name = "plaster_door_frame"
+texture = ExtResource("42_plaster_door_frame")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_small"]
+resource_name = "window_small"
+texture = ExtResource("43_window_small")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_wide"]
+resource_name = "window_wide"
+texture = ExtResource("44_window_wide")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_tall"]
+resource_name = "window_tall"
+texture = ExtResource("45_window_tall")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_centered_upper"]
+resource_name = "window_centered_upper"
+texture = ExtResource("46_window_centered_upper")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_shuttered"]
+resource_name = "window_shuttered"
+texture = ExtResource("47_window_shuttered")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_flower_box"]
+resource_name = "window_flower_box"
+texture = ExtResource("48_window_flower_box")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_multi_pane"]
+resource_name = "window_multi_pane"
+texture = ExtResource("49_window_multi_pane")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_frosted"]
+resource_name = "window_frosted"
+texture = ExtResource("50_window_frosted")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_round"]
+resource_name = "window_round"
+texture = ExtResource("51_window_round")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_arched"]
+resource_name = "window_arched"
+texture = ExtResource("52_window_arched")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_lattice"]
+resource_name = "window_lattice"
+texture = ExtResource("53_window_lattice")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_empty"]
+resource_name = "window_empty"
+texture = ExtResource("54_window_empty")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_half_height"]
+resource_name = "window_half_height"
+texture = ExtResource("55_window_half_height")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_left_frame"]
+resource_name = "window_left_frame"
+texture = ExtResource("56_window_left_frame")
+texture_region_size = Vector2i(32, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_right_frame"]
+resource_name = "window_right_frame"
+texture = ExtResource("57_window_right_frame")
+texture_region_size = Vector2i(32, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_lintel"]
+resource_name = "window_lintel"
+texture = ExtResource("58_window_lintel")
+texture_region_size = Vector2i(64, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_sill"]
+resource_name = "window_sill"
+texture = ExtResource("59_window_sill")
+texture_region_size = Vector2i(64, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_decorative_top"]
+resource_name = "window_decorative_top"
+texture = ExtResource("60_window_decorative_top")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_flower_box_overlay"]
+resource_name = "window_flower_box_overlay"
+texture = ExtResource("61_window_flower_box_overla")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_door_left_jamb"]
+resource_name = "door_left_jamb"
+texture = ExtResource("62_door_left_jamb")
+texture_region_size = Vector2i(32, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_door_right_jamb"]
+resource_name = "door_right_jamb"
+texture = ExtResource("63_door_right_jamb")
+texture_region_size = Vector2i(32, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_door_lintel"]
+resource_name = "door_lintel"
+texture = ExtResource("64_door_lintel")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_door_threshold"]
+resource_name = "door_threshold"
+texture = ExtResource("65_door_threshold")
+texture_region_size = Vector2i(64, 32)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_door_pose_0"]
+resource_name = "door_pose_0"
+texture = ExtResource("66_door_pose_0")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_door_leaf_0"]
+resource_name = "door_leaf_0"
+texture = ExtResource("67_door_leaf_0")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_door_pose_1"]
+resource_name = "door_pose_1"
+texture = ExtResource("68_door_pose_1")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_door_leaf_1"]
+resource_name = "door_leaf_1"
+texture = ExtResource("69_door_leaf_1")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_door_pose_2"]
+resource_name = "door_pose_2"
+texture = ExtResource("70_door_pose_2")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_door_leaf_2"]
+resource_name = "door_leaf_2"
+texture = ExtResource("71_door_leaf_2")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_door_pose_3"]
+resource_name = "door_pose_3"
+texture = ExtResource("72_door_pose_3")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_door_leaf_3"]
+resource_name = "door_leaf_3"
+texture = ExtResource("73_door_leaf_3")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_door_pose_4"]
+resource_name = "door_pose_4"
+texture = ExtResource("74_door_pose_4")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_door_leaf_4"]
+resource_name = "door_leaf_4"
+texture = ExtResource("75_door_leaf_4")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_small_glass_overlay"]
+resource_name = "window_small_glass_overlay"
+texture = ExtResource("76_window_small_glass_overl")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_wide_glass_overlay"]
+resource_name = "window_wide_glass_overlay"
+texture = ExtResource("77_window_wide_glass_overla")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_tall_glass_overlay"]
+resource_name = "window_tall_glass_overlay"
+texture = ExtResource("78_window_tall_glass_overla")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_centered_upper_glass_overlay"]
+resource_name = "window_centered_upper_glass_overlay"
+texture = ExtResource("79_window_centered_upper_gl")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_shuttered_glass_overlay"]
+resource_name = "window_shuttered_glass_overlay"
+texture = ExtResource("80_window_shuttered_glass_o")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_flower_box_glass_overlay"]
+resource_name = "window_flower_box_glass_overlay"
+texture = ExtResource("81_window_flower_box_glass_")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_multi_pane_glass_overlay"]
+resource_name = "window_multi_pane_glass_overlay"
+texture = ExtResource("82_window_multi_pane_glass_")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_frosted_glass_overlay"]
+resource_name = "window_frosted_glass_overlay"
+texture = ExtResource("83_window_frosted_glass_ove")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_round_glass_overlay"]
+resource_name = "window_round_glass_overlay"
+texture = ExtResource("84_window_round_glass_overl")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_arched_glass_overlay"]
+resource_name = "window_arched_glass_overlay"
+texture = ExtResource("85_window_arched_glass_over")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_lattice_glass_overlay"]
+resource_name = "window_lattice_glass_overlay"
+texture = ExtResource("86_window_lattice_glass_ove")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_empty_glass_overlay"]
+resource_name = "window_empty_glass_overlay"
+texture = ExtResource("87_window_empty_glass_overl")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_half_height_glass_overlay"]
+resource_name = "window_half_height_glass_overlay"
+texture = ExtResource("88_window_half_height_glass")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_plaster_window_mount_frame"]
+resource_name = "plaster_window_mount_frame"
+texture = ExtResource("89_plaster_window_mount_fra")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_border_small"]
+resource_name = "window_border_small"
+texture = ExtResource("90_window_border_small")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_detail_small"]
+resource_name = "window_detail_small"
+texture = ExtResource("91_window_detail_small")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_border_wide"]
+resource_name = "window_border_wide"
+texture = ExtResource("92_window_border_wide")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_detail_wide"]
+resource_name = "window_detail_wide"
+texture = ExtResource("93_window_detail_wide")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_border_tall"]
+resource_name = "window_border_tall"
+texture = ExtResource("94_window_border_tall")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_detail_tall"]
+resource_name = "window_detail_tall"
+texture = ExtResource("95_window_detail_tall")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_border_centered_upper"]
+resource_name = "window_border_centered_upper"
+texture = ExtResource("96_window_border_centered_u")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_detail_centered_upper"]
+resource_name = "window_detail_centered_upper"
+texture = ExtResource("97_window_detail_centered_u")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_border_shuttered"]
+resource_name = "window_border_shuttered"
+texture = ExtResource("98_window_border_shuttered")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_detail_shuttered"]
+resource_name = "window_detail_shuttered"
+texture = ExtResource("99_window_detail_shuttered")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_border_flower_box"]
+resource_name = "window_border_flower_box"
+texture = ExtResource("100_window_border_flower_box")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_detail_flower_box"]
+resource_name = "window_detail_flower_box"
+texture = ExtResource("101_window_detail_flower_box")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_border_multi_pane"]
+resource_name = "window_border_multi_pane"
+texture = ExtResource("102_window_border_multi_pane")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_detail_multi_pane"]
+resource_name = "window_detail_multi_pane"
+texture = ExtResource("103_window_detail_multi_pane")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_border_frosted"]
+resource_name = "window_border_frosted"
+texture = ExtResource("104_window_border_frosted")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_detail_frosted"]
+resource_name = "window_detail_frosted"
+texture = ExtResource("105_window_detail_frosted")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_border_round"]
+resource_name = "window_border_round"
+texture = ExtResource("106_window_border_round")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_detail_round"]
+resource_name = "window_detail_round"
+texture = ExtResource("107_window_detail_round")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_border_arched"]
+resource_name = "window_border_arched"
+texture = ExtResource("108_window_border_arched")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_detail_arched"]
+resource_name = "window_detail_arched"
+texture = ExtResource("109_window_detail_arched")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_border_lattice"]
+resource_name = "window_border_lattice"
+texture = ExtResource("110_window_border_lattice")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_detail_lattice"]
+resource_name = "window_detail_lattice"
+texture = ExtResource("111_window_detail_lattice")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_border_empty"]
+resource_name = "window_border_empty"
+texture = ExtResource("112_window_border_empty")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_border_half_height"]
+resource_name = "window_border_half_height"
+texture = ExtResource("113_window_border_half_heigh")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_detail_half_height"]
+resource_name = "window_detail_half_height"
+texture = ExtResource("114_window_detail_half_heigh")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_surround"]
+resource_name = "window_surround"
+texture = ExtResource("115_window_surround")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_window_wooden_strips"]
+resource_name = "window_wooden_strips"
+texture = ExtResource("116_window_wooden_strips")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[resource]
+tile_size = Vector2i(32, 32)
+sources/0 = SubResource("TileSetAtlasSource_blueprint")
+sources/1 = SubResource("TileSetAtlasSource_plaster_horizontal")
+sources/2 = SubResource("TileSetAtlasSource_plaster_vertical")
+sources/3 = SubResource("TileSetAtlasSource_plaster_outer_top_left")
+sources/4 = SubResource("TileSetAtlasSource_plaster_outer_top_right")
+sources/5 = SubResource("TileSetAtlasSource_plaster_outer_bottom_left")
+sources/6 = SubResource("TileSetAtlasSource_plaster_outer_bottom_right")
+sources/7 = SubResource("TileSetAtlasSource_plaster_inner_top_left")
+sources/8 = SubResource("TileSetAtlasSource_plaster_inner_top_right")
+sources/9 = SubResource("TileSetAtlasSource_plaster_inner_bottom_left")
+sources/10 = SubResource("TileSetAtlasSource_plaster_inner_bottom_right")
+sources/11 = SubResource("TileSetAtlasSource_plaster_cap_left")
+sources/12 = SubResource("TileSetAtlasSource_plaster_cap_right")
+sources/13 = SubResource("TileSetAtlasSource_plaster_cap_top")
+sources/14 = SubResource("TileSetAtlasSource_plaster_cap_bottom")
+sources/15 = SubResource("TileSetAtlasSource_plaster_t_up")
+sources/16 = SubResource("TileSetAtlasSource_plaster_t_down")
+sources/17 = SubResource("TileSetAtlasSource_plaster_t_left")
+sources/18 = SubResource("TileSetAtlasSource_plaster_t_right")
+sources/19 = SubResource("TileSetAtlasSource_plaster_four_way")
+sources/20 = SubResource("TileSetAtlasSource_plaster_plain_post")
+sources/21 = SubResource("TileSetAtlasSource_plaster_decorated_post")
+sources/22 = SubResource("TileSetAtlasSource_plaster_heavy_post")
+sources/23 = SubResource("TileSetAtlasSource_plaster_horizontal_divider")
+sources/24 = SubResource("TileSetAtlasSource_plaster_vertical_divider")
+sources/25 = SubResource("TileSetAtlasSource_plaster_half_height_divider")
+sources/26 = SubResource("TileSetAtlasSource_plaster_end_post_divider")
+sources/27 = SubResource("TileSetAtlasSource_plaster_corner_divider")
+sources/28 = SubResource("TileSetAtlasSource_plaster_window_small")
+sources/29 = SubResource("TileSetAtlasSource_plaster_window_wide")
+sources/30 = SubResource("TileSetAtlasSource_plaster_window_tall")
+sources/31 = SubResource("TileSetAtlasSource_plaster_window_centered_upper")
+sources/32 = SubResource("TileSetAtlasSource_plaster_window_shuttered")
+sources/33 = SubResource("TileSetAtlasSource_plaster_window_flower_box")
+sources/34 = SubResource("TileSetAtlasSource_plaster_window_multi_pane")
+sources/35 = SubResource("TileSetAtlasSource_plaster_window_frosted")
+sources/36 = SubResource("TileSetAtlasSource_plaster_window_round")
+sources/37 = SubResource("TileSetAtlasSource_plaster_window_arched")
+sources/38 = SubResource("TileSetAtlasSource_plaster_window_lattice")
+sources/39 = SubResource("TileSetAtlasSource_plaster_window_empty")
+sources/40 = SubResource("TileSetAtlasSource_plaster_window_half_height")
+sources/41 = SubResource("TileSetAtlasSource_plaster_door_frame")
+sources/42 = SubResource("TileSetAtlasSource_window_small")
+sources/43 = SubResource("TileSetAtlasSource_window_wide")
+sources/44 = SubResource("TileSetAtlasSource_window_tall")
+sources/45 = SubResource("TileSetAtlasSource_window_centered_upper")
+sources/46 = SubResource("TileSetAtlasSource_window_shuttered")
+sources/47 = SubResource("TileSetAtlasSource_window_flower_box")
+sources/48 = SubResource("TileSetAtlasSource_window_multi_pane")
+sources/49 = SubResource("TileSetAtlasSource_window_frosted")
+sources/50 = SubResource("TileSetAtlasSource_window_round")
+sources/51 = SubResource("TileSetAtlasSource_window_arched")
+sources/52 = SubResource("TileSetAtlasSource_window_lattice")
+sources/53 = SubResource("TileSetAtlasSource_window_empty")
+sources/54 = SubResource("TileSetAtlasSource_window_half_height")
+sources/55 = SubResource("TileSetAtlasSource_window_left_frame")
+sources/56 = SubResource("TileSetAtlasSource_window_right_frame")
+sources/57 = SubResource("TileSetAtlasSource_window_lintel")
+sources/58 = SubResource("TileSetAtlasSource_window_sill")
+sources/59 = SubResource("TileSetAtlasSource_window_decorative_top")
+sources/60 = SubResource("TileSetAtlasSource_window_flower_box_overlay")
+sources/61 = SubResource("TileSetAtlasSource_door_left_jamb")
+sources/62 = SubResource("TileSetAtlasSource_door_right_jamb")
+sources/63 = SubResource("TileSetAtlasSource_door_lintel")
+sources/64 = SubResource("TileSetAtlasSource_door_threshold")
+sources/65 = SubResource("TileSetAtlasSource_door_pose_0")
+sources/66 = SubResource("TileSetAtlasSource_door_leaf_0")
+sources/67 = SubResource("TileSetAtlasSource_door_pose_1")
+sources/68 = SubResource("TileSetAtlasSource_door_leaf_1")
+sources/69 = SubResource("TileSetAtlasSource_door_pose_2")
+sources/70 = SubResource("TileSetAtlasSource_door_leaf_2")
+sources/71 = SubResource("TileSetAtlasSource_door_pose_3")
+sources/72 = SubResource("TileSetAtlasSource_door_leaf_3")
+sources/73 = SubResource("TileSetAtlasSource_door_pose_4")
+sources/74 = SubResource("TileSetAtlasSource_door_leaf_4")
+sources/75 = SubResource("TileSetAtlasSource_window_small_glass_overlay")
+sources/76 = SubResource("TileSetAtlasSource_window_wide_glass_overlay")
+sources/77 = SubResource("TileSetAtlasSource_window_tall_glass_overlay")
+sources/78 = SubResource("TileSetAtlasSource_window_centered_upper_glass_overlay")
+sources/79 = SubResource("TileSetAtlasSource_window_shuttered_glass_overlay")
+sources/80 = SubResource("TileSetAtlasSource_window_flower_box_glass_overlay")
+sources/81 = SubResource("TileSetAtlasSource_window_multi_pane_glass_overlay")
+sources/82 = SubResource("TileSetAtlasSource_window_frosted_glass_overlay")
+sources/83 = SubResource("TileSetAtlasSource_window_round_glass_overlay")
+sources/84 = SubResource("TileSetAtlasSource_window_arched_glass_overlay")
+sources/85 = SubResource("TileSetAtlasSource_window_lattice_glass_overlay")
+sources/86 = SubResource("TileSetAtlasSource_window_empty_glass_overlay")
+sources/87 = SubResource("TileSetAtlasSource_window_half_height_glass_overlay")
+sources/88 = SubResource("TileSetAtlasSource_plaster_window_mount_frame")
+sources/89 = SubResource("TileSetAtlasSource_window_border_small")
+sources/90 = SubResource("TileSetAtlasSource_window_detail_small")
+sources/91 = SubResource("TileSetAtlasSource_window_border_wide")
+sources/92 = SubResource("TileSetAtlasSource_window_detail_wide")
+sources/93 = SubResource("TileSetAtlasSource_window_border_tall")
+sources/94 = SubResource("TileSetAtlasSource_window_detail_tall")
+sources/95 = SubResource("TileSetAtlasSource_window_border_centered_upper")
+sources/96 = SubResource("TileSetAtlasSource_window_detail_centered_upper")
+sources/97 = SubResource("TileSetAtlasSource_window_border_shuttered")
+sources/98 = SubResource("TileSetAtlasSource_window_detail_shuttered")
+sources/99 = SubResource("TileSetAtlasSource_window_border_flower_box")
+sources/100 = SubResource("TileSetAtlasSource_window_detail_flower_box")
+sources/101 = SubResource("TileSetAtlasSource_window_border_multi_pane")
+sources/102 = SubResource("TileSetAtlasSource_window_detail_multi_pane")
+sources/103 = SubResource("TileSetAtlasSource_window_border_frosted")
+sources/104 = SubResource("TileSetAtlasSource_window_detail_frosted")
+sources/105 = SubResource("TileSetAtlasSource_window_border_round")
+sources/106 = SubResource("TileSetAtlasSource_window_detail_round")
+sources/107 = SubResource("TileSetAtlasSource_window_border_arched")
+sources/108 = SubResource("TileSetAtlasSource_window_detail_arched")
+sources/109 = SubResource("TileSetAtlasSource_window_border_lattice")
+sources/110 = SubResource("TileSetAtlasSource_window_detail_lattice")
+sources/111 = SubResource("TileSetAtlasSource_window_border_empty")
+sources/112 = SubResource("TileSetAtlasSource_window_border_half_height")
+sources/113 = SubResource("TileSetAtlasSource_window_detail_half_height")
+sources/114 = SubResource("TileSetAtlasSource_window_surround")
+sources/115 = SubResource("TileSetAtlasSource_window_wooden_strips")

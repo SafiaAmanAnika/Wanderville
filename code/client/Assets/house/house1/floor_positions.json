@@ -1,0 +1,149 @@
+{
+  "house": "house1",
+  "canvas": [
+    3200,
+    3200
+  ],
+  "reference": "128825f7-4e89-4922-aaf4-485b4e08f20c.webp",
+  "reference_sha256": "d4ca5b1f1050c0b2937024230cd54dcf760df2b966fc3bec4140470915b0fdae",
+  "source_size": [
+    614,
+    768
+  ],
+  "scale": 4,
+  "offset": [
+    372,
+    64
+  ],
+  "colors": "original reference colors; no recolor",
+  "rooms": [
+    {
+      "id": "main_room",
+      "file": "rooms/main_room.png",
+      "placement": [
+        632,
+        756
+      ],
+      "size": [
+        1216,
+        1328
+      ],
+      "sheet_rect": [
+        32,
+        32,
+        1216,
+        1328
+      ],
+      "original_surface_rgb": [
+        202.0,
+        144.0,
+        95.0
+      ]
+    },
+    {
+      "id": "upper_right_room",
+      "file": "rooms/upper_right_room.png",
+      "placement": [
+        1892,
+        756
+      ],
+      "size": [
+        700,
+        820
+      ],
+      "sheet_rect": [
+        1280,
+        32,
+        700,
+        820
+      ],
+      "original_surface_rgb": [
+        154.0,
+        102.0,
+        72.0
+      ]
+    },
+    {
+      "id": "lower_patio",
+      "file": "rooms/lower_patio.png",
+      "placement": [
+        1580,
+        1580
+      ],
+      "size": [
+        1036,
+        712
+      ],
+      "sheet_rect": [
+        32,
+        1408,
+        1036,
+        712
+      ],
+      "original_surface_rgb": [
+        174.0,
+        143.0,
+        113.0
+      ]
+    },
+    {
+      "id": "upper_center_room",
+      "file": "rooms/upper_center_room.png",
+      "placement": [
+        1524,
+        692
+      ],
+      "size": [
+        280,
+        536
+      ],
+      "sheet_rect": [
+        1120,
+        1408,
+        280,
+        536
+      ],
+      "original_surface_rgb": [
+        155.0,
+        160.0,
+        142.0
+      ]
+    },
+    {
+      "id": "patio_steps",
+      "file": "rooms/patio_steps.png",
+      "placement": [
+        1940,
+        2336
+      ],
+      "size": [
+        300,
+        188
+      ],
+      "sheet_rect": [
+        1440,
+        1408,
+        300,
+        188
+      ],
+      "original_surface_rgb": [
+        146.0,
+        150.0,
+        130.0
+      ]
+    }
+  ],
+  "floor_sheet_size": [
+    2048,
+    2176
+  ],
+  "master_verification": "all retained source RGB pixels are byte-identical",
+  "room_reconstruction_verified": true,
+  "layer_order": [
+    "floor.png",
+    "structure.png",
+    "doors_static.png or the placed animation frames",
+    "foreground.png"
+  ],
+  "grid": "placement_grid_32.json"
+}

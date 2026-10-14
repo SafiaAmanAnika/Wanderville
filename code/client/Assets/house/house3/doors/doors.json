@@ -1,0 +1,517 @@
+{
+  "canvas": [
+    3200,
+    3200
+  ],
+  "origin": "top-left",
+  "doors": [
+    {
+      "id": "door_01",
+      "name": "upper_left_room_door",
+      "file": "door_01.png",
+      "frames": 8,
+      "frame_size": [
+        160,
+        256
+      ],
+      "frame_rects": [
+        [
+          0,
+          0,
+          160,
+          256
+        ],
+        [
+          160,
+          0,
+          160,
+          256
+        ],
+        [
+          320,
+          0,
+          160,
+          256
+        ],
+        [
+          480,
+          0,
+          160,
+          256
+        ],
+        [
+          640,
+          0,
+          160,
+          256
+        ],
+        [
+          800,
+          0,
+          160,
+          256
+        ],
+        [
+          960,
+          0,
+          160,
+          256
+        ],
+        [
+          1120,
+          0,
+          160,
+          256
+        ]
+      ],
+      "hinge_world": [
+        1268,
+        1024
+      ],
+      "hinge_in_frame": [
+        120,
+        232
+      ],
+      "placement": [
+        1148,
+        792
+      ],
+      "leaf_height": 112,
+      "leaf_length": 101.98039,
+      "source_hinge": [
+        224,
+        240
+      ],
+      "source_free_end": [
+        205,
+        223
+      ],
+      "source_height": 28,
+      "source_face_polygon": [
+        [
+          224.0,
+          212.0
+        ],
+        [
+          205.0,
+          195.0
+        ],
+        [
+          205.0,
+          223.0
+        ],
+        [
+          224.0,
+          240.0
+        ]
+      ],
+      "source_reference": "50309f29-2376-4e59-92a6-90213fa242b1.webp",
+      "opening_angles_degrees": [
+        0,
+        16.059943373288082,
+        32.119886746576164,
+        48.17983011986424,
+        58.63487258989818,
+        69.08991505993212,
+        79.54495752996607,
+        90
+      ],
+      "swing_sign": -1,
+      "reference_pose_frame": 3,
+      "reference_pose_source_cutout": true,
+      "durations_ms": [
+        80,
+        80,
+        80,
+        80,
+        80,
+        80,
+        80,
+        80
+      ],
+      "closing": "reverse frames",
+      "artwork": "individual reference leaf; original colors"
+    },
+    {
+      "id": "door_02",
+      "name": "upper_middle_room_door",
+      "file": "door_02.png",
+      "frames": 8,
+      "frame_size": [
+        192,
+        320
+      ],
+      "frame_rects": [
+        [
+          0,
+          0,
+          192,
+          320
+        ],
+        [
+          192,
+          0,
+          192,
+          320
+        ],
+        [
+          384,
+          0,
+          192,
+          320
+        ],
+        [
+          576,
+          0,
+          192,
+          320
+        ],
+        [
+          768,
+          0,
+          192,
+          320
+        ],
+        [
+          960,
+          0,
+          192,
+          320
+        ],
+        [
+          1152,
+          0,
+          192,
+          320
+        ],
+        [
+          1344,
+          0,
+          192,
+          320
+        ]
+      ],
+      "hinge_world": [
+        1808,
+        940
+      ],
+      "hinge_in_frame": [
+        16,
+        136
+      ],
+      "placement": [
+        1792,
+        804
+      ],
+      "leaf_height": 120,
+      "leaf_length": 136.235091,
+      "source_hinge": [
+        359,
+        219
+      ],
+      "source_free_end": [
+        385,
+        241
+      ],
+      "source_height": 30,
+      "source_face_polygon": [
+        [
+          359.0,
+          189.0
+        ],
+        [
+          385.0,
+          211.0
+        ],
+        [
+          385.0,
+          241.0
+        ],
+        [
+          359.0,
+          219.0
+        ]
+      ],
+      "source_reference": "50309f29-2376-4e59-92a6-90213fa242b1.webp",
+      "opening_angles_degrees": [
+        0,
+        16.587880563575393,
+        33.175761127150786,
+        49.76364169072618,
+        59.822731268044635,
+        69.8818208453631,
+        79.94091042268155,
+        90
+      ],
+      "swing_sign": -1,
+      "reference_pose_frame": 3,
+      "reference_pose_source_cutout": true,
+      "durations_ms": [
+        80,
+        80,
+        80,
+        80,
+        80,
+        80,
+        80,
+        80
+      ],
+      "closing": "reverse frames",
+      "artwork": "individual reference leaf; original colors"
+    },
+    {
+      "id": "door_03",
+      "name": "upper_right_room_door",
+      "file": "door_03.png",
+      "frames": 8,
+      "frame_size": [
+        192,
+        288
+      ],
+      "frame_rects": [
+        [
+          0,
+          0,
+          192,
+          288
+        ],
+        [
+          192,
+          0,
+          192,
+          288
+        ],
+        [
+          384,
+          0,
+          192,
+          288
+        ],
+        [
+          576,
+          0,
+          192,
+          288
+        ],
+        [
+          768,
+          0,
+          192,
+          288
+        ],
+        [
+          960,
+          0,
+          192,
+          288
+        ],
+        [
+          1152,
+          0,
+          192,
+          288
+        ],
+        [
+          1344,
+          0,
+          192,
+          288
+        ]
+      ],
+      "hinge_world": [
+        2140,
+        1056
+      ],
+      "hinge_in_frame": [
+        16,
+        260
+      ],
+      "placement": [
+        2124,
+        796
+      ],
+      "leaf_height": 116,
+      "leaf_length": 127.310644,
+      "source_hinge": [
+        442,
+        248
+      ],
+      "source_free_end": [
+        465,
+        226
+      ],
+      "source_height": 29,
+      "source_face_polygon": [
+        [
+          442.0,
+          219.0
+        ],
+        [
+          465.0,
+          197.0
+        ],
+        [
+          465.0,
+          226.0
+        ],
+        [
+          442.0,
+          248.0
+        ]
+      ],
+      "source_reference": "50309f29-2376-4e59-92a6-90213fa242b1.webp",
+      "opening_angles_degrees": [
+        0,
+        15.4243433400189,
+        30.8486866800378,
+        46.2730300200567,
+        57.20477251504253,
+        68.13651501002835,
+        79.06825750501417,
+        90
+      ],
+      "swing_sign": 1,
+      "reference_pose_frame": 3,
+      "reference_pose_source_cutout": true,
+      "durations_ms": [
+        80,
+        80,
+        80,
+        80,
+        80,
+        80,
+        80,
+        80
+      ],
+      "closing": "reverse frames",
+      "artwork": "individual reference leaf; original colors"
+    },
+    {
+      "id": "door_04",
+      "name": "south_entrance",
+      "file": "door_04.png",
+      "frames": 8,
+      "frame_size": [
+        224,
+        320
+      ],
+      "frame_rects": [
+        [
+          0,
+          0,
+          224,
+          320
+        ],
+        [
+          224,
+          0,
+          224,
+          320
+        ],
+        [
+          448,
+          0,
+          224,
+          320
+        ],
+        [
+          672,
+          0,
+          224,
+          320
+        ],
+        [
+          896,
+          0,
+          224,
+          320
+        ],
+        [
+          1120,
+          0,
+          224,
+          320
+        ],
+        [
+          1344,
+          0,
+          224,
+          320
+        ],
+        [
+          1568,
+          0,
+          224,
+          320
+        ]
+      ],
+      "hinge_world": [
+        1468,
+        2084
+      ],
+      "hinge_in_frame": [
+        16,
+        132
+      ],
+      "placement": [
+        1452,
+        1952
+      ],
+      "leaf_height": 116,
+      "leaf_length": 161.839427,
+      "source_hinge": [
+        274,
+        505
+      ],
+      "source_free_end": [
+        305,
+        531
+      ],
+      "source_height": 29,
+      "source_face_polygon": [
+        [
+          274.0,
+          476.0
+        ],
+        [
+          305.0,
+          502.0
+        ],
+        [
+          305.0,
+          531.0
+        ],
+        [
+          274.0,
+          505.0
+        ]
+      ],
+      "source_reference": "50309f29-2376-4e59-92a6-90213fa242b1.webp",
+      "opening_angles_degrees": [
+        0,
+        13.32896208165473,
+        26.65792416330946,
+        39.98688624496419,
+        52.490164683723144,
+        64.99344312248209,
+        77.49672156124105,
+        90
+      ],
+      "swing_sign": 1,
+      "reference_pose_frame": 3,
+      "reference_pose_source_cutout": true,
+      "durations_ms": [
+        80,
+        80,
+        80,
+        80,
+        80,
+        80,
+        80,
+        80
+      ],
+      "closing": "reverse frames",
+      "artwork": "individual reference leaf; original colors"
+    }
+  ]
+}

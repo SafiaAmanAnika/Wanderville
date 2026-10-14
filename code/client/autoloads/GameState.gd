@@ -40,7 +40,6 @@ signal gameplay_refreshed
 signal economy_updated(data: Dictionary)
 signal experience_updated(data: Dictionary)
 signal level_advanced(previous: Dictionary, current: Dictionary)
-signal store_requested
 
 
 func reset() -> void:

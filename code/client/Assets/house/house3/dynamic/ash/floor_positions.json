@@ -1,0 +1,232 @@
+{
+  "house": "house3",
+  "canvas": [
+    3200,
+    3200
+  ],
+  "reference": "50309f29-2376-4e59-92a6-90213fa242b1.webp",
+  "reference_sha256": "4d134059eee397f4089b021018a28ea265f11a2ce443698bfe215b2ce85cdb02",
+  "source_size": [
+    614,
+    768
+  ],
+  "scale": 4,
+  "offset": [
+    372,
+    64
+  ],
+  "colors": "#C5B4A3",
+  "rooms": [
+    {
+      "id": "central_hall",
+      "file": "rooms/central_hall.png",
+      "placement": [
+        1372,
+        488
+      ],
+      "size": [
+        640,
+        1712
+      ],
+      "sheet_rect": [
+        32,
+        32,
+        640,
+        1712
+      ],
+      "original_surface_rgb": [
+        187.0,
+        122.0,
+        72.0
+      ]
+    },
+    {
+      "id": "lower_right_room",
+      "file": "rooms/lower_right_room.png",
+      "placement": [
+        1776,
+        1120
+      ],
+      "size": [
+        756,
+        960
+      ],
+      "sheet_rect": [
+        704,
+        32,
+        756,
+        960
+      ],
+      "original_surface_rgb": [
+        163.0,
+        101.0,
+        69.0
+      ]
+    },
+    {
+      "id": "lower_left_room",
+      "file": "rooms/lower_left_room.png",
+      "placement": [
+        620,
+        1324
+      ],
+      "size": [
+        820,
+        756
+      ],
+      "sheet_rect": [
+        32,
+        1792,
+        820,
+        756
+      ],
+      "original_surface_rgb": [
+        200.0,
+        135.0,
+        81.0
+      ]
+    },
+    {
+      "id": "upper_left_room",
+      "file": "rooms/upper_left_room.png",
+      "placement": [
+        620,
+        564
+      ],
+      "size": [
+        756,
+        596
+      ],
+      "sheet_rect": [
+        896,
+        1792,
+        756,
+        596
+      ],
+      "original_surface_rgb": [
+        201.0,
+        135.0,
+        80.0
+      ]
+    },
+    {
+      "id": "upper_middle_room",
+      "file": "rooms/upper_middle_room.png",
+      "placement": [
+        1800,
+        564
+      ],
+      "size": [
+        328,
+        492
+      ],
+      "sheet_rect": [
+        32,
+        2592,
+        328,
+        492
+      ],
+      "original_surface_rgb": [
+        194.0,
+        126.0,
+        72.0
+      ]
+    },
+    {
+      "id": "upper_right_room",
+      "file": "rooms/upper_right_room.png",
+      "placement": [
+        2192,
+        564
+      ],
+      "size": [
+        312,
+        420
+      ],
+      "sheet_rect": [
+        416,
+        2592,
+        312,
+        420
+      ],
+      "original_surface_rgb": [
+        136.0,
+        149.0,
+        128.0
+      ]
+    },
+    {
+      "id": "south_patio",
+      "file": "rooms/south_patio.png",
+      "placement": [
+        1152,
+        2196
+      ],
+      "size": [
+        1384,
+        284
+      ],
+      "sheet_rect": [
+        32,
+        3136,
+        1384,
+        284
+      ],
+      "original_surface_rgb": [
+        135.0,
+        148.0,
+        129.0
+      ]
+    },
+    {
+      "id": "east_bay",
+      "file": "rooms/east_bay.png",
+      "placement": [
+        2540,
+        1480
+      ],
+      "size": [
+        132,
+        196
+      ],
+      "sheet_rect": [
+        1472,
+        3136,
+        132,
+        196
+      ],
+      "original_surface_rgb": [
+        135.0,
+        81.0,
+        53.0
+      ]
+    }
+  ],
+  "floor_sheet_size": [
+    2048,
+    3456
+  ],
+  "master_verification": "all retained source RGB pixels are byte-identical",
+  "room_reconstruction_verified": true,
+  "layer_order": [
+    "floor_layer.png",
+    "../../structure.png",
+    "../../doors_static.png or placed animation frames",
+    "../../foreground.png"
+  ],
+  "grid": "../../placement_grid_32.json",
+  "palette": {
+    "id": "ash",
+    "name": "Pale ash / warm taupe",
+    "floor": "#C5B4A3",
+    "wall": "#AD9989"
+  },
+  "floor_layer": "floor_layer.png",
+  "floor_spritesheet": "floor_spritesheet.png",
+  "shared_original_positions": "../../floor_positions.json",
+  "shared_original_grid": "../../placement_grid_32.json",
+  "alpha_geometry_unchanged": true,
+  "full_floor_includes_hidden_door_underlays": true,
+  "visible_house_tint_match_verified": true,
+  "exported_complete_house_match_verified": true
+}

@@ -1,0 +1,1496 @@
+{
+  "tile_size": 32,
+  "tile_set": "res://Assets/house/tilesets/house_tileset.tres",
+  "blueprint": {
+    "source_id": 0,
+    "texture": "res://Assets/house/spritesheets/puzzle_tiles_32.png",
+    "tile_count": 307,
+    "grid": [
+      16,
+      20
+    ]
+  },
+  "modules": [
+    {
+      "name": "plaster_horizontal",
+      "source_id": 1,
+      "category": "walls_core",
+      "texture": "res://Assets/house/individual/walls_core/plaster_horizontal.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "E",
+        "W"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_vertical",
+      "source_id": 2,
+      "category": "walls_core",
+      "texture": "res://Assets/house/individual/walls_core/plaster_vertical.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "N",
+        "S"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_outer_top_left",
+      "source_id": 3,
+      "category": "walls_corners",
+      "texture": "res://Assets/house/individual/walls_corners/plaster_outer_top_left.png",
+      "tile_size": [
+        128,
+        128
+      ],
+      "ports": [
+        "E",
+        "S"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_outer_top_right",
+      "source_id": 4,
+      "category": "walls_corners",
+      "texture": "res://Assets/house/individual/walls_corners/plaster_outer_top_right.png",
+      "tile_size": [
+        128,
+        128
+      ],
+      "ports": [
+        "S",
+        "W"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_outer_bottom_left",
+      "source_id": 5,
+      "category": "walls_corners",
+      "texture": "res://Assets/house/individual/walls_corners/plaster_outer_bottom_left.png",
+      "tile_size": [
+        128,
+        128
+      ],
+      "ports": [
+        "E",
+        "N"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_outer_bottom_right",
+      "source_id": 6,
+      "category": "walls_corners",
+      "texture": "res://Assets/house/individual/walls_corners/plaster_outer_bottom_right.png",
+      "tile_size": [
+        128,
+        128
+      ],
+      "ports": [
+        "N",
+        "W"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_inner_top_left",
+      "source_id": 7,
+      "category": "walls_corners",
+      "texture": "res://Assets/house/individual/walls_corners/plaster_inner_top_left.png",
+      "tile_size": [
+        128,
+        128
+      ],
+      "ports": [
+        "N",
+        "W"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_inner_top_right",
+      "source_id": 8,
+      "category": "walls_corners",
+      "texture": "res://Assets/house/individual/walls_corners/plaster_inner_top_right.png",
+      "tile_size": [
+        128,
+        128
+      ],
+      "ports": [
+        "E",
+        "N"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_inner_bottom_left",
+      "source_id": 9,
+      "category": "walls_corners",
+      "texture": "res://Assets/house/individual/walls_corners/plaster_inner_bottom_left.png",
+      "tile_size": [
+        128,
+        128
+      ],
+      "ports": [
+        "S",
+        "W"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_inner_bottom_right",
+      "source_id": 10,
+      "category": "walls_corners",
+      "texture": "res://Assets/house/individual/walls_corners/plaster_inner_bottom_right.png",
+      "tile_size": [
+        128,
+        128
+      ],
+      "ports": [
+        "E",
+        "S"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_cap_left",
+      "source_id": 11,
+      "category": "walls_core",
+      "texture": "res://Assets/house/individual/walls_core/plaster_cap_left.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "E"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_cap_right",
+      "source_id": 12,
+      "category": "walls_core",
+      "texture": "res://Assets/house/individual/walls_core/plaster_cap_right.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "W"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_cap_top",
+      "source_id": 13,
+      "category": "walls_core",
+      "texture": "res://Assets/house/individual/walls_core/plaster_cap_top.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "S"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_cap_bottom",
+      "source_id": 14,
+      "category": "walls_core",
+      "texture": "res://Assets/house/individual/walls_core/plaster_cap_bottom.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "N"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_t_up",
+      "source_id": 15,
+      "category": "walls_junctions",
+      "texture": "res://Assets/house/individual/walls_junctions/plaster_t_up.png",
+      "tile_size": [
+        128,
+        128
+      ],
+      "ports": [
+        "E",
+        "N",
+        "W"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_t_down",
+      "source_id": 16,
+      "category": "walls_junctions",
+      "texture": "res://Assets/house/individual/walls_junctions/plaster_t_down.png",
+      "tile_size": [
+        128,
+        128
+      ],
+      "ports": [
+        "E",
+        "S",
+        "W"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_t_left",
+      "source_id": 17,
+      "category": "walls_junctions",
+      "texture": "res://Assets/house/individual/walls_junctions/plaster_t_left.png",
+      "tile_size": [
+        128,
+        128
+      ],
+      "ports": [
+        "N",
+        "S",
+        "W"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_t_right",
+      "source_id": 18,
+      "category": "walls_junctions",
+      "texture": "res://Assets/house/individual/walls_junctions/plaster_t_right.png",
+      "tile_size": [
+        128,
+        128
+      ],
+      "ports": [
+        "E",
+        "N",
+        "S"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_four_way",
+      "source_id": 19,
+      "category": "walls_junctions",
+      "texture": "res://Assets/house/individual/walls_junctions/plaster_four_way.png",
+      "tile_size": [
+        128,
+        128
+      ],
+      "ports": [
+        "E",
+        "N",
+        "S",
+        "W"
+      ],
+      "note": "Retained room beams and posts, with one shared source timber profile and a matching wall face."
+    },
+    {
+      "name": "plaster_plain_post",
+      "source_id": 20,
+      "category": "walls_posts",
+      "texture": "res://Assets/house/individual/walls_posts/plaster_plain_post.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Room support post retained; shared timber palette."
+    },
+    {
+      "name": "plaster_decorated_post",
+      "source_id": 21,
+      "category": "walls_posts",
+      "texture": "res://Assets/house/individual/walls_posts/plaster_decorated_post.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Room support post retained; shared timber palette."
+    },
+    {
+      "name": "plaster_heavy_post",
+      "source_id": 22,
+      "category": "walls_posts",
+      "texture": "res://Assets/house/individual/walls_posts/plaster_heavy_post.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Room support post retained; shared timber palette."
+    },
+    {
+      "name": "plaster_horizontal_divider",
+      "source_id": 23,
+      "category": "walls_variations",
+      "texture": "res://Assets/house/individual/walls_variations/plaster_horizontal_divider.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Retained timber divider and end posts; wall fill matches its material."
+    },
+    {
+      "name": "plaster_vertical_divider",
+      "source_id": 24,
+      "category": "walls_variations",
+      "texture": "res://Assets/house/individual/walls_variations/plaster_vertical_divider.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Retained timber divider and end posts; wall fill matches its material."
+    },
+    {
+      "name": "plaster_half_height_divider",
+      "source_id": 25,
+      "category": "walls_variations",
+      "texture": "res://Assets/house/individual/walls_variations/plaster_half_height_divider.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Retained timber divider and end posts; wall fill matches its material."
+    },
+    {
+      "name": "plaster_end_post_divider",
+      "source_id": 26,
+      "category": "walls_variations",
+      "texture": "res://Assets/house/individual/walls_variations/plaster_end_post_divider.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Retained timber divider and end posts; wall fill matches its material."
+    },
+    {
+      "name": "plaster_corner_divider",
+      "source_id": 27,
+      "category": "walls_variations",
+      "texture": "res://Assets/house/individual/walls_variations/plaster_corner_divider.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Retained timber divider and end posts; wall fill matches its material."
+    },
+    {
+      "name": "plaster_window_small",
+      "source_id": 28,
+      "category": "windows_integrated",
+      "texture": "res://Assets/house/individual/windows_integrated/plaster_window_small.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "E",
+        "W"
+      ],
+      "note": null
+    },
+    {
+      "name": "plaster_window_wide",
+      "source_id": 29,
+      "category": "windows_integrated",
+      "texture": "res://Assets/house/individual/windows_integrated/plaster_window_wide.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "E",
+        "W"
+      ],
+      "note": null
+    },
+    {
+      "name": "plaster_window_tall",
+      "source_id": 30,
+      "category": "windows_integrated",
+      "texture": "res://Assets/house/individual/windows_integrated/plaster_window_tall.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "E",
+        "W"
+      ],
+      "note": null
+    },
+    {
+      "name": "plaster_window_centered_upper",
+      "source_id": 31,
+      "category": "windows_integrated",
+      "texture": "res://Assets/house/individual/windows_integrated/plaster_window_centered_upper.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "E",
+        "W"
+      ],
+      "note": null
+    },
+    {
+      "name": "plaster_window_shuttered",
+      "source_id": 32,
+      "category": "windows_integrated",
+      "texture": "res://Assets/house/individual/windows_integrated/plaster_window_shuttered.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "E",
+        "W"
+      ],
+      "note": null
+    },
+    {
+      "name": "plaster_window_flower_box",
+      "source_id": 33,
+      "category": "windows_integrated",
+      "texture": "res://Assets/house/individual/windows_integrated/plaster_window_flower_box.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "E",
+        "W"
+      ],
+      "note": null
+    },
+    {
+      "name": "plaster_window_multi_pane",
+      "source_id": 34,
+      "category": "windows_integrated",
+      "texture": "res://Assets/house/individual/windows_integrated/plaster_window_multi_pane.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "E",
+        "W"
+      ],
+      "note": null
+    },
+    {
+      "name": "plaster_window_frosted",
+      "source_id": 35,
+      "category": "windows_integrated",
+      "texture": "res://Assets/house/individual/windows_integrated/plaster_window_frosted.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "E",
+        "W"
+      ],
+      "note": null
+    },
+    {
+      "name": "plaster_window_round",
+      "source_id": 36,
+      "category": "windows_integrated",
+      "texture": "res://Assets/house/individual/windows_integrated/plaster_window_round.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "E",
+        "W"
+      ],
+      "note": null
+    },
+    {
+      "name": "plaster_window_arched",
+      "source_id": 37,
+      "category": "windows_integrated",
+      "texture": "res://Assets/house/individual/windows_integrated/plaster_window_arched.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "E",
+        "W"
+      ],
+      "note": null
+    },
+    {
+      "name": "plaster_window_lattice",
+      "source_id": 38,
+      "category": "windows_integrated",
+      "texture": "res://Assets/house/individual/windows_integrated/plaster_window_lattice.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "E",
+        "W"
+      ],
+      "note": null
+    },
+    {
+      "name": "plaster_window_empty",
+      "source_id": 39,
+      "category": "windows_integrated",
+      "texture": "res://Assets/house/individual/windows_integrated/plaster_window_empty.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "E",
+        "W"
+      ],
+      "note": null
+    },
+    {
+      "name": "plaster_window_half_height",
+      "source_id": 40,
+      "category": "windows_integrated",
+      "texture": "res://Assets/house/individual/windows_integrated/plaster_window_half_height.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "E",
+        "W"
+      ],
+      "note": null
+    },
+    {
+      "name": "plaster_door_frame",
+      "source_id": 41,
+      "category": "door_static",
+      "texture": "res://Assets/house/individual/door_static/plaster_door_frame.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "window_small",
+      "source_id": 42,
+      "category": "windows_basic",
+      "texture": "res://Assets/house/individual/windows_basic/window_small.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "window_wide",
+      "source_id": 43,
+      "category": "windows_basic",
+      "texture": "res://Assets/house/individual/windows_basic/window_wide.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "window_tall",
+      "source_id": 44,
+      "category": "windows_basic",
+      "texture": "res://Assets/house/individual/windows_basic/window_tall.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "window_centered_upper",
+      "source_id": 45,
+      "category": "windows_basic",
+      "texture": "res://Assets/house/individual/windows_basic/window_centered_upper.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "window_shuttered",
+      "source_id": 46,
+      "category": "windows_variations",
+      "texture": "res://Assets/house/individual/windows_variations/window_shuttered.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "window_flower_box",
+      "source_id": 47,
+      "category": "windows_variations",
+      "texture": "res://Assets/house/individual/windows_variations/window_flower_box.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "window_multi_pane",
+      "source_id": 48,
+      "category": "windows_variations",
+      "texture": "res://Assets/house/individual/windows_variations/window_multi_pane.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "window_frosted",
+      "source_id": 49,
+      "category": "windows_variations",
+      "texture": "res://Assets/house/individual/windows_variations/window_frosted.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "window_round",
+      "source_id": 50,
+      "category": "windows_variations",
+      "texture": "res://Assets/house/individual/windows_variations/window_round.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "window_arched",
+      "source_id": 51,
+      "category": "windows_variations",
+      "texture": "res://Assets/house/individual/windows_variations/window_arched.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "window_lattice",
+      "source_id": 52,
+      "category": "windows_variations",
+      "texture": "res://Assets/house/individual/windows_variations/window_lattice.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "window_empty",
+      "source_id": 53,
+      "category": "windows_variations",
+      "texture": "res://Assets/house/individual/windows_variations/window_empty.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "window_half_height",
+      "source_id": 54,
+      "category": "windows_variations",
+      "texture": "res://Assets/house/individual/windows_variations/window_half_height.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "window_left_frame",
+      "source_id": 55,
+      "category": "windows_frames",
+      "texture": "res://Assets/house/individual/windows_frames/window_left_frame.png",
+      "tile_size": [
+        32,
+        64
+      ],
+      "ports": [],
+      "note": "Optional separate frame piece from its illustrated frame card."
+    },
+    {
+      "name": "window_right_frame",
+      "source_id": 56,
+      "category": "windows_frames",
+      "texture": "res://Assets/house/individual/windows_frames/window_right_frame.png",
+      "tile_size": [
+        32,
+        64
+      ],
+      "ports": [],
+      "note": "Optional separate frame piece from its illustrated frame card."
+    },
+    {
+      "name": "window_lintel",
+      "source_id": 57,
+      "category": "windows_frames",
+      "texture": "res://Assets/house/individual/windows_frames/window_lintel.png",
+      "tile_size": [
+        64,
+        32
+      ],
+      "ports": [],
+      "note": "Optional separate frame piece from its illustrated frame card."
+    },
+    {
+      "name": "window_sill",
+      "source_id": 58,
+      "category": "windows_frames",
+      "texture": "res://Assets/house/individual/windows_frames/window_sill.png",
+      "tile_size": [
+        64,
+        32
+      ],
+      "ports": [],
+      "note": "Optional separate frame piece from its illustrated frame card."
+    },
+    {
+      "name": "window_decorative_top",
+      "source_id": 59,
+      "category": "windows_frames",
+      "texture": "res://Assets/house/individual/windows_frames/window_decorative_top.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Optional separate frame piece from its illustrated frame card."
+    },
+    {
+      "name": "window_flower_box_overlay",
+      "source_id": 60,
+      "category": "windows_variations",
+      "texture": "res://Assets/house/individual/windows_variations/window_flower_box_overlay.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Source flower-box foreground only; optional overlay."
+    },
+    {
+      "name": "door_left_jamb",
+      "source_id": 61,
+      "category": "door_static",
+      "texture": "res://Assets/house/individual/door_static/door_left_jamb.png",
+      "tile_size": [
+        32,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "door_right_jamb",
+      "source_id": 62,
+      "category": "door_static",
+      "texture": "res://Assets/house/individual/door_static/door_right_jamb.png",
+      "tile_size": [
+        32,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "door_lintel",
+      "source_id": 63,
+      "category": "door_static",
+      "texture": "res://Assets/house/individual/door_static/door_lintel.png",
+      "tile_size": [
+        32,
+        32
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "door_threshold",
+      "source_id": 64,
+      "category": "door_static",
+      "texture": "res://Assets/house/individual/door_static/door_threshold.png",
+      "tile_size": [
+        64,
+        32
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "door_pose_0",
+      "source_id": 65,
+      "category": "door_animation_5frames",
+      "texture": "res://Assets/house/individual/door_animation_5frames/door_pose_0.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "door_leaf_0",
+      "source_id": 66,
+      "category": "door_leaves",
+      "texture": "res://Assets/house/individual/door_leaves/door_leaf_0.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "door_pose_1",
+      "source_id": 67,
+      "category": "door_animation_5frames",
+      "texture": "res://Assets/house/individual/door_animation_5frames/door_pose_1.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "door_leaf_1",
+      "source_id": 68,
+      "category": "door_leaves",
+      "texture": "res://Assets/house/individual/door_leaves/door_leaf_1.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "door_pose_2",
+      "source_id": 69,
+      "category": "door_animation_5frames",
+      "texture": "res://Assets/house/individual/door_animation_5frames/door_pose_2.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "door_leaf_2",
+      "source_id": 70,
+      "category": "door_leaves",
+      "texture": "res://Assets/house/individual/door_leaves/door_leaf_2.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "door_pose_3",
+      "source_id": 71,
+      "category": "door_animation_5frames",
+      "texture": "res://Assets/house/individual/door_animation_5frames/door_pose_3.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "door_leaf_3",
+      "source_id": 72,
+      "category": "door_leaves",
+      "texture": "res://Assets/house/individual/door_leaves/door_leaf_3.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "door_pose_4",
+      "source_id": 73,
+      "category": "door_animation_5frames",
+      "texture": "res://Assets/house/individual/door_animation_5frames/door_pose_4.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "door_leaf_4",
+      "source_id": 74,
+      "category": "door_leaves",
+      "texture": "res://Assets/house/individual/door_leaves/door_leaf_4.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": null
+    },
+    {
+      "name": "window_small_glass_overlay",
+      "source_id": 75,
+      "category": "windows_overlays",
+      "texture": "res://Assets/house/individual/windows_overlays/window_small_glass_overlay.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Bare glass/detail overlay. Place at the same origin as a matching window_mount_frame; default windows are complete framed modules."
+    },
+    {
+      "name": "window_wide_glass_overlay",
+      "source_id": 76,
+      "category": "windows_overlays",
+      "texture": "res://Assets/house/individual/windows_overlays/window_wide_glass_overlay.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Bare glass/detail overlay. Place at the same origin as a matching window_mount_frame; default windows are complete framed modules."
+    },
+    {
+      "name": "window_tall_glass_overlay",
+      "source_id": 77,
+      "category": "windows_overlays",
+      "texture": "res://Assets/house/individual/windows_overlays/window_tall_glass_overlay.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Bare glass/detail overlay. Place at the same origin as a matching window_mount_frame; default windows are complete framed modules."
+    },
+    {
+      "name": "window_centered_upper_glass_overlay",
+      "source_id": 78,
+      "category": "windows_overlays",
+      "texture": "res://Assets/house/individual/windows_overlays/window_centered_upper_glass_overlay.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Bare glass/detail overlay. Place at the same origin as a matching window_mount_frame; default windows are complete framed modules."
+    },
+    {
+      "name": "window_shuttered_glass_overlay",
+      "source_id": 79,
+      "category": "windows_overlays",
+      "texture": "res://Assets/house/individual/windows_overlays/window_shuttered_glass_overlay.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Bare glass/detail overlay. Place at the same origin as a matching window_mount_frame; default windows are complete framed modules."
+    },
+    {
+      "name": "window_flower_box_glass_overlay",
+      "source_id": 80,
+      "category": "windows_overlays",
+      "texture": "res://Assets/house/individual/windows_overlays/window_flower_box_glass_overlay.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Bare glass/detail overlay. Place at the same origin as a matching window_mount_frame; default windows are complete framed modules."
+    },
+    {
+      "name": "window_multi_pane_glass_overlay",
+      "source_id": 81,
+      "category": "windows_overlays",
+      "texture": "res://Assets/house/individual/windows_overlays/window_multi_pane_glass_overlay.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Bare glass/detail overlay. Place at the same origin as a matching window_mount_frame; default windows are complete framed modules."
+    },
+    {
+      "name": "window_frosted_glass_overlay",
+      "source_id": 82,
+      "category": "windows_overlays",
+      "texture": "res://Assets/house/individual/windows_overlays/window_frosted_glass_overlay.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Bare glass/detail overlay. Place at the same origin as a matching window_mount_frame; default windows are complete framed modules."
+    },
+    {
+      "name": "window_round_glass_overlay",
+      "source_id": 83,
+      "category": "windows_overlays",
+      "texture": "res://Assets/house/individual/windows_overlays/window_round_glass_overlay.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Bare glass/detail overlay. Place at the same origin as a matching window_mount_frame; default windows are complete framed modules."
+    },
+    {
+      "name": "window_arched_glass_overlay",
+      "source_id": 84,
+      "category": "windows_overlays",
+      "texture": "res://Assets/house/individual/windows_overlays/window_arched_glass_overlay.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Bare glass/detail overlay. Place at the same origin as a matching window_mount_frame; default windows are complete framed modules."
+    },
+    {
+      "name": "window_lattice_glass_overlay",
+      "source_id": 85,
+      "category": "windows_overlays",
+      "texture": "res://Assets/house/individual/windows_overlays/window_lattice_glass_overlay.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Bare glass/detail overlay. Place at the same origin as a matching window_mount_frame; default windows are complete framed modules."
+    },
+    {
+      "name": "window_empty_glass_overlay",
+      "source_id": 86,
+      "category": "windows_overlays",
+      "texture": "res://Assets/house/individual/windows_overlays/window_empty_glass_overlay.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Bare glass/detail overlay. Place at the same origin as a matching window_mount_frame; default windows are complete framed modules."
+    },
+    {
+      "name": "window_half_height_glass_overlay",
+      "source_id": 87,
+      "category": "windows_overlays",
+      "texture": "res://Assets/house/individual/windows_overlays/window_half_height_glass_overlay.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Bare glass/detail overlay. Place at the same origin as a matching window_mount_frame; default windows are complete framed modules."
+    },
+    {
+      "name": "plaster_window_mount_frame",
+      "source_id": 88,
+      "category": "windows_frames",
+      "texture": "res://Assets/house/individual/windows_frames/plaster_window_mount_frame.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [
+        "E",
+        "W"
+      ],
+      "note": "Complete capped surround and matching wall face, ready for a bare window overlay."
+    },
+    {
+      "name": "window_border_small",
+      "source_id": 89,
+      "category": "windows_borders",
+      "texture": "res://Assets/house/individual/windows_borders/window_border_small.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent complete surround copied from the door wooden posts and strips, plus window timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_detail_small",
+      "source_id": 90,
+      "category": "windows_details",
+      "texture": "res://Assets/house/individual/windows_details/window_detail_small.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent panes and decorations separated from timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_border_wide",
+      "source_id": 91,
+      "category": "windows_borders",
+      "texture": "res://Assets/house/individual/windows_borders/window_border_wide.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent complete surround copied from the door wooden posts and strips, plus window timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_detail_wide",
+      "source_id": 92,
+      "category": "windows_details",
+      "texture": "res://Assets/house/individual/windows_details/window_detail_wide.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent panes and decorations separated from timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_border_tall",
+      "source_id": 93,
+      "category": "windows_borders",
+      "texture": "res://Assets/house/individual/windows_borders/window_border_tall.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent complete surround copied from the door wooden posts and strips, plus window timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_detail_tall",
+      "source_id": 94,
+      "category": "windows_details",
+      "texture": "res://Assets/house/individual/windows_details/window_detail_tall.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent panes and decorations separated from timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_border_centered_upper",
+      "source_id": 95,
+      "category": "windows_borders",
+      "texture": "res://Assets/house/individual/windows_borders/window_border_centered_upper.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent complete surround copied from the door wooden posts and strips, plus window timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_detail_centered_upper",
+      "source_id": 96,
+      "category": "windows_details",
+      "texture": "res://Assets/house/individual/windows_details/window_detail_centered_upper.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent panes and decorations separated from timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_border_shuttered",
+      "source_id": 97,
+      "category": "windows_borders",
+      "texture": "res://Assets/house/individual/windows_borders/window_border_shuttered.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent complete surround copied from the door wooden posts and strips, plus window timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_detail_shuttered",
+      "source_id": 98,
+      "category": "windows_details",
+      "texture": "res://Assets/house/individual/windows_details/window_detail_shuttered.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent panes and decorations separated from timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_border_flower_box",
+      "source_id": 99,
+      "category": "windows_borders",
+      "texture": "res://Assets/house/individual/windows_borders/window_border_flower_box.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent complete surround copied from the door wooden posts and strips, plus window timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_detail_flower_box",
+      "source_id": 100,
+      "category": "windows_details",
+      "texture": "res://Assets/house/individual/windows_details/window_detail_flower_box.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent panes and decorations separated from timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_border_multi_pane",
+      "source_id": 101,
+      "category": "windows_borders",
+      "texture": "res://Assets/house/individual/windows_borders/window_border_multi_pane.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent complete surround copied from the door wooden posts and strips, plus window timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_detail_multi_pane",
+      "source_id": 102,
+      "category": "windows_details",
+      "texture": "res://Assets/house/individual/windows_details/window_detail_multi_pane.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent panes and decorations separated from timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_border_frosted",
+      "source_id": 103,
+      "category": "windows_borders",
+      "texture": "res://Assets/house/individual/windows_borders/window_border_frosted.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent complete surround copied from the door wooden posts and strips, plus window timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_detail_frosted",
+      "source_id": 104,
+      "category": "windows_details",
+      "texture": "res://Assets/house/individual/windows_details/window_detail_frosted.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent panes and decorations separated from timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_border_round",
+      "source_id": 105,
+      "category": "windows_borders",
+      "texture": "res://Assets/house/individual/windows_borders/window_border_round.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent complete surround copied from the door wooden posts and strips, plus window timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_detail_round",
+      "source_id": 106,
+      "category": "windows_details",
+      "texture": "res://Assets/house/individual/windows_details/window_detail_round.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent panes and decorations separated from timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_border_arched",
+      "source_id": 107,
+      "category": "windows_borders",
+      "texture": "res://Assets/house/individual/windows_borders/window_border_arched.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent complete surround copied from the door wooden posts and strips, plus window timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_detail_arched",
+      "source_id": 108,
+      "category": "windows_details",
+      "texture": "res://Assets/house/individual/windows_details/window_detail_arched.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent panes and decorations separated from timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_border_lattice",
+      "source_id": 109,
+      "category": "windows_borders",
+      "texture": "res://Assets/house/individual/windows_borders/window_border_lattice.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent complete surround copied from the door wooden posts and strips, plus window timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_detail_lattice",
+      "source_id": 110,
+      "category": "windows_details",
+      "texture": "res://Assets/house/individual/windows_details/window_detail_lattice.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent panes and decorations separated from timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_border_empty",
+      "source_id": 111,
+      "category": "windows_borders",
+      "texture": "res://Assets/house/individual/windows_borders/window_border_empty.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent complete surround copied from the door wooden posts and strips, plus window timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_border_half_height",
+      "source_id": 112,
+      "category": "windows_borders",
+      "texture": "res://Assets/house/individual/windows_borders/window_border_half_height.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent complete surround copied from the door wooden posts and strips, plus window timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_detail_half_height",
+      "source_id": 113,
+      "category": "windows_details",
+      "texture": "res://Assets/house/individual/windows_details/window_detail_half_height.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent panes and decorations separated from timber. Align all pieces at the same 64x64 origin."
+    },
+    {
+      "name": "window_surround",
+      "source_id": 114,
+      "category": "windows_borders",
+      "texture": "res://Assets/house/individual/windows_borders/window_surround.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Transparent outer capped wall surround. Inner timber border and glass/detail pieces are separate."
+    },
+    {
+      "name": "window_wooden_strips",
+      "source_id": 115,
+      "category": "windows_borders",
+      "texture": "res://Assets/house/individual/windows_borders/window_wooden_strips.png",
+      "tile_size": [
+        64,
+        64
+      ],
+      "ports": [],
+      "note": "Brown wooden strips copied from the door frame; cream jamb panels removed. Align at the module origin."
+    }
+  ]
+}

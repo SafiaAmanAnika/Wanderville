@@ -4,6 +4,7 @@ The existing Godot 4.6 game is connected to the Python/PostgreSQL backend. This 
 
 - **Start/configure/deploy:** [exact Google, email, database and hosting steps](docs/SETUP_AND_HOSTING.md).
 - **Tests, changed files and limitations:** [verification report](docs/VERIFICATION_RESULTS.md).
+- **Native Godot proximity text/voice, gifts and wishlists:** [standalone client, setup and protocol](docs/PROXIMITY_BACKEND.md).
 
 ## In-game controls
 

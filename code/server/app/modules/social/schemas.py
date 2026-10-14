@@ -18,6 +18,14 @@ class GiftRequest(TargetRequest):
     request_id: str = Field(min_length=8, max_length=64, pattern=r"^[a-zA-Z0-9_-]+$")
     item_code: str = Field(min_length=1, max_length=32)
     quantity: int = Field(1, ge=1, le=99, strict=True)
+    wishlist_entry_id: int | None = Field(None, gt=0, strict=True)
+    wishlist_version: int | None = Field(None, gt=0, strict=True)
+
+    @model_validator(mode="after")
+    def wishlist_link(self):
+        if (self.wishlist_entry_id is None) != (self.wishlist_version is None):
+            raise ValueError("wishlist_entry_id and wishlist_version are required together")
+        return self
 
 
 class TradeRequest(TargetRequest):

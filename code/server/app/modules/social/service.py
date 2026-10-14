@@ -23,6 +23,7 @@ from app.modules.economy.models import PlayerExperience
 from app.modules.inventory.service import InventoryService
 from app.modules.notifications.service import NotificationsService
 from app.modules.world.service import WorldService
+from app.modules.social.community import bump_social
 
 
 def filter_message(body):
@@ -108,6 +109,7 @@ class SocialService:
                 "You have a new friend request",
                 "/social/requests",
             )
+            bump_social(self.db, player_id, target)
         return public(row)
 
     def respond(self, player_id, target, action):
@@ -127,6 +129,7 @@ class SocialService:
                     self.db.delete(row)
             else:
                 self.db.delete(row)
+            bump_social(self.db, player_id, target)
         return {"action": action}
 
     def block(self, player_id, target, unblock=False):
@@ -145,6 +148,7 @@ class SocialService:
                 )
                 if friendship:
                     self.db.delete(friendship)
+            bump_social(self.db, player_id, target)
         return {"blocked": not unblock}
 
     def search(self, player_id, query, limit=20):
@@ -217,6 +221,8 @@ class SocialService:
         ]
 
     def gift(self, player_id, request):
+        from app.modules.social.community import CommunityService
+        from app.modules.social.community_models import GiftWishlistAllocation
         with transaction(self.db):
             self.players.lock(player_id, request.target_id)
             old = self.db.scalar(
@@ -225,6 +231,10 @@ class SocialService:
                 )
             )
             if old:
+                allocation = self.db.get(GiftWishlistAllocation, old.id)
+                old_link = (allocation.entry_id, allocation.expected_version) if allocation else (None, None)
+                if old_link != (request.wishlist_entry_id, request.wishlist_version):
+                    raise AppError("IDEMPOTENCY_CONFLICT", "Request ID reused with different wishlist", 409)
                 if (old.receiver_id, old.item_code, old.quantity) != (
                     request.target_id,
                     request.item_code,
@@ -239,6 +249,7 @@ class SocialService:
             self.allowed(player_id, request.target_id)
             if not self.inventory.definition(request.item_code).giftable:
                 raise Forbidden("Item is not giftable")
+            entry = CommunityService(self.db).reserve(player_id, request)
             self.inventory.remove_internal(
                 player_id, request.item_code, request.quantity
             )
@@ -250,6 +261,9 @@ class SocialService:
                 item_code=request.item_code,
                 quantity=request.quantity,
             )
+            if entry is not None:
+                self.db.add(GiftWishlistAllocation(gift_id=row.id, entry_id=entry.id, expected_version=request.wishlist_version))
+            bump_social(self.db, player_id, request.target_id)
             self.alerts.emit(
                 request.target_id,
                 "gift",
@@ -264,13 +278,19 @@ class SocialService:
             if row.receiver_id != player_id:
                 raise NotFound()
             self.players.lock(player_id, row.sender_id)
-            row = self.repo.get(Gift, gift_id)
+            row = self.db.get(Gift, gift_id, populate_existing=True)
             if row.claimed:
                 raise AppError("ALREADY_CLAIMED", "Gift already claimed", 409)
             if self.blocked(player_id, row.sender_id):
                 raise Forbidden("Interaction is blocked")
             self.inventory.add_internal(player_id, row.item_code, row.quantity)
             row.claimed = True
+            from app.modules.social.community_models import GiftWishlistAllocation, WishlistEntry
+            allocation = self.db.get(GiftWishlistAllocation, gift_id)
+            if allocation:
+                entry = self.db.get(WishlistEntry, allocation.entry_id, populate_existing=True)
+                entry.version += 1
+            bump_social(self.db, player_id, row.sender_id)
         return public(row)
 
     def propose(self, player_id, request):

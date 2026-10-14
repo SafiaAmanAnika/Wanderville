@@ -54,6 +54,15 @@ class Settings(BaseSettings):
     dev_allow_world_mutation: bool = False
     max_move_speed: float = Field(3000, gt=0)
     chat_blocked_words: str = "damn,shit,fuck"
+    proximity_radius: float = Field(600, gt=0, le=2000)
+    proximity_exit_radius: float = Field(720, gt=0, le=2400)
+    voice_enabled: bool = False
+    voice_room_limit: int = Field(8, ge=2, le=16)
+    voice_total_limit: int = Field(32, ge=2, le=128)
+    voice_stun_urls: str = ""
+    voice_turn_urls: str = ""
+    voice_turn_secret: str = ""
+    voice_turn_ttl_seconds: int = Field(600, ge=60, le=3600)
     # Base shared slot pool; each level adds its own increment on top.
     inventory_partition_slots: int = Field(30, ge=1, le=1000)
     # Balancing choice: no planting XP existed before, so it defaults to a
@@ -99,6 +108,10 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def production_policy(self):
+        if self.proximity_exit_radius <= self.proximity_radius:
+            raise ValueError("PROXIMITY_EXIT_RADIUS must exceed PROXIMITY_RADIUS")
+        if self.voice_turn_urls and not self.voice_turn_secret:
+            raise ValueError("VOICE_TURN_SECRET is required with VOICE_TURN_URLS")
         if not self.is_development:
             if self.email_delivery == "file":
                 raise ValueError("File email delivery is development-only")

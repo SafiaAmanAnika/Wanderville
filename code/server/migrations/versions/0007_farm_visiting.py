@@ -276,7 +276,7 @@ def downgrade():
             "INSERT INTO social_invites "
             "(sender_id, receiver_id, world_id, expires_at, accepted) "
             "SELECT host_player_id, invited_player_id, world_id, expires_at, "
-            "       CASE WHEN status = 'ACCEPTED' THEN 1 ELSE 0 END "
+            "       CASE WHEN status = 'ACCEPTED' THEN TRUE ELSE FALSE END "
             "FROM farm_invitations ORDER BY id"
         )
     )

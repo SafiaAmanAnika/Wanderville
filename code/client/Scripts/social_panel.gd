@@ -27,6 +27,7 @@ var _rows: Array = []
 var _loading := false
 var _acting := false
 var _sending := false
+var _pending_text: Dictionary = {}
 var _elapsed := 0.0
 var _revision := 0
 var _drafts: Dictionary = {}
@@ -41,6 +42,7 @@ var _people_kind := "people"
 
 func _ready() -> void:
 	_session = Global.session_version
+	history.bbcode_enabled = false
 	mode.select(0)
 	view.select(0)
 	WoodPanel.apply_field_style(message)
@@ -67,6 +69,10 @@ func _ready() -> void:
 	APIClient.realtime.request_failed.connect(_failure)
 	APIClient.realtime.connection_changed.connect(_connection)
 	APIClient.realtime.snapshot_received.connect(_snapshot)
+	APIClient.realtime.room_changed.connect(func(_room: String) -> void:
+		_nearby.clear()
+		_render_history()
+	)
 	GameState.backend_error.connect(_failure)
 	APIClient.session_expired.connect(_expired)
 	_actions()
@@ -119,6 +125,7 @@ func _process(delta: float) -> void:
 		_private.clear()
 		_names.clear()
 		_drafts.clear()
+		_pending_text.clear()
 		_rows.clear()
 		_target = 0
 		_unread = 0
@@ -515,7 +522,11 @@ func _send() -> void:
 	status.text = "Sending..."
 	var response: Dictionary
 	if mode.selected == 0:
-		response = await APIClient.authenticated(HTTPClient.METHOD_POST, "/realtime/chat", {"body": body})
+		if _pending_text.get("body") != body:
+			_pending_text = {"body": body, "id": APIClient.realtime.new_request_id()}
+		response = await APIClient.realtime.command("chat", {"body": body}, str(_pending_text["id"]))
+		if response.get("ok", false) or not response.get("uncertain", false):
+			_pending_text.clear()
 	else:
 		response = await APIClient.send_direct_message(_target, body)
 	_sending = false

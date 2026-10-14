@@ -36,6 +36,9 @@ Two properties this module deliberately keeps from the existing design:
 """
 
 import math
+import hashlib
+from app.core.config import settings
+from app.modules.social.community_models import ChatReceipt
 from datetime import timedelta
 
 from app.core.clock import as_utc, utcnow
@@ -119,6 +122,7 @@ class RealtimeService:
                 x=x,
                 y=y,
                 sequence=0,
+                room_epoch=(row.room_epoch + 1) if row else 1,
                 updated_at=utcnow(),
                 emote=None,
                 emote_until=None,
@@ -169,8 +173,8 @@ class RealtimeService:
         row = self.repo.get(Presence, pid)
         if (utcnow() - as_utc(row.updated_at)).total_seconds() > PRESENCE_TTL_SECONDS:
             raise AppError("SESSION_EXPIRED", "Enter the world again", 409)
-        if is_world_room(row.room):
-            session = resolve(self.db, pid)
+        session = resolve(self.db, pid)
+        if is_world_room(row.room) or session.is_visitor:
             # A visitor may only hold presence in the world they are visiting.
             # If the session was closed server-side (kick, host offline, sweep)
             # while their socket was still up, their room no longer matches, and
@@ -203,6 +207,7 @@ class RealtimeService:
                 # Retain the last position for reconnect, but expire the visible
                 # presence so other players stop seeing a ghost.
                 row.updated_at = utcnow() - timedelta(seconds=PRESENCE_TTL_SECONDS + 1)
+                row.room_epoch += 1
             profile = self.db.get(PlayerProfile, pid)
             if profile:
                 profile.last_seen_at = utcnow()
@@ -260,7 +265,9 @@ class RealtimeService:
         if (utcnow() - as_utc(row.updated_at)).total_seconds() > PRESENCE_TTL_SECONDS:
             raise AppError("SESSION_EXPIRED", "Enter the world again", 409)
         session = resolve(self.db, pid)
-        if is_world_room(row.room) and row.room != world_room(session.current_world_id):
+        if (is_world_room(row.room) or session.is_visitor) and row.room != world_room(
+            session.current_world_id
+        ):
             # The session was closed server-side (kick, host offline, sweep)
             # while this socket was still up. This frame is what tells the client
             # to come back out of the farm.
@@ -291,51 +298,105 @@ class RealtimeService:
             if not other.emote_until or as_utc(other.emote_until) < utcnow():
                 item["emote"] = None
             visible.append(item)
-        messages = self.repo.messages(pid)
+        messages = self.repo.messages(pid, row.room, row.room_epoch)
         return {
             "players": visible,
             "messages": [public(m) for m in messages if m.sender_id not in blocked],
             "server_time": utcnow(),
             "room": row.room,
+            "room_epoch": row.room_epoch,
             "session": session.public(),
         }
 
-    def chat(self, pid, body):
+    def chat(self, pid, body, request_id=None):
+        body = body.strip()
+        if not body or len(body) > 500:
+            raise AppError(
+                "VALIDATION_ERROR", "Text must contain 1 to 500 characters", 422
+            )
+        digest = hashlib.sha256(body.encode("utf-8")).hexdigest()
         with transaction(self.db):
             PlayerRepository(self.db).lock(pid)
+            if request_id:
+                old = self.db.get(ChatReceipt, (pid, request_id))
+                if old and as_utc(old.expires_at) > utcnow():
+                    if old.body_hash != digest:
+                        raise AppError(
+                            "IDEMPOTENCY_CONFLICT",
+                            "Request ID reused with different text",
+                            409,
+                        )
+                    return {"message_id": old.message_id, "request_id": request_id}
+                if old:
+                    self.db.delete(old)
+                    self.db.flush()
             row = self.active(pid)
+            now = utcnow()
             recent = self.repo.list(
                 NearbyMessage,
                 NearbyMessage.sender_id == pid,
-                NearbyMessage.expires_at > utcnow() + timedelta(seconds=9),
+                NearbyMessage.expires_at > now + timedelta(seconds=9),
                 limit=1,
             )
             if recent:
-                raise AppError("CHAT_COOLDOWN", "Wait before sending another message", 429)
+                raise AppError(
+                    "CHAT_COOLDOWN", "Wait before sending another message", 429
+                )
             message = self.repo.add(
                 NearbyMessage,
                 sender_id=pid,
                 body=filter_message(body),
-                expires_at=utcnow() + timedelta(seconds=10),
+                room=row.room,
+                sender_epoch=row.room_epoch,
+                created_at=now,
+                expires_at=now + timedelta(seconds=10),
             )
             blocked = self.repo.blocked_ids(pid)
+            recipients = {pid: row}
             for other in self.repo.nearby(
                 row.room,
-                utcnow() - timedelta(seconds=PRESENCE_TTL_SECONDS),
+                now - timedelta(seconds=PRESENCE_TTL_SECONDS),
                 row.x,
                 row.y,
-                600,
+                settings.proximity_radius,
             ):
                 if (
-                    math.hypot(row.x - other.x, row.y - other.y) <= 600
+                    math.hypot(row.x - other.x, row.y - other.y)
+                    <= settings.proximity_radius
                     and other.player_id not in blocked
                 ):
-                    self.db.add(
-                        MessageRecipient(
-                            message_id=message.id, player_id=other.player_id
-                        )
+                    recipients[other.player_id] = other
+            for other in recipients.values():
+                self.db.add(
+                    MessageRecipient(
+                        message_id=message.id,
+                        player_id=other.player_id,
+                        room_epoch=other.room_epoch,
                     )
-        return {"message_id": message.id}
+                )
+            if request_id:
+                self.db.add(
+                    ChatReceipt(
+                        sender_id=pid,
+                        request_id=request_id,
+                        body_hash=digest,
+                        message_id=message.id,
+                        expires_at=now + timedelta(hours=24),
+                    )
+                )
+        result = {"message_id": message.id}
+        if request_id:
+            result["request_id"] = request_id
+        return result
+
+    def heartbeat(self, pid):
+        # Stationary voice/listen-only clients need not invent movement packets.
+        # Avoid rewriting movement time while normal move updates are flowing.
+        with transaction(self.db):
+            PlayerRepository(self.db).lock(pid)
+            row = self.active(pid)
+            if (utcnow() - as_utc(row.updated_at)).total_seconds() >= 1:
+                row.updated_at = utcnow()
 
     def emote(self, pid, emote):
         with transaction(self.db):

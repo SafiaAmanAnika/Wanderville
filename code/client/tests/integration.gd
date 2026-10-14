@@ -182,7 +182,7 @@ func _run() -> void:
 	if role == "alice":
 		api.realtime._schedule_reconnect()
 		_check(await _wait(func() -> bool: return api.realtime.connected), "reconnect_restores_session")
-		_check(ui._nearby.size() == nearby_count, "reconnect_does_not_duplicate_chat")
+		_check(ui._nearby.is_empty(), "reconnect_does_not_replay_previous_room_epoch")
 		ui.set_open(false)
 		await _farm()
 		_mark("farm")

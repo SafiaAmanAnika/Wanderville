@@ -14,6 +14,8 @@ var _error_version := 0
 
 
 func _ready() -> void:
+	var proximity_social := preload("res://Scripts/social/proximity_social.gd").new()
+	add_child(proximity_social)
 	for label in [%Balance, %ProgressText, %WorldLabel, %NoticeDetails, %Status, %LevelToastText]:
 		WoodPanel.apply_status_label(label)
 	%Balance.add_theme_font_size_override("font_size", 18)

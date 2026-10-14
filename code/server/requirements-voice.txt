@@ -1,0 +1,3 @@
+# Optional small-room WebRTC media backend (Python 3.12 recommended).
+-r requirements.txt
+aiortc==1.14.0

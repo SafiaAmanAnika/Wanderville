@@ -13,6 +13,9 @@ class EnterRequest(BaseModel):
 
 
 class NearbyChatRequest(BaseModel):
+    request_id: str | None = Field(
+        None, min_length=8, max_length=64, pattern=r"^[a-zA-Z0-9_-]+$"
+    )
     body: str = Field(min_length=1, max_length=500, pattern=r".*\S.*")
 
 

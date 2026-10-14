@@ -67,3 +67,4 @@ from app.modules.social.models import (  # noqa: F401, E402
 from app.modules.events.models import WorldEvent, EventClaim  # noqa: F401, E402
 
 from app.modules.realtime.models import Presence, NearbyMessage, MessageRecipient  # noqa: F401, E402
+from app.modules.social.community_models import SocialPreferences, WishlistEntry, GiftWishlistAllocation, ChatReceipt, SocialRevision  # noqa: F401, E402

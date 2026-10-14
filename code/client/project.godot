@@ -53,3 +53,7 @@ move_crop={
 [network]
 
 wanderville_api_url="https://wanderville-api.onrender.com"
+
+[audio]
+
+driver/enable_input=true

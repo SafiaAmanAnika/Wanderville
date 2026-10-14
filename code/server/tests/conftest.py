@@ -22,6 +22,11 @@ os.environ["JWT_SECRET_KEY"] = "test-only-secret-do-not-use-for-deployment"
 os.environ["DEV_ALLOW_WORLD_MUTATION"] = "false"
 os.environ["FARM_CONSUME_INVENTORY"] = "true"
 os.environ["STARTING_AURA"] = "0"
+os.environ["VOICE_ENABLED"] = "false"
+os.environ["WORLD_WORKER_ENABLED"] = "false"
+os.environ["VOICE_STUN_URLS"] = ""
+os.environ["VOICE_TURN_URLS"] = ""
+os.environ["VOICE_TURN_SECRET"] = ""
 
 from app.core import progression  # noqa: E402
 from app.core.config import settings  # noqa: E402

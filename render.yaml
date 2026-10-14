@@ -10,7 +10,7 @@ services:
     region: singapore
     rootDir: code/server
     buildCommand: pip install -r requirements.txt
-    startCommand: python -m alembic upgrade head && python -m app.db.seed && python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --no-access-log
+    startCommand: python -m alembic upgrade head && python -m app.db.seed && python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --ws-max-size 65536 --ws-max-queue 8 --no-access-log
     healthCheckPath: /ready
     autoDeployTrigger: off
     envVars:
@@ -38,5 +38,15 @@ services:
         sync: false
       - key: GOOGLE_CLIENT_SECRET
         sync: false
+      - key: VOICE_ENABLED
+        value: "true"
+      - key: VOICE_ROOM_LIMIT
+        value: "8"
+      - key: VOICE_TOTAL_LIMIT
+        value: "32"
+      - key: PROXIMITY_RADIUS
+        value: "600"
+      - key: PROXIMITY_EXIT_RADIUS
+        value: "720"
       - key: WORLD_WORKER_ENABLED
         value: "true"

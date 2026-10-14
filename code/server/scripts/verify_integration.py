@@ -55,7 +55,7 @@ def run_postgres():
         subprocess.run([pg_ctl, "stop", "-D", str(data), "-m", "fast", "-w"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
 
-def run_godot(binary, render, hud=False):
+def run_godot(binary, render, hud=False, social=False):
     run = SERVER / ".verification" / ("client_" + secrets.token_hex(4))
     run.mkdir(parents=True)
     print("Creating isolated Godot fixtures:", run, flush=True)
@@ -114,6 +114,11 @@ def fill_inventory(pid: int = Depends(get_current_player_id)):
             inventory.add_internal(pid, "wheat_seed", room + (summary.capacity - summary.used_slots) * 99 - 3)
         return success({})
 app.state.lose_shop_response = False
+app.state.lose_gift_response = False
+@app.post("/integration/lose-next-gift-response")
+async def lose_gift_response():
+    app.state.lose_gift_response = True
+    return success({})
 @app.post("/integration/lose-next-shop-response")
 async def lose_response():
     app.state.lose_shop_response = True
@@ -121,6 +126,9 @@ async def lose_response():
 @app.middleware("http")
 async def simulate_lost_response(request, call_next):
     response = await call_next(request)
+    if request.url.path == "/social/gifts" and response.status_code == 200 and app.state.lose_gift_response:
+        app.state.lose_gift_response = False
+        return JSONResponse(status_code=503, content={"message": "Fixture lost committed gift response"})
     if request.url.path == "/shop/buy" and response.status_code == 200 and app.state.lose_shop_response:
         app.state.lose_shop_response = False
         return JSONResponse(status_code=503, content={"message": "Fixture lost committed response"})
@@ -148,6 +156,7 @@ if __name__ == "__main__":
 ''', encoding="utf-8")
     env["WANDERVILLE_SERVER_ROOT"] = str(SERVER)
     env["WORLD_WORKER_ENABLED"] = "false"
+    env["VOICE_ENABLED"] = "true" if social else "false"
     env["WANDERVILLE_TEST_HUD"] = "1" if hud else "0"
     log = (run / "server.log").open("w", encoding="utf-8")
     backend = subprocess.Popen([sys.executable, str(fixture)], cwd=SERVER, env=env, stdout=log, stderr=subprocess.STDOUT)
@@ -181,7 +190,7 @@ if __name__ == "__main__":
             config = (source / "project.godot").read_text(encoding="utf-8")
             config = config.replace("[application]", '[application]\nconfig/use_custom_user_dir=true\nconfig/custom_user_dir_name="WandervilleVerification/' + run.name + '/' + role + '"')
             (project / "project.godot").write_text(config, encoding="utf-8")
-            arguments = [binary, "--path", str(project), "--script", "res://tests/hud_integration.gd" if hud else "res://tests/integration.gd"]
+            arguments = [binary, "--path", str(project), "--script", "res://tests/proximity_integration.gd" if social else ("res://tests/hud_integration.gd" if hud else "res://tests/integration.gd")]
             if render:
                 arguments += ["--rendering-method", "gl_compatibility", "--position", "20000,20000"]
             else:
@@ -230,10 +239,11 @@ if __name__ == "__main__":
     parser.add_argument("--postgres", action="store_true")
     parser.add_argument("--godot")
     parser.add_argument("--render", action="store_true")
+    parser.add_argument("--social", action="store_true", help="Two native Godot clients: proximity, PCM voice, wishlist and gifts")
     parser.add_argument("--hud", action="store_true", help="Single-client HUD checks without loading the large map")
     args = parser.parse_args()
     if args.postgres:
         raise SystemExit(run_postgres())
     if args.godot:
-        raise SystemExit(run_godot(args.godot, args.render, args.hud))
+        raise SystemExit(run_godot(args.godot, args.render, args.hud, args.social))
     parser.error("Choose --postgres or --godot PATH")

@@ -252,3 +252,26 @@ def test_simultaneous_trade_acceptance_has_one_winner(account, session_factory, 
     assert inventory.repo.stack(b.id, "corn") is None
     assert inventory.repo.stack(a.id, "corn").quantity == 1
     assert inventory.repo.stack(b.id, "wheat").quantity == 1
+
+
+def test_wishlist_final_quantity_has_only_one_donor(account, session_factory, db):
+    from app.modules.social.service import SocialService
+    from app.modules.social.schemas import GiftRequest
+    from app.modules.social.community import CommunityService
+    from app.modules.social.community_schemas import WishlistRequest
+    from app.modules.social.models import Gift
+    owner, a, b = account("wish_race_owner"), account("wish_race_a"), account("wish_race_b")
+    for donor in (a, b):
+        SocialService(db).request(owner.id, donor.id)
+        SocialService(db).respond(donor.id, owner.id, "accept")
+        InventoryService(db).add_compatibility(donor.id, ItemRequest(item_code="wheat", quantity=1))
+    entry = CommunityService(db).put(owner.id, "wheat", WishlistRequest(quantity=1))
+    result = concurrent(session_factory, lambda session, i: SocialService(session).gift((a, b)[i].id,
+        GiftRequest(target_id=owner.id, request_id=f"wishlist_race_{i}", item_code="wheat", quantity=1,
+                    wishlist_entry_id=entry["id"], wishlist_version=entry["version"])))
+    assert sorted(result) == ["WISHLIST_CHANGED", "ok"]
+    db.expire_all()
+    gifts = list(db.scalars(select(Gift).where(Gift.receiver_id == owner.id)))
+    assert len(gifts) == 1
+    state = CommunityService(db).wishlist(owner.id, owner.id)[0]
+    assert state["pending_quantity"] == 1 and state["remaining_quantity"] == 0

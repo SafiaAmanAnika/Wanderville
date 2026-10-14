@@ -19,6 +19,7 @@ from app.modules.farming.service import FarmingService
 from app.modules.notifications.service import NotificationsService
 from app.modules.events.models import WorldEvent
 from app.modules.realtime.models import NearbyMessage
+from app.modules.social.community_models import ChatReceipt
 from app.modules.social.farm_visiting import FarmVisitService
 from app.modules.social.models import FarmInvitation
 
@@ -132,6 +133,7 @@ key,
                     )
                 )
         db.execute(delete(NearbyMessage).where(NearbyMessage.expires_at < now))
+        db.execute(delete(ChatReceipt).where(ChatReceipt.expires_at < now))
     return ids[-1] if len(ids) == batch_size else 0
 
 

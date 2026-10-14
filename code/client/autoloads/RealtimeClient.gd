@@ -9,6 +9,15 @@ signal request_failed(message: String)
 signal visit_ended(message: String)
 signal room_changed(room: String)
 
+signal proximity_updated(data: Dictionary)
+signal voice_updated(data: Dictionary)
+
+var standalone_enabled := false
+var connection_id := ""
+var _packet_sequence := 0
+var _heartbeat_elapsed := 0.0
+var _room_epoch := -1
+var _requests: Dictionary = {}
 var connected := false
 var players: Array = []
 var _socket: WebSocketPeer
@@ -65,10 +74,14 @@ func restore_own_world() -> void:
 
 func _in_world() -> bool:
 	var scene := get_tree().current_scene
-	return Global.is_logged_in() and scene != null and scene.scene_file_path == SceneManager.WORLD_SCENE
+	return Global.is_logged_in() and (standalone_enabled or (scene != null and scene.scene_file_path == SceneManager.WORLD_SCENE))
 
 
 func stop() -> void:
+	connection_id = ""
+	_packet_sequence = 0
+	for id in _requests:
+		_requests[id] = {"ok": false, "message": "Disconnected. Retry to check delivery.", "uncertain": true}
 	if _socket != null:
 		_socket.close()
 	_socket = null
@@ -143,7 +156,7 @@ func _process(delta: float) -> void:
 	if state != WebSocketPeer.STATE_OPEN:
 		return
 	if not _auth_sent:
-		_socket.send_text(JSON.stringify({"type": "auth", "token": Global.token}))
+		_socket.send_text(JSON.stringify({"type": "auth", "token": Global.token, "protocol_version": 2}))
 		_auth_sent = true
 		# The server opens the socket in the campus room by default. If this
 		# player belongs somewhere else right now, ask for it explicitly before
@@ -157,6 +170,10 @@ func _process(delta: float) -> void:
 			_handle_packet(packet)
 	if not connected:
 		return
+	_heartbeat_elapsed += delta
+	if _heartbeat_elapsed >= 0.5:
+		_heartbeat_elapsed = 0.0
+		_send("heartbeat", {})
 	_move_elapsed += delta
 	if _move_elapsed >= 0.2 and _pending_sequence == 0:
 		_move_elapsed = 0.0
@@ -172,6 +189,23 @@ func _process(delta: float) -> void:
 
 
 func _handle_packet(packet: Dictionary) -> void:
+	var incoming_id := str(packet.get("connection_id", ""))
+	if not incoming_id.is_empty():
+		if not connection_id.is_empty() and incoming_id != connection_id:
+			return
+		connection_id = incoming_id
+		var sequence := int(packet.get("sequence", 0))
+		if sequence <= _packet_sequence:
+			return
+		_packet_sequence = sequence
+	var request_id := str(packet.get("request_id", ""))
+	if _requests.has(request_id):
+		var result := {"ok": packet.get("type") != "error", "data": packet.get("data", {}), "message": packet.get("message", ""), "status_code": packet.get("status", 0)}
+		for event in packet.get("events", []):
+			if str(event.get("request_id", "")) == request_id:
+				result["data"] = event.get("data", {})
+				break
+		_requests[request_id] = result
 	if packet.get("type") == "error":
 		var code := str(packet.get("error", ""))
 		if code == "VISIT_ENDED":
@@ -188,6 +222,8 @@ func _handle_packet(packet: Dictionary) -> void:
 		request_failed.emit(str(packet.get("message", "Realtime request failed")))
 		if int(packet.get("status", 0)) == 401:
 			_reauthenticate()
+		elif not request_id.is_empty():
+			return
 		elif int(packet.get("status", 0)) == 403:
 			# The server refused the world we asked for, which happens when a
 			# visitor names a world that is not the one hosting them. The campus
@@ -210,7 +246,10 @@ func _handle_packet(packet: Dictionary) -> void:
 	var data: Dictionary = packet["data"]
 	players = data.get("players", [])
 	var room := str(data.get("room", _room))
-	if room != _room:
+	var epoch := int(data.get("room_epoch", -1))
+	if room != _room or epoch != _room_epoch:
+		_room_epoch = epoch
+		_seen_messages.clear()
 		_room = room
 		room_changed.emit(_room)
 	if data.get("session") is Dictionary:
@@ -229,6 +268,11 @@ func _handle_packet(packet: Dictionary) -> void:
 					_correct_position = false
 					_retry_delay = 1.0
 					_set_connected(true)
+	if standalone_enabled:
+		_correct_position = false
+		_set_connected(true)
+	proximity_updated.emit(data.get("proximity", {}))
+	voice_updated.emit(data.get("voice", {}))
 	for message in data.get("messages", []):
 		var id := int(message.get("id", 0))
 		if not _seen_messages.has(id):
@@ -260,8 +304,30 @@ func _send(kind: String, data: Dictionary) -> bool:
 	return _socket.send_text(JSON.stringify({"type": kind, "data": data})) == OK
 
 
+static func new_request_id() -> String:
+	return Crypto.new().generate_random_bytes(16).hex_encode()
+
+
+func command(kind: String, data: Dictionary = {}, request_id: String = "") -> Dictionary:
+	if not connected or _socket == null:
+		return {"ok": false, "message": "Not connected.", "uncertain": true}
+	var id := new_request_id() if request_id.is_empty() else request_id
+	if _requests.has(id):
+		return {"ok": false, "message": "Request already in progress.", "uncertain": true}
+	_requests[id] = {}
+	if _socket.send_text(JSON.stringify({"type": kind, "data": data, "request_id": id})) != OK:
+		_requests.erase(id)
+		return {"ok": false, "message": "Could not send. Retry to check delivery.", "uncertain": true}
+	var deadline := Time.get_ticks_msec() + 8000
+	while _requests[id].is_empty() and Time.get_ticks_msec() < deadline:
+		await get_tree().process_frame
+	var response: Dictionary = _requests[id]
+	_requests.erase(id)
+	return response if not response.is_empty() else {"ok": false, "message": "No acknowledgement. Retry to check delivery.", "uncertain": true}
+
+
 func send_nearby_chat(message: String) -> bool:
-	return connected and _send("chat", {"body": message})
+	return connected and _send("chat", {"body": message, "request_id": new_request_id()})
 
 
 func send_emote(emote: String) -> bool:

@@ -29,8 +29,11 @@ from app.modules.shop.router import router as shop_router
 from app.modules.progression.router import router as progression_router
 from app.modules.fishing.router import router as fishing_router
 from app.modules.social.router import router as social_router
+from app.modules.social.community_router import router as community_router
 from app.modules.social.visit_router import router as farm_visit_router
 from app.modules.realtime.router import router as realtime_router
+from app.modules.realtime.native_voice import router as native_voice_router
+from app.modules.realtime import policy_events  # noqa: F401
 from app.modules.events.router import router as events_router
 from app.modules.state.router import router as state_router
 
@@ -51,6 +54,10 @@ async def lifespan(_app):
         yield
     finally:
         stop.set()
+        from app.modules.realtime.voice import voice_hub
+        from app.modules.realtime.runtime import runtime
+        await voice_hub.shutdown()
+        runtime.clear()
         if task:
             await task
 
@@ -97,7 +104,7 @@ def create_app():
         CORSMiddleware,
         allow_origins=settings.allowed_origins,
         allow_credentials=False,
-        allow_methods=["GET", "POST", "PUT"],
+        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
         allow_headers=["Authorization", "Content-Type"],
     )
     app.middleware("http")(request_logging)
@@ -162,7 +169,7 @@ def create_app():
         revision = db.scalar(text("SELECT version_num FROM alembic_version"))
         seeded = db.scalar(text("SELECT count(*) FROM item_definitions i JOIN item_rules r ON r.item_code = i.item_code WHERE i.item_code = 'wheat_seed'"))
         clock_ready = db.scalar(text("SELECT count(*) FROM world_state WHERE id = 1"))
-        if revision != "0007_farm_visiting" or not seeded or not clock_ready:
+        if revision != "0008_proximity_social" or not seeded or not clock_ready:
             raise AppError("DATABASE_NOT_READY", "Run database migrations and reference seeding", 503)
         return success({"status": "ready", "database": "connected"})
 
@@ -179,10 +186,12 @@ def create_app():
         shop_router,
         progression_router,
         fishing_router,
+        community_router,
         social_router,
         farm_visit_router,
         events_router,
         realtime_router,
+        native_voice_router,
         state_router,
     ):
         app.include_router(router)

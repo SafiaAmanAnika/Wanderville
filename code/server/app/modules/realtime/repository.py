@@ -1,15 +1,16 @@
-from sqlalchemy import select, exists, cast, String, literal, and_, or_
-from app.core.gameplay import Repository
-from app.modules.realtime.models import Presence
+from sqlalchemy import and_, cast, exists, literal, or_, select, String
+from sqlalchemy.orm import aliased
+
+from app.core.clock import utcnow
+from app.db.repository import Repository
+from app.modules.players.models import Player
+from app.modules.realtime.models import MessageRecipient, NearbyMessage, Presence
+from app.modules.social.models import FarmVisitSession, PlayerBlock
+from app.modules.world.models import CAMPUS_ROOM, PlayerWorld
 
 
 def authorized_presence(since):
     """Exclude stale/ended visitors even before their socket's next snapshot."""
-    from sqlalchemy.orm import aliased
-    from app.modules.players.models import Player
-    from app.modules.world.models import PlayerWorld
-    from app.modules.social.models import FarmVisitSession
-
     host = aliased(Presence)
     visiting = exists(
         select(1).where(
@@ -46,7 +47,9 @@ def authorized_presence(since):
     return and_(
         active_player,
         or_(
-            and_(Presence.room == "campus", ~visiting), and_(owns, ~visiting), admitted
+            and_(Presence.room == CAMPUS_ROOM, ~visiting),
+            and_(owns, ~visiting),
+            admitted,
         ),
     )
 
@@ -75,8 +78,6 @@ class RealtimeRepository(Repository):
         )
 
     def blocked_ids(self, pid):
-        from app.modules.social.models import PlayerBlock
-
         return set(
             self.db.scalars(
                 select(PlayerBlock.blocked_id)
@@ -88,18 +89,35 @@ class RealtimeRepository(Repository):
         )
 
     def usernames(self, ids):
-        from app.modules.players.models import Player
-
         return dict(
             self.db.execute(
                 select(Player.id, Player.username).where(Player.id.in_(ids))
             ).all()
         )
 
-    def messages(self, pid, room, room_epoch):
-        from app.core.clock import utcnow
-        from app.modules.realtime.models import NearbyMessage, MessageRecipient
+    def visible_nearby(self, pid, room, x, y, radius, since):
+        """Everyone in ``room`` within ``radius`` of (x, y) who can see ``pid``.
 
+        The one place "who is near me, and am I allowed to see them" is
+        answered. Both the snapshot roster and the proximity policy view call it,
+        so blocked players can never be filtered out of one and left in the other.
+
+        Returns ``(rows, usernames, blocked)``.
+        """
+        blocked = self.blocked_ids(pid)
+        rows = [
+            row
+            for row in self.nearby(room, since, x, y, radius)
+            if row.player_id not in blocked
+        ]
+        return rows, self.usernames([row.player_id for row in rows]), blocked
+
+    def messages(self, pid, room, room_epoch):
+        """Chat this player can still read: their room, their epoch, unexpired.
+
+        The only read in this repository that filters by *receiver* rather than
+        by room scope, which is why it takes the player id at all.
+        """
         return list(
             self.db.scalars(
                 select(NearbyMessage)

@@ -1,9 +1,9 @@
 from app.core.exceptions import AppError, NotFound
-from app.core.gameplay import public
+from app.core.responses import public
 from app.core.progression import HOUSE_UPGRADE_XP
 from app.db.session import transaction
 from app.modules.housing.models import HouseTier, PlayerHouse, Decoration
-from app.modules.housing.repository import HousingRepository
+from app.db.repository import Repository
 from app.modules.players.repository import PlayerRepository
 from app.modules.inventory.service import InventoryService
 from app.modules.economy.service import EconomyService
@@ -11,7 +11,7 @@ from app.modules.economy.service import EconomyService
 
 class HousingService:
     def __init__(self, db):
-        self.db, self.repo = db, HousingRepository(db)
+        self.db, self.repo = db, Repository(db)
 
     def get(self, player_id):
         house = self.repo.get(PlayerHouse, player_id)
@@ -39,7 +39,7 @@ class HousingService:
                 raise AppError("MAX_TIER", "House is fully upgraded")
             economy = EconomyService(self.db)
             if economy.xp(player_id).level < tier.required_level:
-                raise AppError("LEVEL_LOCKED", "Required level has not been reached")
+                raise AppError("LEVEL_internal", "Required level has not been reached")
             if tier.cost:
                 economy.change_internal(player_id, tier.cost, False, "house_upgrade")
             economy.gain_internal(player_id, HOUSE_UPGRADE_XP)

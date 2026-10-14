@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
 
 from app.core.config import settings
+from app.core.exceptions import TransactionBoundaryError
 
 
 def make_engine(url: str, **kwargs):
@@ -28,16 +29,31 @@ def get_db():
         yield db
 
 
+TRANSACTION_DEPTH_KEY = "_wanderville_transaction_depth"
+
+
 @contextmanager
 def transaction(db):
     """One service action; includes any transaction begun by auth/read queries.
 
-    Internal domain helpers flush only. Never nest this boundary.
+    Internal domain helpers flush only and must not open this boundary. Nesting
+    is rejected rather than tolerated: an inner exit would commit the outer
+    caller's half-finished work and make the outer rollback a silent no-op.
+
     Cleanup catches BaseException only to rollback and immediately re-raise.
     """
+    depth = db.info.get(TRANSACTION_DEPTH_KEY, 0)
+    if depth:
+        raise TransactionBoundaryError(
+            "transaction() was entered while another service action was still "
+            "open on the same session"
+        )
+    db.info[TRANSACTION_DEPTH_KEY] = depth + 1
     try:
         yield
         db.commit()
     except BaseException:
         db.rollback()
         raise
+    finally:
+        db.info[TRANSACTION_DEPTH_KEY] = depth

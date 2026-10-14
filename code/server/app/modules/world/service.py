@@ -39,6 +39,20 @@ def environment_at(state, now):
     )
 
 
+def game_day(db, now=None):
+    """Whole day/night cycles elapsed on the shared world clock.
+
+    The authoritative world clock lives on the ``WorldState`` row, so this is
+    part of the world domain rather than shared core: ``app/core/`` stays a leaf
+    layer with no dependency on any module.
+    """
+    state = WorldService(db).raw_state()
+    return int(
+        ((now or utcnow()) - as_utc(state.day_cycle_anchor_at)).total_seconds()
+        // (state.day_night_cycle_minutes * 60)
+    )
+
+
 def growth_seconds_between(state, start, end):
     """Integrate seasonal speed across boundaries; complete cycles are O(1)."""
     rates = [getattr(settings, f"farm_{s}_growth_rate") for s in SEASONS]

@@ -54,8 +54,19 @@ class Settings(BaseSettings):
     dev_allow_world_mutation: bool = False
     max_move_speed: float = Field(3000, gt=0)
     chat_blocked_words: str = "damn,shit,fuck"
+    # How long since the last presence write before a player counts as offline.
+    # Read by both realtime (socket liveness) and social (the visit-session
+    # sweep that reclaims slots whose presence went cold), so it lives here
+    # rather than being declared twice in two modules.
+    presence_ttl_seconds: int = Field(60, gt=0, le=600)
     proximity_radius: float = Field(600, gt=0, le=2000)
     proximity_exit_radius: float = Field(720, gt=0, le=2400)
+    # How far the *roster* reaches: which players a snapshot lists as being in
+    # the room at all. Deliberately much wider than proximity_radius, which
+    # governs who can chat and talk. Kept here because it was previously a bare
+    # literal in the snapshot path and a reader could not tell it apart from the
+    # proximity policy radii.
+    realtime_roster_radius: float = Field(2000, gt=0, le=4000)
     voice_enabled: bool = False
     voice_room_limit: int = Field(8, ge=2, le=16)
     voice_total_limit: int = Field(32, ge=2, le=128)

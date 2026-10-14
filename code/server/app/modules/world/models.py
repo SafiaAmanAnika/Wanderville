@@ -20,6 +20,12 @@ from app.db.timestamps import Timestamps
 # the single source of truth and realtime does not have to import a map value.
 CAMPUS_SPAWN = (7377.0, -891.0)
 
+# The shared map's realtime room key. The two room kinds are "campus" (the
+# shared, stateless map) and "world:{id}" (a persistent world), so this is the
+# only literal that is not derived from a world id. It lives next to
+# CAMPUS_SPAWN so no module has to hardcode the string.
+CAMPUS_ROOM = "campus"
+
 
 class PlayerWorld(Timestamps, Base):
     """Exactly one persistent world per player.

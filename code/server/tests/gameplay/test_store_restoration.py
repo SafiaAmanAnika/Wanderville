@@ -157,7 +157,7 @@ def test_purchase_rejections_are_atomic(client, account, db, monkeypatch, reason
     rows_before = [(r.item_code, r.quantity) for r in InventoryService(db).repo.list(user.id)]
     response = client.post('/shop/buy', headers=user.headers, json={'request_id': 'rejected_purchase', 'item_code': code, 'quantity': quantity})
     assert response.status_code == 400
-    assert response.json()['error'] == {'funds': 'INSUFFICIENT_FUNDS', 'level': 'LEVEL_LOCKED', 'stack': 'INVENTORY_FULL', 'stock': 'OUT_OF_STOCK'}[reason]
+    assert response.json()['error'] == {'funds': 'INSUFFICIENT_FUNDS', 'level': 'LEVEL_internal', 'stack': 'INVENTORY_FULL', 'stock': 'OUT_OF_STOCK'}[reason]
     db.expire_all()
     assert EconomyService(db).get(user.id).aura_balance == before
     assert [(r.item_code, r.quantity) for r in InventoryService(db).repo.list(user.id)] == rows_before
@@ -173,7 +173,7 @@ def test_seed_restrictions_do_not_consume_inventory(client, account, db, reach_l
     db.commit()
     rows = data(client.get('/inventory/', headers=user.headers))['items']
     assert next(r for r in rows if r['item_code'] == 'wheat_seed')['required_level'] == 4
-    assert client.post('/farm/plant', headers=user.headers, json={'x': 0, 'y': 0, 'item_code': 'wheat_seed'}).json()['error'] == 'LEVEL_LOCKED'
+    assert client.post('/farm/plant', headers=user.headers, json={'x': 0, 'y': 0, 'item_code': 'wheat_seed'}).json()['error'] == 'LEVEL_internal'
     # Season is only judged once the level lock is satisfied.
     reach_level(user, 4)
     state = db.get(WorldState, 1)

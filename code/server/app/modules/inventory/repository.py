@@ -1,6 +1,7 @@
 from sqlalchemy import select
 
 from app.modules.inventory.models import InventoryItem, ItemDefinition
+from app.modules.shop.models import ItemRule
 
 
 class InventoryRepository:
@@ -58,6 +59,17 @@ class InventoryRepository:
 
     def used_slots(self, player_id):
         return len(self.list(player_id))
+
+    def rules(self, codes):
+        """Shop rules for many item codes in one query.
+
+        Inventory listing needs the level/season/partition fields of every item
+        it is about to return; asking per row turns one page into N+1.
+        """
+        codes = set(codes)
+        if not codes:
+            return []
+        return list(self.db.scalars(select(ItemRule).where(ItemRule.item_code.in_(codes))))
 
     def add(self, player_id, code, quantity, location, stack_no=0):
         row = InventoryItem(

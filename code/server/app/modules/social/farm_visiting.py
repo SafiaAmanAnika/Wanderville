@@ -1,76 +1,54 @@
-"""Invitation lifecycle and visitor-slot admission.
+"""Farm visit sessions: who is standing in whose farm, and how that ends.
 
-Two invariants this module exists to hold:
+An invitation (see :mod:`app.modules.social.farm_invitations`) is an *offer*; a
+visit session is the *occupancy* it produces. This module owns the occupancy:
+admission results, the visitors list, every exit path (leave, kick, evict,
+heartbeat, disconnect) and the sweeps that reclaim slots nobody released.
 
-1. **Accepting an invitation trusts nothing.** Every precondition the server
-   checked when the invitation was created is re-derived from current state at
-   accept time: the invitation must still exist, still belong to this guest,
-   still be PENDING, still be inside its expiry, the host and world must still
-   exist, the host must still own that world, the guest must not already be
-   visiting somewhere, and the farm must still have a free slot.
+Two invariants live here:
 
-2. **Slot admission is transactional, not a read-then-write.** Counting free
-   slots and inserting the visit session happen inside one transaction that
-   holds ``SELECT ... FOR UPDATE`` on the host's world row, so two guests racing
-   for the fifth slot are serialized by the database. Both the per-world lock and
-   the ordered player locks (a single global order, so the host admitting a
-   guest and that guest leaving cannot deadlock) are taken before the count is
-   read. The unique ``active_visitor_key`` index is the backstop: even if the
-   lock were unavailable, the second insert would fail rather than over-fill.
+1. **A slot is held only while somebody is actually there.** Every exit path --
+   an explicit leave, a host kick, a host going offline, a crashed client -- ends
+   the session through the same code, so "closing a tab frees slots exactly like
+   the button" is true by construction rather than by convention.
+
+2. **Exits are re-entrant-safe.** ``leave_internal`` and friends flush without
+   committing so a caller can end several visits in one transaction; the public
+   wrappers own the boundary. That split is what lets logout revoke a token and
+   release every affected visit in a single commit.
 """
 
 from datetime import timedelta
 
 from sqlalchemy import String, cast, literal, select
-from sqlalchemy.orm import Session
 
 from app.core.clock import as_utc, utcnow
+from app.core.config import settings
 from app.core.exceptions import AppError, NotFound
-from app.core.gameplay import public
+from app.core.responses import public
 from app.db.session import transaction
+from app.modules.notifications.service import NotificationsService
+from app.modules.players.models import Player
 from app.modules.players.repository import PlayerRepository
-from app.modules.social.models import FarmInvitation, FarmVisitSession
-from app.modules.world.access import (
-    capacity,
-    farm_full_error,
-    owned_world,
+from app.modules.realtime.models import Presence
+from app.modules.social.farm_invitations import (
+    FarmInvitationService,
+    invitation_public,
 )
+from app.modules.social.models import FarmInvitation, FarmVisitSession
+from app.modules.social.visit_locking import (
+    OPEN_STATUSES,
+    RESOLVED,
+    VISIT_HEARTBEAT_TIMEOUT,
+    lock_rows,
+)
+from app.modules.world.access import capacity, owned_world
 from app.modules.world.models import PlayerWorld
 
-INVITE_TTL = timedelta(minutes=10)
-# How long a visit session may go without a heartbeat before the sweep reclaims
-# the slot. Must comfortably exceed the client socket poll interval.
-VISIT_HEARTBEAT_TIMEOUT = timedelta(seconds=90)
-# Mirrors realtime.service.PRESENCE_TTL_SECONDS. Declared here rather than
-# imported so the sweep module does not depend on the realtime service, which
-# imports this one.
-PRESENCE_TTL_SECONDS = 60
-
-OPEN_STATUSES = ("PENDING", "ACCEPTED")
-RESOLVED = ("DECLINED", "EXPIRED", "CANCELLED")
-
-
-def _active_key(host_id, guest_id, world_id):
-    return f"{host_id}:{guest_id}:{world_id}"
-
-
-def _lock(db: Session, *player_ids, world_id=None):
-    """Take advisory locks in one global order.
-
-    Every player row by ascending id first, then the world row. Admission,
-    leave and kick all use this single order, so a host admitting a guest and
-    that same guest leaving cannot deadlock against one another.
-    """
-    PlayerRepository(db).lock(
-        *sorted({pid for pid in player_ids if pid is not None})
-    )
-    if world_id is not None:
-        db.scalar(
-            select(PlayerWorld)
-            .where(PlayerWorld.id == world_id)
-            .with_for_update()
-            .execution_options(populate_existing=True)
-        )
+# Mirrors realtime.service.PRESENCE_TTL_SECONDS. Read through settings so the
+# sweep and the socket cannot drift apart while this module stays independent of
+# the realtime service, which imports this one.
+PRESENCE_TTL_SECONDS = settings.presence_ttl_seconds
 
 
 class FarmVisitService:
@@ -80,15 +58,8 @@ class FarmVisitService:
     # ---------------------------------------------------------------- reads
 
     def invitation_public(self, row):
-        data = public(row)
-        host = self.db.get(PlayerWorld, row.world_id)
-        data["world_name"] = host.name if host else None
-        # Both ends of the offer are named so a guest can recognise who is
-        # asking and a host can see who they are waiting on.
-        names = self._usernames([row.host_player_id, row.invited_player_id])
-        data["host_username"] = names.get(row.host_player_id, "Player")
-        data["guest_username"] = names.get(row.invited_player_id, "Player")
-        return data
+        """Delegate to the invitation module; kept for existing callers."""
+        return invitation_public(self.db, row)
 
     def inbox(self, guest_id, include_resolved=False):
         """Open offers for the guest. Resolved offers are hidden by default so
@@ -150,8 +121,6 @@ class FarmVisitService:
     def _usernames(self, ids):
         if not ids:
             return {}
-        from app.modules.players.models import Player
-
         return {
             p.id: p.username
             for p in self.db.scalars(
@@ -160,207 +129,36 @@ class FarmVisitService:
         }
 
     # ---------------------------------------------------------- invitations
+    #
+    # The invitation lifecycle lives in FarmInvitationService. These four
+    # delegations keep one public entry point for the whole visiting feature, so
+    # no caller has to know which of the two modules a given action belongs to.
 
     def invite(self, host_id, guest_id):
         """Host invites one guest. Idempotent on an unexpired open offer."""
-        if host_id == guest_id:
-            raise AppError("SELF_INTERACTION", "You cannot invite yourself")
-        from app.modules.social.service import SocialService
-
-        now = utcnow()
-        with transaction(self.db):
-            SocialService(self.db).allowed(host_id, guest_id)
-            world = owned_world(self.db, host_id)
-            _lock(self.db, host_id, guest_id, world_id=world.id)
-
-            existing = self.db.scalar(
-                select(FarmInvitation).where(
-                    FarmInvitation.host_player_id == host_id,
-                    FarmInvitation.invited_player_id == guest_id,
-                    FarmInvitation.world_id == world.id,
-                    FarmInvitation.status == "PENDING",
-                )
-            )
-            if existing is not None:
-                if as_utc(existing.expires_at) > now:
-                    # An unexpired offer already exists: return it rather than
-                    # creating a second pending row for the same triple.
-                    return self.invitation_public(existing)
-                existing.status = "EXPIRED"
-                existing.active_key = None
-                existing.responded_at = now
-
-            row = FarmInvitation(
-                host_player_id=host_id,
-                invited_player_id=guest_id,
-                world_id=world.id,
-                status="PENDING",
-                active_key=_active_key(host_id, guest_id, world.id),
-                expires_at=now + INVITE_TTL,
-            )
-            self.db.add(row)
-            self.db.flush()
-            from app.modules.notifications.service import NotificationsService
-
-            NotificationsService(self.db).emit(
-                guest_id,
-                "farm_invitation",
-                f"{self._usernames([host_id]).get(host_id, 'A player')} invited you to visit their farm",
-                f"/farm/invitations/{row.id}",
-            )
-            result = self.invitation_public(row)
-        return result
+        return FarmInvitationService(self.db).invite(host_id, guest_id)
 
     def cancel(self, host_id, invitation_id):
         """Host withdraws an offer. Resolved offers report as already handled."""
-        with transaction(self.db):
-            row = self.db.get(FarmInvitation, invitation_id)
-            if row is None or row.host_player_id != host_id:
-                raise NotFound("Invitation not found")
-            _lock(self.db, host_id, row.invited_player_id, world_id=row.world_id)
-            row = self.db.get(FarmInvitation, invitation_id)
-            if row.status != "PENDING":
-                raise AppError(
-                    "INVITE_RESOLVED",
-                    "This invitation is no longer pending",
-                    409,
-                )
-            self._resolve(row, "CANCELLED")
-            result = self.invitation_public(row)
-        return result
+        return FarmInvitationService(self.db).cancel(host_id, invitation_id)
 
     def decline(self, guest_id, invitation_id):
-        with transaction(self.db):
-            row = self.db.get(FarmInvitation, invitation_id)
-            if row is None or row.invited_player_id != guest_id:
-                raise NotFound("Invitation not found")
-            _lock(self.db, guest_id, row.host_player_id, world_id=row.world_id)
-            row = self.db.get(FarmInvitation, invitation_id)
-            if row.status != "PENDING":
-                raise AppError(
-                    "INVITE_RESOLVED",
-                    "This invitation is no longer pending",
-                    409,
-                )
-            self._resolve(row, "DECLINED")
-            result = self.invitation_public(row)
-        return result
-
-    @staticmethod
-    def _resolve(row, status):
-        row.status = status
-        row.active_key = None
-        row.responded_at = utcnow()
-
-    # --------------------------------------------------------------- accept
+        """Guest turns the offer down."""
+        return FarmInvitationService(self.db).decline(guest_id, invitation_id)
 
     def accept(self, guest_id, invitation_id):
-        """Guest accepts: revalidate everything, then reserve a slot atomically.
-
-        A rejected accept deliberately leaves the invitation PENDING. Marking it
-        resolved before raising would roll back with the exception and either
-        write nothing or, worse, consume an invitation because the farm happened
-        to be full at that instant. Staying PENDING lets the guest retry once a
-        slot frees up, and the expiry sweep still retires a genuinely stale
-        offer.
-        """
-        from app.modules.social.service import SocialService
-
-        with transaction(self.db):
-            row = self.db.get(FarmInvitation, invitation_id)
-            if row is None:
-                raise NotFound("Invitation not found")
-            # Identity check before anything else: a guest may only answer their
-            # own offer, and must not be able to learn another pair's invite id.
-            if row.invited_player_id != guest_id:
-                raise NotFound("Invitation not found")
-
-            host_id, world_id = row.host_player_id, row.world_id
-            _lock(self.db, guest_id, host_id, world_id=world_id)
-            row = self.db.get(FarmInvitation, invitation_id)
-
-            now = utcnow()
-            if row.status != "PENDING":
-                raise AppError(
-                    "INVITE_RESOLVED",
-                    "This invitation is no longer pending",
-                    409,
-                )
-            if as_utc(row.expires_at) <= now:
-                raise AppError("INVITE_EXPIRED", "This invitation has expired", 409)
-
-            host_world = self.db.get(PlayerWorld, world_id)
-            if host_world is None or host_world.owner_id != host_id:
-                # The host deleted their world, or ownership moved. The offer is
-                # void rather than silently re-pointed at a different world.
-                raise NotFound("The farm is no longer available")
-
-            SocialService(self.db).allowed(guest_id, host_id)
-
-            existing = self.db.scalar(
-                select(FarmVisitSession).where(
-                    FarmVisitSession.visitor_player_id == guest_id,
-                    FarmVisitSession.status == "ACTIVE",
-                )
-            )
-            if existing is not None:
-                raise AppError(
-                    "ALREADY_VISITING",
-                    "Leave your current farm before visiting another",
-                    409,
-                )
-
-            # Capacity is read under the world lock held above, so a concurrent
-            # accept for the same farm cannot also observe a free slot.
-            free, limit = capacity(self.db, world_id)
-            if free <= 0:
-                raise farm_full_error()
-
-            session = FarmVisitSession(
-                world_id=world_id,
-                host_player_id=host_id,
-                visitor_player_id=guest_id,
-                status="ACTIVE",
-                active_visitor_key=guest_id,
-                started_at=now,
-                last_seen_at=now,
-            )
-            self.db.add(session)
-            self._resolve(row, "ACCEPTED")
-            self.db.flush()
-
-            from app.modules.notifications.service import NotificationsService
-
-            NotificationsService(self.db).emit(
-                host_id,
-                "farm_visitor_joined",
-                f"{self._usernames([guest_id]).get(guest_id, 'A player')} is visiting your farm",
-                "/farm/visitors",
-            )
-            result = {
-                "visit_session_id": session.id,
-                "invitation_id": row.id,
-                "session_mode": "VISITOR",
-                "host_player_id": host_id,
-                "world_id": world_id,
-                "visitor_player_id": guest_id,
-                "spawn_x": host_world.farm_entrance_x,
-                "spawn_y": host_world.farm_entrance_y,
-                "visitor_limit": limit,
-                "visitor_count": limit - free + 1,
-                "read_only": True,
-            }
-        return result
+        """Guest accepts: revalidate everything, then reserve a slot atomically."""
+        return FarmInvitationService(self.db).accept(guest_id, invitation_id)
 
     # ----------------------------------------------------------------- exit
 
     def leave(self, guest_id, reason="LEFT"):
         """Close the visitor's session and free the slot."""
         with transaction(self.db):
-            result = self.leave_locked(guest_id, reason)
+            result = self.leave_internal(guest_id, reason)
         return result
 
-    def leave_locked(self, guest_id, reason="LEFT"):
+    def leave_internal(self, guest_id, reason="LEFT"):
         """``leave`` for callers that already own the transaction boundary.
 
         Returns ``None`` when the guest holds no active session, so a duplicated
@@ -376,7 +174,7 @@ class FarmVisitService:
         )
         if session is None:
             return None
-        _lock(
+        lock_rows(
             self.db,
             guest_id,
             session.host_player_id,
@@ -413,7 +211,7 @@ class FarmVisitService:
             session = self.db.get(FarmVisitSession, visit_session_id)
             if session is None or session.host_player_id != host_id:
                 raise NotFound("Visit session not found")
-            _lock(
+            lock_rows(
                 self.db,
                 host_id,
                 session.visitor_player_id,
@@ -438,10 +236,10 @@ class FarmVisitService:
     def evict_for_world(self, host_id, reason="DISCONNECTED"):
         """Close every active visit to one host's farm (host went offline)."""
         with transaction(self.db):
-            evicted = self.evict_for_world_locked(host_id, reason)
+            evicted = self.evict_for_world_internal(host_id, reason)
         return evicted
 
-    def evict_for_world_locked(self, host_id, reason="DISCONNECTED"):
+    def evict_for_world_internal(self, host_id, reason="DISCONNECTED"):
         """``evict_for_world`` for callers that already own the transaction.
 
         Returns the ids of the visitors whose slot was reclaimed, so the caller
@@ -458,7 +256,7 @@ class FarmVisitService:
         )
         if not active:
             return []
-        _lock(
+        lock_rows(
             self.db,
             *([host_id] + [r.visitor_player_id for r in active]),
             world_id=world.id,
@@ -485,9 +283,9 @@ class FarmVisitService:
         and a flush-only write would never reach the database.
         """
         with transaction(self.db):
-            return self.heartbeat_locked(guest_id)
+            return self.heartbeat_internal(guest_id)
 
-    def heartbeat_locked(self, guest_id):
+    def heartbeat_internal(self, guest_id):
         """``heartbeat`` for callers that already own the transaction."""
         session = self.db.scalar(
             select(FarmVisitSession).where(
@@ -504,13 +302,13 @@ class FarmVisitService:
     def close_all_for_disconnect(self, player_id, reason="DISCONNECTED"):
         """Release every visit slot tied to one connection dropping.
 
-        Owns its transaction. Prefer ``close_all_for_disconnect_locked`` when the
+        Owns its transaction. Prefer ``close_all_for_disconnect_internal`` when the
         caller needs the same commit to carry its own writes.
         """
         with transaction(self.db):
-            return self.close_all_for_disconnect_locked(player_id, reason)
+            return self.close_all_for_disconnect_internal(player_id, reason)
 
-    def close_all_for_disconnect_locked(self, player_id, reason="DISCONNECTED"):
+    def close_all_for_disconnect_internal(self, player_id, reason="DISCONNECTED"):
         """``close_all_for_disconnect`` for callers that already own the boundary.
 
         A disconnect cuts both directions at once, so both are handled together:
@@ -523,9 +321,11 @@ class FarmVisitService:
         Returns the visitor ids that were removed from this player's farm, so the
         caller knows who to tell.
         """
-        world = self.db.query(PlayerWorld).filter(
-            PlayerWorld.owner_id == player_id
-        ).one_or_none()
+        world = self.db.scalar(
+            select(PlayerWorld).where(
+                PlayerWorld.owner_id == player_id
+            ).execution_options(populate_existing=True)
+        )
         affected = list(
             self.db.scalars(
                 select(FarmVisitSession).where(
@@ -577,11 +377,9 @@ class FarmVisitService:
         presence row is the independent signal: no row, a stale row, or a row in
         a different room all mean the host is not there.
         """
-        from app.modules.realtime.models import Presence
-
         cutoff = (now or utcnow()) - timedelta(seconds=PRESENCE_TTL_SECONDS)
         expected_room = literal("world:") + cast(FarmVisitSession.world_id, String)
-        orphans = list(
+        return self._reclaim(
             self.db.scalars(
                 select(FarmVisitSession)
                 .outerjoin(Presence, Presence.player_id == FarmVisitSession.host_player_id)
@@ -595,29 +393,6 @@ class FarmVisitService:
                 .limit(limit)
             )
         )
-        reclaimed = []
-        for session in orphans:
-            with transaction(self.db):
-                locked = self.db.scalar(
-                    select(FarmVisitSession)
-                    .where(FarmVisitSession.id == session.id)
-                    .with_for_update()
-                    .execution_options(populate_existing=True)
-                )
-                if locked is None or locked.status != "ACTIVE":
-                    continue
-                locked.status = "DISCONNECTED"
-                locked.active_visitor_key = None
-                locked.ended_at = utcnow()
-                reclaimed.append(
-                    {
-                        "visit_session_id": locked.id,
-                        "visitor_player_id": locked.visitor_player_id,
-                        "host_player_id": locked.host_player_id,
-                        "world_id": locked.world_id,
-                    }
-                )
-        return reclaimed
 
     def sweep_stale(self, now=None, limit=500):
         """Reclaim slots from sessions whose owner vanished without a clean exit.
@@ -627,7 +402,7 @@ class FarmVisitService:
         never produced a close frame.
         """
         cutoff = (now or utcnow()) - VISIT_HEARTBEAT_TIMEOUT
-        stale = list(
+        return self._reclaim(
             self.db.scalars(
                 select(FarmVisitSession)
                 .where(
@@ -638,12 +413,27 @@ class FarmVisitService:
                 .limit(limit)
             )
         )
+
+    def _reclaim(self, candidates):
+        """End every candidate session in one transaction.
+
+        Both sweeps differ only in *which* rows they select, so they share this
+        loop. It re-reads each row under ``FOR UPDATE`` rather than trusting the
+        selection query, because a session can be accepted, kicked or left
+        between the moment it was picked and the moment it is ended.
+
+        One transaction for the whole batch rather than one per row: a sweep of
+        500 orphans previously meant 500 commits, and a failure part-way through
+        reclaimed only some of them while still releasing every slot it had
+        already ended.
+        """
         reclaimed = []
-        for session in stale:
-            with transaction(self.db):
+        with transaction(self.db):
+            ended_at = utcnow()
+            for candidate in candidates:
                 locked = self.db.scalar(
                     select(FarmVisitSession)
-                    .where(FarmVisitSession.id == session.id)
+                    .where(FarmVisitSession.id == candidate.id)
                     .with_for_update()
                     .execution_options(populate_existing=True)
                 )
@@ -651,7 +441,7 @@ class FarmVisitService:
                     continue
                 locked.status = "DISCONNECTED"
                 locked.active_visitor_key = None
-                locked.ended_at = utcnow()
+                locked.ended_at = ended_at
                 reclaimed.append(
                     {
                         "visit_session_id": locked.id,
@@ -665,6 +455,7 @@ class FarmVisitService:
 
 __all__ = [
     "FarmVisitService",
-    "INVITE_TTL",
+    "PRESENCE_TTL_SECONDS",
     "VISIT_HEARTBEAT_TIMEOUT",
+    "invitation_public",
 ]

@@ -19,3 +19,11 @@ class Forbidden(AppError):
 class InvalidToken(AppError):
     def __init__(self):
         super().__init__("INVALID_TOKEN", "Invalid or expired token", 401)
+
+
+class TransactionBoundaryError(RuntimeError):
+    """A service action opened a second transaction on an already-open session.
+
+    This is a programming error, not a domain failure, so it is deliberately
+    not an AppError: it must never be translated into a client-facing response.
+    """

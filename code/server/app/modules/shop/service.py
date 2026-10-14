@@ -1,10 +1,12 @@
 from sqlalchemy import select
 from app.core.exceptions import AppError
-from app.core.gameplay import game_day, public
+from app.core.idempotency import ensure_same_payload
+from app.core.responses import public
+from app.modules.world.service import game_day
 from app.core.progression import SELL_XP_PER_UNIT, sells_for_xp
 from app.db.session import transaction
 from app.modules.shop.models import ItemRule, Purchase, Sale, StarterGrant, CollectionEntry
-from app.modules.shop.repository import ShopRepository
+from app.db.repository import Repository
 from app.modules.inventory.models import ItemDefinition
 from app.modules.inventory.service import InventoryService
 from app.modules.economy.service import EconomyService
@@ -25,7 +27,7 @@ STARTER_ITEMS = {"paddy_seed": 5, "wheat_seed": 5}
 
 class ShopService:
     def __init__(self, db):
-        self.db, self.repo = db, ShopRepository(db)
+        self.db, self.repo = db, Repository(db)
         self.inventory, self.economy = InventoryService(db), EconomyService(db)
 
     def available(self, item, day):
@@ -60,17 +62,12 @@ class ShopService:
     def buy(self, player_id, request):
         with transaction(self.db):
             PlayerRepository(self.db).lock(player_id)
-            old = self.repo.get(Purchase, (player_id, request.request_id), False)
+            old = ensure_same_payload(
+                self.repo.get(Purchase, (player_id, request.request_id), False),
+                {"item_code": request.item_code, "quantity": request.quantity},
+                "Request ID was used for another purchase",
+            )
             if old:
-                if (old.item_code, old.quantity) != (
-                    request.item_code,
-                    request.quantity,
-                ):
-                    raise AppError(
-                        "IDEMPOTENCY_CONFLICT",
-                        "Request ID was used for another purchase",
-                        409,
-                    )
                 return public(old)
             item = self.inventory.definition(request.item_code)
             rule = self.repo.get(ItemRule, item.item_code)
@@ -78,7 +75,7 @@ class ShopService:
             if not self.available(item, day):
                 raise AppError("OUT_OF_STOCK", "Item is not stocked today")
             if self.economy.xp(player_id).level < rule.required_level:
-                raise AppError("LEVEL_LOCKED", "Required level has not been reached")
+                raise AppError("LEVEL_internal", "Required level has not been reached")
             cost = item.buy_value * request.quantity
             if cost:
                 self.economy.change_internal(player_id, cost, False, "shop_purchase")
@@ -99,10 +96,12 @@ class ShopService:
             PlayerRepository(self.db).lock(player_id)
             request_id = getattr(request, "request_id", None)
             if request_id:
-                old = self.db.get(Sale, (player_id, request_id))
+                old = ensure_same_payload(
+                    self.db.get(Sale, (player_id, request_id)),
+                    {"item_code": request.item_code, "quantity": request.quantity},
+                    "Request ID was used for another sale",
+                )
                 if old:
-                    if (old.item_code, old.quantity) != (request.item_code, request.quantity):
-                        raise AppError("IDEMPOTENCY_CONFLICT", "Request ID was used for another sale", 409)
                     return {"aura_earned": old.unit_price * old.quantity, "quantity": old.quantity}
             item = self.inventory.definition(request.item_code)
             if item.sell_value <= 0:

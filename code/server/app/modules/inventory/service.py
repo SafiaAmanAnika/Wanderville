@@ -1,3 +1,5 @@
+from sqlalchemy import select
+
 from app.core.config import settings
 from app.core.exceptions import AppError, Forbidden, NotFound
 from app.core.progression import effective_capacity, level_for_xp, slot_capacity
@@ -10,6 +12,8 @@ from app.modules.inventory.schemas import (
     ItemDefinitionResponse,
 )
 from app.modules.players.repository import PlayerRepository
+from app.modules.pets.models import PlayerPet
+from app.modules.shop.models import CollectionEntry, ItemRule
 
 
 class InventoryService:
@@ -44,18 +48,21 @@ class InventoryService:
         experience = self.economy_repo.experience(player_id)
         return experience.inventory_base_capacity if experience else settings.inventory_partition_slots
 
-    def response_for(self, row):
-        """One row payload, with the harvest fields lifted out of `item`."""
-        from sqlalchemy import select
-        from app.modules.shop.models import ItemRule
+    def response_for(self, row, rule=None):
+        """One row payload, with the harvest fields lifted out of `item`.
 
+        ``rule`` is the item's shop rule when the caller already has it. Passing
+        it in is what keeps a full inventory listing from issuing one extra
+        query per row; omit it only for a single row whose rule was never fetched.
+        """
         result = InventoryItemResponse.model_validate(row)
         result.max_stack = row.item.max_stack
         result.harvest_category = row.item.harvest_category
         result.harvest_xp = row.item.harvest_xp
-        rule = self.db.scalar(
-            select(ItemRule).where(ItemRule.item_code == row.item_code)
-        )
+        if rule is None:
+            rule = self.db.scalar(
+                select(ItemRule).where(ItemRule.item_code == row.item_code)
+            )
         if rule:
             result.partition = rule.partition
             result.required_level = rule.required_level
@@ -64,7 +71,12 @@ class InventoryService:
 
     def list(self, player_id):
         rows = self.repo.list(player_id)
-        items = [self.response_for(row) for row in rows]
+        # One lookup for the whole page rather than one per row.
+        rules = {
+            rule.item_code: rule
+            for rule in self.repo.rules([row.item_code for row in rows])
+        }
+        items = [self.response_for(row, rules.get(row.item_code)) for row in rows]
         level = self.level(player_id)
         return InventoryListResponse(
             items=items,
@@ -100,8 +112,6 @@ class InventoryService:
         """
         self.validate_quantity(quantity, location)
         item = self.definition(code)
-        from app.modules.shop.models import CollectionEntry
-
         remaining = quantity
         touched = None
         for row in self.repo.stacks(player_id, code, location):
@@ -157,8 +167,6 @@ class InventoryService:
             remaining -= taken
             last = row
             if row.quantity == 0:
-                from app.modules.pets.models import PlayerPet
-
                 pet = self.db.get(PlayerPet, player_id)
                 if pet and pet.accessory_code == code and sum(s.quantity for s in stacks) == 0:
                     pet.accessory_code = None
@@ -213,6 +221,7 @@ class InventoryService:
             self.players.lock(player_id, receiver.id)
             if not receiver.is_active or not receiver.email_verified:
                 raise Forbidden("Recipient is not active")
+            # Deferred: social.service imports this module at module scope.
             from app.modules.social.service import SocialService
 
             if SocialService(self.db).blocked(player_id, receiver.id):

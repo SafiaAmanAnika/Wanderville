@@ -1,9 +1,9 @@
 from app.core.clock import as_utc, utcnow
 from app.core.exceptions import AppError
-from app.core.gameplay import public
+from app.core.responses import public
 from app.db.session import transaction
 from app.modules.pets.models import PlayerPet
-from app.modules.pets.repository import PetsRepository
+from app.db.repository import Repository
 from app.modules.shop.models import ItemRule
 from app.modules.inventory.service import InventoryService
 from app.modules.players.repository import PlayerRepository
@@ -11,7 +11,7 @@ from app.modules.players.repository import PlayerRepository
 
 class PetsService:
     def __init__(self, db):
-        self.db, self.repo = db, PetsRepository(db)
+        self.db, self.repo = db, Repository(db)
 
     def get(self, player_id):
         row = self.repo.get(PlayerPet, player_id)

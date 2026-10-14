@@ -2,8 +2,10 @@ import re
 from datetime import timedelta
 from sqlalchemy import and_, or_, select
 from app.core.clock import as_utc, utcnow
+from app.core.config import settings
 from app.core.exceptions import AppError, Forbidden, NotFound
-from app.core.gameplay import public
+from app.core.idempotency import ensure_same_payload
+from app.core.responses import public
 from app.db.session import transaction
 from app.modules.social.models import (
     Friendship,
@@ -12,6 +14,10 @@ from app.modules.social.models import (
     Trade,
     DirectMessage,
     PlayerReport,
+)
+from app.modules.social.community_models import (
+    GiftWishlistAllocation,
+    WishlistEntry,
 )
 from app.modules.social.farm_visiting import FarmVisitService
 from app.modules.social.repository import SocialRepository
@@ -22,14 +28,14 @@ from app.modules.housing.models import PlayerHouse
 from app.modules.economy.models import PlayerExperience
 from app.modules.inventory.service import InventoryService
 from app.modules.notifications.service import NotificationsService
+from app.modules.realtime.models import Presence
+from app.modules.world.access import resolve
 from app.modules.world.service import WorldService
-from app.modules.social.community import bump_social
+from app.modules.social.community import CommunityService, bump_social
 
 
 def filter_message(body):
     # Deliberately small configurable baseline; not an ML moderation guarantee.
-    from app.core.config import settings
-
     terms = [
         re.escape(w.strip())
         for w in settings.chat_blocked_words.split(",")
@@ -54,11 +60,9 @@ class SocialService:
         self.alerts = NotificationsService(db)
 
     def online_ids(self, ids):
-        from app.modules.realtime.models import Presence
-
         return set(self.db.scalars(select(Presence.player_id).where(
             Presence.player_id.in_(ids),
-            Presence.updated_at > utcnow() - timedelta(seconds=60),
+            Presence.updated_at > utcnow() - timedelta(seconds=settings.presence_ttl_seconds),
         )))
 
     def pair(self, a, b):
@@ -221,8 +225,6 @@ class SocialService:
         ]
 
     def gift(self, player_id, request):
-        from app.modules.social.community import CommunityService
-        from app.modules.social.community_models import GiftWishlistAllocation
         with transaction(self.db):
             self.players.lock(player_id, request.target_id)
             old = self.db.scalar(
@@ -235,16 +237,15 @@ class SocialService:
                 old_link = (allocation.entry_id, allocation.expected_version) if allocation else (None, None)
                 if old_link != (request.wishlist_entry_id, request.wishlist_version):
                     raise AppError("IDEMPOTENCY_CONFLICT", "Request ID reused with different wishlist", 409)
-                if (old.receiver_id, old.item_code, old.quantity) != (
-                    request.target_id,
-                    request.item_code,
-                    request.quantity,
-                ):
-                    raise AppError(
-                        "IDEMPOTENCY_CONFLICT",
-                        "Request ID reused with different gift",
-                        409,
-                    )
+                ensure_same_payload(
+                    old,
+                    {
+                        "receiver_id": request.target_id,
+                        "item_code": request.item_code,
+                        "quantity": request.quantity,
+                    },
+                    "Request ID reused with different gift",
+                )
                 return public(old)
             self.allowed(player_id, request.target_id)
             if not self.inventory.definition(request.item_code).giftable:
@@ -285,10 +286,11 @@ class SocialService:
                 raise Forbidden("Interaction is blocked")
             self.inventory.add_internal(player_id, row.item_code, row.quantity)
             row.claimed = True
-            from app.modules.social.community_models import GiftWishlistAllocation, WishlistEntry
             allocation = self.db.get(GiftWishlistAllocation, gift_id)
             if allocation:
-                entry = self.db.get(WishlistEntry, allocation.entry_id, populate_existing=True)
+                entry = self.db.get(
+                    WishlistEntry, allocation.entry_id, populate_existing=True
+                )
                 entry.version += 1
             bump_social(self.db, player_id, row.sender_id)
         return public(row)
@@ -309,12 +311,9 @@ class SocialService:
                 wanted_quantity=request.wanted_quantity,
             )
             if old:
-                if any(getattr(old, k) != v for k, v in values.items()):
-                    raise AppError(
-                        "IDEMPOTENCY_CONFLICT",
-                        "Request ID reused with different trade",
-                        409,
-                    )
+                ensure_same_payload(
+                    old, values, "Request ID reused with different trade"
+                )
                 return public(old)
             self.allowed(player_id, request.target_id)
             for code in (request.offered_code, request.wanted_code):
@@ -475,8 +474,9 @@ class SocialService:
         Requires an ACTIVE visit session to that host, not just friendship: a
         player only sees a farm they were actually admitted to.
         """
+        # Deferred: farming imports the realtime service for campus presence, and
+        # realtime imports this module for message filtering.
         from app.modules.farming.service import FarmingService
-        from app.modules.world.access import resolve
 
         session = resolve(self.db, player_id)
         if not session.is_visitor or session.host_player_id != target:

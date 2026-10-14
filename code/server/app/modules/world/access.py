@@ -16,6 +16,8 @@ caller change persistent farm state?", which is always no for a visitor.
 
 from dataclasses import dataclass
 
+from sqlalchemy import func, select
+
 from app.core.exceptions import AppError, Forbidden, NotFound
 from app.modules.social.models import FarmVisitSession
 from app.modules.world.models import PlayerWorld
@@ -61,7 +63,11 @@ class WorldSession:
 
 def owned_world(db, player_id):
     """The one world this player owns, or 404 if it was never provisioned."""
-    row = db.query(PlayerWorld).filter(PlayerWorld.owner_id == player_id).one_or_none()
+    row = db.scalar(
+        select(PlayerWorld).where(
+            PlayerWorld.owner_id == player_id
+        ).execution_options(populate_existing=True)
+    )
     if row is None:
         raise NotFound("Player world has not been initialized")
     return row
@@ -97,15 +103,21 @@ def resolve(db, player_id):
 
 
 def active_visit(db, visitor_player_id):
-    return (
-        db.query(FarmVisitSession)
-        .filter(
+    """The visitor's current session, if any, newest first.
+
+    Refreshes the row so a caller that already locked the player sees the state
+    that was committed, not a stale identity-map value.
+    """
+    return db.scalars(
+        select(FarmVisitSession)
+        .where(
             FarmVisitSession.visitor_player_id == visitor_player_id,
             FarmVisitSession.status == "ACTIVE",
         )
         .order_by(FarmVisitSession.id.desc())
-        .first()
-    )
+        .limit(1)
+        .execution_options(populate_existing=True)
+    ).first()
 
 
 def require_owner(db, player_id, world_id=None):
@@ -149,13 +161,13 @@ def require_world_readable(db, player_id, world_id):
 
 
 def active_visitor_count(db, world_id):
-    return (
-        db.query(FarmVisitSession.id)
-        .filter(
+    return db.scalar(
+        select(func.count())
+        .select_from(FarmVisitSession)
+        .where(
             FarmVisitSession.world_id == world_id,
             FarmVisitSession.status == "ACTIVE",
         )
-        .count()
     )
 
 

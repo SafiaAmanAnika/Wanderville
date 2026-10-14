@@ -10,13 +10,13 @@ router = APIRouter(prefix="/events", tags=["events"])
 
 @router.get("")
 def get_events(
-    pid: int = Depends(get_current_player_id), db: Session = Depends(get_db)
+    player_id: int = Depends(get_current_player_id), db: Session = Depends(get_db)
 ):
     return success(EventsService(db).list())
 
 
 @router.post("/{code}/claim")
 def post_code_claim(
-    code: str, pid: int = Depends(get_current_player_id), db: Session = Depends(get_db)
+    code: str, player_id: int = Depends(get_current_player_id), db: Session = Depends(get_db)
 ):
-    return success(EventsService(db).claim(pid, code))
+    return success(EventsService(db).claim(player_id, code))

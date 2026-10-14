@@ -115,7 +115,7 @@ def test_purchase_idempotency_and_rollback(client, account, db, reach_level):
     assert EconomyService(db).get(a.id).aura_balance == before
 
 
-def test_store_gear_is_locked_below_level_five(client, account, db, reach_level):
+def test_store_gear_is_internal_below_level_five(client, account, db, reach_level):
     a = account()
     funds(client, a)
     assert (
@@ -124,7 +124,7 @@ def test_store_gear_is_locked_below_level_five(client, account, db, reach_level)
             headers=a.headers,
             json={"request_id": "locked_rod", "item_code": "basic_rod", "quantity": 1},
         ).json()["error"]
-        == "LEVEL_LOCKED"
+        == "LEVEL_internal"
     )
     reach_level(a, 5)
     data(
@@ -230,7 +230,7 @@ def test_profile_house_pet_and_preferences(client, account, db):
         client.post(
             "/housing/upgrade", headers=a.headers, json={"expected_tier": 1}
         ).json()["error"]
-        == "LEVEL_LOCKED"
+        == "LEVEL_internal"
     )
     data(client.post("/economy/xp/gain", headers=a.headers, json={"xp_amount": 100}))
     assert (
@@ -454,7 +454,7 @@ def test_fishing_requires_level_five(client, account, db):
         FishingService(db).cast(
             a.id, CastRequest(spot_code="campus_lake", rod_code="basic_rod")
         )
-    assert failure.value.code == "LEVEL_LOCKED"
+    assert failure.value.code == "LEVEL_internal"
 
 
 def test_fishing_full_inventory_drop_and_expiry(client, account, db, reach_level):

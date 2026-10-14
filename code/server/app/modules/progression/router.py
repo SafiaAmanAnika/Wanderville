@@ -9,12 +9,12 @@ router = APIRouter(prefix="/progression", tags=["progression"])
 
 
 @router.get("/goals")
-def get_goals(pid: int = Depends(get_current_player_id), db: Session = Depends(get_db)):
-    return success(ProgressionService(db).goals(pid))
+def get_goals(player_id: int = Depends(get_current_player_id), db: Session = Depends(get_db)):
+    return success(ProgressionService(db).goals(player_id))
 
 
 @router.get("/statistics")
 def get_statistics(
-    pid: int = Depends(get_current_player_id), db: Session = Depends(get_db)
+    player_id: int = Depends(get_current_player_id), db: Session = Depends(get_db)
 ):
-    return success(ProgressionService(db).stats(pid))
+    return success(ProgressionService(db).stats(player_id))

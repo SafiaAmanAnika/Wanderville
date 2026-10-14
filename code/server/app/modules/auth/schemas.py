@@ -1,4 +1,5 @@
 import re
+from urllib.parse import urlsplit
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
@@ -58,8 +59,6 @@ class GoogleCodeRequest(BaseModel):
     @field_validator("redirect_uri")
     @classmethod
     def loopback_callback(cls, value):
-        from urllib.parse import urlsplit
-
         url = urlsplit(value)
         if (url.scheme != "http" or url.hostname != "127.0.0.1"
                 or not url.port or url.username or url.password

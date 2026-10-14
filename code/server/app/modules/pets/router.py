@@ -10,14 +10,14 @@ router = APIRouter(prefix="/pets", tags=["pets"])
 
 
 @router.get("")
-def get_pets(pid: int = Depends(get_current_player_id), db: Session = Depends(get_db)):
-    return success(PetsService(db).get(pid))
+def get_pets(player_id: int = Depends(get_current_player_id), db: Session = Depends(get_db)):
+    return success(PetsService(db).get(player_id))
 
 
 @router.post("/actions")
 def post_actions(
     payload: PetAction,
-    pid: int = Depends(get_current_player_id),
+    player_id: int = Depends(get_current_player_id),
     db: Session = Depends(get_db),
 ):
-    return success(PetsService(db).act(pid, payload))
+    return success(PetsService(db).act(player_id, payload))

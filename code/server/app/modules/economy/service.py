@@ -1,3 +1,5 @@
+from sqlalchemy import select
+
 from app.core.config import settings
 from app.core.exceptions import AppError, Forbidden, NotFound
 from app.core.progression import (
@@ -17,7 +19,11 @@ from app.modules.economy.schemas import (
     TransactionResponse,
     XPResponse,
 )
+from app.modules.inventory.models import ItemDefinition
+from app.modules.inventory.service import InventoryService
+from app.modules.notifications.service import NotificationsService
 from app.modules.players.repository import PlayerRepository
+from app.modules.shop.models import ItemRule
 
 
 def progression(total_xp):
@@ -72,8 +78,10 @@ class EconomyService:
     def granted_rewards(self, player_id):
         return {
             row.level: row
-            for row in self.db.query(PlayerLevelReward).filter(
-                PlayerLevelReward.player_id == player_id
+            for row in self.db.scalars(
+                select(PlayerLevelReward).where(
+                    PlayerLevelReward.player_id == player_id
+                )
             )
         }
 
@@ -85,11 +93,6 @@ class EconomyService:
         info = level_info(progress["level"])
         title, title_level = _next_title(info.level)
         granted = self.granted_rewards(player_id)
-        from sqlalchemy import select
-        from app.modules.inventory.models import ItemDefinition
-        from app.modules.inventory.service import InventoryService
-        from app.modules.shop.models import ItemRule
-
         unlocked = self.db.execute(
             select(ItemDefinition.item_code, ItemDefinition.name, ItemRule.required_level)
             .join(ItemRule, ItemRule.item_code == ItemDefinition.item_code)
@@ -188,8 +191,6 @@ class EconomyService:
         row.total_xp += amount
         row.level = level_for_xp(row.total_xp).level
         if row.level > previous_level:
-            from app.modules.notifications.service import NotificationsService
-
             NotificationsService(self.db).emit(
                 player_id, "level_up", f"Reached level {row.level}", "/economy/xp"
             )

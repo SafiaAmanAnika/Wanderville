@@ -11,33 +11,33 @@ router = APIRouter(prefix="/housing", tags=["housing"])
 
 @router.get("")
 def get_housing(
-    pid: int = Depends(get_current_player_id), db: Session = Depends(get_db)
+    player_id: int = Depends(get_current_player_id), db: Session = Depends(get_db)
 ):
-    return success(HousingService(db).get(pid))
+    return success(HousingService(db).get(player_id))
 
 
 @router.post("/upgrade")
 def post_upgrade(
     payload: UpgradeRequest,
-    pid: int = Depends(get_current_player_id),
+    player_id: int = Depends(get_current_player_id),
     db: Session = Depends(get_db),
 ):
-    return success(HousingService(db).upgrade(pid, payload.expected_tier))
+    return success(HousingService(db).upgrade(player_id, payload.expected_tier))
 
 
 @router.post("/decorations")
 def post_decorations(
     payload: DecorationRequest,
-    pid: int = Depends(get_current_player_id),
+    player_id: int = Depends(get_current_player_id),
     db: Session = Depends(get_db),
 ):
-    return success(HousingService(db).place(pid, payload))
+    return success(HousingService(db).place(player_id, payload))
 
 
 @router.post("/decorations/{decoration_id}/remove")
 def post_decorations_decoration_id_remove(
     decoration_id: int,
-    pid: int = Depends(get_current_player_id),
+    player_id: int = Depends(get_current_player_id),
     db: Session = Depends(get_db),
 ):
-    return success(HousingService(db).remove(pid, decoration_id))
+    return success(HousingService(db).remove(player_id, decoration_id))

@@ -15,7 +15,7 @@ from app.modules.inventory.service import InventoryService
 from app.modules.notifications.models import Notification
 from app.modules.pets.models import PlayerPet
 from app.modules.realtime.models import Presence
-from app.modules.realtime.router import socket_step
+from app.modules.realtime.protocol import RealtimeProtocol
 from app.modules.realtime.service import RealtimeService
 from app.modules.shop.models import ItemRule
 from app.modules.social.models import FarmInvitation as Invite
@@ -95,7 +95,7 @@ def test_snapshots_release_connection_and_batch_names(client, account, db):
         statements.append(statement)
     event.listen(db.bind, "before_cursor_execute", capture)
     try:
-        reply = socket_step(db, a.tokens["access_token"], {"type": "snapshot"})
+        reply = RealtimeProtocol(db).step(a.tokens["access_token"], {"type": "snapshot"})
         assert reply["type"] == "snapshot"
         assert len(reply["data"]["players"]) == 2
         assert not db.in_transaction()
@@ -192,7 +192,7 @@ def test_purchase_server_price_level_capacity_and_balance(client, account, db, m
     db.get(ItemRule, "basic_rod").required_level = 2
     db.commit()
     payload.update(quantity=1, request_id="level_gate")
-    assert client.post("/shop/buy", headers=user.headers, json=payload).json()["error"] == "LEVEL_LOCKED"
+    assert client.post("/shop/buy", headers=user.headers, json=payload).json()["error"] == "LEVEL_internal"
     db.get(ItemRule, "basic_rod").required_level = 1
     db.commit()
     # A single shared pool: shrinking the base to 1 leaves only the level
@@ -289,7 +289,7 @@ def test_fishing_exact_window_and_server_reward(client, account, db, delay, caug
     db.get(ItemRule, "basic_rod").required_level = 2
     db.commit()
     assert client.post("/fishing/cast", headers=user.headers,
-                       json={"spot_code": "campus_lake", "rod_code": "basic_rod"}).json()["error"] == "LEVEL_LOCKED"
+                       json={"spot_code": "campus_lake", "rod_code": "basic_rod"}).json()["error"] == "LEVEL_internal"
     db.get(ItemRule, "basic_rod").required_level = 1
     db.commit()
     service = FishingService(db)

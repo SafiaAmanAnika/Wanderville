@@ -59,6 +59,31 @@ class MediaPeer:
     last_spoke: float = 0
 
 
+def accept_incoming(peer):
+    """Whether ``peer`` may contribute audio to the mix right now.
+
+    Two independent gates, checked in this order:
+
+    1. the media lease is still valid (the connection and the voice session
+       have not been replaced, and policy has not been revoked); and
+    2. the publisher is neither muted nor deafened.
+
+    A peer that fails either gate has its queued audio dropped rather than
+    merely skipped, so audio buffered before the revocation is never played
+    after it. Both the WebRTC consumer and the native Godot socket call this,
+    so the two transports cannot drift into disagreeing about who is audible.
+    """
+    if not runtime.media_valid(peer.pid, peer.generation, peer.session_id):
+        peer.incoming.clear()
+        return False
+    with runtime.lock:
+        state = runtime.connection(peer.pid, peer.generation)
+        if state.muted or state.deafened:
+            peer.incoming.clear()
+            return False
+    return True
+
+
 class VoiceHub:
     def __init__(self):
         self.peers = {}
@@ -165,16 +190,8 @@ class VoiceHub:
             while True:
                 frame = await track.recv()
                 for output in resampler.resample(frame):
-                    if not runtime.media_valid(
-                        peer.pid, peer.generation, peer.session_id
-                    ):
-                        peer.incoming.clear()
+                    if not accept_incoming(peer):
                         continue
-                    with runtime.lock:
-                        state = runtime.connection(peer.pid, peer.generation)
-                        if state.muted or state.deafened:
-                            peer.incoming.clear()
-                            continue
                     samples = array("h")
                     samples.frombytes(bytes(output.planes[0])[: output.samples * 2])
                     if len(samples) == 960:

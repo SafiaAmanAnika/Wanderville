@@ -13,15 +13,23 @@ from app.modules.farming.schemas import (
     HarvestResponse,
     PlantResponse,
 )
+from app.modules.inventory.models import PlayerFirstHarvest
 from app.modules.inventory.service import InventoryService
+from app.modules.notifications.service import NotificationsService
 from app.modules.players.repository import PlayerRepository
+from app.modules.profile.models import PlayerProfile
+from app.modules.progression.service import ProgressionService
+from app.modules.realtime.service import CAMPUS_ROOM, RealtimeService
+from app.modules.shop.models import ItemRule
 from app.modules.world.access import (
     MODE_VISITOR,
     require_owner,
     require_world_readable,
     resolve,
 )
-from app.modules.world.service import WorldService, growth_seconds_between
+from app.modules.world.geometry import at_water
+from app.modules.world.models import CAMPUS_SPAWN
+from app.modules.world.service import WorldService, game_day, growth_seconds_between
 
 # CropVisual.gd defaults and the supplied scenes: frame 0 waits for water,
 # frame 1 starts immediately; the last frame is harvestable upon entry.
@@ -166,8 +174,6 @@ class FarmingService:
 
     def _first_harvest_bonus(self, player_id, crop_code):
         """Claim the one-time bonus for a crop species; 0 if already claimed."""
-        from app.modules.inventory.models import PlayerFirstHarvest
-
         if self.db.get(PlayerFirstHarvest, (player_id, crop_code)) is not None:
             return 0
         self.db.add(PlayerFirstHarvest(player_id=player_id, item_code=crop_code))
@@ -182,6 +188,44 @@ class FarmingService:
         tile.last_growth_update_at = max(
             as_utc(tile.last_growth_update_at), as_utc(now)
         )
+
+    def advance_tiles(self, player_id, now):
+        """Grow, water and announce every planted tile this player owns.
+
+        The public entry point for the background world worker: one pass over one
+        player's farm, inside the caller's transaction with the player already
+        locked. Growth arithmetic, rain watering and the two harvest
+        notifications are all gameplay rules, so they live here rather than in
+        the scheduler that decides *when* to run them.
+        """
+        world = self.world.own_world(player_id)
+        state = self.world.raw_state()
+        environment = self.world.state(now)
+        grown = []
+        for tile in self.repo.list(world.id):
+            if not tile.crop_item_code:
+                continue
+            self._persist_growth(tile, state, now)
+            grown.append(tile)
+            if environment.is_raining and tile.growth_stage < 3 and not tile.is_watered:
+                tile.is_watered = True
+                tile.watered_at = now
+                NotificationsService(self.db).emit(
+                    player_id,
+                    "rain",
+                    "Rain watered your crops",
+                    "/farm/plots",
+                    f"rain:{game_day(self.db, now)}",
+                )
+            if tile.growth_stage == 3:
+                NotificationsService(self.db).emit(
+                    player_id,
+                    "crop_ready",
+                    "A crop is ready to harvest",
+                    f"/farm/plots/{tile.id}",
+                    f"crop:{tile.id}:{as_utc(tile.planted_at).isoformat()}",
+                )
+        return grown
 
     def till(self, player_id, request, now=None):
         self._coordinate(request)
@@ -209,14 +253,12 @@ class FarmingService:
                     "FARM_PLOT_OCCUPIED", "This farm tile already has a crop", 409
                 )
             item = self.inventory.definition(request.item_code)
-            from app.modules.shop.models import ItemRule
-
             rule = self.db.get(ItemRule, item.item_code)
             seed_code = item.item_code
             if rule and rule.harvest_code:
                 item = self.inventory.definition(rule.harvest_code)
             if rule and self.economy.xp(player_id).level < rule.required_level:
-                raise AppError("LEVEL_LOCKED", "Required planting level not reached")
+                raise AppError("LEVEL_internal", "Required planting level not reached")
             if not item.growth_time_seconds or not (
                 item.category.endswith("_crop") or item.category == "rare_plant"
             ):
@@ -239,8 +281,6 @@ class FarmingService:
             if settings.farm_plant_xp > 0:
                 self.economy.gain_internal(player_id, settings.farm_plant_xp)
             self.db.flush()
-            from app.modules.progression.service import ProgressionService
-
             ProgressionService(self.db).record(player_id, "plant", now=now)
             result = PlantResponse(plot=tile_response(tile, state, now))
         return result
@@ -261,8 +301,6 @@ class FarmingService:
                     "This growth stage has already been watered",
                     409,
                 )
-            from app.modules.profile.models import PlayerProfile
-
             profile = self.db.get(PlayerProfile, player_id)
             if profile.water_charges <= 0:
                 raise AppError("EMPTY_BUCKET", "Refill your watering bucket")
@@ -302,8 +340,6 @@ class FarmingService:
             if earned:
                 self.economy.gain_internal(player_id, earned)
             self.db.flush()
-            from app.modules.progression.service import ProgressionService
-
             ProgressionService(self.db).record(player_id, "harvest", now=now)
             result = HarvestResponse(
                 plot=tile_response(tile, state, now),
@@ -314,10 +350,6 @@ class FarmingService:
         return result
 
     def refill(self, player_id):
-        from app.modules.profile.models import PlayerProfile
-        from app.modules.realtime.service import CAMPUS_ROOM, RealtimeService
-        from app.modules.world.geometry import at_water
-
         with transaction(self.db):
             self.players.lock(player_id)
             self._owner_world(player_id)

@@ -14,6 +14,10 @@ from app.modules.economy.repository import EconomyRepository
 from app.modules.economy.service import EconomyService
 from app.modules.players.repository import PlayerRepository
 from app.modules.players.schemas import PlayerPublic
+from app.modules.profile.models import PlayerProfile
+from app.modules.profile.service import ProfileService
+from app.modules.progression.service import ProgressionService
+from app.modules.realtime.service import RealtimeService
 from app.modules.world.repository import WorldRepository
 
 _DUMMY_HASH = security.hasher.hash("TimingOnly-password-123!")
@@ -26,8 +30,6 @@ class AuthService:
     def _initialize_player(self, player):
         WorldRepository(self.db).create(player.id)
         EconomyRepository(self.db).create(player.id)
-        from app.modules.profile.service import ProfileService
-
         ProfileService(self.db).initialize(player.id)
         if settings.starting_aura:
             EconomyService(self.db).change_internal(
@@ -60,9 +62,6 @@ class AuthService:
         return raw
 
     def _login_result(self, player, now, ip):
-        from app.modules.progression.service import ProgressionService
-        from app.modules.profile.models import PlayerProfile
-
         ProgressionService(self.db).login(player.id, now)
         profile = self.db.get(PlayerProfile, player.id)
         if profile:
@@ -124,7 +123,7 @@ class AuthService:
             self.players.lock(player.id)
             if player.locked_until and as_utc(player.locked_until) > now:
                 raise AppError(
-                    "ACCOUNT_LOCKED",
+                    "ACCOUNT_internal",
                     "Account is temporarily locked. Try again later.",
                     423,
                 )
@@ -185,6 +184,9 @@ class AuthService:
 
     def logout(self, raw):
         player_id = None
+        # One action, one boundary: revoking the refresh token and releasing the
+        # player's presence/visitor slots commit together, so a failure cannot
+        # leave a live session with a revoked token or the reverse.
         with transaction(self.db):
             hashed = security.hash_token(raw)
             row = self.repo.refresh(hashed)
@@ -193,15 +195,13 @@ class AuthService:
                 row = self.repo.refresh(hashed, lock=True)
                 row.revoked_at = row.revoked_at or utcnow()
                 player_id = row.player_id
-        if player_id is not None:
-            # Signing out is an intentional departure, so release presence and any
-            # held visitor slots now instead of waiting for the socket to drop.
-            # Imported here because realtime depends on this module.
-            from app.modules.realtime.service import RealtimeService
+            if player_id is not None:
+                # Signing out is an intentional departure, so release presence and
+                # any held visitor slots now instead of waiting for the socket to
+                # drop.
+                RealtimeService(self.db).leave_internal(player_id)
 
-            RealtimeService(self.db).leave(player_id)
-
-    def _locked_account_token(self, raw, kind, now):
+    def _internal_account_token(self, raw, kind, now):
         hashed = security.hash_token(raw)
         row = self.repo.account(hashed, kind)
         if row is None:
@@ -233,7 +233,7 @@ class AuthService:
     def verify_email(self, raw):
         now = utcnow()
         with transaction(self.db):
-            row, player = self._locked_account_token(raw, "email_verification", now)
+            row, player = self._internal_account_token(raw, "email_verification", now)
             if not player.is_active:
                 raise Forbidden("Account is inactive")
             row.used_at = now
@@ -272,7 +272,7 @@ class AuthService:
     def reset_password(self, request):
         now = utcnow()
         with transaction(self.db):
-            row, player = self._locked_account_token(
+            row, player = self._internal_account_token(
                 request.token, "password_reset", now
             )
             self._active(player)

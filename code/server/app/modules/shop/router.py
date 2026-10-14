@@ -11,46 +11,46 @@ router = APIRouter(prefix="/shop", tags=["shop"])
 
 
 @router.get("")
-def get_shop(pid: int = Depends(get_current_player_id), db: Session = Depends(get_db)):
-    return success(ShopService(db).catalog(pid))
+def get_shop(player_id: int = Depends(get_current_player_id), db: Session = Depends(get_db)):
+    return success(ShopService(db).catalog(player_id))
 
 
 @router.post("/buy")
 def post_buy(
     payload: PurchaseRequest,
-    pid: int = Depends(get_current_player_id),
+    player_id: int = Depends(get_current_player_id),
     db: Session = Depends(get_db),
 ):
-    return success(ShopService(db).buy(pid, payload))
+    return success(ShopService(db).buy(player_id, payload))
 
 
 @router.post("/sell")
 def post_sell(
     payload: SaleRequest,
-    pid: int = Depends(get_current_player_id),
+    player_id: int = Depends(get_current_player_id),
     db: Session = Depends(get_db),
 ):
-    return success(ShopService(db).sell(pid, payload))
+    return success(ShopService(db).sell(player_id, payload))
 
 
 @router.get("/transactions/{request_id}")
 def transaction_status(
     request_id: str = Path(min_length=8, max_length=64, pattern=r"^[a-zA-Z0-9_-]+$"),
     action: Literal["buy", "sell"] = "buy",
-    pid: int = Depends(get_current_player_id), db: Session = Depends(get_db),
+    player_id: int = Depends(get_current_player_id), db: Session = Depends(get_db),
 ):
-    return success(ShopService(db).transaction_status(pid, request_id, action))
+    return success(ShopService(db).transaction_status(player_id, request_id, action))
 
 
 @router.post("/starter/claim")
-def claim_starter(pid: int = Depends(get_current_player_id), db: Session = Depends(get_db)):
-    return success(ShopService(db).claim_starter(pid))
+def claim_starter(player_id: int = Depends(get_current_player_id), db: Session = Depends(get_db)):
+    return success(ShopService(db).claim_starter(player_id))
 
 
 @router.get("/collection")
 def get_collection(
     fish_only: bool = False,
-    pid: int = Depends(get_current_player_id),
+    player_id: int = Depends(get_current_player_id),
     db: Session = Depends(get_db),
 ):
-    return success(ShopService(db).collection(pid, fish_only))
+    return success(ShopService(db).collection(player_id, fish_only))

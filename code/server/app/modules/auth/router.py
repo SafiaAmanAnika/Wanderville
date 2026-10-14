@@ -1,10 +1,18 @@
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
+from app.core.exceptions import AppError
 from app.core.rate_limit import rate_limit
 from app.core.responses import Envelope, success
 from app.db.session import get_db
-from app.modules.auth.dependencies import get_current_player, get_current_player_id
+from app.modules.auth.dependencies import (
+    client_host,
+    get_current_player,
+    get_current_player_id,
+)
+from app.modules.auth.oauth import exchange_code
+from app.modules.auth.pages import account_page, reset_page
 from app.modules.auth.schemas import (
     ChangePasswordRequest,
     EmailRequest,
@@ -25,8 +33,6 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.get("/config")
 def auth_config():
-    from app.core.config import settings
-
     local_mail = settings.email_delivery == "file" or (
         settings.email_delivery == "auto" and settings.is_development
     )
@@ -44,11 +50,13 @@ def auth_config():
 
 
 @router.post("/google/code", response_model=Envelope[LoginResponse], dependencies=[Depends(rate_limit(10))])
-def google_code(payload: GoogleCodeRequest, request: Request, db: Session = Depends(get_db)):
-    from app.modules.auth.oauth import exchange_code
-
+def google_code(
+    payload: GoogleCodeRequest,
+    host: str | None = Depends(client_host),
+    db: Session = Depends(get_db),
+):
     return success(AuthService(db).google_login(
-        exchange_code(payload), request.client.host if request.client else None, payload.nonce
+        exchange_code(payload), host, payload.nonce
     ), "Google authentication successful")
 
 
@@ -68,9 +76,13 @@ def signup(payload: SignupRequest, db: Session = Depends(get_db)):
     response_model=Envelope[LoginResponse],
     dependencies=[Depends(rate_limit(10))],
 )
-def login(payload: LoginRequest, request: Request, db: Session = Depends(get_db)):
+def login(
+    payload: LoginRequest,
+    host: str | None = Depends(client_host),
+    db: Session = Depends(get_db),
+):
     return success(
-        AuthService(db).login(payload, request.client.host if request.client else None),
+        AuthService(db).login(payload, host),
         "Login successful",
     )
 
@@ -80,11 +92,13 @@ def login(payload: LoginRequest, request: Request, db: Session = Depends(get_db)
     response_model=Envelope[LoginResponse],
     dependencies=[Depends(rate_limit(10))],
 )
-def google(payload: GoogleRequest, request: Request, db: Session = Depends(get_db)):
+def google(
+    payload: GoogleRequest,
+    host: str | None = Depends(client_host),
+    db: Session = Depends(get_db),
+):
     return success(
-        AuthService(db).google_login(
-            payload.id_token, request.client.host if request.client else None
-        ),
+        AuthService(db).google_login(payload.id_token, host),
         "Google authentication successful",
     )
 
@@ -115,9 +129,6 @@ def verify_email(
     request: Request,
     token: str = Query(min_length=1, max_length=512), db: Session = Depends(get_db)
 ):
-    from app.core.exceptions import AppError
-    from app.modules.auth.pages import account_page
-
     browser = "text/html" in request.headers.get("accept", "")
     try:
         player = AuthService(db).verify_email(token)
@@ -132,8 +143,6 @@ def verify_email(
 
 @router.get("/reset-password", include_in_schema=False)
 def reset_password_page():
-    from app.modules.auth.pages import reset_page
-
     return reset_page()
 
 

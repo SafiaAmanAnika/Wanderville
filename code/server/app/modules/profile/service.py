@@ -1,20 +1,21 @@
 from sqlalchemy import delete
 from app.core.clock import utcnow
 from app.core.exceptions import AppError, Forbidden
-from app.core.gameplay import public
+from app.core.responses import public
 from app.db.session import transaction
 from app.modules.profile.models import PlayerProfile, EncounterHint, Feedback
-from app.modules.profile.repository import ProfileRepository
+from app.db.repository import Repository
 from app.modules.players.models import Player
 from app.modules.players.repository import PlayerRepository
 from app.modules.pets.models import PlayerPet
 from app.modules.housing.models import PlayerHouse
+from app.modules.auth import oauth
 from app.modules.auth.security import verify_password
 
 
 class ProfileService:
     def __init__(self, db):
-        self.db, self.repo = db, ProfileRepository(db)
+        self.db, self.repo = db, Repository(db)
 
     def initialize(self, player_id):
         # Same transaction as signup; backfill old accounts in migration.
@@ -97,8 +98,6 @@ class ProfileService:
             else:
                 if not request.google_id_token:
                     raise Forbidden("Reauthenticate with Google to delete this account")
-                from app.modules.auth import oauth
-
                 identity = oauth.verify_google(request.google_id_token)
                 if (
                     player.oauth_provider != "google"

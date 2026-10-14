@@ -1,25 +1,25 @@
 from datetime import timedelta
 from sqlalchemy import select
 from app.core.clock import utcnow
-from app.core.gameplay import game_day, public
+from app.core.responses import public
+from app.modules.world.service import game_day
 from app.modules.progression.models import (
     GoalDefinition,
     GoalProgress,
     PlayerStatistic,
     LoginStreak,
 )
-from app.modules.progression.repository import ProgressionRepository
+from app.modules.economy.service import EconomyService
 from app.modules.notifications.service import NotificationsService
+from app.db.repository import Repository
 
 
 class ProgressionService:
     def __init__(self, db):
-        self.db, self.repo = db, ProgressionRepository(db)
+        self.db, self.repo = db, Repository(db)
 
     def record(self, player_id, event, quantity=1, now=None):
         # Internal trusted events only; caller owns the player lock and transaction.
-        from app.modules.economy.service import EconomyService
-
         stat = self.repo.get(PlayerStatistic, (player_id, event), False)
         if stat is None:
             stat = self.repo.add(
@@ -45,7 +45,12 @@ class ProgressionService:
                 progress.rewarded = True
                 if goal.aura_reward:
                     EconomyService(self.db).change_internal(
-                        player_id, goal.aura_reward, True, goal.kind, "goal", goal.code
+                        player_id,
+                        goal.aura_reward,
+                        True,
+                        goal.kind,
+                        "goal",
+                        goal.code,
                     )
                 NotificationsService(self.db).emit(
                     player_id,
@@ -57,8 +62,6 @@ class ProgressionService:
         self.db.flush()
 
     def login(self, player_id, now=None):
-        from app.modules.economy.service import EconomyService
-
         today = (now or utcnow()).date()
         row = self.repo.get(LoginStreak, player_id, False)
         if row is None:

@@ -61,7 +61,7 @@ def test_unverified_inactive_lockout_and_recovery(client, account, db):
             ).status_code
             == 401
         )
-    assert client.post("/auth/login", json=request).json()["error"] == "ACCOUNT_LOCKED"
+    assert client.post("/auth/login", json=request).json()["error"] == "ACCOUNT_internal"
     player = db.get(Player, unverified.id)
     player.locked_until = utcnow() - timedelta(seconds=1)
     db.commit()

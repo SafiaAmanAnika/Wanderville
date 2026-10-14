@@ -6,6 +6,7 @@ from pathlib import Path
 from sqlalchemy import select, func
 
 from app.db import model_registry  # noqa: F401
+from app.db.gameplay_seed import seed_gameplay
 from app.db.session import SessionLocal, transaction
 from app.modules.inventory.models import ItemDefinition
 from app.modules.world.models import WorldState
@@ -26,8 +27,6 @@ def seed_reference_data(db):
         if db.get(WorldState, 1) is None:
             db.add(WorldState(id=1))
         db.flush()
-        from app.db.gameplay_seed import seed_gameplay
-
         seed_gameplay(db)
 
 

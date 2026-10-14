@@ -380,7 +380,7 @@ def test_commit_revokes_voice_but_rollback_does_not(client, account, db, monkeyp
 def test_stationary_heartbeat_refreshes_presence(client, account, db):
     from datetime import timedelta
     from app.core.clock import as_utc
-    from app.modules.realtime.router import socket_step
+    from app.modules.realtime.protocol import RealtimeProtocol
 
     user = account("idle_voice")
     enter(client, user)
@@ -389,8 +389,8 @@ def test_stationary_heartbeat_refreshes_presence(client, account, db):
     db.commit()
     generation = runtime.attach(user.id)
     try:
-        reply = socket_step(
-            db, user.tokens["access_token"], {"type": "heartbeat"}, 2, generation
+        reply = RealtimeProtocol(db).step(
+            user.tokens["access_token"], {"type": "heartbeat"}, 2, generation
         )
         assert reply["type"] == "snapshot"
         assert (

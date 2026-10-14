@@ -109,7 +109,6 @@ def effective_capacity(level: int, occupied: int, base: int = BASE_INVENTORY_SLO
 # Every crop stores exactly one harvest_xp from its category in the catalog,
 # so a multi-tagged item can never combine two categories.
 HARVEST_XP: dict[str, int] = {"common": 5, "seasonal": 10, "rare": 20, "magical": 30}
-HARVEST_CATEGORY_XP = {name: value for name, value in HARVEST_XP.items()}
 
 # One-time bonus for the first harvest of each crop species, per player.
 FIRST_HARVEST_XP = 15

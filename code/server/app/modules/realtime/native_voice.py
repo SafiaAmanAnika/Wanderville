@@ -20,7 +20,7 @@ from app.core.exceptions import AppError
 from app.db.session import get_db
 from app.modules.auth.service import AuthService
 from app.modules.realtime.runtime import runtime
-from app.modules.realtime.voice import MediaPeer, voice_hub
+from app.modules.realtime.voice import MediaPeer, accept_incoming, voice_hub
 
 router = APIRouter(prefix="/realtime/voice", tags=["realtime"])
 
@@ -40,16 +40,16 @@ class SocketMedia:
 
 
 def ingest(peer, raw):
+    """Accept one native PCM frame from the Godot client.
+
+    Wire format: little-endian signed PCM16, mono 48 kHz, exactly 960 samples
+    (20 ms / 1920 bytes) per message. Byte order is normalized so the same
+    server accepts a client on either host endianness.
+    """
     if len(raw) != 1920:
         raise ValueError("Expected one 20ms PCM frame")
-    if not runtime.media_valid(peer.pid, peer.generation, peer.session_id):
-        peer.incoming.clear()
+    if not accept_incoming(peer):
         return
-    with runtime.lock:
-        state = runtime.connection(peer.pid, peer.generation)
-        if state.muted or state.deafened:
-            peer.incoming.clear()
-            return
     samples = array("h")
     samples.frombytes(raw)
     if sys.byteorder != "little":
@@ -57,6 +57,19 @@ def ingest(peer, raw):
     if max(abs(x) for x in samples) > 500:
         peer.last_spoke = time.monotonic()
     peer.incoming.append((time.monotonic(), samples))
+
+
+def authenticate(db, token):
+    """Resolve an access token to a player id, leaving no transaction open.
+
+    The socket's session is reused for its whole lifetime, so the speculative
+    read this authentication begins is rolled back here rather than being left
+    for the next frame to inherit.
+    """
+    try:
+        return AuthService(db).authenticate(token).id
+    finally:
+        db.rollback()
 
 
 @router.websocket("/ws")
@@ -76,12 +89,7 @@ async def native_voice(websocket: WebSocket, db: Session = Depends(get_db)):
         auth = json.loads(raw)
         if not isinstance(auth, dict) or auth.get("type") != "auth" or not isinstance(auth.get("token"), str):
             raise ValueError("Invalid auth")
-        def authenticate():
-            try:
-                return AuthService(db).authenticate(auth["token"]).id
-            finally:
-                db.rollback()
-        pid = await run_in_threadpool(authenticate)
+        pid = await run_in_threadpool(authenticate, db, auth["token"])
         generation, session_id = auth.get("connection_id"), auth.get("session_id")
         if not isinstance(session_id, str) or not isinstance(generation, str):
             raise ValueError("Invalid session")

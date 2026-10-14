@@ -1,7 +1,6 @@
 from sqlalchemy import select
 
 from app.modules.farming.models import FarmTile
-from app.modules.world.models import PlayerWorld
 
 
 class FarmingRepository:
@@ -29,14 +28,6 @@ class FarmingRepository:
         return self.db.scalar(
             select(FarmTile)
             .where(FarmTile.world_id == world_id, FarmTile.x == x, FarmTile.y == y)
-            .execution_options(populate_existing=True)
-        )
-
-    def owned(self, player_id, tile_id):
-        return self.db.scalar(
-            select(FarmTile)
-            .join(PlayerWorld, FarmTile.world_id == PlayerWorld.id)
-            .where(PlayerWorld.owner_id == player_id, FarmTile.id == tile_id)
             .execution_options(populate_existing=True)
         )
 

@@ -1,16 +1,33 @@
-"""Invalidate permissions only after durable policy changes commit."""
+"""Invalidate permissions only after durable policy changes commit.
+
+Listeners are attached by calling :func:`register`, not by importing this
+module. Permission revocation must happen on *commit*, never on flush, because a
+rolled-back transaction would otherwise have already revoked a live voice
+session; and because a policy change that never reaches the database must leave
+every session untouched.
+
+Registering explicitly means the wiring is greppable from ``app/main.py`` instead
+of being an invisible side effect of an import somewhere in the graph.
+"""
 
 from sqlalchemy import event, inspect
 from sqlalchemy.orm import Session
-from app.modules.realtime.runtime import runtime
-from app.modules.realtime.models import Presence
-from app.modules.social.models import Friendship, PlayerBlock, FarmVisitSession
-from app.modules.social.community_models import SocialPreferences
+
 from app.modules.players.models import Player
+from app.modules.realtime.models import Presence
+from app.modules.realtime.runtime import runtime
+from app.modules.social.community_models import SocialPreferences
+from app.modules.social.models import FarmVisitSession, Friendship, PlayerBlock
+
+_REGISTERED = False
 
 
-@event.listens_for(Session, "before_flush")
-def collect_changes(db, _context, _instances):
+def _collect_changes(db, _context, _instances):
+    """Stage which players must lose voice/presence permissions.
+
+    Runs before the flush that will write these rows, so it sees the intended
+    final state rather than whatever happens to be in the session.
+    """
     invalidate = db.info.setdefault("voice_invalidate", set())
     leave = db.info.setdefault("voice_leave", set())
     for row in set(db.new) | set(db.dirty) | set(db.deleted):
@@ -43,8 +60,8 @@ def collect_changes(db, _context, _instances):
                 leave.add(row.id)
 
 
-@event.listens_for(Session, "after_commit")
-def committed(db):
+def _committed(db):
+    """Revoke permissions for everything that just became durable."""
     players = db.info.pop("voice_invalidate", set())
     leave = db.info.pop("voice_leave", set())
     if players:
@@ -53,7 +70,18 @@ def committed(db):
         runtime.invalidate(leave, leave=True)
 
 
-@event.listens_for(Session, "after_rollback")
-def rolled_back(db):
+def _rolled_back(db):
+    """Discard staged revocations; a rollback must not revoke anything."""
     db.info.pop("voice_invalidate", None)
     db.info.pop("voice_leave", None)
+
+
+def register():
+    """Attach the listeners once per process."""
+    global _REGISTERED
+    if _REGISTERED:
+        return
+    event.listen(Session, "before_flush", _collect_changes)
+    event.listen(Session, "after_commit", _committed)
+    event.listen(Session, "after_rollback", _rolled_back)
+    _REGISTERED = True

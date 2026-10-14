@@ -11,18 +11,23 @@ from app.modules.social.models import Friendship
 
 
 def proximity_view(db, pid):
+    """The proximity/voice policy projection for one player.
+
+    Selection (who is near, who is blocked, who is a friend) comes from
+    ``RealtimeRepository.visible_nearby`` so this view and the snapshot roster
+    can never disagree about who is present.
+    """
     row = RealtimeService(db).active(pid)
     repo = RealtimeRepository(db)
-    blocked = repo.blocked_ids(pid)
-    candidates = repo.nearby(
+    candidates, names, _ = repo.visible_nearby(
+        pid,
         row.room,
-        utcnow() - timedelta(seconds=PRESENCE_TTL_SECONDS),
         row.x,
         row.y,
         settings.proximity_exit_radius,
+        utcnow() - timedelta(seconds=PRESENCE_TTL_SECONDS),
     )
     ids = [p.player_id for p in candidates]
-    names = repo.usernames(ids)
     preferences = {
         p.player_id: p.voice_privacy
         for p in db.scalars(
@@ -43,11 +48,7 @@ def proximity_view(db, pid):
     for other in candidates:
         target = other.player_id
         distance = math.hypot(row.x - other.x, row.y - other.y)
-        if (
-            target == pid
-            or target in blocked
-            or distance > settings.proximity_exit_radius
-        ):
+        if target == pid or distance > settings.proximity_exit_radius:
             continue
         friend = target in friends
         policies = (own["voice_privacy"], preferences.get(target, "friends"))

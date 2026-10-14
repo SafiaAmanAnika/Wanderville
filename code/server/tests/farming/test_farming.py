@@ -52,7 +52,7 @@ def test_plant_validation_consumption_xp_and_ownership(farm, client, account, db
         ("unknown", "INVALID_ITEM"),
         # Potato is a level 4 seasonal crop, so a level 1 player is stopped
         # by the level lock before the season is ever considered.
-        ("potato", "LEVEL_LOCKED"),
+        ("potato", "LEVEL_internal"),
         ("paddy", "INSUFFICIENT_INVENTORY"),
     ]:
         with pytest.raises(AppError) as exc:

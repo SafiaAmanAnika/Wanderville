@@ -13,19 +13,19 @@ router = APIRouter(prefix="/notifications", tags=["notifications"])
 def get_notifications(
     before: int | None = Query(None, gt=0),
     limit: int = Query(50, ge=1, le=100),
-    pid: int = Depends(get_current_player_id),
+    player_id: int = Depends(get_current_player_id),
     db: Session = Depends(get_db),
 ):
-    return success(NotificationsService(db).list(pid, before, limit))
+    return success(NotificationsService(db).list(player_id, before, limit))
 
 
 @router.post("/{notification_id}")
 def post_notification_id(
     payload: NotificationUpdate,
     notification_id: int,
-    pid: int = Depends(get_current_player_id),
+    player_id: int = Depends(get_current_player_id),
     db: Session = Depends(get_db),
 ):
     return success(
-        NotificationsService(db).update(pid, notification_id, payload.dismiss)
+        NotificationsService(db).update(player_id, notification_id, payload.dismiss)
     )

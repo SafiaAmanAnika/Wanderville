@@ -2,32 +2,32 @@ import secrets
 from datetime import timedelta
 from app.core.clock import as_utc, utcnow
 from app.core.exceptions import AppError, NotFound
-from app.core.gameplay import public
+from app.core.responses import public
 from app.core.progression import FISH_XP_BY_ITEM
 from app.db.session import transaction
 from app.modules.fishing.models import FishingSpot, FishingSession, GroundDrop
-from app.modules.fishing.repository import FishingRepository
+from app.db.repository import Repository
 from app.modules.shop.models import ItemRule
 from app.modules.players.repository import PlayerRepository
 from app.modules.inventory.service import InventoryService
 from app.modules.economy.service import EconomyService
 from app.modules.progression.service import ProgressionService
+from app.modules.realtime.service import RealtimeService
+from app.modules.world.geometry import at_water
+from app.modules.world.models import CAMPUS_ROOM
 from app.modules.world.service import WorldService
 
 
 class FishingService:
     def __init__(self, db):
-        self.db, self.repo = db, FishingRepository(db)
+        self.db, self.repo = db, Repository(db)
 
     def cast(self, player_id, request, now=None):
         now = now or utcnow()
         with transaction(self.db):
             PlayerRepository(self.db).lock(player_id)
-            from app.modules.realtime.service import RealtimeService
-            from app.modules.world.geometry import at_water
-
             presence = RealtimeService(self.db).active(player_id)
-            if presence.room != "campus" or not at_water(presence.x, presence.y):
+            if presence.room != CAMPUS_ROOM or not at_water(presence.x, presence.y):
                 raise AppError("FISHING_SPOT_REQUIRED", "Stand near a campus lake")
             spot = self.repo.get(FishingSpot, request.spot_code)
             state = WorldService(self.db).state(now)
@@ -40,7 +40,7 @@ class FishingService:
             if not rule.fishing_rod or not inv.has_item(player_id, request.rod_code):
                 raise AppError("ROD_REQUIRED", "You must own the selected fishing rod")
             if EconomyService(self.db).xp(player_id).level < rule.required_level:
-                raise AppError("LEVEL_LOCKED", "Rod level requirement not met")
+                raise AppError("LEVEL_internal", "Rod level requirement not met")
             row = self.repo.get(FishingSession, player_id, False)
             if row and not row.resolved and as_utc(row.expires_at) >= now:
                 raise AppError("CAST_ACTIVE", "Finish the active cast first", 409)

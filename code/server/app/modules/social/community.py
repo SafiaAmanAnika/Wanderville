@@ -1,6 +1,6 @@
 from sqlalchemy import select, func
 from app.core.exceptions import AppError, Forbidden, NotFound
-from app.core.gameplay import public
+from app.core.responses import public
 from app.db.session import transaction
 from app.modules.players.repository import PlayerRepository
 from app.modules.inventory.service import InventoryService
@@ -57,6 +57,7 @@ class CommunityService:
     def authorize_view(self, viewer, owner):
         if viewer == owner:
             return
+        # Deferred: service.py imports this module at module scope.
         from app.modules.social.service import SocialService
 
         SocialService(self.db).allowed(viewer, owner)
@@ -73,8 +74,30 @@ class CommunityService:
         values = dict(rows)
         return int(values.get(False, 0)), int(values.get(True, 0))
 
-    def entry_public(self, row):
-        pending, fulfilled = self.counts(row.id)
+    def counts_for(self, entry_ids):
+        """``{entry_id: (pending, fulfilled)}`` for many entries at once.
+
+        A wishlist page renders one aggregate per entry; issuing them one at a
+        time turned a 50-entry list into 51 queries.
+        """
+        entry_ids = list(entry_ids)
+        if not entry_ids:
+            return {}
+        rows = self.db.execute(
+            select(GiftWishlistAllocation.entry_id, Gift.claimed, func.sum(Gift.quantity))
+            .join(Gift, GiftWishlistAllocation.gift_id == Gift.id)
+            .where(GiftWishlistAllocation.entry_id.in_(entry_ids))
+            .group_by(GiftWishlistAllocation.entry_id, Gift.claimed)
+        ).all()
+        totals = {entry_id: [0, 0] for entry_id in entry_ids}
+        for entry_id, claimed, quantity in rows:
+            totals[entry_id][1 if claimed else 0] += int(quantity or 0)
+        return {entry_id: (values[0], values[1]) for entry_id, values in totals.items()}
+
+    def entry_public(self, row, counts=None):
+        pending, fulfilled = (
+            counts if counts is not None else self.counts(row.id)
+        )
         return {
             **public(row),
             "pending_quantity": pending,
@@ -84,13 +107,16 @@ class CommunityService:
 
     def wishlist(self, viewer, owner):
         self.authorize_view(viewer, owner)
-        rows = self.db.scalars(
-            select(WishlistEntry)
-            .where(WishlistEntry.player_id == owner, WishlistEntry.active.is_(True))
-            .order_by(WishlistEntry.priority.desc(), WishlistEntry.id)
-            .limit(50)
+        rows = list(
+            self.db.scalars(
+                select(WishlistEntry)
+                .where(WishlistEntry.player_id == owner, WishlistEntry.active.is_(True))
+                .order_by(WishlistEntry.priority.desc(), WishlistEntry.id)
+                .limit(50)
+            )
         )
-        return [self.entry_public(row) for row in rows]
+        counts = self.counts_for(row.id for row in rows)
+        return [self.entry_public(row, counts.get(row.id, (0, 0))) for row in rows]
 
     def own_entry(self, pid, item_code):
         row = self.db.scalar(

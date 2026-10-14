@@ -9,7 +9,7 @@ import time
 from datetime import timedelta
 from sqlalchemy import delete, select
 from app.core.clock import utcnow, as_utc
-from app.core.gameplay import game_day
+from app.modules.world.service import game_day
 from app.db import model_registry  # noqa: F401
 from app.db.session import SessionLocal, transaction
 from app.modules.players.models import Player
@@ -81,37 +81,7 @@ def tick(db, now=None, after_id=0, batch_size=100):
         with transaction(db):
             if not PlayerRepository(db).lock(pid):
                 continue
-            farm = FarmingService(db)
-            state = farm.world.raw_state()
-            environment = farm.world.state(now)
-            world = farm.world.own_world(pid)
-            for tile in farm.repo.list(world.id):
-                if not tile.crop_item_code:
-                    continue
-                farm._persist_growth(tile, state, now)
-                if (
-                    environment.is_raining
-                    and tile.growth_stage < 3
-                    and not tile.is_watered
-                ):
-                    tile.is_watered = True
-                    tile.watered_at = now
-                    NotificationsService(db).emit(
-                        pid,
-                        "rain",
-                        "Rain watered your crops",
-                        "/farm/plots",
-                        f"rain:{game_day(db, now)}",
-                    )
-                if tile.growth_stage == 3:
-                    key = f"crop:{tile.id}:{as_utc(tile.planted_at).isoformat()}"
-                    NotificationsService(db).emit(
-                        pid,
-                        "crop_ready",
-                        "A crop is ready to harvest",
-                        f"/farm/plots/{tile.id}",
-key,
-                )
+            FarmingService(db).advance_tiles(pid, now)
     with transaction(db):
         # Global event schedule: one 5-minute event every seventh in-game day.
         state = WorldService(db).repo.state(lock=True)

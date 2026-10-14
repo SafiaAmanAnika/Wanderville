@@ -1,14 +1,15 @@
 from sqlalchemy import func, select
-from app.core.gameplay import public
+from app.core.exceptions import NotFound
+from app.core.responses import public
 from app.db.session import transaction
 from app.modules.notifications.models import Notification
-from app.modules.notifications.repository import NotificationsRepository
+from app.db.repository import Repository
 from app.modules.players.repository import PlayerRepository
 
 
 class NotificationsService:
     def __init__(self, db):
-        self.db, self.repo = db, NotificationsRepository(db)
+        self.db, self.repo = db, Repository(db)
 
     def emit(self, player_id, kind, message, target=None, event_key=None):
         if event_key and self.db.scalar(
@@ -31,12 +32,14 @@ class NotificationsService:
             Notification.player_id == player_id,
             Notification.dismissed.is_(False),
         ]
-        if before:
-            conditions.append(Notification.id < before)
-        rows = self.repo.list(
-            Notification, *conditions, order=Notification.id.desc(), limit=limit
+        rows, next_cursor = self.repo.keyset_page(
+            Notification,
+            *conditions,
+            before=before,
+            limit=limit,
+            order=Notification.id.desc(),
         )
-        count = self.db.scalar(
+        unread = self.db.scalar(
             select(func.count())
             .select_from(Notification)
             .where(
@@ -47,13 +50,11 @@ class NotificationsService:
         )
         return {
             "items": [public(r) for r in rows],
-            "unread_count": count,
-            "next_cursor": rows[-1].id if len(rows) == limit else None,
+            "unread_count": unread,
+            "next_cursor": next_cursor,
         }
 
     def update(self, player_id, notification_id, dismiss=False):
-        from app.core.exceptions import NotFound
-
         with transaction(self.db):
             PlayerRepository(self.db).lock(player_id)
             row = self.repo.get(Notification, notification_id)

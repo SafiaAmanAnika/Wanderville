@@ -2,7 +2,7 @@
 
 from sqlalchemy import select
 from app.core.progression import FISH_XP_BY_ITEM, unlock_level
-from app.modules.inventory.models import ItemDefinition
+from app.modules.inventory.models import InventoryItem, ItemDefinition
 from app.modules.shop.models import ItemRule, CollectionEntry
 from app.modules.housing.models import HouseTier
 from app.modules.fishing.models import FishingSpot
@@ -195,8 +195,6 @@ def seed_gameplay(db):
             ),
         )
     # Seed is also a safe backfill for already-owned collectible items.
-    from app.modules.inventory.models import InventoryItem
-
     for pid, code in db.execute(
         select(InventoryItem.player_id, InventoryItem.item_code)
     ):

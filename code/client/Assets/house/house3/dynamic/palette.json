@@ -1,0 +1,54 @@
+{
+  "schema": "wanderville.dynamic-palette.v1",
+  "house": "house3",
+  "canvas": [
+    3200,
+    3200
+  ],
+  "native_size": [
+    614,
+    768
+  ],
+  "scale": 4,
+  "offset": [
+    372,
+    64
+  ],
+  "mask": "color_mask.png",
+  "tones": "color_tones.png",
+  "floor_mask_channel": "R",
+  "wall_mask_channel": "G",
+  "floor_tone_channel": "R",
+  "wall_tone_channel": "G",
+  "tone_bias": 128,
+  "formula": "targetRGB + toneChannel - 128, clipped to [0,255]; preserve original RGBA outside the enabled channel",
+  "presets": [
+    {
+      "id": "honey",
+      "name": "Honey oak / warm ivory",
+      "floor": "#CC9865",
+      "wall": "#EEDDC8"
+    },
+    {
+      "id": "walnut",
+      "name": "Dark walnut / muted sage",
+      "floor": "#463025",
+      "wall": "#9FA990"
+    },
+    {
+      "id": "chestnut",
+      "name": "Chestnut / dusty blue",
+      "floor": "#7E5032",
+      "wall": "#788B9A"
+    },
+    {
+      "id": "ash",
+      "name": "Pale ash / warm taupe",
+      "floor": "#C5B4A3",
+      "wall": "#AD9989"
+    }
+  ],
+  "reference_master_unchanged": true,
+  "shared_geometry": "../floor_positions.json",
+  "protected_pixels_verified": true
+}

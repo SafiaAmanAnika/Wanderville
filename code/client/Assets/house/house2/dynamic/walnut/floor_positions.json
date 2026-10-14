@@ -1,0 +1,232 @@
+{
+  "house": "house2",
+  "canvas": [
+    3200,
+    3200
+  ],
+  "reference": "14f4f57f-70ad-4486-8e90-91920bf5217d.webp",
+  "reference_sha256": "2141b1d6d04851a5736757eeb4cc1d6a52f2eb51bce5b4652b232e3fa54a8e2d",
+  "source_size": [
+    768,
+    768
+  ],
+  "scale": 4,
+  "offset": [
+    64,
+    64
+  ],
+  "colors": "#463025",
+  "rooms": [
+    {
+      "id": "main_room",
+      "file": "rooms/main_room.png",
+      "placement": [
+        640,
+        632
+      ],
+      "size": [
+        1156,
+        1772
+      ],
+      "sheet_rect": [
+        32,
+        32,
+        1156,
+        1772
+      ],
+      "original_surface_rgb": [
+        203.0,
+        140.0,
+        83.0
+      ]
+    },
+    {
+      "id": "lower_right_room",
+      "file": "rooms/lower_right_room.png",
+      "placement": [
+        1540,
+        1572
+      ],
+      "size": [
+        1016,
+        832
+      ],
+      "sheet_rect": [
+        32,
+        1856,
+        1016,
+        832
+      ],
+      "original_surface_rgb": [
+        151.0,
+        98.0,
+        63.0
+      ]
+    },
+    {
+      "id": "upper_hall",
+      "file": "rooms/upper_hall.png",
+      "placement": [
+        1592,
+        480
+      ],
+      "size": [
+        376,
+        700
+      ],
+      "sheet_rect": [
+        1088,
+        1856,
+        376,
+        700
+      ],
+      "original_surface_rgb": [
+        171.0,
+        137.0,
+        97.0
+      ]
+    },
+    {
+      "id": "south_patio",
+      "file": "rooms/south_patio.png",
+      "placement": [
+        704,
+        2404
+      ],
+      "size": [
+        936,
+        400
+      ],
+      "sheet_rect": [
+        32,
+        2720,
+        936,
+        400
+      ],
+      "original_surface_rgb": [
+        170.0,
+        111.0,
+        73.0
+      ]
+    },
+    {
+      "id": "upper_right_room",
+      "file": "rooms/upper_right_room.png",
+      "placement": [
+        2008,
+        692
+      ],
+      "size": [
+        576,
+        380
+      ],
+      "sheet_rect": [
+        1024,
+        2720,
+        576,
+        380
+      ],
+      "original_surface_rgb": [
+        198.0,
+        154.0,
+        111.0
+      ]
+    },
+    {
+      "id": "middle_right_room",
+      "file": "rooms/middle_right_room.png",
+      "placement": [
+        1820,
+        1200
+      ],
+      "size": [
+        748,
+        344
+      ],
+      "sheet_rect": [
+        32,
+        3168,
+        748,
+        344
+      ],
+      "original_surface_rgb": [
+        165.0,
+        168.0,
+        148.0
+      ]
+    },
+    {
+      "id": "north_patio",
+      "file": "rooms/north_patio.png",
+      "placement": [
+        920,
+        220
+      ],
+      "size": [
+        952,
+        264
+      ],
+      "sheet_rect": [
+        832,
+        3168,
+        952,
+        264
+      ],
+      "original_surface_rgb": [
+        170.0,
+        113.0,
+        75.0
+      ]
+    },
+    {
+      "id": "south_steps",
+      "file": "rooms/south_steps.png",
+      "placement": [
+        944,
+        2840
+      ],
+      "size": [
+        460,
+        204
+      ],
+      "sheet_rect": [
+        32,
+        3552,
+        460,
+        204
+      ],
+      "original_surface_rgb": [
+        89.0,
+        55.0,
+        35.0
+      ]
+    }
+  ],
+  "floor_sheet_size": [
+    2048,
+    3808
+  ],
+  "master_verification": "all retained source RGB pixels are byte-identical",
+  "room_reconstruction_verified": true,
+  "layer_order": [
+    "floor_layer.png",
+    "../../structure.png",
+    "../../doors_static.png or placed animation frames",
+    "../../foreground.png"
+  ],
+  "grid": "../../placement_grid_32.json",
+  "palette": {
+    "id": "walnut",
+    "name": "Dark walnut / muted sage",
+    "floor": "#463025",
+    "wall": "#9FA990"
+  },
+  "floor_layer": "floor_layer.png",
+  "floor_spritesheet": "floor_spritesheet.png",
+  "shared_original_positions": "../../floor_positions.json",
+  "shared_original_grid": "../../placement_grid_32.json",
+  "alpha_geometry_unchanged": true,
+  "full_floor_includes_hidden_door_underlays": true,
+  "visible_house_tint_match_verified": true,
+  "exported_complete_house_match_verified": true
+}

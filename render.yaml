@@ -11,7 +11,9 @@ services:
     rootDir: code/server
     buildCommand: pip install -r requirements.txt
     startCommand: python -m alembic upgrade head && python -m app.db.seed && python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --ws-max-size 65536 --ws-max-queue 8 --no-access-log
-    healthCheckPath: /ready
+    # Routine probes must not wake the serverless database.
+    # Use /ready manually after deployment to verify schema and seeding.
+    healthCheckPath: /health
     autoDeployTrigger: off
     envVars:
       - key: PYTHON_VERSION
@@ -48,5 +50,6 @@ services:
         value: "600"
       - key: PROXIMITY_EXIT_RADIUS
         value: "720"
+      # Keep Neon idle when nobody is playing; run maintenance explicitly.
       - key: WORLD_WORKER_ENABLED
-        value: "true"
+        value: "false"

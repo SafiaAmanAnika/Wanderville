@@ -45,7 +45,13 @@ def auth_config():
         else "smtp"
     )
     return success(
-        {"google_client_id": settings.google_client_id, "email_delivery": delivery}
+        {
+            "google_client_id": settings.google_client_id,
+            "email_delivery": delivery,
+            # Lets the client say "play now" instead of sending a new player to
+            # look for an email that local play never delivers.
+            "require_email_verification": settings.require_email_verification,
+        }
     )
 
 
@@ -67,7 +73,10 @@ def google_code(
 )
 def signup(payload: SignupRequest, db: Session = Depends(get_db)):
     return success(
-        AuthService(db).signup(payload), "Signup successful. Please verify your email."
+        AuthService(db).signup(payload),
+        "Signup successful."
+        if settings.require_email_verification
+        else "Signup successful. You can play right away.",
     )
 
 

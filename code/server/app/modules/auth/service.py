@@ -86,6 +86,10 @@ class AuthService:
 
     def signup(self, request):
         now = utcnow()
+        # Set once here rather than bypassed at every gate that reads
+        # email_verified, so an account created in local play is genuinely
+        # usable for trading, chat and everything else from its first login.
+        verified = not settings.require_email_verification
         try:
             with transaction(self.db):
                 if self.players.by_username(request.username):
@@ -98,7 +102,7 @@ class AuthService:
                     hashed_password=security.hash_password(request.password),
                     display_name=request.display_name or request.username,
                     is_active=True,
-                    email_verified=False,
+                    email_verified=verified,
                 )
                 self._initialize_player(player)
                 raw = self._account_token(player.id, "email_verification", now)
@@ -107,6 +111,8 @@ class AuthService:
             raise AppError(
                 "ACCOUNT_EXISTS", "Username or email is already registered", 409
             ) from exc
+        if verified:
+            return result
         if not email.deliver_safely(player.email, player.username, raw, "email_verification"):
             raise AppError("EMAIL_DELIVERY_FAILED", "Your account was created, but the verification email could not be delivered. Ask the server owner to check the mail provider settings, then use Resend Verification.", 503)
         return result

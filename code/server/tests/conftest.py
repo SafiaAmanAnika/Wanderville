@@ -68,9 +68,14 @@ def clean_database(test_engine):
         for table in reversed(Base.metadata.sorted_tables):
             connection.execute(table.delete())
     limiter.clear()
+    # Pin every setting a test depends on. Settings load from .env, so without
+    # this a developer's local file (for example one that disables verification
+    # for private play) silently changes what the suite asserts.
     settings.wanderville_env = "test"
     settings.farm_consume_inventory = True
     settings.dev_allow_world_mutation = False
+    settings.require_email_verification = True
+    settings.world_worker_enabled = False
     factory = sessionmaker(test_engine, expire_on_commit=False, autoflush=False)
     with factory() as db:
         seed_reference_data(db)

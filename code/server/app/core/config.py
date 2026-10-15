@@ -41,6 +41,10 @@ class Settings(BaseSettings):
     email_base_url: str = Field(default_factory=lambda: os.getenv("RENDER_EXTERNAL_URL", "http://localhost:8000"))
     email_verification_expire_minutes: int = Field(60, gt=0)
     password_reset_expire_minutes: int = Field(30, gt=0)
+    # Local/private play has nowhere to deliver a verification email, so a new
+    # account is usable immediately. Deployments must keep this on: it is what
+    # stops anyone registering somebody else's address.
+    require_email_verification: bool = True
     max_login_attempts: int = Field(5, gt=0)
     lockout_minutes: int = Field(15, gt=0)
     cors_origins: str = "http://localhost:8000"
@@ -67,6 +71,9 @@ class Settings(BaseSettings):
     # literal in the snapshot path and a reader could not tell it apart from the
     # proximity policy radii.
     realtime_roster_radius: float = Field(2000, gt=0, le=4000)
+    # Per-connection passive projections are reused briefly between commits.
+    # Never exceed the two-second voice authorization lease. Zero disables it.
+    realtime_snapshot_cache_seconds: float = Field(1.0, ge=0, le=1)
     voice_enabled: bool = False
     voice_room_limit: int = Field(8, ge=2, le=16)
     voice_total_limit: int = Field(32, ge=2, le=128)
@@ -149,6 +156,8 @@ class Settings(BaseSettings):
                 raise ValueError("Configure explicit CORS origins outside development")
             if not self.farm_consume_inventory:
                 raise ValueError("Production planting must consume inventory")
+            if not self.require_email_verification:
+                raise ValueError("Email verification cannot be disabled in production")
             if self.dev_allow_world_mutation:
                 raise ValueError(
                     "World mutation compatibility switch is development-only"

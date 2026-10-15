@@ -240,10 +240,16 @@ func _on_create() -> void:
 func _show_success_panel(user_email: String) -> void:
 	_form_panel.hide()
 	_success_panel.show()
-	_success_message.text = "We sent a verification link to:\n%s\n\nPlease check your email and verify your account before logging in." % user_email
 	WoodPanel.play_entrance(_success_panel)
 	var config: Dictionary = await APIClient.auth_config()
 	var data: Variant = APIClient.data_of(config)
+	if data is Dictionary and data.get("require_email_verification") == false:
+		# Local/private play has no mailbox to check, so do not send a new player
+		# hunting for a message that was never sent.
+		_success_message.text = "Account created for:\n%s\n\nYou can log in and play right away." % user_email
+		_resend_btn.visible = false
+		return
+	_success_message.text = "We sent a verification link to:\n%s\n\nPlease check your email and verify your account before logging in." % user_email
 	if data is Dictionary and data.get("email_delivery") == "file":
 		_success_message.text = "Account created for:\n%s\n\nThis development server saves verification emails locally. Open the newest .eml in code/server/.dev-mail, follow its link, then return to Log In." % user_email
 

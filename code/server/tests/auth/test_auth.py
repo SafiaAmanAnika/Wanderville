@@ -2,6 +2,7 @@ from datetime import timedelta
 
 import pytest
 from jose import jwt
+from pydantic import ValidationError
 from sqlalchemy import select
 
 from app.core.clock import utcnow
@@ -316,3 +317,64 @@ def test_rate_limit_sensitive_endpoint(client):
         ).status_code
         == 429
     )
+
+
+def test_verification_can_be_disabled_for_private_play(client, db, mailbox):
+    """Local play: a new account is usable immediately and no email is sent.
+
+    A private server has nowhere to deliver a verification link, so gating the
+    account on one would strand every new player. Disabling verification marks
+    the account verified at signup, which is what lets trading and proximity
+    chat work from the first login rather than needing a separate bypass at
+    each of those checks.
+    """
+    settings.require_email_verification = False
+    try:
+        response = client.post(
+            "/auth/signup",
+            json={
+                "username": "localplayer",
+                "email": "local@example.com",
+                "password": "Str0ng-Pass!",
+            },
+        )
+        assert response.status_code == 200, response.text
+        assert "right away" in response.json()["message"]
+        assert mailbox == []
+
+        player = db.scalar(select(Player).where(Player.username == "localplayer"))
+        assert player.email_verified is True
+
+        # Usable immediately, including the social features that check
+        # email_verified, rather than only being able to log in. Entering the
+        # world also proves the player's world was provisioned.
+        login = client.post(
+            "/auth/login",
+            json={"username": "localplayer", "password": "Str0ng-Pass!"},
+        )
+        assert login.status_code == 200, login.text
+        headers = {
+            "Authorization": "Bearer " + login.json()["data"]["access_token"]
+        }
+        assert client.post("/realtime/enter", headers=headers, json={}).status_code == 200
+    finally:
+        settings.require_email_verification = True
+
+
+def test_verification_cannot_be_disabled_in_production(monkeypatch):
+    monkeypatch.setenv("WANDERVILLE_ENV", "production")
+    monkeypatch.setenv("REQUIRE_EMAIL_VERIFICATION", "false")
+    monkeypatch.setenv("JWT_SECRET_KEY", "k" * 40)
+    monkeypatch.setenv("DATABASE_URL", "postgresql://user:pw@localhost/wanderville")
+    monkeypatch.setenv("CORS_ORIGINS", "https://example.com")
+    monkeypatch.setenv("FARM_CONSUME_INVENTORY", "true")
+    monkeypatch.setenv("EMAIL_DELIVERY", "smtp")
+    monkeypatch.setenv("EMAIL_BASE_URL", "https://example.com")
+    monkeypatch.setenv("EMAIL_FROM", "noreply@example.com")
+
+    from app.core.config import Settings
+
+    # Private play is the only place verification may be skipped; a deployment
+    # must not be able to turn it off, or anyone can register another address.
+    with pytest.raises(ValidationError, match="verification cannot be disabled"):
+        Settings()

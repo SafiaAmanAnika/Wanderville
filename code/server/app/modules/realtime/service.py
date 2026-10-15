@@ -96,16 +96,31 @@ class RealtimeService:
 
         * an ACTIVE visit session wins, because the server already decided this
           player is standing in somebody else's farm;
-        * otherwise ``owner_id == player_id`` means "my own farm";
-        * otherwise, naming a *different* player is refused, since friendship
-          alone must not be a key to another player's world;
+        * otherwise ``owner_id`` naming this player or their own world means
+          "my own farm";
+        * otherwise, naming a *different* player or world is refused, since
+          friendship alone must not be a key to another player's world;
         * otherwise the shared campus, which is what an unaffiliated player gets.
+
+        ``owner_id`` is a historical name for the host player's id, but the
+        Godot client fills it from ``GameState.desired_world_id()``, which is a
+        *world* id. Those two numbers coincide only while a player's id and
+        their world's id happen to match, which stops being true as soon as any
+        account is deleted and the sequences drift -- as they already have in
+        the local development database. Both are therefore accepted, and only
+        ever as one of the two identifiers this session already proved the
+        caller owns, so widening the comparison grants nothing that ``resolve``
+        did not already grant.
         """
         if session.is_visitor:
-            if owner_id not in (None, session.host_player_id):
+            if owner_id not in (
+                None,
+                session.host_player_id,
+                session.current_world_id,
+            ):
                 raise Forbidden("Leave your current farm before visiting another farm")
             return world_room(session.current_world_id)
-        if owner_id == session.player_id:
+        if owner_id in (session.player_id, session.owned_world_id):
             return world_room(session.owned_world_id)
         if owner_id is not None:
             raise Forbidden("Accept a farm invitation before visiting")

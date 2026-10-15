@@ -108,6 +108,37 @@ def commit(player_id, room, x, y, sequence, room_epoch, updated_at):
     return position
 
 
+def refresh(player_id, updated_at):
+    """Mark an existing position as still live, without moving it.
+
+    A heartbeat proves the socket is alive but says nothing about where the
+    player is, so this updates only the freshness stamp and never the
+    coordinates. Without it, a player standing still in a menu, on a fishing
+    screen, or simply choosing not to walk would expire from the projection
+    after the TTL while their connection was perfectly healthy.
+
+    Returns True if a live position was refreshed.
+    """
+    with _projection.lock:
+        position = _projection.positions.get(player_id)
+        if position is None:
+            return False
+        position.updated_at = updated_at
+        return True
+
+
+def adopt(player_id, room, x, y, sequence, room_epoch, updated_at):
+    """Record a position for a player the projection does not currently hold.
+
+    Used when a healthy connection heartbeats but the in-memory record has
+    expired or was never created: the durable ``player_presence`` row supplies
+    the last accepted position, so the player rejoins the room where they were
+    standing rather than at the default spawn. The coordinates still come from
+    a row this server wrote after validating movement -- never from the client.
+    """
+    return commit(player_id, room, x, y, sequence, room_epoch, updated_at)
+
+
 def drop(player_id):
     """Forget one player: disconnect, logout, room revocation, or a kick."""
     with _projection.lock:

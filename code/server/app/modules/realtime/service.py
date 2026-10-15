@@ -331,8 +331,11 @@ class RealtimeService:
                     now,
                 )
                 # last_seen_at is a login-activity marker, not a per-step write.
-                if self.db.get(PlayerProfile, pid):
-                    self.db.get(PlayerProfile, pid).last_seen_at = row.updated_at
+                # Read the row once: this used to issue two identical SELECTs
+                # for every movement packet.
+                profile = self.db.get(PlayerProfile, pid)
+                if profile:
+                    profile.last_seen_at = row.updated_at
             result = public(row)
             if memory:
                 result.update(
@@ -396,7 +399,8 @@ class RealtimeService:
 
         permitted = self.repo.authorized_ids(row.room, since)
         # Union with the caller's own id: a player is always in their own roster.
-        wanted = ({p.player_id for p in live} | {row.player_id}) & permitted
+        own = row.player_id
+        wanted = ({p.player_id for p in live} | {own}) & permitted
         wanted -= blocked
         if not wanted:
             return [], {}
@@ -406,6 +410,15 @@ class RealtimeService:
             return [], {}
 
         positions = {position.player_id: position for position in live}
+        # The caller was excluded from the distance query above, so their own
+        # live position is overlaid explicitly. Without this the caller's roster
+        # entry would silently report the durable row while everybody else
+        # reports memory, and the client would be told its own position was
+        # somewhere it had never been.
+        mine = position_projection.get(own)
+        if mine is not None:
+            positions[own] = mine
+
         merged = []
         for presence in rows:
             position = positions.get(presence.player_id)
@@ -450,7 +463,14 @@ class RealtimeService:
         for other in self.roster(row)[0]:
             if other.player_id in blocked:
                 continue
-            item = self._presence_public(other, session if other.player_id == pid else None)
+            # The caller's own row is annotated with their session, so the client
+            # can reconcile against the position it believes the server holds.
+            # In memory mode that must be the live projected position, not the
+            # durable row: `roster` has already overlaid it, and reading `row`
+            # here would send the caller their own stale coordinates.
+            item = self._presence_public(
+                other, session if other.player_id == pid else None
+            )
             if not other.emote_until or as_utc(other.emote_until) < utcnow():
                 item["emote"] = None
             visible.append(item)
@@ -551,8 +571,29 @@ class RealtimeService:
         with transaction(self.db):
             PlayerRepository(self.db).lock(pid)
             row = self.active(pid)
-            if (utcnow() - as_utc(row.updated_at)).total_seconds() >= min(15, PRESENCE_TTL_SECONDS / 3):
-                row.updated_at = utcnow()
+            now = utcnow()
+            stale = (now - as_utc(row.updated_at)).total_seconds() >= min(
+                15, PRESENCE_TTL_SECONDS / 3
+            )
+            if stale:
+                row.updated_at = now
+            if settings.presence_backend == "memory":
+                # A heartbeat is proof of life, so it must sustain the in-memory
+                # presence too. ``refresh`` only restamps an existing record; if
+                # the projection no longer holds this player, adopt the durable
+                # row so they reappear where they were standing instead of at the
+                # default spawn. That row was written by this server after
+                # validating movement, so it is trusted input, not a client claim.
+                if not position_projection.refresh(pid, now):
+                    position_projection.adopt(
+                        pid,
+                        row.room,
+                        row.x,
+                        row.y,
+                        row.sequence,
+                        row.room_epoch,
+                        now,
+                    )
 
     def emote(self, pid, emote):
         with transaction(self.db):

@@ -128,13 +128,44 @@ durable row, so a client cannot replay an old coordinate to reset its clock.
 
 A direct `UPDATE` to `player_presence` does not override an active in-memory
 position. That is intentional: memory is the live authority for coordinates. To
-move a player, use `/realtime/move`. Records expire after
-`PRESENCE_MEMORY_TTL_SECONDS` and are **not** restored from the stale row, so a
-dropped connection cannot leave a ghost standing still.
+move a player, use `/realtime/move`.
+
+**Heartbeats sustain presence.** A connection that heartbeats but does not move
+— someone parked in a menu, on the fishing screen, or simply standing still —
+stays present in memory mode. `RealtimeService.heartbeat` restamps the live
+position without touching its coordinates, and re-adopts the durable row if the
+projection no longer holds the player, so they reappear where they were standing
+rather than at the default spawn. A genuine disconnect still expires at once
+through `leave`.
+
+Records expire after `PRESENCE_MEMORY_TTL_SECONDS` and are **not** restored from
+the stale row, so a dropped connection cannot leave a ghost standing still.
 
 Bounded by `PRESENCE_MEMORY_MAX_PLAYERS` and `PRESENCE_MEMORY_TTL_SECONDS`. Like
 the realtime runtime this is per-process state, so `memory` is only correct for a
 **single** API worker.
+
+### What memory mode does and does not remove
+
+Measured over 10 movement steps plus 10 snapshots with two players connected,
+on PostgreSQL 18.6 (`pytest tests/gameplay/test_presence_baseline.py -q -s`):
+
+| | `database` | `memory` |
+| --- | ---: | ---: |
+| Movement `UPDATE` statements | 20 | **0** |
+| `SELECT` statements | 130 | 120 |
+| Total | 150 | 120 |
+
+The remaining reads are not presence filtering: they are the per-snapshot
+session resolve (`player_worlds` + `farm_visit_sessions`, 40), token
+authentication (30), presence authorization (20), blocks (10), the caller
+lookup (10) and chat receipts (10). Cutting those further means caching identity
+and permission state, which this project deliberately does not do — see the
+remaining SQL load note below.
+
+Two smaller wins are unconditional: `move` no longer issues two identical
+`player_profiles` reads per step, and the snapshots a cached connection serves
+are invalidated by memory movement rather than waiting for a database commit.
 
 Both backends pass the full suite. To run the suite against the memory backend:
 

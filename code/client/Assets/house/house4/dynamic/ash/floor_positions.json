@@ -1,0 +1,209 @@
+{
+  "house": "house4",
+  "canvas": [
+    3200,
+    3200
+  ],
+  "reference": "53654f80-315d-4a2f-bf39-bcf131ccdc15.webp",
+  "reference_sha256": "958b4a7415ffa83e3cd2e617e14915d681355d013df910b5455e40c77a4b6106",
+  "source_size": [
+    768,
+    768
+  ],
+  "scale": 4,
+  "offset": [
+    64,
+    64
+  ],
+  "colors": "#C5B4A3",
+  "rooms": [
+    {
+      "id": "main_room",
+      "file": "rooms/main_room.png",
+      "placement": [
+        1036,
+        340
+      ],
+      "size": [
+        1632,
+        1156
+      ],
+      "sheet_rect": [
+        32,
+        32,
+        1632,
+        1156
+      ],
+      "original_surface_rgb": [
+        201.0,
+        149.0,
+        98.0
+      ]
+    },
+    {
+      "id": "lower_right_room",
+      "file": "rooms/lower_right_room.png",
+      "placement": [
+        1864,
+        1180
+      ],
+      "size": [
+        736,
+        944
+      ],
+      "sheet_rect": [
+        32,
+        1248,
+        736,
+        944
+      ],
+      "original_surface_rgb": [
+        149.0,
+        98.0,
+        70.0
+      ]
+    },
+    {
+      "id": "west_patio",
+      "file": "rooms/west_patio.png",
+      "placement": [
+        540,
+        356
+      ],
+      "size": [
+        424,
+        820
+      ],
+      "sheet_rect": [
+        800,
+        1248,
+        424,
+        820
+      ],
+      "original_surface_rgb": [
+        139.0,
+        148.0,
+        127.0
+      ]
+    },
+    {
+      "id": "lower_left_room",
+      "file": "rooms/lower_left_room.png",
+      "placement": [
+        608,
+        1368
+      ],
+      "size": [
+        676,
+        752
+      ],
+      "sheet_rect": [
+        1280,
+        1248,
+        676,
+        752
+      ],
+      "original_surface_rgb": [
+        186.0,
+        132.0,
+        81.0
+      ]
+    },
+    {
+      "id": "lower_middle_room",
+      "file": "rooms/lower_middle_room.png",
+      "placement": [
+        1488,
+        1500
+      ],
+      "size": [
+        300,
+        616
+      ],
+      "sheet_rect": [
+        32,
+        2240,
+        300,
+        616
+      ],
+      "original_surface_rgb": [
+        150.0,
+        158.0,
+        138.0
+      ]
+    },
+    {
+      "id": "east_steps",
+      "file": "rooms/east_steps.png",
+      "placement": [
+        2736,
+        872
+      ],
+      "size": [
+        188,
+        372
+      ],
+      "sheet_rect": [
+        384,
+        2240,
+        188,
+        372
+      ],
+      "original_surface_rgb": [
+        147.0,
+        156.0,
+        134.0
+      ]
+    },
+    {
+      "id": "west_steps",
+      "file": "rooms/west_steps.png",
+      "placement": [
+        308,
+        840
+      ],
+      "size": [
+        184,
+        312
+      ],
+      "sheet_rect": [
+        608,
+        2240,
+        184,
+        312
+      ],
+      "original_surface_rgb": [
+        152.0,
+        161.0,
+        137.0
+      ]
+    }
+  ],
+  "floor_sheet_size": [
+    2048,
+    2912
+  ],
+  "master_verification": "all retained source RGB pixels are byte-identical",
+  "room_reconstruction_verified": true,
+  "layer_order": [
+    "floor_layer.png",
+    "../../structure.png",
+    "../../doors_static.png or placed animation frames",
+    "../../foreground.png"
+  ],
+  "grid": "../../placement_grid_32.json",
+  "palette": {
+    "id": "ash",
+    "name": "Pale ash / warm taupe",
+    "floor": "#C5B4A3",
+    "wall": "#AD9989"
+  },
+  "floor_layer": "floor_layer.png",
+  "floor_spritesheet": "floor_spritesheet.png",
+  "shared_original_positions": "../../floor_positions.json",
+  "shared_original_grid": "../../placement_grid_32.json",
+  "alpha_geometry_unchanged": true,
+  "full_floor_includes_hidden_door_underlays": true,
+  "visible_house_tint_match_verified": true,
+  "exported_complete_house_match_verified": true
+}

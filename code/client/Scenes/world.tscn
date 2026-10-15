@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://qicqxmogfgn6" path="res://Scenes/seed_picker_menu.tscn" id="7_5v1tr"]
 [ext_resource type="Script" uid="uid://v0sfr2gwlupt" path="res://Scripts/HUD_waterAmount.gd" id="7_o06y3"]
 [ext_resource type="Script" uid="uid://dxcfeslajrfk0" path="res://Scripts/HUD_waterPanel.gd" id="8_k7acu"]
-[ext_resource type="PackedScene" path="res://Scenes/world_hud.tscn" id="9_social"]
+[ext_resource type="PackedScene" uid="uid://dr3jow7krse27" path="res://Scenes/world_hud.tscn" id="9_social"]
 [ext_resource type="Script" uid="uid://dn30wkti03ron" path="res://Scripts/remote_players.gd" id="10_remote"]
 [ext_resource type="Script" uid="uid://bbsefjtcb4mad" path="res://Scripts/day_and_night_cycle.gd" id="11_cycle"]
 [ext_resource type="Script" uid="uid://cspawnesa832b" path="res://Scripts/character_spawner.gd" id="12_spawner"]

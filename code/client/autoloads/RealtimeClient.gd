@@ -25,6 +25,7 @@ var _auth_sent := false
 var _sequence := 0
 var _pending_sequence := 0
 var _move_elapsed := 0.0
+var _last_sent_position := Vector2(INF, INF)
 var _retry_elapsed := 0.0
 var _connection_elapsed := 0.0
 var _last_packet_elapsed := 0.0
@@ -78,6 +79,7 @@ func _in_world() -> bool:
 
 
 func stop() -> void:
+	_last_sent_position = Vector2(INF, INF)
 	connection_id = ""
 	_packet_sequence = 0
 	for id in _requests:
@@ -178,10 +180,13 @@ func _process(delta: float) -> void:
 	if _move_elapsed >= 0.2 and _pending_sequence == 0:
 		_move_elapsed = 0.0
 		var player := get_tree().get_first_node_in_group("player") as Node2D
-		if player != null:
+		if player != null and player.global_position != _last_sent_position:
 			_sequence += 1
 			_pending_sequence = _sequence
-			_send("move", {"x": player.global_position.x, "y": player.global_position.y, "sequence": _sequence})
+			if _send("move", {"x": player.global_position.x, "y": player.global_position.y, "sequence": _sequence}):
+				_last_sent_position = player.global_position
+			else:
+				_pending_sequence = 0
 	_chat_elapsed += delta
 	if _chat_elapsed >= 2.0 and not _chat_polling:
 		_chat_elapsed = 0.0
@@ -264,6 +269,7 @@ func _handle_packet(packet: Dictionary) -> void:
 				var player := get_tree().get_first_node_in_group("player") as Node2D
 				if player != null:
 					player.global_position = Vector2(float(entry["x"]), float(entry["y"]))
+					_last_sent_position = player.global_position
 					_sequence = accepted
 					_correct_position = false
 					_retry_delay = 1.0

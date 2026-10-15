@@ -1,10 +1,7 @@
 import math
-from datetime import timedelta
 from sqlalchemy import select, or_
-from app.core.clock import utcnow
 from app.core.config import settings
-from app.modules.realtime.repository import RealtimeRepository
-from app.modules.realtime.service import RealtimeService, PRESENCE_TTL_SECONDS
+from app.modules.realtime.service import RealtimeService
 from app.modules.social.community import CommunityService
 from app.modules.social.community_models import SocialPreferences, SocialRevision
 from app.modules.social.models import Friendship
@@ -14,18 +11,16 @@ def proximity_view(db, pid):
     """The proximity/voice policy projection for one player.
 
     Selection (who is near, who is blocked, who is a friend) comes from
-    ``RealtimeRepository.visible_nearby`` so this view and the snapshot roster
-    can never disagree about who is present.
+    ``RealtimeService.roster`` so this view and the snapshot roster can never
+    disagree about who is present. Under ``PRESENCE_BACKEND=memory`` that is the
+    in-process projection's coordinates filtered by the database's
+    authorization, so voice permission follows the same live positions the
+    players see rather than the last committed row.
     """
-    row = RealtimeService(db).active(pid)
-    repo = RealtimeRepository(db)
-    candidates, names, _ = repo.visible_nearby(
-        pid,
-        row.room,
-        row.x,
-        row.y,
-        settings.proximity_exit_radius,
-        utcnow() - timedelta(seconds=PRESENCE_TTL_SECONDS),
+    service = RealtimeService(db)
+    row = service.active(pid)
+    candidates, names = service.roster(
+        row, radius=settings.proximity_exit_radius, exclude_blocks=True
     )
     ids = [p.player_id for p in candidates]
     preferences = {

@@ -36,6 +36,7 @@ from app.db.seed import seed_reference_data  # noqa: E402
 from app.db.session import get_db, make_engine  # noqa: E402
 from app.main import app  # noqa: E402
 from app.modules.auth import email  # noqa: E402
+from app.modules.realtime import position_projection  # noqa: E402
 
 
 @pytest.fixture(scope="session")
@@ -68,6 +69,10 @@ def clean_database(test_engine):
         for table in reversed(Base.metadata.sorted_tables):
             connection.execute(table.delete())
     limiter.clear()
+    # The in-memory presence projection is process-global, so it outlives the
+    # database rows this fixture deletes. Without this a position from a previous
+    # test would still be live against a freshly emptied table.
+    position_projection.reset()
     # Pin every setting a test depends on. Settings load from .env, so without
     # this a developer's local file (for example one that disables verification
     # for private play) silently changes what the suite asserts.
@@ -76,6 +81,9 @@ def clean_database(test_engine):
     settings.dev_allow_world_mutation = False
     settings.require_email_verification = True
     settings.world_worker_enabled = False
+    # Tests that exercise PRESENCE_BACKEND=memory set this explicitly; the
+    # suite's baseline is always the default database backend.
+    settings.presence_backend = "database"
     factory = sessionmaker(test_engine, expire_on_commit=False, autoflush=False)
     with factory() as db:
         seed_reference_data(db)

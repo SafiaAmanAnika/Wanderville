@@ -112,6 +112,39 @@ class RealtimeRepository(Repository):
         ]
         return rows, self.usernames([row.player_id for row in rows]), blocked
 
+    def authorized_ids(self, room, since):
+        """Player ids permitted to appear in ``room``, and nobody else.
+
+        This is the authorization half of a roster, with no coordinates in it.
+        ``PRESENCE_BACKEND=memory`` uses it to filter an in-memory position list,
+        so memory mode never decides *who may be seen* -- only *where they are*.
+        Identical predicate to ``nearby``, minus the distance test, so the two
+        backends can never disagree about eligibility.
+        """
+        return set(
+            self.db.scalars(
+                select(Presence.player_id).where(
+                    authorized_presence(since),
+                    Presence.room == room,
+                    Presence.updated_at >= since,
+                )
+            )
+        )
+
+    def rows_for(self, ids):
+        """Presence rows for ``ids``, in the caller's room, regardless of age.
+
+        Used by the memory backend, which has already decided *who* belongs in
+        the room and *where* they are; this only supplies the durable fields a
+        roster renders. Age is deliberately not filtered here so a player who has
+        entered but not yet moved is still present.
+        """
+        if not ids:
+            return []
+        return list(
+            self.db.scalars(select(Presence).where(Presence.player_id.in_(ids)))
+        )
+
     def messages(self, pid, room, room_epoch):
         """Chat this player can still read: their room, their epoch, unexpired.
 

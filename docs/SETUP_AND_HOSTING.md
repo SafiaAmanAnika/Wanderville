@@ -110,6 +110,39 @@ If input still feels slow after deploying this, check in order: the Neon region 
 
 Use **one Uvicorn worker and one instance**: realtime socket ownership is process-local. Keep `WORLD_WORKER_ENABLED=false` for Neon Free. Watered crop growth derives from persisted timestamps and is projected on reads/actions. Automatic rain watering, worker-generated events/notifications and expired-row cleanup require explicit worker runs (`python -m app.modules.world.worker --once`) or a deliberately infrequent scheduler. Do not run an always-on worker or uptime pinger against Neon. See [free-tier recovery](NEON_FREE_TIER.md).
 
+### Where live player positions are stored
+
+`PRESENCE_BACKEND` selects who owns a player's live coordinates. It is
+independent of the transport, so it can be adopted before a dedicated server
+exists.
+
+| Value | Behaviour |
+| --- | --- |
+| `database` (default) | Every validated movement step commits a `player_presence` row, and each roster is a SQL query. Today's behaviour, and what the suite's baseline asserts. |
+| `memory` | Accepted positions are kept in a bounded per-process map, so walking costs no PostgreSQL write. PostgreSQL still decides identity, ownership, visits, blocks and privacy; only the coordinate is served from memory. |
+
+In `memory` mode the sequence, speed and collision checks are unchanged and run
+*before* anything is recorded, so a rejected packet is never stored. Sequence and
+speed are measured against the previously accepted position rather than the
+durable row, so a client cannot replay an old coordinate to reset its clock.
+
+A direct `UPDATE` to `player_presence` does not override an active in-memory
+position. That is intentional: memory is the live authority for coordinates. To
+move a player, use `/realtime/move`. Records expire after
+`PRESENCE_MEMORY_TTL_SECONDS` and are **not** restored from the stale row, so a
+dropped connection cannot leave a ghost standing still.
+
+Bounded by `PRESENCE_MEMORY_MAX_PLAYERS` and `PRESENCE_MEMORY_TTL_SECONDS`. Like
+the realtime runtime this is per-process state, so `memory` is only correct for a
+**single** API worker.
+
+Both backends pass the full suite. To run the suite against the memory backend:
+
+```
+$env:PRESENCE_BACKEND='memory'
+.\.venv312\Scripts\python.exe -m pytest tests -q
+```
+
 ### Check the public deployment
 
 Replace `YOUR-SERVICE` with your actual Render service hostname:

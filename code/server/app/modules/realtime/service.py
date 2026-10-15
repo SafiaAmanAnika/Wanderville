@@ -48,6 +48,7 @@ from app.db.session import transaction
 from app.modules.players.repository import PlayerRepository
 from app.modules.profile.models import PlayerProfile
 from app.modules.realtime.models import MessageRecipient, NearbyMessage, Presence
+from app.modules.realtime import position_projection
 from app.modules.realtime.repository import RealtimeRepository
 from app.modules.social.farm_visiting import FarmVisitService
 from app.modules.social.service import filter_message
@@ -158,6 +159,19 @@ class RealtimeService:
                 row = self.repo.add(Presence, player_id=pid, **values)
             FarmVisitService(self.db).heartbeat_internal(pid)
             result = self._presence_public(row, session)
+            # Entering establishes a room and a spawn position, so memory mode
+            # records it here. A room change must not leave the player visible
+            # in the room they just left.
+            if settings.presence_backend == "memory":
+                position_projection.commit(
+                    pid,
+                    row.room,
+                    row.x,
+                    row.y,
+                    row.sequence,
+                    row.room_epoch,
+                    row.updated_at,
+                )
         return result
 
     def spawn_for(self, room):
@@ -258,37 +272,158 @@ class RealtimeService:
         profile = self.db.get(PlayerProfile, pid)
         if profile:
             profile.last_seen_at = utcnow()
+        # Disconnect expires the visible presence, so the live position must go
+        # too: leaving it would keep a ghost visible in memory mode, and the
+        # durable row has just been expired so there is nothing to fall back to.
+        position_projection.drop(pid)
 
     # ------------------------------------------------------------- movement
 
     def move(self, pid, request):
+        """Validate a movement step and record the resulting position.
+
+        The validation is identical in both backends: sequence must increase,
+        the step must be within the allowed speed for the elapsed time, and a
+        campus step must not cross a blocked polygon. Only the *storage* of the
+        accepted position differs.
+
+        In ``memory`` mode the accepted position is written to the in-process
+        projection and the durable row is left alone, so walking costs no
+        PostgreSQL commit. Sequence and speed are still measured against a
+        previously accepted position -- read from memory in that mode, so a
+        client cannot reset its own clock by replaying an old coordinate.
+        """
+        memory = settings.presence_backend == "memory"
         with transaction(self.db):
             PlayerRepository(self.db).lock(pid)
             row = self.active(pid)
-            if request.sequence <= row.sequence:
+            current = self._current_position(pid, row, memory=memory)
+            if request.sequence <= current.sequence:
                 raise AppError("STALE_MOVEMENT", "Movement sequence must increase", 409)
             elapsed = min(
-                1.0, max(0.0, (utcnow() - as_utc(row.updated_at)).total_seconds())
+                1.0, max(0.0, (utcnow() - as_utc(current.updated_at)).total_seconds())
             )
             if (
-                math.hypot(request.x - row.x, request.y - row.y)
+                math.hypot(request.x - current.x, request.y - current.y)
                 > settings.max_move_speed * elapsed + 5
             ):
                 raise AppError("MOVEMENT_TOO_FAST", "Movement exceeds allowed speed")
             if row.room == CAMPUS_ROOM and blocked_segment(
-                row.x, row.y, request.x, request.y
+                current.x, current.y, request.x, request.y
             ):
                 raise AppError("COLLISION", "Movement crosses a blocked campus polygon")
-            row.x, row.y, row.sequence, row.updated_at = (
-                request.x,
-                request.y,
-                request.sequence,
-                utcnow(),
+            now = utcnow()
+            if memory:
+                position_projection.commit(
+                    pid,
+                    row.room,
+                    request.x,
+                    request.y,
+                    request.sequence,
+                    row.room_epoch,
+                    now,
+                )
+            else:
+                row.x, row.y, row.sequence, row.updated_at = (
+                    request.x,
+                    request.y,
+                    request.sequence,
+                    now,
+                )
+                # last_seen_at is a login-activity marker, not a per-step write.
+                if self.db.get(PlayerProfile, pid):
+                    self.db.get(PlayerProfile, pid).last_seen_at = row.updated_at
+            result = public(row)
+            if memory:
+                result.update(
+                    x=request.x,
+                    y=request.y,
+                    sequence=request.sequence,
+                    updated_at=now,
+                    room=row.room,
+                    room_epoch=row.room_epoch,
+                )
+        return result
+
+    def _current_position(self, pid, row, memory):
+        """The position a new movement step is measured against.
+
+        In memory mode the live projection is the reference, so speed and
+        sequence checks follow the position the player is actually being shown.
+        Falling back to the durable row keeps a reconnect or a cold projection
+        behaving exactly as it does today.
+        """
+        if memory:
+            live = position_projection.get(pid)
+            if live is not None:
+                return live
+        return row
+
+    def roster(self, row, radius=None, exclude_blocks=False):
+        """Who is in the caller's room, nearest first.
+
+        Database mode is today's behaviour verbatim: one distance-ordered query.
+
+        Memory mode reads coordinates from the in-process projection but keeps
+        every authorization decision in the database. ``authorized_ids`` applies
+        the identical predicate ``nearby`` uses -- active account, verified
+        email, permitted room, live visit with a present host -- so memory mode
+        can never widen who is visible, only where they are. The durable rows
+        are still loaded for the fields a roster renders (username, emote) and
+        for the caller's own row, so nothing is served from memory that is not
+        also still true in PostgreSQL.
+
+        Returns ``(rows, usernames)``. ``exclude_blocks`` applies the block
+        filter here, which is what the proximity policy needs; the snapshot path
+        filters the same set separately so it can share one query.
+        """
+        radius = settings.realtime_roster_radius if radius is None else radius
+        since = utcnow() - timedelta(seconds=PRESENCE_TTL_SECONDS)
+        blocked = self.repo.blocked_ids(row.player_id) if exclude_blocks else set()
+
+        if settings.presence_backend != "memory":
+            rows = self.repo.nearby(row.room, since, row.x, row.y, radius)
+            visible = [r for r in rows if r.player_id not in blocked]
+            return visible, self.repo.usernames([r.player_id for r in visible])
+
+        live = position_projection.nearby(
+            row.room, row.x, row.y, radius, exclude={row.player_id}
+        )
+        if not live:
+            rows = self.repo.nearby(row.room, since, row.x, row.y, radius)
+            visible = [r for r in rows if r.player_id not in blocked]
+            return visible, self.repo.usernames([r.player_id for r in visible])
+
+        permitted = self.repo.authorized_ids(row.room, since)
+        # Union with the caller's own id: a player is always in their own roster.
+        wanted = ({p.player_id for p in live} | {row.player_id}) & permitted
+        wanted -= blocked
+        if not wanted:
+            return [], {}
+
+        rows = self.repo.rows_for(wanted)
+        if not rows:
+            return [], {}
+
+        positions = {position.player_id: position for position in live}
+        merged = []
+        for presence in rows:
+            position = positions.get(presence.player_id)
+            # Memory wins for coordinates; the durable row supplies everything
+            # else. A row with no live position is a player who has not moved
+            # since entering, so their stored spawn is still their position.
+            if position is not None:
+                presence.x = position.x
+                presence.y = position.y
+                presence.sequence = position.sequence
+            merged.append(presence)
+        merged.sort(
+            key=lambda presence: (
+                (presence.x - row.x) ** 2 + (presence.y - row.y) ** 2,
+                presence.player_id,
             )
-            # last_seen_at is a login-activity marker, not a per-step write.
-            if self.db.get(PlayerProfile, pid):
-                self.db.get(PlayerProfile, pid).last_seen_at = row.updated_at
-        return public(row)
+        )
+        return merged, self.repo.usernames([r.player_id for r in merged])
 
     def snapshot(self, pid):
         """Authoritative view of the room the caller is standing in.
@@ -311,22 +446,11 @@ class RealtimeService:
             with transaction(self.db):
                 FarmVisitService(self.db).heartbeat_internal(pid)
         blocked = self.repo.blocked_ids(pid)
-        nearby = self.repo.nearby(
-            row.room,
-            utcnow() - timedelta(seconds=PRESENCE_TTL_SECONDS),
-            row.x,
-            row.y,
-            settings.realtime_roster_radius,
-        )
-        names = self.repo.usernames([r.player_id for r in nearby])
         visible = []
-        for other in nearby:
+        for other in self.roster(row)[0]:
             if other.player_id in blocked:
                 continue
-            item = self._presence_public(
-                other, session if other.player_id == pid else None
-            )
-            item["username"] = names[other.player_id]
+            item = self._presence_public(other, session if other.player_id == pid else None)
             if not other.emote_until or as_utc(other.emote_until) < utcnow():
                 item["emote"] = None
             visible.append(item)

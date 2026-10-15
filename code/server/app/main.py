@@ -37,6 +37,7 @@ from app.modules.progression.router import router as progression_router
 from app.modules.profile.router import router as profile_router
 from app.modules.realtime.native_voice import router as native_voice_router
 from app.modules.realtime.policy_events import register as register_policy_events
+from app.modules.realtime import position_projection
 from app.modules.realtime.router import router as realtime_router
 from app.modules.realtime.runtime import runtime
 from app.modules.realtime.voice import voice_hub
@@ -119,10 +120,16 @@ async def lifespan(_app):
     configure_logging()
     # Migrations and reference seeding are explicit commands, never startup work.
     logging.getLogger("wanderville").info(
-        "Starting %s against %s, delivery=%s",
+        "Starting %s against %s, delivery=%s, presence=%s",
         settings.wanderville_env,
         settings.database_target,
         settings.email_delivery,
+        settings.presence_backend,
+    )
+    # Apply the configured bounds before the first socket can record a position.
+    position_projection.configure(
+        max_players=settings.presence_memory_max_players,
+        ttl_seconds=settings.presence_memory_ttl_seconds,
     )
     stop = asyncio.Event()
     task = asyncio.create_task(_world_worker(stop)) if settings.world_worker_enabled else None
@@ -132,6 +139,7 @@ async def lifespan(_app):
         stop.set()
         await voice_hub.shutdown()
         runtime.clear()
+        position_projection.reset()
         if task:
             await task
 

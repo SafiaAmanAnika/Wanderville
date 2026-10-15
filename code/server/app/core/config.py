@@ -71,6 +71,25 @@ class Settings(BaseSettings):
     # literal in the snapshot path and a reader could not tell it apart from the
     # proximity policy radii.
     realtime_roster_radius: float = Field(2000, gt=0, le=4000)
+    # Where live positions are authoritative.
+    #
+    # "database" keeps today's behaviour exactly: every validated movement step
+    # commits a row to ``player_presence`` and every roster is a SQL query. This
+    # is the default and is what the whole existing suite is written against.
+    #
+    # "memory" keeps the same validation rules but holds live positions in a
+    # bounded in-process map, so walking costs no PostgreSQL write. PostgreSQL
+    # still decides identity, ownership, visits, blocks and privacy; only the
+    # coordinate is served from memory. It is independent of
+    # MULTIPLAYER_TRANSPORT so it can be adopted before, or without, a
+    # dedicated Godot host.
+    #
+    # Like the realtime runtime this is per-process state: "memory" is only
+    # correct for the single-worker deployment this project documents.
+    presence_backend: Literal["database", "memory"] = "database"
+    # Bounds for the in-memory projection. Ignored in database mode.
+    presence_memory_max_players: int = Field(512, ge=8, le=100000)
+    presence_memory_ttl_seconds: int = Field(15, gt=1, le=600)
     # Per-connection passive projections are reused briefly between commits.
     # Never exceed the two-second voice authorization lease. Zero disables it.
     realtime_snapshot_cache_seconds: float = Field(1.0, ge=0, le=1)

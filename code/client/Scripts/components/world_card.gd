@@ -1,6 +1,8 @@
 extends Button
 
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
+const DEFAULT_THUMBNAIL := preload("res://Assets/background/bg.png")
+const MONTH_NAMES := ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 const WOOD_SURFACE := Color(0.60, 0.43, 0.27)
 const WOOD_BORDER := Color(0.38, 0.25, 0.13)
@@ -35,6 +37,9 @@ func _ready() -> void:
 	_apply_name_label_style()
 	_overlay.color = Color(WOOD_DARK.r, WOOD_DARK.g, WOOD_DARK.b, 0.35)
 	_create_info_panel()
+	# Container sizing may finish before _ready creates the details label.
+	# Lay it out now as well as on subsequent resizes.
+	_layout_info_panel()
 
 	mouse_entered.connect(_on_mouse_entered)
 	mouse_exited.connect(_on_mouse_exited)
@@ -108,11 +113,12 @@ func _create_info_panel() -> void:
 	_info_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_info_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_info_label.clip_text = false
-	_info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_info_label.clip_text = true
+	_info_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	_info_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	_info_label.add_theme_font_override("font", PIXEL_FONT)
 	_info_label.add_theme_font_size_override("font_size", WoodPanel.SIZE_CARD_DETAIL)
-	_info_label.add_theme_color_override("font_color", PARCHMENT_DARK)
+	_info_label.add_theme_color_override("font_color", WOOD_DARK)
 	add_child(_info_label)
 
 	var panel_style := StyleBoxFlat.new()
@@ -139,7 +145,7 @@ func _notification(what: int) -> void:
 func _layout_info_panel() -> void:
 	if _info_label == null:
 		return
-	var info_height := 50.0
+	var info_height := 32.0 if _info_label.visible else 0.0
 	_info_label.set_anchor_and_offset(SIDE_LEFT, 0.0, 8)
 	_info_label.set_anchor_and_offset(SIDE_RIGHT, 1.0, -8)
 	_info_label.set_anchor_and_offset(SIDE_BOTTOM, 1.0, -8)
@@ -149,6 +155,9 @@ func _layout_info_panel() -> void:
 	_name_label.offset_bottom = -info_height - 8
 	_name_label.offset_left = 8
 	_name_label.offset_right = -8
+	# Keep the artwork above the name/details instead of behind their text.
+	_thumbnail.offset_bottom = -(info_height + 48)
+	pivot_offset = size / 2.0
 
 func _on_mouse_entered() -> void:
 	_is_hovered = true
@@ -168,8 +177,8 @@ func set_world(id: String, world_name: String, thumbnail: Texture2D = null, info
 	world_id = id
 	if _name_label != null:
 		_name_label.text = world_name
-	if _thumbnail != null and thumbnail != null:
-		_thumbnail.texture = thumbnail
+	if _thumbnail != null:
+		_thumbnail.texture = thumbnail if thumbnail != null else DEFAULT_THUMBNAIL
 	set_world_info(info)
 
 func set_world_info(info: Dictionary) -> void:
@@ -178,11 +187,12 @@ func set_world_info(info: Dictionary) -> void:
 	if info.is_empty():
 		_info_label.text = ""
 		_info_label.visible = false
+		_layout_info_panel()
 		return
 	_info_label.visible = true
 	var lines: PackedStringArray = []
 	if info.has("created_at"):
-		lines.append("Created: %s" % str(info["created_at"]))
+		lines.append("Created: %s" % format_creation_date(info["created_at"]))
 	if info.has("season"):
 		lines.append("Season: %s" % str(info["season"]))
 	if info.has("play_time"):
@@ -191,7 +201,27 @@ func set_world_info(info: Dictionary) -> void:
 		lines.append("Day: %s" % str(info["day"]))
 	if info.has("population"):
 		lines.append("Population: %s" % str(info["population"]))
-	_info_label.text = "\n".join(lines)
+	_info_label.text = "  |  ".join(lines)
+	tooltip_text = "%s\n%s" % [_name_label.text, "\n".join(lines)]
+	_info_label.visible = not lines.is_empty()
+	_layout_info_panel()
+
+
+static func format_creation_date(value: Variant) -> String:
+	# Display the date supplied by the server without fractional seconds or its
+	# timezone suffix. Both ISO timestamps and plain YYYY-MM-DD are supported.
+	var date := str(value).strip_edges().get_slice("T", 0).get_slice(" ", 0)
+	var parts := date.split("-")
+	if parts.size() != 3:
+		return "Unknown"
+	for part in parts:
+		if not part.is_valid_int():
+			return "Unknown"
+	var month := int(parts[1])
+	var day := int(parts[2])
+	if month < 1 or month > 12 or day < 1 or day > 31:
+		return "Unknown"
+	return "%d %s %s" % [day, MONTH_NAMES[month - 1], parts[0]]
 
 func set_selected(selected: bool) -> void:
 	_is_selected = selected

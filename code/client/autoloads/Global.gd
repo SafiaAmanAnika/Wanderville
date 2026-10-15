@@ -24,6 +24,11 @@ var pending_reset_token: String = ""
 
 const AUTH_FILE := "user://auth.cfg"
 
+
+func _auth_file() -> String:
+	# Local development and the hosted game must not overwrite each other's login.
+	return "user://auth_%s.cfg" % APIClient.base_url.sha256_text()
+
 const CHARACTER_SCENES: Dictionary = {
 	"player1": "res://Scenes/player1.tscn",
 	"farmer_female": "res://Scenes/player1.tscn",
@@ -91,12 +96,15 @@ func save_session() -> void:
 	cfg.set_value("auth", "remember_device", remember_device)
 	cfg.set_value("auth", "selected_character", selected_character)
 	cfg.set_value("auth", "selected_world_id", selected_world_id)
-	cfg.save(AUTH_FILE)
+	cfg.save(_auth_file())
 
 
 func load_session() -> bool:
 	var cfg := ConfigFile.new()
-	var err := cfg.load(AUTH_FILE)
+	var err := cfg.load(_auth_file())
+	# Migrate the previous unscoped login only for its original project server.
+	if err != OK and APIClient.base_url == str(ProjectSettings.get_setting("network/wanderville_api_url", APIClient.DEFAULT_BASE_URL)).rstrip("/"):
+		err = cfg.load(AUTH_FILE)
 	if err != OK:
 		return false
 	if not bool(cfg.get_value("auth", "remember_device", true)):
@@ -132,7 +140,9 @@ func clear_session() -> void:
 	remember_device = true
 	var dir := DirAccess.open("user://")
 	if dir:
-		dir.remove(AUTH_FILE)
+		dir.remove(_auth_file())
+		if APIClient.base_url == str(ProjectSettings.get_setting("network/wanderville_api_url", APIClient.DEFAULT_BASE_URL)).rstrip("/"):
+			dir.remove(AUTH_FILE)
 	session_changed.emit()
 
 

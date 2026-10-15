@@ -13,3 +13,4 @@ venv*/
 .coverage
 htmlcov/
 .verification/
+.local-postgres/

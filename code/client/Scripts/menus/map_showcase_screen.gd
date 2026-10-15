@@ -2,6 +2,7 @@ extends Control
 
 const BG_TEXTURE := preload("res://Assets/background/bg.png")
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
+const WORLD_CARD := preload("res://Scripts/components/world_card.gd")
 
 const TEXT_COLOR := Color(0.95, 0.91, 0.80)
 const TEXT_SECONDARY := Color(0.82, 0.74, 0.58)
@@ -166,12 +167,11 @@ func _select_world(world: Dictionary, selected_card: Button) -> void:
 	_enter_button.disabled = false
 
 	for card in _grid.get_children():
+		card.modulate = Color.WHITE
 		if card == selected_card:
-			card.modulate = Color(1, 1, 1, 1)
 			if card.has_method("set_selected"):
 				card.set_selected(true)
 		else:
-			card.modulate = Color(0.7, 0.7, 0.7, 0.7)
 			if card.has_method("set_selected"):
 				card.set_selected(false)
 
@@ -183,7 +183,7 @@ func _show_world_info(world: Dictionary) -> void:
 	var world_name := str(world.get("name", "Unnamed World"))
 	lines.append("World: %s" % world_name)
 	if world.has("created_at"):
-		lines.append("Created: %s" % str(world["created_at"]))
+		lines.append("Created: %s" % WORLD_CARD.format_creation_date(world["created_at"]))
 	if world.has("season"):
 		lines.append("Season: %s" % str(world["season"]))
 	if world.has("day"):

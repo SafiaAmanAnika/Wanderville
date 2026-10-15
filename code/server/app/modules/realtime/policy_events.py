@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 from app.modules.players.models import Player
 from app.modules.realtime.models import Presence
 from app.modules.realtime.runtime import runtime
+from app.modules.realtime.snapshot_cache import snapshot_revision
 from app.modules.social.community_models import SocialPreferences
 from app.modules.social.models import FarmVisitSession, Friendship, PlayerBlock
 
@@ -28,6 +29,8 @@ def _collect_changes(db, _context, _instances):
     Runs before the flush that will write these rows, so it sees the intended
     final state rather than whatever happens to be in the session.
     """
+    if db.new or db.dirty or db.deleted:
+        db.info["snapshot_dirty"] = True
     invalidate = db.info.setdefault("voice_invalidate", set())
     leave = db.info.setdefault("voice_leave", set())
     for row in set(db.new) | set(db.dirty) | set(db.deleted):
@@ -53,15 +56,18 @@ def _collect_changes(db, _context, _instances):
             leave.add(row.player_id)
         elif (
             isinstance(row, Player)
-            and inspect(row).attrs.is_active.history.has_changes()
+            and any(inspect(row).attrs[field].history.has_changes()
+                    for field in ("is_active", "email_verified", "token_version"))
         ):
             invalidate.add(row.id)
-            if not row.is_active:
+            if not row.is_active or not row.email_verified or inspect(row).attrs.token_version.history.has_changes():
                 leave.add(row.id)
 
 
 def _committed(db):
     """Revoke permissions for everything that just became durable."""
+    if db.info.pop("snapshot_dirty", False):
+        snapshot_revision.invalidate()
     players = db.info.pop("voice_invalidate", set())
     leave = db.info.pop("voice_leave", set())
     if players:
@@ -74,6 +80,13 @@ def _rolled_back(db):
     """Discard staged revocations; a rollback must not revoke anything."""
     db.info.pop("voice_invalidate", None)
     db.info.pop("voice_leave", None)
+    db.info.pop("snapshot_dirty", None)
+
+
+def _bulk_write(state):
+    # Session.execute(update/delete/insert) bypasses before_flush.
+    if state.is_update or state.is_delete or state.is_insert:
+        state.session.info["snapshot_dirty"] = True
 
 
 def register():
@@ -84,4 +97,5 @@ def register():
     event.listen(Session, "before_flush", _collect_changes)
     event.listen(Session, "after_commit", _committed)
     event.listen(Session, "after_rollback", _rolled_back)
+    event.listen(Session, "do_orm_execute", _bulk_write)
     _REGISTERED = True

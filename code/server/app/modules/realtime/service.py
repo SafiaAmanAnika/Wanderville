@@ -412,7 +412,7 @@ class RealtimeService:
         with transaction(self.db):
             PlayerRepository(self.db).lock(pid)
             row = self.active(pid)
-            if (utcnow() - as_utc(row.updated_at)).total_seconds() >= 1:
+            if (utcnow() - as_utc(row.updated_at)).total_seconds() >= min(15, PRESENCE_TTL_SECONDS / 3):
                 row.updated_at = utcnow()
 
     def emote(self, pid, emote):

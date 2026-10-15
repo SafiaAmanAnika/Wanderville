@@ -98,7 +98,7 @@ An alternative database is [Supabase Free](https://supabase.com/pricing), but in
 | `GOOGLE_CLIENT_ID` | Desktop OAuth JSON's `client_id` |
 | `GOOGLE_CLIENT_SECRET` | Desktop OAuth JSON's `client_secret` |
 
-The blueprint generates the JWT secret, selects Gmail HTTPS delivery, and enables the existing world worker inside the API process. `PYTHON_VERSION` is pinned to 3.12.12; do not raise it, because SQLAlchemy 2.0.36 fails while mapping `Optional[...]` annotations on Python 3.14 and the service will not start. `EMAIL_BASE_URL` defaults to Render's public `RENDER_EXTERNAL_URL`; set it explicitly to your HTTPS public API URL if using a custom hostname. The start command runs migrations and idempotent reference seeding, then Uvicorn. Use a **new empty Neon database** unless you have separately planned an existing-data migration.
+The blueprint generates the JWT secret, selects Gmail HTTPS delivery, and disables the always-on world worker to let Neon sleep when nobody plays. Routine Render health checks use `/health`, which performs no database queries; use `/ready` manually after deployment. `PYTHON_VERSION` is pinned to 3.12.12; do not raise it, because SQLAlchemy 2.0.36 fails while mapping `Optional[...]` annotations on Python 3.14 and the service will not start. `EMAIL_BASE_URL` defaults to Render's public `RENDER_EXTERNAL_URL`; set it explicitly to your HTTPS public API URL if using a custom hostname. The start command runs migrations and idempotent reference seeding, then Uvicorn. Use a **new empty Neon database** unless you have separately planned an existing-data migration.
 
 ### Gameplay request latency
 
@@ -108,7 +108,7 @@ The bundle also samples the clock once and passes that timestamp to both crop gr
 
 If input still feels slow after deploying this, check in order: the Neon region matches Render's, the response time of `GET /ready` (which includes a database query) rather than `/health` (which does not), and that the client is polling a bundle rather than the older per-section endpoints.
 
-Use **one Uvicorn worker and one instance**: realtime socket ownership is process-local. The embedded world worker runs while Render is awake; timed notifications/events are delayed while it sleeps. Time and crop growth derive from persisted timestamps and are projected again when the service wakes. This is not a keep-alive workaround.
+Use **one Uvicorn worker and one instance**: realtime socket ownership is process-local. Keep `WORLD_WORKER_ENABLED=false` for Neon Free. Watered crop growth derives from persisted timestamps and is projected on reads/actions. Automatic rain watering, worker-generated events/notifications and expired-row cleanup require explicit worker runs (`python -m app.modules.world.worker --once`) or a deliberately infrequent scheduler. Do not run an always-on worker or uptime pinger against Neon. See [free-tier recovery](NEON_FREE_TIER.md).
 
 ### Check the public deployment
 
@@ -159,7 +159,7 @@ Set-Location D:\GitHubProjects\Wanderville\code\server
 .\.venv312\Scripts\python.exe -m app.modules.world.worker
 ```
 
-Alternatively set `WORLD_WORKER_ENABLED=true` on the local API and run only Uvicorn. Do not also launch a standalone worker unnecessarily. Then run `code/client/project.godot`. The existing PostgreSQL service on port 5433 must be running.
+When using local PostgreSQL, alternatively set `WORLD_WORKER_ENABLED=true` on the local API and run only Uvicorn. Do not also launch a standalone worker unnecessarily. Keep the worker disabled when the local API points to Neon Free. Then run `code/client/project.godot`. The existing PostgreSQL service on port 5433 must be running.
 
 Check the restarted process with `Invoke-RestMethod http://127.0.0.1:8000/ready`. A successful `/health` alone does not confirm that migrations and reference data are current. Open the HUD Store button and use **Claim starter seeds (once)** for an account that has not already claimed the pack. The existing `original_seeds_v1` marker is retained, so upgrading never grants a second pack or replenishes consumed seeds. The complete grant and its marker commit together; lack of capacity rolls back both.
 

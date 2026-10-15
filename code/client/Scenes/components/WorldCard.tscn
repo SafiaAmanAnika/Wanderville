@@ -19,7 +19,12 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-stretch_mode = 3
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -80.0
+expand_mode = 1
+stretch_mode = 6
 mouse_filter = 2
 
 [node name="Overlay" type="ColorRect" parent="."]
@@ -45,6 +50,8 @@ grow_horizontal = 2
 grow_vertical = 0
 horizontal_alignment = 1
 vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
 mouse_filter = 2
 
 [node name="Border" type="Panel" parent="."]

@@ -30,6 +30,7 @@ from app.modules.realtime.schemas import (
     NearbyChatRequest,
 )
 from app.modules.realtime.service import RealtimeService
+from app.modules.realtime.snapshot_cache import SnapshotCache, snapshot_revision
 from app.modules.realtime.voice import ensure_media_available, ice_servers
 from app.modules.realtime.voice_schemas import (
     DismissRequest,
@@ -66,6 +67,7 @@ class RealtimeProtocol:
 
     def __init__(self, db):
         self.db = db
+        self.cache = SnapshotCache()
 
     def step(self, token, message, protocol=1, generation=None):
         """Handle one inbound frame and return the reply packet.
@@ -77,6 +79,14 @@ class RealtimeProtocol:
         request_id = None
         pid = None
         try:
+            passive = self.cache.eligible(message)
+            if passive:
+                cached = self.cache.get(token, protocol, generation)
+                if cached is not None:
+                    return cached
+            self.cache.clear()
+            revision = snapshot_revision.current()
+            policy_revision = runtime.policy_revision()
             player = AuthService(self.db).authenticate(token)
             pid = player.id
             if protocol == 2:
@@ -96,10 +106,14 @@ class RealtimeProtocol:
                 service.heartbeat(pid)
             data = service.snapshot(pid)
             if protocol == 2:
-                return self._protocol_two_reply(
+                reply = self._protocol_two_reply(
                     pid, generation, kind, message, data, events, request_id
                 )
-            return jsonable_encoder({"type": "snapshot", "data": data})
+            else:
+                reply = jsonable_encoder({"type": "snapshot", "data": data})
+            if passive:
+                self.cache.store(reply, token, protocol, generation, revision, policy_revision)
+            return reply
         except AppError as exc:
             if pid and protocol == 2 and exc.code in SESSION_OVER_CODES:
                 runtime.invalidate({pid}, leave=True)

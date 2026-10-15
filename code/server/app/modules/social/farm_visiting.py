@@ -295,6 +295,10 @@ class FarmVisitService:
         )
         if session is None:
             return None
+        # A live socket checks often; persisting each check wastes database
+        # traffic. Stay well inside the presence TTL used by stale-session sweeps.
+        if session.last_seen_at and (utcnow() - as_utc(session.last_seen_at)).total_seconds() < min(15, settings.presence_ttl_seconds / 3):
+            return session.id
         session.last_seen_at = utcnow()
         self.db.flush()
         return session.id

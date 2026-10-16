@@ -50,6 +50,21 @@ def require_host(
 
         raise Forbidden(_UNCONFIGURED)
 
+    if not constant_time_matches(x_multiplayer_secret or "", expected):
+        import logging
+
+        from app.core.exceptions import Forbidden
+
+        # Never log the presented value; log only its shape, which is what is
+        # needed to tell a missing header from a wrong secret.
+        logging.getLogger("wanderville").warning(
+            "multiplayer host rejected: header_present=%s length=%d expected_length=%d",
+            x_multiplayer_secret is not None,
+            len(x_multiplayer_secret or ""),
+            len(expected),
+        )
+        raise Forbidden("Invalid multiplayer host credentials")
+
     if settings.multiplayer_host_allowlist:
         allowed = [
             entry.strip()
@@ -61,13 +76,6 @@ def require_host(
             from app.core.exceptions import Forbidden
 
             raise Forbidden("Multiplayer host address is not allowed")
-
-    if not x_multiplayer_secret or not constant_time_matches(
-        x_multiplayer_secret, expected
-    ):
-        from app.core.exceptions import Forbidden
-
-        raise Forbidden("Invalid multiplayer host credentials")
 
 
 class ConsumeRequest(BaseModel):

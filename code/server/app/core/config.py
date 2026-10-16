@@ -90,6 +90,27 @@ class Settings(BaseSettings):
     # Bounds for the in-memory projection. Ignored in database mode.
     presence_memory_max_players: int = Field(512, ge=8, le=100000)
     presence_memory_ttl_seconds: int = Field(15, gt=1, le=600)
+    # Multiplayer admission. The Godot dedicated server trades a short-lived,
+    # single-use ticket for a verified player identity, so no account credential
+    # and no refresh token ever crosses onto the ENet transport.
+    #
+    # The internal secret authenticates the *Godot host* to this backend and is
+    # never sent to a game client. It defaults to empty so a misconfigured
+    # deployment fails closed rather than trusting an empty secret.
+    multiplayer_bridge_secret: str = ""
+    # Short on purpose: the ticket only has to survive the ENet handshake.
+    multiplayer_ticket_ttl_seconds: int = Field(30, ge=5, le=300)
+    # Bound on the in-memory ticket registry, which expires entries anyway.
+    multiplayer_ticket_capacity: int = Field(4096, ge=16, le=100000)
+    multiplayer_host_allowlist: str = ""
+    # Which transport a game client uses for live movement. "legacy" is the
+    # existing Python WebSocket path and stays the default; "godot-enet" routes
+    # movement through a Godot dedicated server. This phase only adds the
+    # admission half of the new transport, so "godot-enet" does not yet move
+    # anything and must not be selected expecting it to.
+    multiplayer_transport: Literal["legacy", "godot-enet"] = "legacy"
+    godot_multiplayer_host: str = "127.0.0.1"
+    godot_multiplayer_port: int = Field(24567, ge=1, le=65535)
     # Per-connection passive projections are reused briefly between commits.
     # Never exceed the two-second voice authorization lease. Zero disables it.
     realtime_snapshot_cache_seconds: float = Field(1.0, ge=0, le=1)
@@ -147,6 +168,14 @@ class Settings(BaseSettings):
     def production_policy(self):
         if self.proximity_exit_radius <= self.proximity_radius:
             raise ValueError("PROXIMITY_EXIT_RADIUS must exceed PROXIMITY_RADIUS")
+        # A multiplayer bridge secret left unset would let anyone who can reach
+        # the internal endpoint mint and consume admission tickets. Outside
+        # development that is a hard failure rather than a warning.
+        if not self.is_development and self.multiplayer_host_allowlist:
+            raise ValueError(
+                "MULTIPLAYER_HOST_ALLOWLIST is development-only; a public "
+                "deployment needs TLS and signed internal requests instead"
+            )
         if self.voice_turn_urls and not self.voice_turn_secret:
             raise ValueError("VOICE_TURN_SECRET is required with VOICE_TURN_URLS")
         if not self.is_development:

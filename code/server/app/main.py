@@ -38,6 +38,8 @@ from app.modules.profile.router import router as profile_router
 from app.modules.realtime.native_voice import router as native_voice_router
 from app.modules.realtime.policy_events import register as register_policy_events
 from app.modules.realtime import position_projection
+from app.modules.realtime.admission_router import router as multiplayer_admission_router
+from app.modules.realtime.internal_router import router as internal_multiplayer_router
 from app.modules.realtime.router import router as realtime_router
 from app.modules.realtime.runtime import runtime
 from app.modules.realtime.voice import voice_hub
@@ -72,6 +74,9 @@ ROUTERS = (
     # realtime
     realtime_router,
     native_voice_router,
+    # multiplayer admission: public ticket issue, private host consumption
+    multiplayer_admission_router,
+    internal_multiplayer_router,
     events_router,
     # composite
     state_router,

@@ -868,6 +868,10 @@ def movement_env(workdir: Path, arena: bool = True) -> dict:
     }
     if arena:
         env["GODOT_MOVEMENT_ARENA"] = "1"
+    # Optional server-side movement diagnostics, requested from the environment so
+    # a single failing test can be traced without editing the suite.
+    if os.environ.get("GODOT_MOVEMENT_TRACE") == "1":
+        env["GODOT_MOVEMENT_TRACE"] = "1"
     return env
 
 

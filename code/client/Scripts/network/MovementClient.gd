@@ -47,6 +47,10 @@ const RECONCILE_BLEED := 0.35
 const STALE_SNAPSHOTS := 40
 
 var input_enabled := true
+## When true the client transmits nothing at all after settling, not even neutral
+## packets. Used to exercise the server's input-expiry path directly, which is a
+## different condition from "client says I am idle".
+var input_silent := false
 ## Set by a headless test to drive movement without a keyboard.
 var scripted_input := Vector2.ZERO
 
@@ -168,6 +172,10 @@ func _physics_process(delta: float) -> void:
 	_input_accumulator += delta
 	if _input_accumulator >= 1.0 / INPUT_HZ:
 		_input_accumulator = 0.0
+		if input_silent:
+			# Transmit nothing at all. The server must stop this player on its own
+			# and must keep the peer connected -- silence is not a disconnect.
+			return
 		_send_input(direction)
 
 

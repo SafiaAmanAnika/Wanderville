@@ -66,6 +66,9 @@ NAMES = ["mv_p1", "mv_p2", "mv_p3", "mv_p4", "mv_p5", "mv_p6"]
 ARENA_HALF_HEIGHT = 1200.0
 #: Deterministic spawn ring radius, mirrored from MovementClient._spawn_point.
 ARENA_SPAWN_RING = 260.0
+#: MovementAuthority.INPUT_TIMEOUT, mirrored so the expiry bound is derived from the
+#: real constant rather than a number picked to make a test pass.
+INPUT_TIMEOUT_SECONDS = 0.25
 
 
 def pool_user(index: int) -> dict:
@@ -792,6 +795,50 @@ def _point(row: dict) -> tuple:
 
 
 # ── 22: the legacy path is untouched ───────────────────────────────────────
+
+
+def test_silent_client_stops_on_server_input_expiry(
+    backend, freed_ports, server_port, harness_dir
+):
+    """A client that stops transmitting entirely is stopped by the server itself.
+
+    Distinct from an idle script, which keeps sending neutral packets and so tells
+    the server to stop. Here transmission stops completely, so the only thing that
+    can halt the entity is the server's own input expiry.
+
+    The bound is derived rather than chosen: the client transmits for
+    ``SILENCE_AFTER`` seconds at the server's 300 units/second, then the server
+    may keep it moving for at most ``INPUT_TIMEOUT`` more before it expires. One
+    extra second of slack absorbs the settle and the frame quantisation.
+    """
+    one, two = pair(0)
+    silence_after = 1.0
+    server, results_a, results_b, _out_a, out_b = run_pair(
+        backend, server_port, harness_dir,
+        script_a="right:4.0", script_b="right:4.0", hold=1.5, index=0,
+        extra_a={"TEST_GO_SILENT_AFTER": str(silence_after)},
+    )
+    try:
+        row_a = observed(results_a, one["player_id"])
+        assert row_a is not None, out_a[-1500:]
+        # Travel is bounded by transmitted time plus the expiry grace.
+        limit = MOVEMENT_SPEED * (silence_after + INPUT_TIMEOUT_SECONDS) + 60.0
+        assert movement_extent(row_a)["width"] <= limit, (
+            "the server kept moving a silent player for %.1f units; the bound from "
+            "%.1fs of transmission plus a %.2fs expiry is %.1f:\n%s"
+            % (movement_extent(row_a)["width"], silence_after,
+               INPUT_TIMEOUT_SECONDS, limit, row_a)
+        )
+        # And it did actually move first, so this is not passing vacuously.
+        assert movement_extent(row_a)["width"] > MOVEMENT_SPEED * 0.5, row_a
+        # The peer was never disconnected merely for being quiet.
+        text = reap(server).decode("utf-8", "replace")
+        assert f"player {one['player_id']} disconnected" not in text, text[-1200:]
+        # The other player is unaffected.
+        row_b = observed(results_b, two["player_id"])
+        assert row_b is not None and movement_extent(row_b)["width"] > MOVEMENT_SPEED * 2.0, row_b
+    finally:
+        reap(server)
 
 
 def test_legacy_transport_remains_the_default(backend, freed_ports, server_port, harness_dir):

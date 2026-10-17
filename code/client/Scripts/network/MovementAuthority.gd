@@ -81,6 +81,8 @@ var _bytes_sent := 0
 var _collision_shapes := 0
 var _collision_built := false
 var _arena_mode := false
+## Opt-in diagnostics. Off by default so a normal server log stays readable.
+var _trace := OS.get_environment("GODOT_MOVEMENT_TRACE") == "1"
 var _world_label := ""
 var _speed_limit_violations := 0
 
@@ -266,13 +268,31 @@ func _physics_process(delta: float) -> void:
 		# The speed is the server's constant. The client contributed a direction
 		# and nothing else.
 		var direction: Vector2 = entity.get("direction", Vector2.ZERO)
-		if not bool(entity.get("moving", false)):
+		var declared_moving := bool(entity.get("moving", false))
+		if not declared_moving:
 			direction = Vector2.ZERO
 		# A client that has stopped talking stops moving, after a short grace that
 		# absorbs a single dropped unreliable packet.
 		var silence := wall_clock - float(entity.get("last_input_at", 0.0))
-		if silence > INPUT_TIMEOUT:
+		var expired := silence > INPUT_TIMEOUT
+		if expired:
 			direction = Vector2.ZERO
+		# Diagnostics, opt-in via GODOT_MOVEMENT_TRACE and only on the transitions
+		# plus a periodic sample, so a trace stays readable and never floods.
+		if _trace and direction != Vector2.ZERO and not bool(entity.get("was_moving", false)):
+			print(
+				LOG_PREFIX + "trace MOVE-START player=%d tick=%d t=%.2f seq=%d dir=%s pos=%s"
+				% [player_id, _tick, wall_clock, int(entity.get("last_seq", -1)),
+					str(direction), str(before)]
+			)
+		if _trace and direction == Vector2.ZERO and bool(entity.get("was_moving", false)):
+			print(
+				LOG_PREFIX + "trace MOVE-STOP player=%d tick=%d t=%.2f declared_moving=%s expired=%s silence=%.3f seq=%d pos=%s"
+				% [player_id, _tick, wall_clock, str(declared_moving), str(expired),
+					silence, int(entity.get("last_seq", -1)), str(before)]
+			)
+		entity["was_moving"] = direction != Vector2.ZERO
+		var velocity_before := body.velocity
 		body.velocity = direction * SPEED
 		body.move_and_slide()
 		var after := body.global_position
@@ -280,6 +300,14 @@ func _physics_process(delta: float) -> void:
 			# Not reachable from the network: the server just moved this body. If
 			# it ever fires, the simulation is wrong, not the client.
 			_speed_limit_violations += 1
+		if _trace and _tick % 30 == 0:
+			print(
+				LOG_PREFIX + "trace tick player=%d tick=%d t=%.2f pos=%s vel=%s->%s seq=%d dir=%s declared_moving=%s silence=%.2fs expired=%s moved=%.1f"
+				% [player_id, _tick, wall_clock, str(after), str(velocity_before),
+					str(body.velocity), int(entity.get("last_seq", -1)),
+					str(direction), str(declared_moving), silence, str(expired),
+					before.distance_to(after)]
+			)
 		entity["position"] = after
 		_entities[player_id] = entity
 

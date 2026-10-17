@@ -34,6 +34,8 @@ var _port := NetworkConfig.DEFAULT_PORT
 var _phase := "boot"
 var _elapsed := 0.0
 var _settled := false
+var _silence_after := 0.0
+var _silence_at := -1.0
 var _script_steps: Array = []
 var _script_index := 0
 var _script_time := 0.0
@@ -68,7 +70,21 @@ func _ready() -> void:
 	# collides identically and reconciliation has nothing to argue about.
 	movement.build_collision_world(self)
 
+	# TEST_SILENT: transmit nothing after settling, so the server's own input-expiry
+	# path is what stops this player rather than an explicit neutral packet.
+	if OS.get_environment("TEST_SILENT") == "1":
+		movement.input_silent = true
+
 	_parse_scripts()
+
+	# TEST_GO_SILENT_AFTER: seconds after settling at which transmission stops
+	# entirely. Distinct from TEST_SILENT because the scenario under test is "move,
+	# then stop talking", and from an idle script because an idle script still
+	# transmits neutral packets -- the server must stop the player on expiry, not
+	# because the client told it to.
+	_silence_after = float(OS.get_environment("TEST_GO_SILENT_AFTER"))
+	if _silence_after > 0.0:
+		_silence_at = 0.0
 
 	client = MultiplayerClient.new()
 	add_child(client)
@@ -217,6 +233,14 @@ func _observe(packet: PackedByteArray) -> void:
 
 func _process(delta: float) -> void:
 	_elapsed += delta
+	# Enforce the "stop transmitting" deadline. Without this the timer is armed
+	# but nothing ever consumes it, and the client keeps sending input for its
+	# whole life -- which is exactly what made a silent-client test measure the
+	# script duration instead of the server's expiry behaviour.
+	if _silence_at > 0.0 and _elapsed >= _silence_at:
+		_silence_at = -1.0
+		movement.input_silent = true
+		print("%s stopped transmitting at t=%.2f" % [_username, _elapsed])
 	match _phase:
 		"settling":
 			_maybe_settle()
@@ -247,6 +271,8 @@ func _maybe_settle() -> void:
 		return
 	# Give the last snapshot a moment to land so the "before" position is real.
 	_settled = true
+	if _silence_after > 0.0:
+		_silence_at = _elapsed + _silence_after
 	print(
 		"%s settled: self=%d remotes=%s"
 		% [_username, movement.player_id, str(movement.remote_ids())]

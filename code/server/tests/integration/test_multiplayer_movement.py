@@ -63,6 +63,8 @@ NAMES = ["mv_p1", "mv_p2", "mv_p3", "mv_p4", "mv_p5", "mv_p6"]
 
 #: Half the height of the isolated test arena, mirrored from MovementArena.
 ARENA_HALF_HEIGHT = 1200.0
+#: Deterministic spawn ring radius, mirrored from MovementClient._spawn_point.
+ARENA_SPAWN_RING = 260.0
 
 
 def pool_user(index: int) -> dict:
@@ -519,17 +521,20 @@ def test_player_cannot_cross_a_wall_in_the_isolated_arena(
 
         row = observed(results_a, one["player_id"])
         assert row is not None, out_a[-1500:]
-        # Unobstructed, 5.0s at 300/s would be 1500 units of northward travel.
-        assert movement_extent(row)["height"] > 100.0, (
-            "the player barely moved, so this proves nothing:\n%s" % row
+        # It really did try to travel.
+        assert movement_extent(row)["height"] > 100.0, row
+        # It really was stopped. Unobstructed, 5.0s at 300/s is 1500 units; the
+        # furthest a spawn-ring position can possibly travel north before meeting
+        # the wall is the ring radius plus the arena half-height, 1460. Anything
+        # beyond that went through the wall.
+        unreachable = ARENA_HALF_HEIGHT + ARENA_SPAWN_RING + 20.0
+        assert movement_extent(row)["height"] < unreachable, (
+            "the player travelled %.1f units, past the %.1f at which the wall must "
+            "have stopped it:\n%s"
+            % (movement_extent(row)["height"], unreachable, row)
         )
-        assert movement_extent(row)["height"] < MOVEMENT_SPEED * 5.0 * 0.9, (
-            "the player travelled straight through a wall:\n%s" % row
-        )
-        # The decisive check, and the one that does not depend on where this
-        # particular player happened to spawn: no published position may lie north
-        # of the wall's inner face. The spawn ring is 260 units and the arena is
-        # 1200 tall, so the player always has wall in front of it to walk into.
+        # The decisive check, and independent of the spawn position: no published
+        # position may lie north of the wall's inner face.
         north_limit = CAMPUS_SPAWN[1] - ARENA_HALF_HEIGHT
         for sample in (row["min_y"], row["max_y"], _point(row)[1]):
             assert sample > north_limit, (
@@ -540,15 +545,21 @@ def test_player_cannot_cross_a_wall_in_the_isolated_arena(
         reap(server)
 
 
+@pytest.mark.timeout(240)
 def test_the_real_campus_collision_deflects_a_player(
     backend, freed_ports, server_port, harness_dir
 ):
     """The real campus collision world measurably changes where a player ends up.
 
-    Without collision, 6.0s at 300/s would carry the player 1800 units north. The
-    real lakes and borders cut that short, and this asserts the shortfall is real,
+    Unobstructed, 6.0s at 300/s would carry the player 1800 units north. The real
+    lakes and borders cut that short, and this asserts the shortfall is real,
     which is what catches a regression where the collision body is present in the
     scene graph but not actually participating in physics.
+
+    Given a longer budget than the arena tests, on measurement rather than
+    instinct: this is the one test that must load the actual campus, and building
+    map.tscn and its TileSet costs about 20 seconds in each of the three Godot
+    processes. The arena tests run in a fraction of this.
     """
     seconds = 6.0
     one, two = pair(0)

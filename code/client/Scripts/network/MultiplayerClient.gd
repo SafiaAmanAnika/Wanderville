@@ -35,6 +35,43 @@ const HTTP_TIMEOUT_SECONDS := 10.0
 ## the server has registered this peer as authenticating.
 const AUTH_SETTLE_SECONDS := 1.5
 
+
+## Symbolic name for an HTTPRequest.Result.
+##
+## An earlier report read the bare integer 13 as a DNS failure. It is not:
+## RESULT_CANT_RESOLVE is 3 and RESULT_TIMEOUT is 13 in Godot 4.6, verified against
+## ClassDB. Logging the name alongside the number is what stops that mistake
+## recurring.
+static func http_result_name(result: int) -> String:
+	match result:
+		HTTPRequest.RESULT_SUCCESS: return "RESULT_SUCCESS"
+		HTTPRequest.RESULT_CANT_CONNECT: return "RESULT_CANT_CONNECT"
+		HTTPRequest.RESULT_CANT_RESOLVE: return "RESULT_CANT_RESOLVE"
+		HTTPRequest.RESULT_CONNECTION_ERROR: return "RESULT_CONNECTION_ERROR"
+		HTTPRequest.RESULT_NO_RESPONSE: return "RESULT_NO_RESPONSE"
+		HTTPRequest.RESULT_BODY_SIZE_LIMIT_EXCEEDED: return "RESULT_BODY_SIZE_LIMIT_EXCEEDED"
+		HTTPRequest.RESULT_REDIRECT_LIMIT_REACHED: return "RESULT_REDIRECT_LIMIT_REACHED"
+		HTTPRequest.RESULT_REQUEST_FAILED: return "RESULT_REQUEST_FAILED"
+		HTTPRequest.RESULT_TIMEOUT: return "RESULT_TIMEOUT"
+		_: return "RESULT_UNKNOWN_%d" % result
+
+
+## Symbolic name for an HTTPClient.Status, so a connection phase can be told
+## apart from a response phase.
+static func http_client_status_name(status: int) -> String:
+	match status:
+		HTTPClient.STATUS_DISCONNECTED: return "DISCONNECTED"
+		HTTPClient.STATUS_RESOLVING: return "RESOLVING"
+		HTTPClient.STATUS_CANT_RESOLVE: return "CANT_RESOLVE"
+		HTTPClient.STATUS_CONNECTING: return "CONNECTING"
+		HTTPClient.STATUS_CANT_CONNECT: return "CANT_CONNECT"
+		HTTPClient.STATUS_CONNECTED: return "CONNECTED"
+		HTTPClient.STATUS_REQUESTING: return "REQUESTING"
+		HTTPClient.STATUS_BODY: return "BODY"
+		HTTPClient.STATUS_CONNECTION_ERROR: return "CONNECTION_ERROR"
+		HTTPClient.STATUS_TLS_HANDSHAKE_ERROR: return "TLS_HANDSHAKE_ERROR"
+		_: return "STATUS_UNKNOWN_%d" % status
+
 var state: int = State.IDLE
 var identity: Dictionary = {}
 var host := NetworkConfig.DEFAULT_HOST
@@ -287,17 +324,46 @@ func _request_ticket() -> Dictionary:
 		"Authorization: Bearer " + _token,
 	])
 	_diag("ticket_request_start", {"url": url, "method": "POST", "auth_header_present": true})
+
+	# Let the freshly added HTTPRequest initialise before issuing the request.
+	#
+	# Measured, not theoretical: issuing in the same frame the node was added
+	# produced a spurious RESULT_TIMEOUT after about 6ms with the HTTPClient still
+	# at DISCONNECTED, on the *first* attempt from every client, while the backend
+	# itself answers a ticket in single-digit milliseconds. One frame is enough to
+	# avoid it. The retry below still exists and still requests a fresh ticket each
+	# time, so this is an optimisation, never a correctness dependency.
+	await get_tree().process_frame
+
+	var started_usec := Time.get_ticks_usec()
 	var initiate := request.request(url, headers, HTTPClient.METHOD_POST, "{}")
+	# The immediate return is an Error, a different enum from the Result reported
+	# by request_completed. They were being conflated, so both are logged by name.
+	_diag(
+		"ticket_request_initiated",
+		{"error": int(initiate), "error_name": error_string(initiate)}
+	)
 	if initiate != OK:
-		_diag("ticket_request_not_started", {"code": int(initiate)})
 		request.queue_free()
 		return {}
 
 	var response: Array = await request.request_completed
-	request.queue_free()
+	var elapsed_ms := (Time.get_ticks_usec() - started_usec) / 1000.0
+	var client_status := int(request.get_http_client_status())
 	var result := int(response[0])
 	var code := int(response[1])
-	_diag("ticket_request_completed", {"transport": result, "status": code})
+	_diag(
+		"ticket_request_completed",
+		{
+			"result": result,
+			"result_name": http_result_name(result),
+			"status": code,
+			"client_status": http_client_status_name(client_status),
+			"elapsed_ms": snappedf(float(elapsed_ms), 1.0),
+			"timeout_s": HTTP_TIMEOUT_SECONDS,
+		}
+	)
+	request.queue_free()
 	if result != HTTPRequest.RESULT_SUCCESS:
 		return {}
 	if code != 200:

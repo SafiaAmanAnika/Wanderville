@@ -310,24 +310,28 @@ func _run_attacks(delta: float, unauthenticated: bool) -> void:
 			forged.append_array(PackedByteArray([1, 2, 3, 4]))
 			link.submit_input.rpc_id(1, forged)
 		"long_direction":
-			# Both axes at maximum: a magnitude of 1.41, i.e. "move faster".
-			var packet := MovementProtocol.encode_input(
-				movement.inputs_sent() + 1, Vector2(1.4142, 1.4142), 0, true
-			)
-			link.submit_input.rpc_id(1, packet)
+			# Both axes at the maximum magnitude: a direction of length 1.414, i.e.
+			# "move 41% faster". Written as raw bytes on purpose -- encoding it
+			# through the normal path would clamp it to a unit vector and the server
+			# would never see anything invalid to reject.
+			link.submit_input.rpc_id(1, MovementProtocol.encode_raw_input(
+				movement.inputs_sent() + 1, 127, 127, 0, MovementProtocol.FLAG_MOVING
+			))
 		"replay_seq":
 			# A sequence number the server has already consumed.
 			var stale := MovementProtocol.encode_input(1, Vector2.UP, 0, true)
 			link.submit_input.rpc_id(1, stale)
 		"flood":
-			# Spread over the tick rather than blasted in one frame. A single
-			# 60-packet burst is dropped in transit by the unreliable channel, which
-			# would make this test pass for the wrong reason; sent at roughly twice
-			# the input rate it reliably reaches the server and drains the bucket.
-			for _i in 12:
-				var packet := MovementProtocol.encode_input(
-					movement.inputs_sent() + 5000 + _attack_index * 20 + _i,
-					Vector2.RIGHT, 0, true
+			# Spread over the tick rather than blasted in one frame. A single large
+			# burst is dropped in transit by the unreliable channel, which would
+			# make this test pass for the wrong reason.
+			#
+			# 20 per tick against a 25 Hz legitimate rate is ~65 packets/second
+			# against a bucket that refills at 30, so the bucket genuinely drains.
+			for _i in 20:
+				var packet := MovementProtocol.encode_raw_input(
+					movement.inputs_sent() + 5000 + _attack_index * 40 + _i,
+					127, 0, 0, MovementProtocol.FLAG_MOVING
 				)
 				link.submit_input.rpc_id(1, packet)
 		"zero_seq":

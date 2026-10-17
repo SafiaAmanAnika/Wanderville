@@ -183,6 +183,28 @@ static func is_newer(seq: int, last: int) -> bool:
 	return (seq - last) % SEQ_MODULUS > 0 and (seq - last) % SEQ_MODULUS < (SEQ_MODULUS / 2)
 
 
+## Craft a packet byte-for-byte, bypassing the normalisation in encode_input.
+##
+## Exists so the test harness can send the packets a hostile client would send.
+## This matters: encoding an over-long direction through the normal path clamps it
+## to a unit vector, so an "invalid direction" test built that way was really
+## testing the client's own sanitiser and the server never saw anything malformed.
+## The server's validation is what has to be under test, so the forged bytes have
+## to reach it unmolested.
+static func encode_raw_input(
+	seq: int, raw_x: int, raw_y: int, facing: int, flags: int
+) -> PackedByteArray:
+	var buffer := StreamPeerBuffer.new()
+	buffer.put_u8(PROTOCOL_VERSION)
+	buffer.put_u8(INPUT_TYPE)
+	buffer.put_u32(seq % SEQ_MODULUS)
+	buffer.put_8(clampi(raw_x, -128, 127))
+	buffer.put_8(clampi(raw_y, -128, 127))
+	buffer.put_u8(clampi(facing, 0, 255))
+	buffer.put_u8(clampi(flags, 0, 255))
+	return buffer.data_array
+
+
 ## Eight-way facing index from a direction, matching the row order the character
 ## sheets use: right, front_right, front, front_left, left, back_left, back,
 ## back_right.

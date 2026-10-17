@@ -913,7 +913,13 @@ def harness_dir(freed_ports):
     try:
         yield directory
     finally:
-        shutil.rmtree(directory, ignore_errors=True)
+        # Kept on request. Client and server logs are the only evidence of what a
+        # Godot process actually did, and they live in this directory -- so a
+        # failure is unreproducible-by-inspection unless they survive.
+        if os.environ.get("WANDERVILLE_TEST_KEEP_WORKDIR") == "1":
+            print(f"\n[harness] kept {directory}")
+        else:
+            shutil.rmtree(directory, ignore_errors=True)
 
 
 @pytest.fixture

@@ -85,6 +85,7 @@ def run_pair(
     extra_env_server: dict | None = None,
     users=None,
     index: int = 0,
+    partners: bool = True,
 ):
     """Start a server plus two movement clients, wait for both, and collect.
 
@@ -115,6 +116,14 @@ def run_pair(
     a = start_movement_client(
         one, backend.secret, server_port, harness_dir, script_a, hold, shared(extra_a)
     )
+    if not partners:
+        # A single client is enough for the validation tests: an admitted peer
+        # can attack the server on its own, and every avoided client is an avoided
+        # admission ticket. The ticket endpoint allows 30 per minute per IP and the
+        # suite is otherwise close enough to that ceiling for the later tests to
+        # spend their time in rate-limit backoff.
+        wait_for(a)
+        return server, parse_results(reap(a)), [], reap(a), b""
     b = start_movement_client(
         two, backend.secret, server_port, harness_dir, script_b, hold, shared(extra_b)
     )
@@ -124,7 +133,7 @@ def run_pair(
     return server, parse_results(out_a), parse_results(out_b), out_a, out_b
 
 
-def wait_for(*processes, timeout: float = 75.0) -> None:
+def wait_for(*processes, timeout: float = 90.0) -> None:
     """Wait for every process to exit, within a hard bound.
 
     Bounded on purpose. A client that never finishes used to turn into a hung
@@ -152,10 +161,17 @@ def movement_extent(row: dict) -> dict:
 
 def test_two_players_join_campus_and_spawn(backend, freed_ports, server_port, harness_dir):
     """Two authenticated players get the identities the backend decided, and the
-    server creates a real physics entity for each."""
+    server creates a real physics entity for each.
+
+    Runs in the isolated arena. The *room* is still campus -- that is decided by
+    the backend and reported over admission -- but nothing here is about campus
+    geometry, and loading the real map in three processes pushed this test past
+    its timeout on its own.
+    """
     one, two = pair(0)
     server, results_a, results_b, out_a, out_b = run_pair(
-        backend, server_port, harness_dir, hold=1.0, index=0
+        backend, server_port, harness_dir, hold=1.0, index=0,
+        extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
     )
     try:
         admitted_a = events(results_a, "admitted")
@@ -397,6 +413,7 @@ def test_forged_identity_field_is_rejected(
         extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
         extra_a={"TEST_RAW_ATTACKS": "oversized_identity", "TEST_EXPECT_ROSTER": "1"},
         extra_b={"TEST_EXPECT_ROSTER": "1"},
+        partners=False,
     )
     try:
         dump = read_movement_dump(harness_dir)
@@ -417,6 +434,7 @@ def test_invalid_direction_is_rejected(backend, freed_ports, server_port, harnes
         extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
         extra_a={"TEST_RAW_ATTACKS": "long_direction", "TEST_EXPECT_ROSTER": "1"},
         extra_b={"TEST_EXPECT_ROSTER": "1"},
+        partners=False,
     )
     try:
         dump = read_movement_dump(harness_dir)
@@ -438,6 +456,7 @@ def test_stale_sequence_numbers_are_ignored(backend, freed_ports, server_port, h
         extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
         extra_a={"TEST_RAW_ATTACKS": "replay_seq,zero_seq", "TEST_EXPECT_ROSTER": "1"},
         extra_b={"TEST_EXPECT_ROSTER": "1"},
+        partners=False,
     )
     try:
         dump = read_movement_dump(harness_dir)
@@ -458,7 +477,7 @@ def test_input_flood_is_rate_limited(backend, freed_ports, server_port, harness_
         script_a="idle:0.1", script_b="idle:0.1", hold=1.0, index=1,
         extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
         extra_a={"TEST_RAW_ATTACKS": ",".join(["flood"] * 8), "TEST_EXPECT_ROSTER": "1"},
-        extra_b={"TEST_EXPECT_ROSTER": "1"},
+        partners=False,
     )
     try:
         dump = read_movement_dump(harness_dir)

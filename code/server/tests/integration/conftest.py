@@ -270,6 +270,12 @@ def _bounded_processes():
         yield
     finally:
         _reap_all()
+        # Let the OS and the graphics driver actually release a terminated Godot
+        # process before the next test starts three more. Without this the module
+        # degraded partway through: later clients failed to start or never
+        # reported, which reads exactly like a movement fault but is not one --
+        # the same tests pass in isolation.
+        time.sleep(1.5)
 
 
 def free_port_is_free(port: int) -> bool:

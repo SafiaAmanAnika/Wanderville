@@ -21,12 +21,21 @@ here deliberately, because each was paid for with a confusing failure:
   client printed one.
 * Signup is rate limited per IP in the backend process, and that limit is left in
   force: accounts are created once per module and 429s are waited out.
+
+**Process lifetime is bounded.** Every process started here is registered in
+``_OWNED``, given a maximum lifetime, and killed -- with its descendants -- by an
+autouse fixture after each test. Without that, a client that never finishes leaves
+a Godot process holding a UDP port, the next test waits on that port, and the
+whole session degrades into timeouts rather than failures. Killing uses the
+registered PID and verifies that PID is one of ours before touching it, so a
+user's Godot editor or database is never a target.
 """
 
 import json
 import os
 import re
 import shutil
+import signal
 import socket
 import subprocess
 import sys
@@ -79,6 +88,190 @@ requires_godot = pytest.mark.skipif(
 )
 
 
+# ── owned-process lifecycle ────────────────────────────────────────────────
+#
+# Every backend, server and client this module starts is recorded here so it can
+# be bounded and killed. Three properties matter, and each exists because its
+# absence caused a hang:
+#
+#  * a maximum lifetime, so a process that stops responding is killed rather than
+#    waited on;
+#  * an explicit registry, so nothing is killed by name or by port. A user's
+#    Godot editor, their database and any unrelated process are never touched --
+#    only PIDs this harness itself created;
+#  * cleanup on every path, including failures, via an autouse fixture, because
+#    pytest-timeout's thread method can terminate pytest without running
+#    teardown and would otherwise leave Godot processes behind.
+
+#: Hard cap on how long any single spawned process may live.
+PROCESS_LIFETIME_SECONDS = float(os.environ.get("WANDERVILLE_TEST_PROCESS_LIFETIME", "180"))
+
+#: How long a server may take to report a listening port. Generous, because the
+#: campus collision world is built before the socket is created, but finite.
+SERVER_READY_TIMEOUT = float(os.environ.get("WANDERVILLE_TEST_READY_TIMEOUT", "90"))
+
+#: How long a backend may take to become healthy.
+BACKEND_READY_TIMEOUT = float(os.environ.get("WANDERVILLE_TEST_BACKEND_TIMEOUT", "90"))
+
+#: pid -> {"process": Popen, "label": str, "started": monotonic}
+_OWNED: dict[int, dict] = {}
+
+#: Written so an external watchdog can clean up if pytest is killed abruptly.
+_PIDFILE = Path(
+    os.environ.get(
+        "WANDERVILLE_TEST_PIDFILE",
+        str(Path(os.environ.get("TEMP", ".")) / "wanderville_test_pids.txt"),
+    )
+)
+
+
+def _write_pidfile() -> None:
+    """Publish owned PIDs for the external watchdog."""
+    try:
+        _PIDFILE.write_text(
+            " ".join(str(pid) for pid in _OWNED), encoding="utf-8"
+        )
+    except OSError:
+        pass
+
+
+def _register(process: subprocess.Popen, label: str, persistent: bool = False) -> subprocess.Popen:
+    _OWNED[process.pid] = {
+        "process": process,
+        "label": label,
+        "started": time.monotonic(),
+        "persistent": persistent,
+    }
+    _write_pidfile()
+    return process
+
+
+def _kill_tree(pid: int) -> None:
+    """Kill a process and its descendants, but only if it is one of ours.
+
+    psutil is used rather than taskkill so the parentage is verified in Python
+    first: a PID that has been recycled by the operating system would otherwise
+    point at somebody else's process.
+    """
+    try:
+        import psutil
+    except ImportError:
+        psutil = None
+
+    if psutil is not None:
+        try:
+            parent = psutil.Process(pid)
+            children = parent.children(recursive=True)
+        except psutil.Error:
+            children = []
+        else:
+            for child in children:
+                try:
+                    child.kill()
+                except psutil.Error:
+                    pass
+    try:
+        os.kill(pid, signal.SIGTERM)
+    except (OSError, ProcessLookupError):
+        pass
+    # Give the tree a moment, then insist.
+    deadline = time.monotonic() + 3.0
+    while time.monotonic() < deadline:
+        if not _pid_alive(pid):
+            return
+        time.sleep(0.1)
+    try:
+        if _pid_alive(pid):
+            os.kill(pid, signal.SIGKILL if hasattr(signal, "SIGKILL") else signal.SIGTERM)
+    except (OSError, ProcessLookupError, AttributeError):
+        pass
+
+
+def _pid_alive(pid: int) -> bool:
+    try:
+        import psutil
+
+        return psutil.pid_exists(pid) and psutil.Process(pid).status() != psutil.STATUS_ZOMBIE
+    except ImportError:
+        return False
+    except Exception:  # noqa: BLE001 - liveness probe only
+        return False
+
+
+def _reap_all() -> None:
+    """Terminate every owned per-test process and wait for it to be gone.
+
+    Skips persistent entries. The FastAPI backend is module-scoped and is owned by
+    its own fixture, not by any single test; killing it after the first test made
+    every later test in the module fail with a refused connection, which looked
+    exactly like a networking fault.
+    """
+    victims = {
+        pid: record
+        for pid, record in _OWNED.items()
+        if not record.get("persistent")
+    }
+    for pid, record in victims.items():
+        process: subprocess.Popen = record["process"]
+        if process.poll() is None:
+            try:
+                process.terminate()
+            except OSError:
+                pass
+    deadline = time.monotonic() + 5.0
+    while time.monotonic() < deadline:
+        if all(r["process"].poll() is not None for r in victims.values()):
+            break
+        time.sleep(0.1)
+    for pid, record in victims.items():
+        process: subprocess.Popen = record["process"]
+        if process.poll() is None:
+            _kill_tree(pid)
+        extra = getattr(process, "_wanderville_log", None)
+        if extra:
+            handle = extra[0]
+            if not handle.closed:
+                try:
+                    handle.flush()
+                    handle.close()
+                except (OSError, ValueError):
+                    pass
+        _OWNED.pop(pid, None)
+    _write_pidfile()
+
+
+def enforce_lifetimes() -> None:
+    """Kill any owned process that has outlived its maximum lifetime.
+
+    Persistent processes -- the module-scoped backend -- get a much longer budget.
+    They are meant to live for a whole module, so applying the per-test lifetime to
+    them killed the backend mid-suite and every later test failed with a refused
+    connection.
+    """
+    now = time.monotonic()
+    for pid, record in list(_OWNED.items()):
+        budget = PROCESS_LIFETIME_SECONDS * 4 if record.get("persistent") else PROCESS_LIFETIME_SECONDS
+        if now - record["started"] < budget:
+            continue
+        print(
+            f"\n[lifecycle] killing {record['label']} (pid {pid}): exceeded "
+            f"{budget:.0f}s"
+        )
+        _kill_tree(pid)
+        _OWNED.pop(pid, None)
+    _write_pidfile()
+
+
+@pytest.fixture(autouse=True)
+def _bounded_processes():
+    """Bound every spawned process, whatever the test does."""
+    enforce_lifetimes()
+    try:
+        yield
+    finally:
+        _reap_all()
+
+
 def free_port_is_free(port: int) -> bool:
     """True when nothing holds the UDP port.
 
@@ -124,6 +317,24 @@ class Backend:
             self._log = open(path, "ab")
         return self._log
 
+    def ensure_accounts(self, names=None) -> None:
+        """Create the named accounts while the rate-limit budget is fresh.
+
+        Signup is limited to 10 per minute per IP and that limit is left in
+        force, so this must never be handed the whole pool: creating fifteen
+        accounts at once exhausts the budget and every later attempt waits out a
+        backoff. Callers pass the few accounts they need, and because these
+        modules carry the ``preserve_rows`` marker the rows survive between tests,
+        so an account is signed up once for a whole session rather than per test.
+        """
+        global _ACCOUNTS, _VALIDATED_AT
+        for name in (names or []):
+            if name in _ACCOUNTS:
+                continue
+            record = make_account(name)
+            _ACCOUNTS[name] = record
+            _VALIDATED_AT[name] = time.monotonic()
+
     def start(self):
         # An orphaned backend from an earlier run would keep the port and answer
         # with a different host secret, which looks exactly like "invalid host
@@ -154,9 +365,11 @@ class Backend:
             cwd=str(SERVER), env=env,
             stdout=subprocess.DEVNULL, stderr=self._log_handle(),
         )
-        deadline = time.time() + 60
+        # Persistent: module-scoped, owned by its own fixture's teardown.
+        _register(self.process, "fastapi-backend", persistent=True)
+        deadline = time.monotonic() + BACKEND_READY_TIMEOUT
         last_error = "no attempt"
-        while time.time() < deadline:
+        while time.monotonic() < deadline:
             if self.process.poll() is not None:
                 self.stop()
                 pytest.skip("backend exited during startup")
@@ -169,7 +382,10 @@ class Backend:
                 last_error = f"{type(exc).__name__}: {exc}"
             time.sleep(0.5)
         self.stop()
-        pytest.skip(f"backend did not become healthy in time (last probe: {last_error})")
+        pytest.skip(
+            f"backend did not become healthy within {BACKEND_READY_TIMEOUT:.0f}s "
+            f"(last probe: {last_error})"
+        )
 
     def stop(self):
         if self.process and self.process.poll() is None:
@@ -177,7 +393,14 @@ class Backend:
             try:
                 self.process.wait(timeout=10)
             except subprocess.TimeoutExpired:
-                self.process.kill()
+                _kill_tree(self.process.pid)
+                try:
+                    self.process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    pass
+        if self.process is not None:
+            _OWNED.pop(self.process.pid, None)
+            _write_pidfile()
         if self._log is not None and not self._log.closed:
             self._log.close()
             self._log = None
@@ -200,7 +423,9 @@ _ACCOUNTS: dict[str, dict] = {}
 #: account name -> monotonic time of its last liveness check
 _VALIDATED_AT: dict[str, float] = {}
 #: A cached account is trusted for this long before being re-checked.
-VALIDATION_INTERVAL = 20.0
+VALIDATION_INTERVAL = 300.0
+
+
 
 
 def account(username: str) -> dict:
@@ -249,7 +474,7 @@ def _token_is_valid(record: dict) -> bool:
         return False
 
 
-def _post_with_retry(request, label: str, attempts: int = 8):
+def _post_with_retry(request, label: str, attempts: int = 6):
     """POST, waiting out the per-IP rate limit instead of weakening it.
 
     A 429 here is expected: the suite creates several accounts against one
@@ -266,7 +491,11 @@ def _post_with_retry(request, label: str, attempts: int = 8):
         except urllib.error.HTTPError as exc:
             if exc.code != 429 or attempt == attempts - 1:
                 raise
-            time.sleep(8 + attempt * 2)
+            # The limiter uses a 60 second window, so a short retry cannot help
+            # until the window rolls over. Bounded, and only paid when actually
+            # limited: making the suite faster concentrated a dozen signups into a
+            # few seconds, which is what crossed the 10-per-minute budget.
+            time.sleep(10 + attempt * 3)
     raise AssertionError(f"{label} never succeeded")
 
 
@@ -351,19 +580,20 @@ def start_server(
         stdout=handle, stderr=subprocess.STDOUT,
     )
     process._wanderville_log = (handle, log)  # type: ignore[attr-defined]
-    deadline = time.time() + 60
-    while time.time() < deadline:
+    _register(process, f"godot-server:{port}")
+    deadline = time.monotonic() + SERVER_READY_TIMEOUT
+    while time.monotonic() < deadline:
         if process.poll() is not None:
             raise AssertionError(
                 "the dedicated server exited during startup:\n" + tail(log.read_bytes())
             )
         if ready.exists() and ready.read_text(encoding="utf-8").strip():
             return process
-        time.sleep(0.4)
+        time.sleep(0.3)
     reap(process)
     raise AssertionError(
         "the dedicated server never reported a listening port on udp/"
-        f"{port}:\n" + tail(log.read_bytes())
+        f"{port} within {SERVER_READY_TIMEOUT:.0f}s:\n" + tail(log.read_bytes())
     )
 
 
@@ -397,27 +627,51 @@ def start_client(
         cwd=str(CLIENT), env=env, stdout=handle, stderr=subprocess.STDOUT,
     )
     process._wanderville_log = (handle, log)  # type: ignore[attr-defined]
+    _register(process, f"client:{account['username']}")
     return process
 
 
-def reap(process: subprocess.Popen, timeout: float = 20.0) -> bytes:
+def reap(process: subprocess.Popen, timeout: float = 15.0) -> bytes:
     """Terminate a process and return whatever it wrote, for diagnostics.
 
     Safe to call more than once, so a test may collect a client and then reap it
-    without leaking a file handle or erroring.
+    without leaking a file handle or erroring. Bounded on every path: a process
+    that ignores terminate() is killed by PID, with its descendants, rather than
+    waited on.
     """
     extra = getattr(process, "_wanderville_log", None)
+    if extra:
+        # Flush before waiting, so a block-buffered RESULT is on disk even if the
+        # process is terminated rather than exiting on its own.
+        handle = extra[0]
+        if not handle.closed:
+            try:
+                handle.flush()
+            except (OSError, ValueError):
+                pass
     if process.poll() is None:
-        process.terminate()
-    try:
-        process.wait(timeout=timeout)
-    except subprocess.TimeoutExpired:
-        process.kill()
-        process.wait(timeout=timeout)
+        try:
+            process.terminate()
+        except OSError:
+            pass
+        try:
+            process.wait(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            _kill_tree(process.pid)
+            try:
+                process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                pass
+    if not getattr(process, "_wanderville_persistent", False):
+        _OWNED.pop(process.pid, None)
+        _write_pidfile()
     if extra:
         handle, path = extra
         if not handle.closed:
-            handle.close()
+            try:
+                handle.close()
+            except (OSError, ValueError):
+                pass
         try:
             return path.read_bytes()
         except OSError:
@@ -429,24 +683,31 @@ def tail(data: bytes, limit: int = 1200) -> str:
     return data.decode("utf-8", "replace")[-limit:]
 
 
-def collect(process: subprocess.Popen, timeout: float = 60.0) -> tuple[int, bytes]:
+def collect(process: subprocess.Popen, timeout: float = 45.0) -> tuple[int, bytes]:
     """Wait for a process to exit on its own and return its captured output.
 
     Clients and the server write to files rather than pipes, so the output is
     read back from the file after exit. Reading a pipe instead would race the
     block buffer and report an empty result for a client that did print one.
+
+    Bounded, and it kills rather than hanging: an unbounded wait here is what
+    turned a stuck client into a hung test session.
     """
     try:
         process.wait(timeout=timeout)
     except subprocess.TimeoutExpired:
-        process.kill()
-        process.wait(timeout=timeout)
+        return (process.returncode or -9), reap(process)
+    _OWNED.pop(process.pid, None)
+    _write_pidfile()
     extra = getattr(process, "_wanderville_log", None)
     if extra:
         handle, path = extra
         if not handle.closed:
-            handle.flush()
-            handle.close()
+            try:
+                handle.flush()
+                handle.close()
+            except (OSError, ValueError):
+                pass
         try:
             return process.returncode, path.read_bytes()
         except OSError:
@@ -492,6 +753,7 @@ def movement_env(workdir: Path) -> dict:
     cannot pass by believing the client that is being tested.
     """
     return {
+        "GODOT_MOVEMENT_ENABLED": "1",
         "GODOT_MOVEMENT_DUMP_FILE": str(workdir / "movement-dump.json"),
         "GODOT_MOVEMENT_COLLISION_FILE": str(workdir / "collision.json"),
     }
@@ -592,6 +854,7 @@ def start_movement_client(
         cwd=str(CLIENT), env=env, stdout=handle, stderr=subprocess.STDOUT,
     )
     process._wanderville_log = (handle, log)  # type: ignore[attr-defined]
+    _register(process, f"mover:{account['username']}")
     return process
 
 

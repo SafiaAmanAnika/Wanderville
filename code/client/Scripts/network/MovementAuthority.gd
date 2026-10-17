@@ -79,6 +79,7 @@ var _packets_in_window := 0
 var _rate_window := 0.0
 var _bytes_sent := 0
 var _collision_shapes := 0
+var _collision_built := false
 var _arena_mode := false
 var _world_label := ""
 var _speed_limit_violations := 0
@@ -102,16 +103,13 @@ func setup(server: Node, link: NetworkLink) -> void:
 
 func _ready() -> void:
 	# The isolated arena is opt-in and clearly labelled as not being the campus.
-	# It exists so collision can be tested against flat walls, which the concave
-	# campus lakes cannot provide.
 	_arena_mode = OS.get_environment("GODOT_MOVEMENT_ARENA") == "1"
+	_world_label = MovementArena.NAME if _arena_mode else CampusCollision.MAP_SCENE
 	if _arena_mode:
 		_collision_shapes = MovementArena.build(self).get_child_count()
-		_world_label = MovementArena.NAME
 	else:
 		_collision_shapes = CampusCollision.build(self).get_child_count()
-		_world_label = CampusCollision.MAP_SCENE
-	# Written once at startup so a test can check the real campus outline offline.
+	# Written once, so a test can check the real campus outline offline.
 	var collision_path := OS.get_environment("GODOT_MOVEMENT_COLLISION_FILE")
 	if collision_path != "":
 		CampusCollision.dump(collision_path)
@@ -124,6 +122,12 @@ func _ready() -> void:
 		+ "physics=%d Hz input=%.0f Hz snapshots=%.0f Hz rooms=%s only"
 		% [Engine.physics_ticks_per_second, INPUT_HZ, SNAPSHOT_HZ, ROOM_CAMPUS]
 	)
+
+
+## Present for symmetry and for callers that must not block; the world is already
+## built by the time any entity can exist.
+func _ensure_collision_world() -> void:
+	pass
 
 
 ## A client may declare which character it is using, for presentation only.
@@ -319,6 +323,8 @@ func spawn_position(player_id: int) -> Vector2:
 
 func add_player(player_id: int, peer_id: int, generation: int, room: String,
 		character_code: String = "") -> void:
+	# The first entity pays for the collision world.
+	_ensure_collision_world()
 	if room != ROOM_CAMPUS:
 		# Campus is the only room this phase simulates. A peer admitted to any
 		# other room is tracked but never given an entity, rather than being
@@ -437,6 +443,10 @@ func reject_counts() -> Dictionary:
 
 func collision_shape_count() -> int:
 	return _collision_shapes
+
+
+func collision_world_ready() -> bool:
+	return _collision_built
 
 
 func physics_ticks() -> int:

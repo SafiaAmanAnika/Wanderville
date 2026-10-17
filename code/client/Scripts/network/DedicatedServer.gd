@@ -69,10 +69,17 @@ func _start() -> void:
 	link.name = "NetworkLink"
 	add_child(link)
 
-	movement = MovementAuthority.new()
-	movement.name = "MovementAuthority"
-	add_child(movement)
-	movement.setup(self, link)
+	# The movement simulation is opt-in. Building the real campus collision costs
+	# roughly 15 seconds, and an admission-only run must not pay for a movement
+	# world it never touches -- worse, paying it mid-test would stall the server's
+	# main thread during the first admission and starve the clients' handshake.
+	if OS.get_environment("GODOT_MOVEMENT_ENABLED") == "1":
+		movement = MovementAuthority.new()
+		movement.name = "MovementAuthority"
+		add_child(movement)
+		movement.setup(self, link)
+	else:
+		print(LOG_PREFIX + "movement simulation disabled (GODOT_MOVEMENT_ENABLED!=1)")
 
 	_bound_address = OS.get_environment("GODOT_MULTIPLAYER_BIND")
 	if _bound_address == "":
@@ -265,13 +272,14 @@ func _on_peer_connected(peer_id: int) -> void:
 		)
 		# Only now is the peer fully connected, so only now does it get an entity
 		# to move. The identity and generation come from the registry, not the peer.
-		movement.add_player(
-			admitted_player,
-			peer_id,
-			int(identity.get("generation", -1)),
-			str(identity.get("room", "campus")),
-			str(waiting.get("character_code", "")),
-		)
+		if movement != null:
+			movement.add_player(
+				admitted_player,
+				peer_id,
+				int(identity.get("generation", -1)),
+				str(identity.get("room", "campus")),
+				str(waiting.get("character_code", "")),
+			)
 
 
 func _on_peer_disconnected(peer_id: int) -> void:

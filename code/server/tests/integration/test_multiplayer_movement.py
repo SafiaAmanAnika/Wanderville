@@ -32,6 +32,8 @@ from conftest import (
     MOVEMENT_SPEED,
     account,
     collect,
+    _register,
+    enforce_lifetimes,
     diagnose,
     events,
     movement_env,
@@ -48,7 +50,7 @@ from conftest import (
     tail,
 )
 
-pytestmark = requires_godot
+pytestmark = [requires_godot, pytest.mark.preserve_rows]
 
 # A small fixed pool. Signup is rate limited per IP and that limit is left in
 # force, so accounts are created once and reused across the module rather than
@@ -117,18 +119,24 @@ def run_pair(
         two, backend.secret, server_port, harness_dir, script_b, hold, shared(extra_b)
     )
     wait_for(a, b)
-    out_a = reap(a, timeout=90)
-    out_b = reap(b, timeout=90)
+    out_a = reap(a, timeout=20)
+    out_b = reap(b, timeout=20)
     return server, parse_results(out_a), parse_results(out_b), out_a, out_b
 
 
-def wait_for(*processes, timeout: float = 200.0) -> None:
-    import time
+def wait_for(*processes, timeout: float = 75.0) -> None:
+    """Wait for every process to exit, within a hard bound.
 
-    deadline = time.time() + timeout
-    while time.time() < deadline:
+    Bounded on purpose. A client that never finishes used to turn into a hung
+    session rather than a failure, and the harness cannot tell the difference
+    between "still working" and "never going to finish" -- so it gives up and the
+    autouse cleanup kills whatever is left.
+    """
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
         if all(p.poll() is not None for p in processes):
             return
+        enforce_lifetimes()
         time.sleep(0.5)
 
 
@@ -346,6 +354,7 @@ def test_unauthenticated_peer_cannot_move(
             stdout=handle, stderr=subprocess.STDOUT,
         )
         attacker._wanderville_log = (handle, attacker_log)
+        _register(attacker, "mv_attacker")
         wait_for(honest, attacker)
         reap(attacker)
         reap(honest)
@@ -669,7 +678,7 @@ def test_movement_state_does_not_survive_a_server_restart(
             {"TEST_EXPECT_ROSTER": "1"},
         )
         wait_for(client)
-        out = reap(client, timeout=90)
+        out = reap(client, timeout=20)
         row = observed(parse_results(out), user["player_id"])
         assert row is not None, tail(out, 1500)
         moved = movement_extent(row)["width"]
@@ -703,7 +712,7 @@ def test_movement_state_does_not_survive_a_server_restart(
             {"TEST_EXPECT_ROSTER": "1"},
         )
         wait_for(client2)
-        out2 = reap(client2, timeout=90)
+        out2 = reap(client2, timeout=20)
         row2 = observed(parse_results(out2), user["player_id"])
         assert row2 is not None, tail(out2, 1500)
         # It is standing still, and near its deterministic spawn -- not where the

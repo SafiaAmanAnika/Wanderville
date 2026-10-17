@@ -38,6 +38,7 @@ from conftest import (
     free_port_is_free,
     parse_results,
     reap,
+    _register,
     requires_godot,
     start_server,
     tail,
@@ -47,6 +48,7 @@ RENDERED = EVIDENCE / "rendered"
 
 pytestmark = [
     requires_godot,
+    pytest.mark.preserve_rows,
     pytest.mark.skipif(
         os.environ.get("RUN_RENDERED_TESTS") != "1",
         reason="set RUN_RENDERED_TESTS=1 to open real windows on the desktop",
@@ -76,6 +78,7 @@ def _launch(user: dict, secret: str, port: int, workdir: Path, shots: Path):
         cwd=str(CLIENT), env=env, stdout=handle, stderr=subprocess.STDOUT,
     )
     process._wanderville_log = (handle, log)  # type: ignore[attr-defined]
+    _register(process, f"rendered:{user['username']}")
     return process
 
 

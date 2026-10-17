@@ -64,7 +64,19 @@ def test_engine(tmp_path_factory):
 
 
 @pytest.fixture(autouse=True)
-def clean_database(test_engine):
+def clean_database(request, test_engine):
+    # Some tests do not use this database through the in-process client at all:
+    # the real-process Godot suites start their own FastAPI subprocess and create
+    # their own accounts over HTTP. Wiping between their tests deleted accounts
+    # that the next test then had to sign up again -- and signup is rate limited
+    # per IP to 10/minute, so each one waited out a backoff. That, not the
+    # movement code, is what made those suites take over an hour.
+    #
+    # Those suites opt out with the ``preserve_rows`` marker. The wipe is kept for
+    # everything else, which does rely on it for isolation.
+    if request.node.get_closest_marker("preserve_rows"):
+        yield
+        return
     with test_engine.begin() as connection:
         for table in reversed(Base.metadata.sorted_tables):
             connection.execute(table.delete())

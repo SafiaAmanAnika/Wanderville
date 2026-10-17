@@ -31,6 +31,7 @@ from conftest import (  # noqa: F401  (fixtures are resolved by pytest from conf
     HOST,
     account,
     collect,
+    _register,
     diagnose,
     free_port_is_free,
     parse_result,
@@ -41,7 +42,7 @@ from conftest import (  # noqa: F401  (fixtures are resolved by pytest from conf
     tail,
 )
 
-pytestmark = requires_godot
+pytestmark = [requires_godot, pytest.mark.preserve_rows]
 
 
 def test_server_starts_and_listens(backend, freed_ports, server_port, harness_dir):
@@ -50,7 +51,7 @@ def test_server_starts_and_listens(backend, freed_ports, server_port, harness_di
     Readiness is taken from the server's own ready file rather than a sleep, and
     the port is re-probed to confirm something is genuinely bound.
     """
-    server, _ = start_server(backend.secret, server_port, harness_dir)
+    server = start_server(backend.secret, server_port, harness_dir)
     try:
         assert server.poll() is None, "the dedicated server exited during startup"
         assert not free_port_is_free(server_port), (
@@ -73,7 +74,7 @@ def test_two_real_clients_authenticate_concurrently(
     two = account("mp_peer_two")
     assert one["player_id"] != two["player_id"]
 
-    server, _ = start_server(backend.secret, server_port, harness_dir)
+    server = start_server(backend.secret, server_port, harness_dir)
     client_one = start_client(one, backend.secret, server_port, harness_dir, hold=8.0)
     client_two = start_client(two, backend.secret, server_port, harness_dir, hold=8.0)
 
@@ -114,7 +115,7 @@ def test_server_log_shows_two_distinct_admissions(
     """Server-side admissions carry the same identities the clients reported."""
     one = account("mp_log_one")
     two = account("mp_log_two")
-    server, _ = start_server(backend.secret, server_port, harness_dir)
+    server = start_server(backend.secret, server_port, harness_dir)
     a = start_client(one, backend.secret, server_port, harness_dir, hold=5.0)
     b = start_client(two, backend.secret, server_port, harness_dir, hold=5.0)
     try:
@@ -143,7 +144,7 @@ def test_disconnect_then_reconnect_with_a_fresh_ticket(
     """
     one = account("mp_dc_one")
     two = account("mp_dc_two")
-    server, _ = start_server(backend.secret, server_port, harness_dir)
+    server = start_server(backend.secret, server_port, harness_dir)
 
     # The long-lived client holds its session for the whole test.
     survivor = start_client(one, backend.secret, server_port, harness_dir, hold=22.0)
@@ -206,7 +207,7 @@ def test_replayed_ticket_is_rejected(backend, freed_ports, server_port, harness_
     with urllib.request.urlopen(request, timeout=10) as response:
         ticket = json.loads(response.read())["data"]["ticket"]
 
-    server, _ = start_server(backend.secret, server_port, harness_dir)
+    server = start_server(backend.secret, server_port, harness_dir)
     try:
         for attempt in range(2):
             proc = subprocess.Popen(
@@ -227,8 +228,9 @@ def test_replayed_ticket_is_rejected(backend, freed_ports, server_port, harness_
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )
+            _register(proc, "replay-attempt")
             try:
-                proc.wait(timeout=60)
+                proc.wait(timeout=45)
             except subprocess.TimeoutExpired:
                 proc.kill()
         text = reap(server).decode("utf-8", "replace")
@@ -247,7 +249,7 @@ def test_invalid_token_is_rejected(backend, freed_ports, server_port, harness_di
     rejection, so it is given the whole retry window and the test waits for the
     process rather than a fixed sleep.
     """
-    server, _ = start_server(backend.secret, server_port, harness_dir)
+    server = start_server(backend.secret, server_port, harness_dir)
     log = harness_dir / "client-bogus.log"
     with open(log, "wb") as handle:
         process = subprocess.Popen(
@@ -271,8 +273,9 @@ def test_invalid_token_is_rejected(backend, freed_ports, server_port, harness_di
             stderr=subprocess.STDOUT,
         )
         process._wanderville_log = (handle, log)  # type: ignore[attr-defined]
+        _register(process, "forged-token-client")
     try:
-        out = collect(process, timeout=90)[1]
+        out = collect(process, timeout=60)[1]
         result = parse_result(out)
         assert result is not None, tail(out)
         assert not result["ok"], "a forged access token must not be admitted"

@@ -79,6 +79,40 @@ def _alive(pid):
         return False
 
 
+def _sweep_registered():
+    """Kill anything still alive that conftest registered as ours.
+
+    Needed because pytest-timeout's thread method terminates pytest *without*
+    running fixture teardown. When pytest dies its Godot grandchildren are
+    reparented and the autouse cleanup never runs, so they survive and hold UDP
+    ports. The registry file is the authoritative list of processes this harness
+    created, and each is verified to still look like what it was before it is
+    killed.
+    """
+    import psutil
+
+    killed = []
+    for pid in _read_registered():
+        if not _alive(pid):
+            continue
+        try:
+            proc = psutil.Process(pid)
+            name = proc.name().lower()
+            cmdline = " ".join(proc.cmdline()).lower()
+        except psutil.Error:
+            continue
+        # Only ever kill something this harness started. The registry is the first
+        # gate; the image-name check is the second, so a recycled PID belonging to
+        # something else is left alone.
+        if not ("godot" in name or "python" in name or "uvicorn" in name):
+            continue
+        if not ("wanderville" in cmdline or "godot" in cmdline or "uvicorn" in cmdline):
+            continue
+        _kill_tree(pid)
+        killed.append(pid)
+    return killed
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pid", type=int, required=True, help="pytest process id")
@@ -95,7 +129,13 @@ def main():
     last_report = 0.0
     while time.monotonic() < deadline:
         if not _alive(args.pid):
-            print(f"[watchdog] pytest {args.pid} exited normally", flush=True)
+            print(f"[watchdog] pytest {args.pid} exited", flush=True)
+            # pytest may have been killed without teardown; sweep regardless.
+            leaked = _sweep_registered()
+            if leaked:
+                print(f"[watchdog] swept {len(leaked)} orphaned pid(s): {leaked}", flush=True)
+                return 2
+            print("[watchdog] no leaked processes", flush=True)
             return 0
         now = time.monotonic()
         if now - last_report >= 30.0:
@@ -114,7 +154,7 @@ def main():
     )
     gone, alive = _kill_tree(args.pid)
     print(f"[watchdog] terminated {gone} process(es), {alive} stubborn", flush=True)
-    leaked = [pid for pid in _read_registered() if _alive(pid)]
+    leaked = _sweep_registered()
     if leaked:
         print(f"[watchdog] WARNING still alive after kill: {leaked}", flush=True)
         return 2

@@ -112,3 +112,34 @@ static func inside_any_wall(x: float, y: float) -> bool:
 				and y >= float(row["min_y"]) and y <= float(row["max_y"])):
 			return true
 	return false
+
+
+## Write the arena's rectangles for offline inspection by tests.
+##
+## Deliberately never touches ``map.tscn``: serialising the campus here is what
+## made every arena process pay ~15 seconds and flood its log with TileSet errors.
+static func dump(path: String) -> bool:
+	if path == "":
+		return false
+	var rows: Array = []
+	for row in rectangles():
+		var min_x := float(row["min_x"])
+		var max_x := float(row["max_x"])
+		var min_y := float(row["min_y"])
+		var max_y := float(row["max_y"])
+		rows.append({"kind": "rectangle", "radius": 0.0, "points": [
+			[min_x, min_y], [max_x, min_y], [max_x, max_y], [min_x, max_y],
+		]})
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		return false
+	file.store_string(JSON.stringify({
+		"spawn": [CampusCollision.CAMPUS_SPAWN.x, CampusCollision.CAMPUS_SPAWN.y],
+		"arena": true,
+		"name": NAME,
+		"width": WIDTH,
+		"height": HEIGHT,
+		"shapes": rows,
+	}))
+	file.close()
+	return true

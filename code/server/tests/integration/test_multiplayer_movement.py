@@ -194,6 +194,9 @@ def test_player_a_moves_right_and_the_server_records_it(
     server, results_a, _results_b, out_a, _out_b = run_pair(
         backend, server_port, harness_dir, script_a="right:%.1f" % seconds,
         hold=1.0, index=0,
+        # Clear interior, so 2.0s of travel is measured rather than cut short by
+        # whichever campus obstacle happens to be near the spawn ring.
+        extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
     )
     try:
         row = observed(results_a, one["player_id"])
@@ -327,7 +330,8 @@ def test_unauthenticated_peer_cannot_move(
 
     one, two = pair(0)
     server = start_server(
-        backend.secret, server_port, harness_dir, extra_env=movement_env(harness_dir)
+        backend.secret, server_port, harness_dir,
+        extra_env={**movement_env(harness_dir), "GODOT_MOVEMENT_ARENA": "1"},
     )
     try:
         # One honest client, so there is a real body to try to interfere with.
@@ -390,6 +394,7 @@ def test_forged_identity_field_is_rejected(
     server, results_a, _results_b, _out_a, out_a = run_pair(
         backend, server_port, harness_dir,
         script_a="idle:0.1", script_b="idle:0.1", hold=1.0, index=1,
+        extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
         extra_a={"TEST_RAW_ATTACKS": "oversized_identity", "TEST_EXPECT_ROSTER": "1"},
         extra_b={"TEST_EXPECT_ROSTER": "1"},
     )
@@ -430,6 +435,7 @@ def test_stale_sequence_numbers_are_ignored(backend, freed_ports, server_port, h
     server, _results_a, _results_b, _out_a, _out_b = run_pair(
         backend, server_port, harness_dir,
         script_a="right:1.5", script_b="idle:0.1", hold=1.0, index=1,
+        extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
         extra_a={"TEST_RAW_ATTACKS": "replay_seq,zero_seq", "TEST_EXPECT_ROSTER": "1"},
         extra_b={"TEST_EXPECT_ROSTER": "1"},
     )
@@ -450,6 +456,7 @@ def test_input_flood_is_rate_limited(backend, freed_ports, server_port, harness_
     server, _results_a, _results_b, _out_a, _out_b = run_pair(
         backend, server_port, harness_dir,
         script_a="idle:0.1", script_b="idle:0.1", hold=1.0, index=1,
+        extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
         extra_a={"TEST_RAW_ATTACKS": ",".join(["flood"] * 8), "TEST_EXPECT_ROSTER": "1"},
         extra_b={"TEST_EXPECT_ROSTER": "1"},
     )
@@ -595,7 +602,8 @@ def test_disconnect_removes_the_avatar_and_reconnect_makes_exactly_one(
     survivor_user = pool_user(2)
     mover_user = pool_user(3)
     server = start_server(
-        backend.secret, server_port, harness_dir, extra_env=movement_env(harness_dir)
+        backend.secret, server_port, harness_dir,
+        extra_env={**movement_env(harness_dir), "GODOT_MOVEMENT_ARENA": "1"},
     )
     try:
         # The survivor holds its session for the whole test. The hold is generous

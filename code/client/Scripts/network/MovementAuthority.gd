@@ -109,10 +109,16 @@ func _ready() -> void:
 		_collision_shapes = MovementArena.build(self).get_child_count()
 	else:
 		_collision_shapes = CampusCollision.build(self).get_child_count()
-	# Written once, so a test can check the real campus outline offline.
+	# Written once, so a test can check the geometry offline. Crucially this must
+	# match the world that was just built: dumping the campus while running in the
+	# arena instantiated map.tscn purely to serialise shapes nobody was using,
+	# which cost about 15 seconds and ~10 MB of TileSet error output per process.
 	var collision_path := OS.get_environment("GODOT_MOVEMENT_COLLISION_FILE")
 	if collision_path != "":
-		CampusCollision.dump(collision_path)
+		if _arena_mode:
+			MovementArena.dump(collision_path)
+		else:
+			CampusCollision.dump(collision_path)
 	print(
 		LOG_PREFIX + "collision world from %s: %d shapes, speed=%.0f units/s"
 		% [_world_label, _collision_shapes, SPEED]

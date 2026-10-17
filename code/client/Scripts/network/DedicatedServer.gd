@@ -35,6 +35,12 @@ const LOG_PREFIX := "[DedicatedServer] "
 
 var registry := PeerRegistry.new()
 var bridge: BackendBridge
+## The shared RPC endpoint. Created in code as a direct child of this scene root
+## so that, with root_path pointing here, its relative RPC path is identical to
+## the client's. See NetworkLink for why that matters.
+var link: NetworkLink
+## The campus movement simulation. Owns every authoritative position.
+var movement: MovementAuthority
 
 var _port := NetworkConfig.DEFAULT_PORT
 var _bound_address := "0.0.0.0"
@@ -42,6 +48,9 @@ var _running := false
 var _server_id := ""
 ## Peers currently being validated, so a slow backend call is not started twice.
 var _pending: Dictionary = {}
+## Identities of peers whose handshake completed but whose connection callback has
+## not fired yet. They are not yet reachable by RPC, so they are not yet announced.
+var _awaiting_connect: Dictionary = {}
 
 
 func _ready() -> void:
@@ -54,6 +63,17 @@ func _ready() -> void:
 
 func _start() -> void:
 	_port = NetworkConfig.port()
+	# Before the peer is created: every side must agree on root_path before any
+	# packet exists, and the children this is about to add must be in the tree.
+	link = NetworkLink.new()
+	link.name = "NetworkLink"
+	add_child(link)
+
+	movement = MovementAuthority.new()
+	movement.name = "MovementAuthority"
+	add_child(movement)
+	movement.setup(self, link)
+
 	_bound_address = OS.get_environment("GODOT_MULTIPLAYER_BIND")
 	if _bound_address == "":
 		_bound_address = "0.0.0.0"
@@ -181,15 +201,27 @@ func _validate(peer_id: int, ticket: String) -> void:
 		}
 	)
 	scene_multiplayer.send_auth(peer_id, verdict.to_utf8_buffer())
+	# Recorded *before* complete_auth, because complete_auth emits peer_connected
+	# synchronously and that callback is what publishes this player. Set after, the
+	# lookup there always misses and the roster stays permanently empty.
+	_awaiting_connect[peer_id] = {
+		"player_id": player_id,
+		"username": username,
+	}
 	# complete_auth on both ends finishes the handshake; the client does the same
 	# from its own auth callback when this message arrives.
 	scene_multiplayer.complete_auth(peer_id)
+	# The roster is published from _on_peer_connected, which is the first moment a
+	# peer can actually receive a high-level RPC. Publishing earlier would silently
+	# never arrive.
 	peer_admitted.emit(peer_id, player_id, username)
 
 
 func _reject(peer_id: int, reason: String) -> void:
 	print(LOG_PREFIX + "rejected peer %d: %s" % [peer_id, reason])
 	peer_rejected.emit(peer_id, reason)
+	_awaiting_connect.erase(peer_id)
+	link.server_forget_peer(peer_id)
 	registry.release(peer_id)
 	_pending.erase(peer_id)
 	(multiplayer as SceneMultiplayer).disconnect_peer(peer_id)
@@ -199,6 +231,8 @@ func _on_auth_failed(peer_id: int) -> void:
 	# Fired when a peer leaves the authenticating state without completing, which
 	# covers both a rejected ticket and an expired auth_timeout.
 	_pending.erase(peer_id)
+	_awaiting_connect.erase(peer_id)
+	link.server_forget_peer(peer_id)
 	registry.release(peer_id)
 
 
@@ -219,11 +253,36 @@ func _has_peer(peer_id: int) -> bool:
 
 func _on_peer_connected(peer_id: int) -> void:
 	print(LOG_PREFIX + "peer %d authenticated" % peer_id)
+	# Now that the peer is fully connected, publish it. The roster broadcast also
+	# teaches this newcomer about everyone who was already here.
+	var waiting: Dictionary = _awaiting_connect.get(peer_id, {})
+	if not waiting.is_empty():
+		_awaiting_connect.erase(peer_id)
+		var admitted_player := int(waiting.get("player_id", 0))
+		var identity := registry.identity_for(peer_id)
+		link.server_track_player(
+			peer_id, admitted_player, str(waiting.get("username", ""))
+		)
+		# Only now is the peer fully connected, so only now does it get an entity
+		# to move. The identity and generation come from the registry, not the peer.
+		movement.add_player(
+			admitted_player,
+			peer_id,
+			int(identity.get("generation", -1)),
+			str(identity.get("room", "campus")),
+			str(waiting.get("character_code", "")),
+		)
 
 
 func _on_peer_disconnected(peer_id: int) -> void:
 	var player_id := registry.player_for(peer_id)
 	_pending.erase(peer_id)
+	_awaiting_connect.erase(peer_id)
+	# Republish before the registry entry goes: this is what makes every client
+	# drop the leaving avatar in the same frame the server notices.
+	link.server_forget_peer(peer_id)
+	if player_id > 0:
+		movement.remove_player(player_id, "disconnect")
 	registry.release(peer_id)
 	if player_id > 0:
 		print(LOG_PREFIX + "peer %d (player %d) disconnected" % [peer_id, player_id])
@@ -239,6 +298,14 @@ func _on_displaced(peer_id: int, player_id: int) -> void:
 		LOG_PREFIX + "superseding stale session for player %d (peer %d)"
 		% [player_id, peer_id]
 	)
+	# Clears the mapping for the old socket only; the successor keeps the roster
+	# entry because server_forget_peer only erases the entry it still owns.
+	#
+	# The entity is deliberately left alone. The successor already spawned its own
+	# with its own generation, and the displaced socket can no longer drive it:
+	# MovementAuthority refuses any packet whose connection generation no longer
+	# matches. Dropping it here would instead delete the live player's body.
+	link.server_forget_peer(peer_id)
 	(multiplayer as SceneMultiplayer).disconnect_peer(peer_id)
 
 
@@ -281,7 +348,12 @@ func shutdown() -> void:
 	for peer_id in registry.admitted_peer_ids():
 		(multiplayer as SceneMultiplayer).disconnect_peer(peer_id)
 	registry.clear()
+	if link != null:
+		link.server_clear_roster()
+	if movement != null:
+		movement.clear_all()
 	_pending.clear()
+	_awaiting_connect.clear()
 	if multiplayer.multiplayer_peer != null:
 		multiplayer.multiplayer_peer.close()
 		multiplayer.multiplayer_peer = null

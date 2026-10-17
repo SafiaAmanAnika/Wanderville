@@ -278,6 +278,78 @@ def _bounded_processes():
         time.sleep(1.5)
 
 
+def tcp_port_is_free(port: int) -> bool:
+    """True when nothing holds the TCP port.
+
+    Separate from the UDP check and deliberately so. The API runs under uvicorn,
+    which listens on TCP; the multiplayer servers listen on UDP. Checking the API
+    port with the UDP probe reported a busy port as free, so an orphaned backend
+    from an earlier run went undetected, a fresh backend failed to bind, and the
+    health probe then succeeded against the *stale* server. Every test after that
+    ran against the wrong process -- a different in-memory ticket registry and a
+    different host secret -- which presented as mysterious cross-test failures.
+    """
+    import socket as _socket
+
+    with _socket.socket(_socket.AF_INET, _socket.SOCK_STREAM) as probe:
+        probe.setsockopt(_socket.SOL_SOCKET, _socket.SO_REUSEADDR, 1)
+        try:
+            probe.bind((HOST, port))
+            return True
+        except OSError:
+            return False
+
+
+#: Where a started backend records its pid, so a later session can clear a backend
+#: this harness orphaned rather than silently attaching to it.
+_BACKEND_PIDFILE = Path(
+    os.environ.get(
+        "WANDERVILLE_TEST_BACKEND_PIDFILE",
+        str(Path(os.environ.get("TEMP", ".")) / "wanderville_test_backend.pid"),
+    )
+)
+
+
+def _reap_orphaned_backends() -> None:
+    """Clear a backend a previous run left holding the API port.
+
+    Only kills a process this harness recorded, and only after verifying it is
+    still a uvicorn for this application -- so a recycled pid, a developer's own
+    server, or the real application are never touched.
+    """
+    try:
+        import psutil
+    except ImportError:
+        return
+    try:
+        recorded = int(_BACKEND_PIDFILE.read_text(encoding="utf-8").strip())
+    except (OSError, ValueError):
+        return
+    try:
+        process = psutil.Process(recorded)
+        cmdline = " ".join(process.cmdline()).lower()
+    except Exception:  # noqa: BLE001 - liveness/identity probe only
+        return
+    if "uvicorn" not in cmdline or "app.main:app" not in cmdline:
+        # The pid was recycled by something unrelated. Leave it alone.
+        return
+    print(f"[harness] clearing orphaned backend pid {recorded} from a previous run")
+    _kill_tree(recorded)
+
+
+def listeners_on_tcp(port: int) -> list:
+    """PIDs listening on a TCP port, for a diagnosable skip message."""
+    try:
+        import psutil
+    except ImportError:
+        return []
+    found = []
+    for connection in psutil.net_connections(kind="inet"):
+        if connection.laddr and connection.laddr.port == port and connection.pid:
+            found.append(connection.pid)
+    return sorted(set(found))
+
+
 def free_port_is_free(port: int) -> bool:
     """True when nothing holds the UDP port.
 
@@ -344,12 +416,17 @@ class Backend:
     def start(self):
         # An orphaned backend from an earlier run would keep the port and answer
         # with a different host secret, which looks exactly like "invalid host
-        # credentials" from the Godot side. Refuse rather than silently test
-        # against somebody else's server.
-        if not free_port_is_free(API_PORT):
+        # credentials" from the Godot side. Clear our own leftovers, then refuse
+        # rather than silently test against somebody else's server.
+        _reap_orphaned_backends()
+        # Check the port with the protocol the API actually uses.
+        if not tcp_port_is_free(API_PORT):
+            owners = listeners_on_tcp(API_PORT)
             pytest.skip(
-                f"port {API_PORT} is already in use by another process; "
-                "stop the stale backend before running this test"
+                f"TCP {API_PORT} is already held (pid {owners}). That is almost "
+                "always a backend left behind by an earlier run; stop it before "
+                "running this suite. Attaching to it would run these tests against "
+                "a stale process with the wrong ticket registry and host secret."
             )
         # A disposable test database has no reference data, and login refuses to
         # issue tokens without it. Seed explicitly rather than assuming it.
@@ -373,6 +450,10 @@ class Backend:
         )
         # Persistent: module-scoped, owned by its own fixture's teardown.
         _register(self.process, "fastapi-backend", persistent=True)
+        try:
+            _BACKEND_PIDFILE.write_text(str(self.process.pid), encoding="utf-8")
+        except OSError:
+            pass
         deadline = time.monotonic() + BACKEND_READY_TIMEOUT
         last_error = "no attempt"
         while time.monotonic() < deadline:
@@ -382,6 +463,16 @@ class Backend:
             try:
                 with urllib_request(self.url + "/health") as response:
                     if response.status == 200:
+                        # Confirm the server answering is *ours*. Without this the
+                        # health probe can succeed against a stale backend that
+                        # still owns the port, while our own uvicorn silently
+                        # failed to bind and is on its way out.
+                        if self.process.poll() is not None:
+                            self.stop()
+                            pytest.skip(
+                                "our backend exited during startup; another process "
+                                f"is already serving TCP {API_PORT}"
+                            )
                         return self
                 last_error = f"status {response.status}"
             except Exception as exc:  # noqa: BLE001 - diagnostics only
@@ -407,6 +498,11 @@ class Backend:
         if self.process is not None:
             _OWNED.pop(self.process.pid, None)
             _write_pidfile()
+        try:
+            if _BACKEND_PIDFILE.exists():
+                _BACKEND_PIDFILE.unlink()
+        except OSError:
+            pass
         if self._log is not None and not self._log.closed:
             self._log.close()
             self._log = None
@@ -752,17 +848,27 @@ CAMPUS_SPAWN = (7378.0, -891.0)
 MOVEMENT_SPEED = 300.0
 
 
-def movement_env(workdir: Path) -> dict:
+def movement_env(workdir: Path, arena: bool = True) -> dict:
     """Environment that makes the server write its own view of the world.
 
     Tests assert against the dump rather than against a client's claim, so a test
     cannot pass by believing the client that is being tested.
+
+    ``arena`` defaults to True. That default is deliberate: the arena costs a
+    fraction of a second to build while loading the real campus costs roughly 15
+    seconds and about 10 MB of TileSet error output per process, and a client
+    stuck in that load looks exactly like a hung test. Making the cheap world the
+    default means a test only pays for the campus when it says so, and the flag
+    reaches server and clients together through this one helper.
     """
-    return {
+    env = {
         "GODOT_MOVEMENT_ENABLED": "1",
         "GODOT_MOVEMENT_DUMP_FILE": str(workdir / "movement-dump.json"),
         "GODOT_MOVEMENT_COLLISION_FILE": str(workdir / "collision.json"),
     }
+    if arena:
+        env["GODOT_MOVEMENT_ARENA"] = "1"
+    return env
 
 
 def read_movement_dump(workdir: Path) -> dict:
@@ -827,12 +933,20 @@ def start_movement_client(
     input_script: str = "",
     hold: float = 1.5,
     extra_env: dict | None = None,
+    arena: bool = True,
 ) -> subprocess.Popen:
     """A headless campus-movement client.
 
     ``input_script`` is a comma-separated ``direction:seconds`` timeline, so a
     test drives real keyboard-equivalent input through the real client rather
     than poking the server directly.
+
+    ``arena`` defaults to True and is applied here as well as in ``movement_env``,
+    because a client must build the same collision world the server simulates
+    against. Setting it in one place per call site let a client silently load the
+    real campus while its server used the arena; the client then spent its whole
+    startup instantiating map.tscn and emitting TileSet errors, which presented
+    as a hung test rather than as a configuration mistake.
     """
     env = dict(os.environ)
     env.update({
@@ -853,6 +967,10 @@ def start_movement_client(
     })
     if extra_env:
         env.update(extra_env)
+    if arena:
+        env.setdefault("GODOT_MOVEMENT_ARENA", "1")
+    else:
+        env.pop("GODOT_MOVEMENT_ARENA", None)
     log = workdir / f"mover-{account['username']}.log"
     handle = open(log, "wb")
     process = subprocess.Popen(

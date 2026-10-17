@@ -20,6 +20,7 @@ geometry rather than against a guessed wall position.
 import json
 import os
 import time
+from pathlib import Path
 
 import pytest
 
@@ -88,6 +89,7 @@ def run_pair(
     users=None,
     index: int = 0,
     partners: bool = True,
+    arena: bool = True,
 ):
     """Start a server plus two movement clients, wait for both, and collect.
 
@@ -96,7 +98,7 @@ def run_pair(
     of spurious disconnect these tests exist to examine.
     """
     one, two = users if users else pair(index)
-    server_env = movement_env(harness_dir)
+    server_env = movement_env(harness_dir, arena=arena)
     if extra_env_server:
         server_env.update(extra_env_server)
     server = start_server(
@@ -106,13 +108,14 @@ def run_pair(
     def shared(extra: dict | None) -> dict:
         """Client environment, told about the arena.
 
-        Building the real campus collision means instantiating map.tscn and its
-        TileSet, which is slow and -- given the map's pre-existing tile errors --
-        extremely noisy. A test that runs entirely inside the arena must not pay
-        that cost in two client processes as well as the server.
+        The client must build the same collision world the server simulates
+        against, or its prediction disagrees with the authority for reasons that
+        have nothing to do with the test. Deriving it here -- rather than passing
+        it per call site -- is what stops a client silently loading the real
+        campus while its server uses the arena, which is exactly what happened.
         """
         env = dict(extra or {})
-        if server_env.get("GODOT_MOVEMENT_ARENA") == "1":
+        if arena:
             env["GODOT_MOVEMENT_ARENA"] = "1"
         return env
     a = start_movement_client(
@@ -151,6 +154,31 @@ def wait_for(*processes, timeout: float = 90.0) -> None:
         time.sleep(0.5)
 
 
+def wait_for_reject(workdir: Path, reason: str, expected: int = 1,
+                    timeout: float = 15.0) -> dict:
+    """Wait for the server to record a rejection, then return its state.
+
+    Event-driven rather than a fixed sleep, and deliberately so. Reading the dump
+    as soon as the client exits races the server: the client finishes immediately
+    after firing its one attack, while the packet still has to arrive, be judged
+    and be written into the next dump. That race is why this assertion was
+    intermittently ``0 >= 1`` -- the rejection was real but had not been persisted
+    yet when the test looked.
+    """
+    deadline = time.monotonic() + timeout
+    dump = {}
+    while time.monotonic() < deadline:
+        try:
+            dump = read_movement_dump(workdir)
+        except AssertionError:
+            time.sleep(0.25)
+            continue
+        if int(dump.get("rejects", {}).get(reason, 0)) >= expected:
+            return dump
+        time.sleep(0.25)
+    return dump
+
+
 def movement_extent(row: dict) -> dict:
     return {
         "width": row["max_x"] - row["min_x"],
@@ -173,7 +201,6 @@ def test_two_players_join_campus_and_spawn(backend, freed_ports, server_port, ha
     one, two = pair(0)
     server, results_a, results_b, out_a, out_b = run_pair(
         backend, server_port, harness_dir, hold=1.0, index=0,
-        extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
     )
     try:
         admitted_a = events(results_a, "admitted")
@@ -212,9 +239,6 @@ def test_player_a_moves_right_and_the_server_records_it(
     server, results_a, _results_b, out_a, _out_b = run_pair(
         backend, server_port, harness_dir, script_a="right:%.1f" % seconds,
         hold=1.0, index=0,
-        # Clear interior, so 2.0s of travel is measured rather than cut short by
-        # whichever campus obstacle happens to be near the spawn ring.
-        extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
     )
     try:
         row = observed(results_a, one["player_id"])
@@ -242,7 +266,6 @@ def test_player_b_receives_player_a_movement(
     server, _results_a, results_b, _out_a, out_b = run_pair(
         backend, server_port, harness_dir,
         script_a="right:2.0", script_b="idle:0.1", hold=1.5, index=0,
-        extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
     )
     try:
         row = observed(results_b, one["player_id"])
@@ -269,7 +292,6 @@ def test_player_b_moves_up_and_player_a_receives_it(
     server, results_a, results_b, _out_a, _out_b = run_pair(
         backend, server_port, harness_dir,
         script_a="idle:0.1", script_b="up:2.0", hold=1.5, index=0,
-        extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
     )
     try:
         own_b = observed(results_b, two["player_id"])
@@ -292,7 +314,6 @@ def test_both_players_move_concurrently_without_sharing_authority(
     server, results_a, results_b, _out_a, out_b = run_pair(
         backend, server_port, harness_dir,
         script_a="right:2.5", script_b="down:2.5", hold=1.5, index=0,
-        extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
     )
     try:
         row_a = observed(results_a, one["player_id"])
@@ -320,7 +341,6 @@ def test_one_player_cannot_drive_the_other(
     server, _results_a, results_b, _out_a, out_b = run_pair(
         backend, server_port, harness_dir,
         script_a="right:2.5", script_b="idle:0.1", hold=2.0, index=0,
-        extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
     )
     try:
         row_b = observed(results_b, two["player_id"])
@@ -349,7 +369,7 @@ def test_unauthenticated_peer_cannot_move(
     one, two = pair(0)
     server = start_server(
         backend.secret, server_port, harness_dir,
-        extra_env={**movement_env(harness_dir), "GODOT_MOVEMENT_ARENA": "1"},
+        extra_env=movement_env(harness_dir),
     )
     try:
         # One honest client, so there is a real body to try to interfere with.
@@ -412,14 +432,13 @@ def test_forged_identity_field_is_rejected(
     server, results_a, _results_b, _out_a, out_a = run_pair(
         backend, server_port, harness_dir,
         script_a="idle:0.1", script_b="idle:0.1", hold=1.0, index=1,
-        extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
         extra_a={"TEST_RAW_ATTACKS": "oversized_identity", "TEST_EXPECT_ROSTER": "1"},
         extra_b={"TEST_EXPECT_ROSTER": "1"},
         partners=False,
     )
     try:
-        dump = read_movement_dump(harness_dir)
-        assert dump["rejects"].get("malformed", 0) >= 1, dump
+        dump = wait_for_reject(harness_dir, "malformed")
+        assert dump.get("rejects", {}).get("malformed", 0) >= 1, dump
         final = events(results_a, "final")
         assert final and final[0]["attacks_sent"] == 1, final
     finally:
@@ -433,14 +452,13 @@ def test_invalid_direction_is_rejected(backend, freed_ports, server_port, harnes
     server, results_a, _results_b, _out_a, _out_a = run_pair(
         backend, server_port, harness_dir,
         script_a="right:2.0", script_b="idle:0.1", hold=1.0, index=1,
-        extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
         extra_a={"TEST_RAW_ATTACKS": "long_direction", "TEST_EXPECT_ROSTER": "1"},
         extra_b={"TEST_EXPECT_ROSTER": "1"},
         partners=False,
     )
     try:
-        dump = read_movement_dump(harness_dir)
-        assert dump["rejects"].get("malformed", 0) >= 1, dump
+        dump = wait_for_reject(harness_dir, "malformed")
+        assert dump.get("rejects", {}).get("malformed", 0) >= 1, dump
         row = observed(results_a, one["player_id"])
         assert row is not None
         # 2.0s at 300/s is 600; a forged faster direction would exceed it.
@@ -455,14 +473,13 @@ def test_stale_sequence_numbers_are_ignored(backend, freed_ports, server_port, h
     server, _results_a, _results_b, _out_a, _out_b = run_pair(
         backend, server_port, harness_dir,
         script_a="right:1.5", script_b="idle:0.1", hold=1.0, index=1,
-        extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
         extra_a={"TEST_RAW_ATTACKS": "replay_seq,zero_seq", "TEST_EXPECT_ROSTER": "1"},
         extra_b={"TEST_EXPECT_ROSTER": "1"},
         partners=False,
     )
     try:
-        dump = read_movement_dump(harness_dir)
-        assert dump["rejects"].get("stale_sequence", 0) >= 2, dump
+        dump = wait_for_reject(harness_dir, "stale_sequence", expected=2)
+        assert dump.get("rejects", {}).get("stale_sequence", 0) >= 2, dump
     finally:
         reap(server)
 
@@ -477,13 +494,12 @@ def test_input_flood_is_rate_limited(backend, freed_ports, server_port, harness_
     server, _results_a, _results_b, _out_a, _out_b = run_pair(
         backend, server_port, harness_dir,
         script_a="idle:0.1", script_b="idle:0.1", hold=1.0, index=1,
-        extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
         extra_a={"TEST_RAW_ATTACKS": ",".join(["flood"] * 8), "TEST_EXPECT_ROSTER": "1"},
         partners=False,
     )
     try:
-        dump = read_movement_dump(harness_dir)
-        assert dump["rejects"].get("rate_limited", 0) >= 1, dump
+        dump = wait_for_reject(harness_dir, "rate_limited")
+        assert dump.get("rejects", {}).get("rate_limited", 0) >= 1, dump
     finally:
         reap(server)
 
@@ -512,7 +528,6 @@ def test_player_cannot_cross_a_wall_in_the_isolated_arena(
     server, results_a, _results_b, _out_a, out_a = run_pair(
         backend, server_port, harness_dir,
         script_a="up:5.0", script_b="idle:0.1", hold=1.5, index=0,
-        extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
     )
     try:
         dump = read_movement_dump(harness_dir)
@@ -566,6 +581,7 @@ def test_the_real_campus_collision_deflects_a_player(
     server, results_a, _results_b, _out_a, out_a = run_pair(
         backend, server_port, harness_dir,
         script_a="up:%.1f" % seconds, script_b="idle:0.1", hold=1.5, index=0,
+        arena=False,
     )
     try:
         dump = read_movement_dump(harness_dir)
@@ -608,7 +624,6 @@ def test_a_silent_client_stops_without_stalling_the_others(
     server, results_a, results_b, _out_a, _out_b = run_pair(
         backend, server_port, harness_dir,
         script_a="right:1.0", script_b="right:5.0", hold=2.0, index=0,
-        extra_env_server={"GODOT_MOVEMENT_ARENA": "1"},
     )
     try:
         row_a = observed(results_a, one["player_id"])
@@ -633,7 +648,7 @@ def test_disconnect_removes_the_avatar_and_reconnect_makes_exactly_one(
     mover_user = pool_user(3)
     server = start_server(
         backend.secret, server_port, harness_dir,
-        extra_env={**movement_env(harness_dir), "GODOT_MOVEMENT_ARENA": "1"},
+        extra_env=movement_env(harness_dir),
     )
     try:
         # The survivor holds its session for the whole test. The hold is generous

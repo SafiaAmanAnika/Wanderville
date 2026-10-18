@@ -188,7 +188,7 @@ func _on_floor_chosen(floor_name: String) -> void:
 	GameState.house["stage"] = "done"
 	GameState.save_house()
 	interior.show_floor(floor_name)
-	HousePrompt.flash("Your house is finished!")
+	HousePrompt.flash("Your house is finished! Go to the stairs to exit the house", 4.0)
 # ─── Leaving ─────────────────────────────────────────────────────────
 
 func _leave_house() -> void:

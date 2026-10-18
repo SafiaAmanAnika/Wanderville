@@ -222,14 +222,15 @@ func _handle_packet(packet: Dictionary) -> void:
 			_sequence = maxi(_sequence, accepted)
 			if accepted >= _pending_sequence:
 				_pending_sequence = 0
-			if _correct_position and not pause_movement:
+			if _correct_position:
 				var player := get_tree().get_first_node_in_group("player") as Node2D
 				if player != null:
-					player.global_position = Vector2(float(entry["x"]), float(entry["y"]))
+					if not pause_movement:      # inside a house: don't pull the player back outside
+						player.global_position = Vector2(float(entry["x"]), float(entry["y"]))
 					_sequence = accepted
 					_correct_position = false
 					_retry_delay = 1.0
-					_set_connected(true)
+					_set_connected(true)       
 	for message in data.get("messages", []):
 		var id := int(message.get("id", 0))
 		if not _seen_messages.has(id):

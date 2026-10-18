@@ -21,8 +21,8 @@ func door_position() -> Vector2:
 # show / hide the prompt when the player walks up to or away from the door
 func _process(_delta: float) -> void:
 	var player := get_tree().get_first_node_in_group("player") as Node2D
-	var near := player != null and not GameState.menu_open \
-		and player.global_position.distance_to(door_position()) < DOOR_RANGE
+	var near : bool = player != null and not GameState.menu_open \
+	and $DoorZone.overlaps_body(player)
 	if near == _near:
 		return
 	_near = near

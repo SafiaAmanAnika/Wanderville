@@ -87,7 +87,9 @@ func _ready() -> void:
 		port = NetworkConfig.DEFAULT_PORT
 	_screenshot_dir = OS.get_environment("TEST_SCREENSHOT_DIR")
 	# Test-only: flips playback direction on the instance, never on the scene.
-	_anim_forward = OS.get_environment("TEST_ANIM_SPEED_SCALE") == "1"
+	# Forward playback is the approved default. TEST_ANIM_SPEED_SCALE=0 still
+	# selects the original reversed sheet for comparison; only the default changed.
+	_anim_forward = OS.get_environment("TEST_ANIM_SPEED_SCALE") != "0"
 	_run_seconds = float(OS.get_environment("TEST_RUN_SECONDS"))
 
 	# Direct child of the scene root: NetworkLink's relative RPC path depends on it.

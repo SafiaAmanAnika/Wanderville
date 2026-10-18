@@ -493,7 +493,15 @@ def test_stale_sequence_numbers_are_ignored(backend, freed_ports, server_port, h
     server, _results_a, _results_b, _out_a, _out_b = run_pair(
         backend, server_port, harness_dir,
         script_a="right:1.5", script_b="idle:0.1", hold=1.0, index=1,
-        extra_a={"TEST_RAW_ATTACKS": "replay_seq,zero_seq", "TEST_EXPECT_ROSTER": "1"},
+        # Sent twice each, for the same reason test_input_flood_is_rate_limited
+        # repeats its burst: movement packets travel on an unreliable_ordered
+        # channel, so an individual crafted packet is occasionally discarded in
+        # transit. That is the transport being unreliable, not the server accepting a
+        # stale sequence, and repeating the pair removes the flake without touching
+        # production delivery semantics or the assertion below. Both varieties are
+        # still present, so the replayed and the wrap-old paths are both exercised.
+        extra_a={"TEST_RAW_ATTACKS": "replay_seq,zero_seq,replay_seq,zero_seq",
+                  "TEST_EXPECT_ROSTER": "1"},
         extra_b={"TEST_EXPECT_ROSTER": "1"},
         partners=False,
     )

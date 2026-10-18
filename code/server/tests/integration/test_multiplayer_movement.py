@@ -63,7 +63,7 @@ pytestmark = [requires_godot, pytest.mark.preserve_rows]
 NAMES = ["mv_p1", "mv_p2", "mv_p3", "mv_p4", "mv_p5", "mv_p6"]
 
 #: Half the height of the isolated test arena, mirrored from MovementArena.
-ARENA_HALF_HEIGHT = 1200.0
+ARENA_HALF_HEIGHT = 2000.0
 #: Deterministic spawn ring radius, mirrored from MovementClient._spawn_point.
 ARENA_SPAWN_RING = 260.0
 #: MovementAuthority.INPUT_TIMEOUT, mirrored so the expiry bound is derived from the
@@ -101,6 +101,17 @@ def run_pair(
     of spurious disconnect these tests exist to examine.
     """
     one, two = users if users else pair(index)
+    # The two logical roles, named explicitly rather than inferred from the order
+    # results happen to arrive in.
+    assert one["username"] != two["username"], (
+        "both clients were assigned the same account, so their results would be "
+        f"indistinguishable: {one['username']}"
+    )
+    assert one["player_id"] != two["player_id"], (
+        "both clients were assigned the same player id: "
+        f"{one['player_id']} vs {two['player_id']}"
+    )
+    run_id = f"t{os.getpid()}s{server_port}"
     server_env = movement_env(harness_dir, arena=arena)
     if extra_env_server:
         server_env.update(extra_env_server)
@@ -122,7 +133,8 @@ def run_pair(
             env["GODOT_MOVEMENT_ARENA"] = "1"
         return env
     a = start_movement_client(
-        one, backend.secret, server_port, harness_dir, script_a, hold, shared(extra_a)
+        one, backend.secret, server_port, harness_dir, script_a, hold,
+        shared(extra_a), role="A", run_id=run_id,
     )
     if not partners:
         # A single client is enough for the validation tests: an admitted peer
@@ -133,8 +145,13 @@ def run_pair(
         wait_for(a)
         return server, parse_results(reap(a)), [], reap(a), b""
     b = start_movement_client(
-        two, backend.secret, server_port, harness_dir, script_b, hold, shared(extra_b)
+        two, backend.secret, server_port, harness_dir, script_b, hold,
+        shared(extra_b), role="B", run_id=run_id,
     )
+    # The two clients must not be able to overwrite each other's output.
+    log_a = a._wanderville_log[1]
+    log_b = b._wanderville_log[1]
+    assert log_a != log_b, f"both clients share one log file: {log_a}"
     wait_for(a, b)
     out_a = reap(a, timeout=20)
     out_b = reap(b, timeout=20)
@@ -530,7 +547,7 @@ def test_player_cannot_cross_a_wall_in_the_isolated_arena(
     one, two = pair(0)
     server, results_a, _results_b, _out_a, out_a = run_pair(
         backend, server_port, harness_dir,
-        script_a="up:5.0", script_b="idle:0.1", hold=1.5, index=0,
+        script_a="up:8.0", script_b="idle:0.1", hold=1.5, index=0,
     )
     try:
         dump = read_movement_dump(harness_dir)
@@ -658,19 +675,26 @@ def test_disconnect_removes_the_avatar_and_reconnect_makes_exactly_one(
         # and the test terminates it itself: ticket requests occasionally retry,
         # so a survivor sized to a guessed timeline would exit early and produce a
         # failure that looks like a dropped connection.
+        run_id = f"t{os.getpid()}dc{server_port}"
         survivor = start_movement_client(
-            survivor_user, backend.secret, server_port, harness_dir, "", 90.0
+            survivor_user, backend.secret, server_port, harness_dir, "", 90.0,
+            role="survivor", run_id=run_id,
         )
         # First visit by the mover.
         first = start_movement_client(
-            mover_user, backend.secret, server_port, harness_dir, "right:1.5", 3.0
+            mover_user, backend.secret, server_port, harness_dir, "right:1.5", 3.0,
+            role="first", run_id=run_id,
         )
         wait_for(first)
         reap(first)
 
         # Second visit, same account, therefore a different ticket.
+        # A distinct role matters: the log is opened "wb", so two visits of one
+        # account sharing a filename would let the second overwrite the first and
+        # the survivor's view of the two visits could not be reconstructed.
         again = start_movement_client(
-            mover_user, backend.secret, server_port, harness_dir, "left:1.5", 3.0
+            mover_user, backend.secret, server_port, harness_dir, "left:1.5", 3.0,
+            role="again", run_id=run_id,
         )
         wait_for(again)
         reap(again)
@@ -680,7 +704,7 @@ def test_disconnect_removes_the_avatar_and_reconnect_makes_exactly_one(
         # Read the survivor's log without terminating it, so its file handle is
         # left for reap() and nothing is truncated mid-write.
         time.sleep(2.0)
-        raw = (harness_dir / f"mover-{survivor_user['username']}.log").read_bytes()
+        raw = survivor._wanderville_log[1].read_bytes()
         results = parse_results(raw)
 
         lefts = [e for e in events(results, "remote_left")
@@ -837,6 +861,53 @@ def test_silent_client_stops_on_server_input_expiry(
         # The other player is unaffected.
         row_b = observed(results_b, two["player_id"])
         assert row_b is not None and movement_extent(row_b)["width"] > MOVEMENT_SPEED * 2.0, row_b
+    finally:
+        reap(server)
+
+
+def test_client_pairing_is_unambiguous(backend, freed_ports, server_port, harness_dir):
+    """Cheap check that each logical client owns its identity, script and output.
+
+    Runs before any movement assertion is trusted. The harness names logs by
+    username and opens them ``wb``, so two clients sharing a filename would let
+    one silently overwrite the other's results -- which looks exactly like a
+    movement bug. This proves the pairing holds end to end: distinct accounts,
+    distinct log files, each client authenticating as the account it was
+    assigned, and the server agreeing.
+    """
+    one, two = pair(0)
+    assert one["username"] != two["username"]
+    assert one["player_id"] != two["player_id"]
+
+    server, results_a, results_b, out_a, out_b = run_pair(
+        backend, server_port, harness_dir,
+        script_a="right:1.0", script_b="idle:0.1", hold=1.0, index=0,
+    )
+    try:
+        admitted_a = events(results_a, "admitted")
+        admitted_b = events(results_b, "admitted")
+        assert admitted_a and admitted_b, (out_a[-800:], out_b[-800:])
+        # Each client authenticated as the account it was assigned -- not as the
+        # other one, and not merely as "some other player".
+        assert admitted_a[0]["player_id"] == one["player_id"], admitted_a[0]
+        assert admitted_b[0]["player_id"] == two["player_id"], admitted_b[0]
+        assert admitted_a[0]["username"] == one["username"], admitted_a[0]
+        assert admitted_b[0]["username"] == two["username"], admitted_b[0]
+
+        # The server's own mapping agrees, and it saw two distinct peers.
+        text = reap(server).decode("utf-8", "replace")
+        assert f"player {one['player_id']} ({one['username']})" in text, text[-1200:]
+        assert f"player {two['player_id']} ({two['username']})" in text, text[-1200:]
+        admissions = [line for line in text.splitlines() if "admitted peer" in line]
+        assert len({line.split(" as player ")[1].split(" ")[0] for line in admissions}) == 2, (
+            "the server did not see two distinct player ids:\n" + "\n".join(admissions)
+        )
+
+        # Each client received its own script: A moved, B did not.
+        row_a = observed(results_a, one["player_id"])
+        row_b = observed(results_b, two["player_id"])
+        assert row_a is not None and movement_extent(row_a)["width"] > MOVEMENT_SPEED * 0.5, row_a
+        assert row_b is not None and movement_extent(row_b)["width"] < 30.0, row_b
     finally:
         reap(server)
 

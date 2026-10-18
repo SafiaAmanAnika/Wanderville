@@ -936,8 +936,10 @@ def start_movement_client(
     workdir: Path,
     input_script: str = "",
     hold: float = 1.5,
-    extra_env: dict | None = None,
+extra_env: dict | None = None,
     arena: bool = True,
+    role: str = "A",
+    run_id: str = "",
 ) -> subprocess.Popen:
     """A headless campus-movement client.
 
@@ -948,9 +950,15 @@ def start_movement_client(
     ``arena`` defaults to True and is applied here as well as in ``movement_env``,
     because a client must build the same collision world the server simulates
     against. Setting it in one place per call site let a client silently load the
-    real campus while its server used the arena; the client then spent its whole
+    real campus while its server uses the arena; the client then spent its whole
     startup instantiating map.tscn and emitting TileSet errors, which presented
     as a hung test rather than as a configuration mistake.
+
+    ``role`` and ``run_id`` name the log file. The log is opened ``wb``, so two
+    clients resolving to one filename means the second silently truncates and
+    overwrites the first -- after which results are attributed to whichever
+    process wrote last. Keying on username alone is therefore only safe while no
+    test runs one account twice, which the reconnect test does.
     """
     env = dict(os.environ)
     env.update({
@@ -968,6 +976,9 @@ def start_movement_client(
         # whole module of tests draws on one backend process. A patient retry
         # budget keeps a 429 from being mistaken for a movement failure.
         "GODOT_MULTIPLAYER_MAX_RETRIES": "8",
+        "TEST_RUN_ID": run_id or f"pid{os.getpid()}",
+        "TEST_ROLE": role,
+        "TEST_WORKDIR": str(workdir),
     })
     if extra_env:
         env.update(extra_env)
@@ -975,7 +986,9 @@ def start_movement_client(
         env.setdefault("GODOT_MOVEMENT_ARENA", "1")
     else:
         env.pop("GODOT_MOVEMENT_ARENA", None)
-    log = workdir / f"mover-{account['username']}.log"
+    # Role and run id in the filename, so two clients can never share a log even
+    # when they deliberately share an account.
+    log = workdir / f"mover-{run_id or 'run'}-{role}-{account['username']}.log"
     handle = open(log, "wb")
     process = subprocess.Popen(
         [GODOT, "--headless", "--path", str(CLIENT), MOVEMENT_SCENE],

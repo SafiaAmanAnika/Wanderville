@@ -18,12 +18,15 @@ class_name MovementArena
 
 const NAME := "ISOLATED TEST ARENA (not the campus)"
 
-## Sized so a player on the deterministic 260-unit spawn ring always has room for
-## the longest straight-line run the tests perform (3.0s at 300 units/s = 900)
-## plus the ring offset, with margin. That is what makes the distance assertions
-## independent of which player id a test happens to draw.
-const WIDTH := 2400.0
-const HEIGHT := 2400.0
+## Sized so the longest scripted run in the suite fits from any spawn-ring
+## position. The tests drive up to 5.0s at 300 units/second, which is 1500 units,
+## and a player may spawn 260 units off centre in any direction, so the half-size
+## must exceed 1760. At 1200 it did not: a 5-second run was quietly wall-limited to
+## about 1014 units and a test that expected more reported a movement defect that
+## did not exist. The wall-crossing test compensates with a longer run so it still
+## reaches the wall.
+const WIDTH := 4000.0
+const HEIGHT := 4000.0
 const WALL := 60.0
 
 

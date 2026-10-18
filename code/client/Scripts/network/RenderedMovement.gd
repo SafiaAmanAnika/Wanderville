@@ -257,8 +257,8 @@ func _trace_animation(scope: String, id: int, body: Node) -> void:
 	if _anim_seen.get(key) == moving:
 		return
 	_anim_seen[key] = moving
-	print("RESULT anim=1 scope=%s id=%d name=%s frame=%d playing=%s" % [
-		scope, id, sprite.animation, sprite.frame, str(moving),
+	print("RESULT anim=1 t=%.2f scope=%s id=%d name=%s frame=%d playing=%s" % [
+		_elapsed, scope, id, sprite.animation, sprite.frame, str(moving),
 	])
 
 
@@ -411,7 +411,13 @@ func _finish() -> void:
 	_refresh_hud()
 	for fkey in _anim_max_frame.keys():
 		print("RESULT animframe=1 scope_name=%s max_frame=%d" % [fkey, int(_anim_max_frame[fkey])])
-	await _capture("final")
+	# The summary is emitted before the final screenshot, not after.
+	#
+	# Reading a Forward+ framebuffer back during shutdown is not reliably safe:
+	# save_png can still fault even after waiting for frame_post_draw, and when it
+	# does it takes the process down with it. Printing the records first means a
+	# crash in the nicest-to-have artefact can never cost the evidence that the
+	# test actually asserts on.
 	print("RESULT summary=1 username=%s phase=%s player_id=%d position=%.1f,%.1f remotes=%d corrections=%d snapshots=%d errors=%s" % [
 		username, _phase,
 		_player_id,
@@ -419,4 +425,5 @@ func _finish() -> void:
 		ids.size(), movement.correction_count(), movement.snapshot_count(),
 		",".join(_errors),
 	])
+	await _capture("final")
 	get_tree().quit(0 if _errors.is_empty() else 1)

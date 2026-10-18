@@ -43,6 +43,8 @@ from conftest import (
 pytestmark = [pytest.mark.integration, pytest.mark.timeout(600)]
 
 SCENE = "res://Scenes/network/RenderedMovement.tscn"
+## Long enough to walk, watch, hit a wall and reconnect without rushing.
+MANUAL_WINDOW_SECONDS = float(os.environ.get("WANDERVILLE_MANUAL_SECONDS", 300))
 HOST = "127.0.0.1"
 
 
@@ -505,3 +507,55 @@ def test_local_and_remote_characters_actually_animate(backend, harness_dir, serv
         f"the sprite never came to rest: {local}"
     )
     print(f"\nlocal animation timeline: {[(r['name'], r['playing']) for r in local]}")
+
+@pytest.mark.timeout(420)
+def test_manual_rendered_pair(backend, harness_dir, server_port):
+    """Open two undriven windows for a human to look at.
+
+    Skipped unless WANDERVILLE_RENDERED_MANUAL is set, so ordinary runs never
+    block on a person being at the keyboard.
+
+    Nothing here is scripted or asserted. Both windows are launched with no
+    TEST_INPUT_SCRIPT, so MovementClient reads the real ui_* actions and the
+    tester drives them with WASD or the arrow keys. The windows stay open long
+    enough to walk around, watch each other, hit a wall and reconnect.
+
+    The launcher deliberately does not reap on timeout: killing the windows the
+    moment a person is still using them would defeat the point. Teardown is left
+    to the registered PIDs and the normal bounded-run cleanup, which only ever
+    touches processes this test started.
+    """
+    backend.ensure_accounts(["rmv_manual_a", "rmv_manual_b"])
+    workdir = harness_dir / f"manual-{server_port}"
+    workdir.mkdir(parents=True, exist_ok=True)
+
+    start_server(secret=backend.secret, port=server_port, workdir=workdir,
+                 extra_env=movement_env(workdir))
+
+    windows = []
+    for name in ("rmv_manual_a", "rmv_manual_b"):
+        windows.append(_launch(
+            account(name), backend.secret, server_port, workdir, workdir / "shots",
+            "", name, f"m{server_port}", seconds=MANUAL_WINDOW_SECONDS,
+        ))
+
+    # Prove the windows actually came up on a real display before sitting and
+    # waiting. A headless fallback would make every manual check below meaningless,
+    # so it is a failure rather than a warning.
+    for name, proc in zip(("a", "b"), windows):
+        text = _wait_for_text(proc, "[RenderedMovement] display=", 60, f"window {name}")
+        match = re.search(rb"\[RenderedMovement\] display=(\w+)", text)
+        assert match, f"window {name} never reported a display"
+        assert match.group(1).decode() != "headless", (
+            f"window {name} came up headless; manual verification needs real windows"
+        )
+        print(f"\nwindow {name} up: {match.group(1).decode()}")
+
+    print(
+        f"\nTwo windows are open for {MANUAL_WINDOW_SECONDS:.0f} seconds.\n"
+        "Drive them with WASD or the arrow keys. Both accounts are disposable test\n"
+        "accounts and the database is the test database."
+    )
+
+    for proc in windows:
+        proc.wait(timeout=MANUAL_WINDOW_SECONDS + 120)

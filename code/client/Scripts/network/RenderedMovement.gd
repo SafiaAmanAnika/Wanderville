@@ -458,12 +458,13 @@ func _finish() -> void:
 	# does it takes the process down with it. Printing the records first means a
 	# crash in the nicest-to-have artefact can never cost the evidence that the
 	# test actually asserts on.
-	print("RESULT summary=1 username=%s phase=%s player_id=%d position=%.1f,%.1f remotes=%d corrections=%d snapshots=%d back_nudges=%d errors=%s" % [
+	print("RESULT summary=1 username=%s phase=%s player_id=%d position=%.1f,%.1f remotes=%d corrections=%d snapshots=%d back_nudges=%d max_step=%.2f errors=%s" % [
 		username, _phase,
 		_player_id,
 		movement.local_position().x, movement.local_position().y,
 		ids.size(), movement.correction_count(), movement.snapshot_count(),
 		int(movement.back_nudge_stats().get("count", 0)),
+		float(movement.back_nudge_stats().get("max_step", 0.0)),
 		",".join(_errors),
 	])
 	await _capture("final")

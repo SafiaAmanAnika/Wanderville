@@ -40,7 +40,10 @@ const RECONCILE_DEADZONE := 2.0
 ## Error above which the client snaps, because easing would look like rubber-banding.
 const RECONCILE_SNAP := 48.0
 ## Fraction of a small error corrected per snapshot.
-const RECONCILE_BLEED := 0.35
+## Correction backlog is drained at no more than this many units per second, so no
+## single frame can move the body further than this times delta. Well above the
+## 300 units/second movement speed, so convergence stays ahead of the error.
+const CORRECTION_MAX_SPEED := 450.0
 
 ## How many snapshots may arrive with no sign of a remote avatar before it is
 ## dropped as stale.
@@ -70,6 +73,10 @@ var _roster: Dictionary = {}
 var _missed: Dictionary = {}
 var _corrections := 0
 ## Corrections that pulled a moving player backwards, and how far in total.
+## Small corrections waiting to be applied, spread across frames.
+var _pending_correction := Vector2.ZERO
+## Largest correction distance applied in any single frame.
+var _max_step := 0.0
 var _back_nudges := 0
 var _back_nudge_distance := 0.0
 var _snaps := 0
@@ -172,6 +179,13 @@ func _physics_process(delta: float) -> void:
 		_last_facing = MovementProtocol.facing_from_direction(direction)
 	local.velocity = direction * SPEED
 	local.move_and_slide()
+	if _pending_correction.length() > 0.01:
+		var step := _pending_correction.limit_length(CORRECTION_MAX_SPEED * delta)
+		local.global_position += step
+		# How far the body actually moved this frame, corrections included. A
+		# visual jump shows up here as a large single-frame displacement.
+		_max_step = maxf(_max_step, step.length())
+		_pending_correction -= step
 
 	# Drive the local player's own presentation here, because nothing else can.
 	#
@@ -286,15 +300,36 @@ func _reconcile(state: Dictionary) -> void:
 	if distance <= RECONCILE_DEADZONE:
 		return
 	if distance >= RECONCILE_SNAP:
+		# A large divergence is resolved at once on purpose. This is what a wall
+		# deflection, a respawn or a room transition looks like, and easing any of
+		# those would drag the player away from where the server actually put them.
 		local.global_position = target
+		_pending_correction = Vector2.ZERO
 		_snaps += 1
 	else:
-		local.global_position += error * RECONCILE_BLEED
+		# Small corrections are queued rather than applied, because applying one
+		# immediately is what reads as a twitch.
+		#
+		# An empty unacknowledged-input buffer does not mean the server position is
+		# current: it means the server has caught up with everything sent so far, and
+		# the body has since moved on. The two are therefore compared across
+		# different moments, and a residual of a few units is arithmetic rather than
+		# drift. Applied instantly, thirty of those a second became visible shaking.
+		#
+		# Queuing them keeps the convergence but spreads it over frames, so no single
+		# frame moves the body further than CORRECTION_MAX_SPEED allows. It still
+		# converges: the queue drains every frame and is never discarded, so server
+		# disagreement is not hidden, merely delivered over a few frames instead of
+		# one. A backlog large enough to be a real divergence is flushed immediately
+		# by the snap branch above rather than being smoothed into a lie.
+		_pending_correction += error
+		if _pending_correction.length() >= RECONCILE_SNAP:
+			local.global_position += _pending_correction
+			_pending_correction = Vector2.ZERO
 	_corrections += 1
 	# A correction that pulls a moving player backwards is the one the eye reads as
 	# jitter, so it is counted apart from ordinary corrections instead of being
-	# averaged into them. Measured at 29 out of 50 corrections under rapid
-	# direction changes, which is why this exists: the number is the finding.
+	# averaged into them.
 	var heading := local.velocity
 	if heading.length() > 1.0:
 		if error.normalized().dot(heading.normalized()) < 0.0:
@@ -410,7 +445,7 @@ func correction_count() -> int:
 
 ## Backward nudges and the distance they covered, so the jitter can be measured.
 func back_nudge_stats() -> Dictionary:
-	return {"count": _back_nudges, "distance": _back_nudge_distance}
+	return {"count": _back_nudges, "distance": _back_nudge_distance, "max_step": _max_step}
 
 
 func snap_count() -> int:

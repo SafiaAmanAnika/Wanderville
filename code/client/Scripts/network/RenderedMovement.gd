@@ -62,6 +62,8 @@ var _script_time := 0.0
 var _script_settle_until := 0.0
 var _player_id := 0
 var _anim_seen: Dictionary = {}
+## Reversed when TEST_ANIM_SPEED_SCALE=1, so the two can be compared by eye.
+var _anim_forward := false
 var _anim_max_frame: Dictionary = {}
 ## Camera zoom; see _build_camera() for why the default of 1 is far too wide.
 const CAMERA_ZOOM := 3.0
@@ -80,6 +82,8 @@ func _ready() -> void:
 	if port <= 0:
 		port = NetworkConfig.DEFAULT_PORT
 	_screenshot_dir = OS.get_environment("TEST_SCREENSHOT_DIR")
+	# Test-only: flips playback direction on the instance, never on the scene.
+	_anim_forward = OS.get_environment("TEST_ANIM_SPEED_SCALE") == "1"
 	_run_seconds = float(OS.get_environment("TEST_RUN_SECONDS"))
 
 	# Direct child of the scene root: NetworkLink's relative RPC path depends on it.
@@ -168,6 +172,9 @@ func _build_ui() -> void:
 	_hint = _label(layer, Vector2(16, 96), "WASD / arrows to move")
 	_hint.add_theme_color_override("font_color", Color(0.8, 0.9, 1.0))
 	_label(layer, Vector2(16, 124), "F1 screenshot")
+	var mode := "animation: REVERSED (authored -1.0)" if not _anim_forward else "animation: FORWARD (test 1.0)"
+	var mode_label := _label(layer, Vector2(16, 152), mode)
+	mode_label.add_theme_color_override("font_color", Color(1, 0.85, 0.3))
 
 
 func _label(layer: CanvasLayer, at: Vector2, text: String) -> Label:
@@ -239,6 +246,26 @@ func _direction(word: String) -> Vector2:
 ## for looking at it: what it proves is that the sprite is being driven, that it
 ## changes when the player does, and that it stops when the player stops. Whether
 ## the result looks right is a question for a person.
+## Compare reverse playback against forward playback without touching the art.
+##
+## girl.tscn ships speed_scale = -1.0, so every run cycle plays 5, 4, 3, 2, 1, 0
+## at its authored 5fps. The rate is correct; only the direction is reversed. This
+## sets the scale to 1.0 on the instance only, leaving the scene on disk untouched,
+## so the two can be looked at side by side and nothing needs un-picking.
+##
+## The authored frame rate is never changed, only the sign of the scale, so the
+## comparison isolates direction without confounding it with speed.
+func _apply_animation_speed(body: Node) -> void:
+	if body == null or not is_instance_valid(body):
+		return
+	var sprite := CharacterPresentation.sprite_of(body)
+	if sprite == null:
+		return
+	var want := 1.0 if _anim_forward else -1.0
+	if not is_equal_approx(sprite.speed_scale, want):
+		sprite.speed_scale = want
+
+
 func _trace_animation(scope: String, id: int, body: Node) -> void:
 	if OS.get_environment("TEST_TRACE_ANIM") != "1" or body == null:
 		return
@@ -307,6 +334,7 @@ func _refresh_hud() -> void:
 		username, _phase, movement.local_position().x,
 		movement.local_position().y, movement.correction_count(),
 	]
+	_apply_animation_speed(movement.local)
 	_trace_animation("local", _player_id, movement.local)
 	var ids := movement.remote_ids()
 	var parts: Array = []
@@ -319,6 +347,7 @@ func _refresh_hud() -> void:
 		# node reports (0,0) for everybody and looks like a replication failure
 		# when nothing is wrong.
 		parts.append(str(avatar.name))
+		_apply_animation_speed(avatar)
 		_trace_animation("remote", id, avatar)
 		# The username label is a world-space node, so the camera magnifies it
 		# along with everything else and it grows to three times its intended
@@ -429,11 +458,12 @@ func _finish() -> void:
 	# does it takes the process down with it. Printing the records first means a
 	# crash in the nicest-to-have artefact can never cost the evidence that the
 	# test actually asserts on.
-	print("RESULT summary=1 username=%s phase=%s player_id=%d position=%.1f,%.1f remotes=%d corrections=%d snapshots=%d errors=%s" % [
+	print("RESULT summary=1 username=%s phase=%s player_id=%d position=%.1f,%.1f remotes=%d corrections=%d snapshots=%d back_nudges=%d errors=%s" % [
 		username, _phase,
 		_player_id,
 		movement.local_position().x, movement.local_position().y,
 		ids.size(), movement.correction_count(), movement.snapshot_count(),
+		int(movement.back_nudge_stats().get("count", 0)),
 		",".join(_errors),
 	])
 	await _capture("final")

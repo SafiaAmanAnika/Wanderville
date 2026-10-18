@@ -42,6 +42,9 @@ var _script_time := 0.0
 var _attacks: Array = []
 var _attack_index := 0
 var _attack_time := 0.0
+## Wall-clock deadline, set once the final attack has been transmitted.
+var _attack_settle_until := 0.0
+var _attack_settle_seconds := 0.75
 
 ## Observed server-reported bounds, per player. A test asserts a player moved by
 ## looking at the range the *server* published, not at local prediction.
@@ -76,6 +79,10 @@ func _ready() -> void:
 		movement.input_silent = true
 
 	_parse_scripts()
+	# Settle window after the final attack: long enough for the unreliable channel
+	# to deliver it and for the server to record the rejection.
+	var settle := OS.get_environment("TEST_ATTACK_SETTLE")
+	_attack_settle_seconds = 0.75 if settle == "" else float(settle)
 
 	# TEST_GO_SILENT_AFTER: seconds after settling at which transmission stops
 	# entirely. Distinct from TEST_SILENT because the scenario under test is "move,
@@ -314,10 +321,24 @@ func _run_script(delta: float) -> void:
 func _run_attacks(delta: float, unauthenticated: bool) -> void:
 	movement.scripted_input = Vector2.ZERO
 	if _attack_index >= _attacks.size():
-		if _attack_index > 0:
-			_finish()
-		else:
+		if _attack_index <= 0:
 			_attack_index = 0
+			return
+		# Wait out a settle window before quitting.
+		#
+		# Movement packets travel on an unreliable_ordered channel, and the final
+		# attack used to be followed by _finish() on the very next frame -- roughly
+		# 16ms to reach the server and be written into its state dump. The first
+		# attack had half a second, so the last one was regularly dropped and the
+		# server counted one rejection where two were sent. This is the harness
+		# quitting before it had evidence, not the server accepting a stale
+		# sequence: both seq=1 and seq=0 are rejected by the same comparison.
+		if _attack_settle_until <= 0.0:
+			_attack_settle_until = _elapsed + _attack_settle_seconds
+			print("%s attacks sent, settling until t=%.2f" % [_username, _attack_settle_until])
+			return
+		if _elapsed >= _attack_settle_until:
+			_finish()
 		return
 	_attack_time += delta
 	if _attack_time < 0.5:

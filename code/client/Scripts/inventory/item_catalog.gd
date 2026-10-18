@@ -30,6 +30,7 @@ const MISC := {
 	"garden_lantern": ["Garden Lantern", 30, 5, "Lights up your garden at night."],
 	"basic_rod": ["Basic Fishing Rod", 10, 2, "A simple rod for the campus lake."],
 	"lake_pearl": ["Lake Pearl", 0, 90, "A rare pearl found in the lake."],
+	"wood": ["Wood", 3, 1, "Used to build houses, furnitures."],
 }
 
 

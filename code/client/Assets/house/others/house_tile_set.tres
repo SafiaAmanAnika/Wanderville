@@ -1,8 +1,8 @@
-[gd_resource type="TileSet" format=3 uid="uid://do7cqx8mmvkyq"]
+[gd_resource type="TileSet" format=3 uid="uid://1pg82vayr1xs"]
 
-[ext_resource type="Texture2D" uid="uid://dwbn1hqwrrv10" path="res://Assets/house/TopDownHouse_FloorsAndWalls.png" id="1_ka1bo"]
-[ext_resource type="Texture2D" uid="uid://cr50sx1d4emdu" path="res://Assets/house/TopDownHouse_FloorsAndWalls_OpenDoors.png" id="2_qqtc0"]
-[ext_resource type="Texture2D" uid="uid://d0upuv5pjoiy2" path="res://Assets/house/TopDownHouse_FurnitureState1.png" id="3_44c6s"]
+[ext_resource type="Texture2D" uid="uid://crr2615uhvgir" path="res://Assets/house/others/TopDownHouse_FloorsAndWalls.png" id="1_ka1bo"]
+[ext_resource type="Texture2D" uid="uid://coq5unu2xmvok" path="res://Assets/house/others/TopDownHouse_FloorsAndWalls_OpenDoors.png" id="2_qqtc0"]
+[ext_resource type="Texture2D" uid="uid://drerqmy5hllnf" path="res://Assets/house/others/TopDownHouse_FurnitureState1.png" id="3_44c6s"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4bie6"]
 texture = ExtResource("1_ka1bo")

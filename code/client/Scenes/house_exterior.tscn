@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://dyg40b0qm715q"]
+
+[ext_resource type="Texture2D" uid="uid://delxdfmrqryob" path="res://Assets/house/house1/house_1.png" id="1_ie03u"]
+[ext_resource type="Script" uid="uid://b407nekuqx8kx" path="res://Scripts/housing/house_exterior.gd" id="1_l5hu7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ie03u"]
+size = Vector2(25, 41)
+
+[node name="HouseExterior" type="StaticBody2D" unique_id=728960246]
+script = ExtResource("1_l5hu7")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=518937617]
+texture_filter = 1
+texture = ExtResource("1_ie03u")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=711964473]
+position = Vector2(-1.5, 48.5)
+shape = SubResource("RectangleShape2D_ie03u")
+
+[node name="DoorPoint" type="Marker2D" parent="." unique_id=199241673]
+position = Vector2(0, 34)

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/network/RenderedMovement.gd" id="1_rendered_movement"]
+
+[node name="RenderedMovement" type="Node2D"]
+script = ExtResource("1_rendered_movement")

@@ -249,18 +249,41 @@ func _reconcile(state: Dictionary) -> void:
 		return
 	var authoritative := Vector2(float(state["x"]), float(state["y"]))
 	var seq := int(state.get("last_seq", -1))
+
+	# Reconcile against this client's own most recent unacknowledged prediction,
+	# not against wherever the body happens to be right now.
+	#
+	# The old code measured the error as authoritative minus the current position,
+	# which folds two different things together: genuine divergence between client
+	# and server, and the distance the client has legitimately travelled since the
+	# server answered. At 300 units a second and 25Hz input, that second term is
+	# large by construction, so every 15Hz snapshot reported a correction of
+	# several units that had nothing wrong with it, 35 percent of which was applied
+	# straight back to the body. Fifteen small nudges a second is the jitter.
+	#
+	# The prediction for the newest sequence the server has not yet answered is
+	# where the client believes it should already be, so subtracting that leaves
+	# only real disagreement. When the two agree, which is the normal case, the
+	# error is nil and nothing moves at all.
+	var target := authoritative
+	var newest := -1
 	var predicted: Variant = _predicted.get(seq)
 	if predicted is Vector2:
 		# Drop predictions the server has now answered.
 		for key in _predicted.keys():
 			if int(key) <= seq:
 				_predicted.erase(key)
-	var error := authoritative - local.global_position
+	for key in _predicted.keys():
+		if int(key) > seq:
+			newest = maxi(newest, int(key))
+	if newest >= 0:
+		target = _predicted[newest]
+	var error := target - local.global_position
 	var distance := error.length()
 	if distance <= RECONCILE_DEADZONE:
 		return
 	if distance >= RECONCILE_SNAP:
-		local.global_position = authoritative
+		local.global_position = target
 		_snaps += 1
 	else:
 		local.global_position += error * RECONCILE_BLEED

@@ -253,6 +253,17 @@ func _trace_animation(scope: String, id: int, body: Node) -> void:
 	var fkey := "%s/%s" % [scope, sprite.animation]
 	_anim_max_frame[fkey] = maxi(int(_anim_max_frame.get(fkey, 0)), sprite.frame)
 
+	# Log every frame change, not just play-state changes, so the actual playback
+	# rate can be measured rather than guessed at. A run sheet that is supposed to
+	# advance at its authored speed and one that is restarting on every physics
+	# frame look identical in a transition-only trace.
+	var fprev := "%s/%d/f" % [scope, id]
+	if _anim_seen.get(fprev) != sprite.frame:
+		_anim_seen[fprev] = sprite.frame
+		print("RESULT animframe_at=1 t=%.3f scope=%s id=%d name=%s frame=%d" % [
+			_elapsed, scope, id, sprite.animation, sprite.frame,
+		])
+
 	var key := "%s/%d/%s" % [scope, id, sprite.animation]
 	if _anim_seen.get(key) == moving:
 		return

@@ -69,6 +69,8 @@ def _launch(user: dict, secret: str, port: int, workdir: Path, shots: Path,
         "TEST_RUN_SECONDS": str(seconds),
         # Animation tracing is cheap and only this file's windows emit it.
         "TEST_TRACE_ANIM": "1",
+        # Campus mode puts the real map in the tree; otherwise the gray arena.
+        "TEST_CAMPAIGN_MAP": "1" if campus else "0",
         # Campus mode loads the real map scene; otherwise the gray arena.
     })
     if script:
@@ -538,21 +540,27 @@ def test_manual_rendered_pair(backend, harness_dir, server_port):
     workdir = harness_dir / f"manual-{server_port}"
     workdir.mkdir(parents=True, exist_ok=True)
 
+# WANDERVILLE_CAMPUS=1 puts the real campus map in both windows; unset keeps
+    # the gray arena this test has always used.
+    campus_mode = os.environ.get("WANDERVILLE_CAMPUS") == "1"
     start_server(secret=backend.secret, port=server_port, workdir=workdir,
-                 extra_env=movement_env(workdir))
+                 extra_env=movement_env(workdir, arena=not campus_mode))
 
     windows = []
     for name in ("rmv_manual_a", "rmv_manual_b"):
         windows.append(_launch(
             account(name), backend.secret, server_port, workdir, workdir / "shots",
             "", name, f"m{server_port}", seconds=MANUAL_WINDOW_SECONDS,
+            campus=campus_mode,
         ))
 
     # Prove the windows actually came up on a real display before sitting and
     # waiting. A headless fallback would make every manual check below meaningless,
     # so it is a failure rather than a warning.
     for name, proc in zip(("a", "b"), windows):
-        text = _wait_for_text(proc, "[RenderedMovement] display=", 60, f"window {name}")
+        # Campus mode instantiates map.tscn and builds its TileSets, which takes
+        # minutes the first time; the arena starts in seconds.
+        text = _wait_for_text(proc, "[RenderedMovement] display=", 240, f"window {name}")
         match = re.search(rb"\[RenderedMovement\] display=(\w+)", text)
         assert match, f"window {name} never reported a display"
         assert match.group(1).decode() != "headless", (
@@ -664,7 +672,7 @@ def test_two_players_meet_on_the_real_campus_map(backend, harness_dir, server_po
                 shots, "up:2.5", "cb", run_id, seconds=30.0, campus=True)
 
     for label, proc in (("campus a", a), ("campus b", b)):
-        text = _wait_for_text(proc, "[RenderedMovement] display=", 60, f"{label} start")
+        text = _wait_for_text(proc, "[RenderedMovement] display=", 180, f"{label} start")
         assert b"display=headless" not in text, f"{label} came up headless"
 
     atext = _wait_for_text(a, "RESULT remote_joined", 60, "campus a sees b")

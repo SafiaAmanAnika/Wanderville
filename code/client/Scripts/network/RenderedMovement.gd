@@ -102,20 +102,21 @@ func _ready() -> void:
 	movement.name = "MovementClient"
 	add_child(movement)
 	movement.setup(link)
-	# Collision source follows GODOT_MOVEMENT_ARENA exactly as the server does: arena
-	# mode builds the gray test arena, and with it unset MovementClient builds the
-	# real campus through CampusCollision, which harvests Scenes/map.tscn itself.
-	# Client and server therefore read one collision source by construction rather
-	# than two code paths being expected to agree.
+	# Collision source follows GODOT_MOVEMENT_ARENA exactly as the server does, with
+	# one exception in campus mode: the map is in the tree and already carries its
+	# own CollisionLayer, so building the harvested world as well would put every
+	# lake and border in the physics space twice and instantiate map.tscn a second
+	# time, which is the single most expensive thing this scene does.
 	#
-	# Campus mode currently gives the real campus *collision* but not the campus
-	# *picture*. Loading map.tscn into the tree to draw it fails: its TileMapLayers
-	# reference tiles the saved TileSet no longer contains, and Godot reports
-	# "TileSetAtlasSource has no tile at (22, 63)" while instantiating them. Those
-	# entries were authored in the editor and did not survive being saved. The
-	# tilemap data has to be repaired in the editor before the campus can be drawn
-	# from the scene; nothing here can work around it honestly.
-	movement.build_collision_world(self)
+	# The map is not corrupt. world.tscn instances this very scene, so the normal
+	# game builds the same TileSets and pays the same cost; Godot's "TileSetAtlasSource
+	# has no tile" lines come from building alternative tiles for decor placed over
+	# empty atlas cells, and it carries on past them. What actually broke the client
+	# was doing that work twice inside a sixty second startup budget.
+	if _load_campus_map():
+		pass
+	else:
+		movement.build_collision_world(self)
 	_parse_input_script()
 
 	_build_camera()
@@ -341,6 +342,43 @@ func _trace_animation(scope: String, id: int, body: Node) -> void:
 	print("RESULT anim=1 t=%.2f scope=%s id=%d name=%s frame=%d playing=%s" % [
 		_elapsed, scope, id, sprite.animation, sprite.frame, str(moving),
 	])
+
+
+## Put the real campus in the tree: its TileMapLayers draw the map and its
+## CollisionLayer is the collision the server also simulates.
+##
+## Scripts are stripped first. map.tscn carries water_source.gd,
+## weather_manager.gd and farm_field.gd, and CampusCollision already documents
+## why that matters on a machine with no gameplay business: they reach for HTTP
+## and WebSocket clients and spawn GPU particles, which would fight over the same
+## network the ENet session is using. They stay in the map for the real game,
+## which this scene never touches.
+##
+## Only the scene path is referenced. No shape, polygon or coordinate is read
+## here, so the campus can be redrawn later without this file changing.
+func _load_campus_map() -> bool:
+	if OS.get_environment("TEST_CAMPAIGN_MAP") != "1":
+		return false
+	if not ResourceLoader.exists(CampusCollision.MAP_SCENE):
+		push_error("[Campus] %s is missing" % CampusCollision.MAP_SCENE)
+		return false
+	var packed := load(CampusCollision.MAP_SCENE) as PackedScene
+	if packed == null:
+		return false
+	var map := packed.instantiate()
+	map.name = "CampusMap"
+	_strip_scripts(map)
+	add_child(map)
+	_phase = "campus"
+	print("[Campus] real map in tree: %s" % CampusCollision.MAP_SCENE)
+	return true
+
+
+func _strip_scripts(node: Node) -> void:
+	if node.get_script() != null:
+		node.set_script(null)
+	for child in node.get_children():
+		_strip_scripts(child)
 
 
 func _drive_script(delta: float) -> void:

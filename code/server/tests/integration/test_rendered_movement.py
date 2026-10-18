@@ -492,11 +492,14 @@ def test_local_and_remote_characters_actually_animate(backend, harness_dir, serv
     # this from the furthest frame reached per animation rather than from the
     # transition log: a newly started animation is always on frame 0, so the
     # transitions alone cannot show that a cycle advanced.
-    maxima = {
-        r["scope_name"]: int(r["max_frame"])
-        for r in _results(text) if "animframe" in r
-    }
-    running_max = [v for k, v in maxima.items() if "/run_" in k]
+    # Derived from the per-frame records rather than the shutdown maxima, which
+    # are lost when reading a Forward+ framebuffer back faults during quit.
+    maxima = {}
+    for r in _results(text):
+        if "animframe_at" in r:
+            key = r["name"]
+            maxima[key] = max(maxima.get(key, 0), int(r["frame"]))
+    running_max = [v for k, v in maxima.items() if k.startswith("run_")]
     assert running_max, f"no walk animation ran at all: {sorted(maxima)}"
     assert max(running_max) >= 2, (
         f"the walk cycle never advanced past its first frame: {sorted(maxima.items())}"

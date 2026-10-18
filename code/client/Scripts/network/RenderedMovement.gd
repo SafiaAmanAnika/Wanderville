@@ -64,6 +64,10 @@ var _player_id := 0
 var _anim_seen: Dictionary = {}
 ## Reversed when TEST_ANIM_SPEED_SCALE=1, so the two can be compared by eye.
 var _anim_forward := false
+## Run and idle rates, copied from chara_player.gd, which is where the game already
+## states its convention. Reused rather than invented.
+const RUN_FPS := 10.0
+const IDLE_FPS := 6.0
 var _anim_max_frame: Dictionary = {}
 ## Camera zoom; see _build_camera() for why the default of 1 is far too wide.
 const CAMERA_ZOOM := 3.0
@@ -150,7 +154,11 @@ func _build_camera() -> void:
 	# collision, and no coordinate: the server still moves the player 300 units a
 	# second and the sprites are still the original textures at their original
 	# scale.
-	camera.zoom = Vector2(CAMERA_ZOOM, CAMERA_ZOOM)
+	# TEST_CAMERA_ZOOM lets the original gameplay value be tried side by side.
+	# world.tscn uses 0.3; this scene invented 3.0 purely so the character was
+	# visible at all. Unset keeps 3.0, "0.3" matches the original game.
+	var zoom := float(OS.get_environment("TEST_CAMERA_ZOOM"))
+	camera.zoom = Vector2(CAMERA_ZOOM if zoom <= 0.0 else zoom, CAMERA_ZOOM if zoom <= 0.0 else zoom)
 	add_child(camera)
 	camera.make_current()
 
@@ -264,6 +272,28 @@ func _apply_animation_speed(body: Node) -> void:
 	var want := 1.0 if _anim_forward else -1.0
 	if not is_equal_approx(sprite.speed_scale, want):
 		sprite.speed_scale = want
+
+	# Frame rate, from the convention the game already uses.
+	#
+	# girl.tscn ships its run sheets at 5fps. chara_player.gd, the other character
+	# family, states its own convention plainly: run at 10fps, idle at 6fps. The
+	# experimental client was therefore running walk cycles at half the rate the
+	# game uses for walking, while the body still covered ground at the full 300
+	# units a second that player.gd also uses. One cycle took 1.2 seconds and the
+	# character crossed 360 units during it, so the feet could not keep up with the
+	# body and slid. That reads as racing along the ground rather than walking,
+	# which is a far better explanation for "too fast" than the frame rate itself,
+	# since 5fps is slower than the game's own 10.
+	#
+	# The rates are applied to the instance, not to girl.tscn, and are the numbers
+	# the game already uses rather than new ones.
+	var frames := sprite.sprite_frames
+	if frames == null:
+		return
+	for anim_name in frames.get_animation_names():
+		var fps := RUN_FPS if anim_name.begins_with("run_") else IDLE_FPS
+		if not is_equal_approx(frames.get_animation_speed(anim_name), fps):
+			frames.set_animation_speed(anim_name, fps)
 
 
 func _trace_animation(scope: String, id: int, body: Node) -> void:

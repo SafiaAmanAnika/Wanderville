@@ -61,6 +61,8 @@ var _script_index := 0
 var _script_time := 0.0
 var _script_settle_until := 0.0
 var _player_id := 0
+## Camera zoom; see _build_camera() for why the default of 1 is far too wide.
+const CAMERA_ZOOM := 3.0
 
 
 func _ready() -> void:
@@ -125,8 +127,32 @@ func _build_camera() -> void:
 	# the window staring at nothing.
 	camera.position_smoothing_enabled = true
 	camera.position_smoothing_speed = 8.0
+	#
+	# Zoom is the whole of the "two-pixel sprite" bug, and it lives here rather
+	# than in RemoteAvatar because RemoteAvatar is not at fault.
+	#
+	# The character frames are 48x48 (girl.tscn) and the sprite inside them carries
+	# scale 0.3, so a character is 48 * 0.3 = 14.4 world units tall. At the default
+	# camera zoom of 1 that is 14 pixels -- a speck, with the name label towering
+	# over it, which is exactly what the first screenshots showed. Godot maps one
+	# world unit to one pixel at zoom 1, so the zoom has to undo the sprite's own
+	# 0.3 to get the artwork back to its authored 48 pixels: 1 / 0.3 = 3.333.
+	# 3.0 is used instead, a whole number that stays a little wider than native and
+	# keeps both spawn-ring neighbours (260 units apart) comfortably in frame.
+	#
+	# This is a view setting on an isolated test scene. It touches no art, no
+	# collision, and no coordinate: the server still moves the player 300 units a
+	# second and the sprites are still the original textures at their original
+	# scale.
+	camera.zoom = Vector2(CAMERA_ZOOM, CAMERA_ZOOM)
 	add_child(camera)
 	camera.make_current()
+
+	# Pixel art stays crisp only under nearest-neighbour filtering. The project
+	# default is linear, which is right for the big painted campus tiles and wrong
+	# for these sprites, and project.godot is not this scene's to change, so the
+	# filter is set here and inherited by every child.
+	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 
 func _build_ui() -> void:
@@ -249,6 +275,16 @@ func _refresh_hud() -> void:
 		# node reports (0,0) for everybody and looks like a replication failure
 		# when nothing is wrong.
 		parts.append(str(avatar.name))
+		# The username label is a world-space node, so the camera magnifies it
+		# along with everything else and it grows to three times its intended
+		# size. Dividing it back out keeps it a constant size on screen. This is
+		# done here rather than in RemoteAvatar because that compensation is
+		# already correct for the default zoom, and the zoom is this scene's
+		# choice, not the avatar's.
+		var label := avatar.username_label()
+		if label != null:
+			label.scale = Vector2.ONE / CAMERA_ZOOM
+			label.position = Vector2(-20, -140) / CAMERA_ZOOM
 	_remotes.text = "remotes (%d): %s" % [ids.size(), " ".join(parts)]
 
 
@@ -303,16 +339,24 @@ func _on_disconnected() -> void:
 func _capture(tag: String) -> void:
 	if _screenshot_dir == "":
 		return
-	_shot_index += 1
-	var dir := DirAccess.open(_screenshot_dir)
-	if dir == null:
-		_errors.append("no screenshot dir")
+	# Wait for the frame to actually land on the GPU before reading it back.
+	#
+	# RenderingServer.force_draw() only *submits* the frame; it does not wait for
+	# it. Reading the viewport texture straight afterwards can therefore return a
+	# null image, and saving that crashes the engine outright -- which is exactly
+	# what happened, an access violation inside save_png while a client was being
+	# admitted. frame_post_draw is the signal that says the frame is really there.
+	await RenderingServer.frame_post_draw
+
+	var image := get_viewport().get_texture().get_image()
+	if image == null:
+		_errors.append("no frame for %s" % tag)
 		return
+
+	_shot_index += 1
 	var path := "%s/rendered-%s-%02d-%s.png" % [
 		_screenshot_dir, _safe(username), _shot_index, _safe(tag),
 	]
-	RenderingServer.force_draw(false)
-	var image := get_viewport().get_texture().get_image()
 	var err := image.save_png(path)
 	if err != OK:
 		_errors.append("save_png %d" % err)
@@ -331,7 +375,7 @@ func _finish() -> void:
 	# frame in which a remote joins is the frame before its avatar has been drawn.
 	# A final shot shows the world as it actually stood.
 	_refresh_hud()
-	_capture("final")
+	await _capture("final")
 	print("RESULT summary=1 username=%s phase=%s player_id=%d position=%.1f,%.1f remotes=%d corrections=%d snapshots=%d errors=%s" % [
 		username, _phase,
 		_player_id,

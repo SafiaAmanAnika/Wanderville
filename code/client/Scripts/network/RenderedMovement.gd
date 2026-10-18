@@ -61,6 +61,8 @@ var _script_index := 0
 var _script_time := 0.0
 var _script_settle_until := 0.0
 var _player_id := 0
+var _anim_seen: Dictionary = {}
+var _anim_max_frame: Dictionary = {}
 ## Camera zoom; see _build_camera() for why the default of 1 is far too wide.
 const CAMERA_ZOOM := 3.0
 
@@ -230,6 +232,36 @@ func _direction(word: String) -> Vector2:
 	return Vector2.ZERO
 
 
+## Report a sprite's animation state whenever it changes.
+##
+## This exists because "the character animates" cannot be established from a
+## screenshot, and should not be asserted from one. It is also not a substitute
+## for looking at it: what it proves is that the sprite is being driven, that it
+## changes when the player does, and that it stops when the player stops. Whether
+## the result looks right is a question for a person.
+func _trace_animation(scope: String, id: int, body: Node) -> void:
+	if OS.get_environment("TEST_TRACE_ANIM") != "1" or body == null:
+		return
+	var sprite := CharacterPresentation.sprite_of(body)
+	if sprite == null:
+		return
+	var moving := sprite.is_playing()
+
+	# Track the furthest frame reached per animation. The transition log below only
+	# fires when play state changes, and a freshly started animation is always on
+	# frame 0, so the transitions alone cannot show that a walk cycle advanced.
+	var fkey := "%s/%s" % [scope, sprite.animation]
+	_anim_max_frame[fkey] = maxi(int(_anim_max_frame.get(fkey, 0)), sprite.frame)
+
+	var key := "%s/%d/%s" % [scope, id, sprite.animation]
+	if _anim_seen.get(key) == moving:
+		return
+	_anim_seen[key] = moving
+	print("RESULT anim=1 scope=%s id=%d name=%s frame=%d playing=%s" % [
+		scope, id, sprite.animation, sprite.frame, str(moving),
+	])
+
+
 func _drive_script(delta: float) -> void:
 	if movement == null or _script_steps.is_empty():
 		return
@@ -264,6 +296,7 @@ func _refresh_hud() -> void:
 		username, _phase, movement.local_position().x,
 		movement.local_position().y, movement.correction_count(),
 	]
+	_trace_animation("local", _player_id, movement.local)
 	var ids := movement.remote_ids()
 	var parts: Array = []
 	for id in ids:
@@ -275,6 +308,7 @@ func _refresh_hud() -> void:
 		# node reports (0,0) for everybody and looks like a replication failure
 		# when nothing is wrong.
 		parts.append(str(avatar.name))
+		_trace_animation("remote", id, avatar)
 		# The username label is a world-space node, so the camera magnifies it
 		# along with everything else and it grows to three times its intended
 		# size. Dividing it back out keeps it a constant size on screen. This is
@@ -375,6 +409,8 @@ func _finish() -> void:
 	# frame in which a remote joins is the frame before its avatar has been drawn.
 	# A final shot shows the world as it actually stood.
 	_refresh_hud()
+	for fkey in _anim_max_frame.keys():
+		print("RESULT animframe=1 scope_name=%s max_frame=%d" % [fkey, int(_anim_max_frame[fkey])])
 	await _capture("final")
 	print("RESULT summary=1 username=%s phase=%s player_id=%d position=%.1f,%.1f remotes=%d corrections=%d snapshots=%d errors=%s" % [
 		username, _phase,

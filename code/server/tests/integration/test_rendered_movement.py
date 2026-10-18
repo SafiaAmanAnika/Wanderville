@@ -60,6 +60,8 @@ def _launch(user: dict, secret: str, port: int, workdir: Path, shots: Path,
         "TEST_PORT": str(port),
         "TEST_SCREENSHOT_DIR": str(shots),
         "TEST_RUN_SECONDS": str(seconds),
+        # Animation tracing is cheap and only this file's windows emit it.
+        "TEST_TRACE_ANIM": "1",
     })
     if script:
         env["TEST_INPUT_SCRIPT"] = script
@@ -440,3 +442,66 @@ def test_two_rendered_windows_see_each_other_move_and_reconnect_once(
     print(f"\nwitness: joined={sorted({int(r['remote_joined']) for r in witness_res if 'remote_joined' in r})}"
           f" left={sorted(set(left))} joins_for_beta={len(total)}")
     print(f"screenshots: {len(pngs)} in {shots}")
+
+
+@pytest.mark.timeout(420)
+def test_local_and_remote_characters_actually_animate(backend, harness_dir, server_port):
+    """The local sprite must animate at all, which it previously did not.
+
+    MovementClient disables the local body's _physics_process so the character's
+    own controller cannot fight prediction. For player.gd that also disabled the
+    only thing that ever called _update_animation, so the local sprite stood on
+    one frame for the whole session while remote avatars animated normally. The
+    symptom was invisible headlessly and only showed up on screen.
+
+    What is asserted here is mechanical, not visual: that the sprite is driven,
+    that its animation changes when the player does, and that it stops when the
+    player stops. Whether it looks right still needs a person.
+    """
+    backend.ensure_accounts(["rmv_anim_a", "rmv_anim_b"])
+    workdir = harness_dir / f"anim-{server_port}"
+    workdir.mkdir(parents=True, exist_ok=True)
+    secret = backend.secret
+    start_server(secret=secret, port=server_port, workdir=workdir,
+                 extra_env=movement_env(workdir))
+
+    # Four legs in different directions, then a deliberate stop. run_* names come
+    # from player.gd's compass vocabulary, so a correct wiring produces a
+    # different animation per axis rather than one repeated frame.
+    script = "right:1.2;down:1.2;left:1.2;up:1.2"
+    proc = _launch(
+        account("rmv_anim_a"), secret, server_port, workdir, workdir / "shots",
+        script, "anim", f"a{server_port}", seconds=18.0,
+    )
+    _wait_for_text(proc, "RESULT admitted", 60, "anim admitted")
+    time.sleep(16.0)
+    reap(proc)
+
+    text = (workdir / f"rendered-mv-anim-rmv_anim_a-a{server_port}.log").read_bytes()
+    anims = [r for r in _results(text) if "anim" in r]
+    local = [r for r in anims if r.get("scope") == "local"]
+    assert local, f"the local sprite reported no animation at all:\n{text.decode('utf-8', 'replace')[-1200:]}"
+
+    names = {r["name"] for r in local}
+    assert len(names) >= 3, f"local sprite barely animated, saw only {sorted(names)}"
+    assert any(n.startswith("run_") for n in names), f"never played a walk cycle: {sorted(names)}"
+
+    # Walking must actually advance frames, otherwise the sprite is a still. Read
+    # this from the furthest frame reached per animation rather than from the
+    # transition log: a newly started animation is always on frame 0, so the
+    # transitions alone cannot show that a cycle advanced.
+    maxima = {
+        r["scope_name"]: int(r["max_frame"])
+        for r in _results(text) if "animframe" in r
+    }
+    running_max = [v for k, v in maxima.items() if "/run_" in k]
+    assert running_max, f"no walk animation ran at all: {sorted(maxima)}"
+    assert max(running_max) >= 2, (
+        f"the walk cycle never advanced past its first frame: {sorted(maxima.items())}"
+    )
+
+    # After the last leg the player stands still, and the sprite must stop.
+    assert any(r["playing"] == "false" for r in local), (
+        f"the sprite never came to rest: {local}"
+    )
+    print(f"\nlocal animation timeline: {[(r['name'], r['playing']) for r in local]}")

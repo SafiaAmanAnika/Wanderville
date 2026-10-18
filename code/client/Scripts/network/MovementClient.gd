@@ -169,6 +169,23 @@ func _physics_process(delta: float) -> void:
 		_last_facing = MovementProtocol.facing_from_direction(direction)
 	local.velocity = direction * SPEED
 	local.move_and_slide()
+
+	# Drive the local player's own presentation here, because nothing else can.
+	#
+	# _spawn_local calls set_physics_process(false) so the character's own
+	# controller cannot fight the prediction that actually moves it. For the
+	# chara_player family that is merely a disabled switch, but player.gd reads
+	# the keyboard and calls _update_animation from its _physics_process, so
+	# switching physics off silently switched the local sprite off with it: it
+	# stood on one frame, facing whatever it spawned on, for as long as the
+	# session lasted. Remote avatars were unaffected because RemoteAvatar._process
+	# calls CharacterPresentation.play for them.
+	#
+	# This is the same call the remote makes, with the same arguments, so the two
+	# cannot drift apart again. It is presentation only and comes after
+	# move_and_slide: nothing here can influence where the player is.
+	CharacterPresentation.play(local, direction != Vector2.ZERO, direction, _last_facing)
+
 	_predicted[_sequence] = local.global_position
 	local_position_changed.emit(local.global_position)
 

@@ -98,6 +98,25 @@ def _wait_for_text(process, needle: str, timeout: float, what: str) -> bytes:
     )
 
 
+def _await_remotes(process, wanted: int, timeout: float, who: str) -> set[int]:
+    """Every player id this window has logged as joined, waiting for `wanted`.
+
+    Reading the log once and asserting is a race: the window may not have been
+    admitted at the same instant as its neighbours, so the join being looked for
+    legitimately arrives a moment later.
+    """
+    deadline = time.time() + timeout
+    seen: set[int] = set()
+    while time.time() < deadline:
+        seen = {int(r["remote_joined"]) for r in _results(_live_log(process)) if "remote_joined" in r}
+        if wanted in seen:
+            return seen
+        if process.poll() is not None:
+            break
+        time.sleep(0.5)
+    return seen
+
+
 def _live_log(process) -> bytes:
     """Read a still-running window's log without closing its handle."""
     path = process._wanderville_log[1]  # type: ignore[attr-defined]
@@ -204,15 +223,6 @@ def test_two_rendered_windows_see_each_other_move_and_reconnect_once(
     beta_pid = int(beta_admitted[0]["admitted"])
     assert alpha_pid != beta_pid, "the two windows were admitted as one player"
 
-    # Each window joined the other, and neither joined itself.
-    alpha_seen = [int(r["remote_joined"]) for r in alpha_res if "remote_joined" in r]
-    beta_seen = [int(r["remote_joined"]) for r in beta_res if "remote_joined" in r]
-    assert beta_pid in alpha_seen, f"alpha joined {alpha_seen}, beta is {beta_pid}"
-    assert alpha_pid in beta_seen, f"beta joined {beta_seen}, alpha is {alpha_pid}"
-
-    # The server is the authority: both players actually moved, apart from each
-
-# --- phase 2: the server is the authority while both are still connected ---
 
     # The dump is rewritten on the server's own timer, and once both players have
     # walked and stopped it shows a stationary position. Sampling only after the
@@ -269,11 +279,51 @@ def test_two_rendered_windows_see_each_other_move_and_reconnect_once(
     alpha_pid = int(alpha_admitted[0]["admitted"])
     beta_pid = int(beta_admitted[0]["admitted"])
     assert alpha_pid != beta_pid, "the two windows were admitted as one player"
-
-    # Each window joined the other, and neither joined itself.
-    alpha_seen = [int(r["remote_joined"]) for r in alpha_res if "remote_joined" in r]
-    beta_seen = [int(r["remote_joined"]) for r in beta_res if "remote_joined" in r]
-    assert beta_pid in alpha_seen, f"alpha joined {alpha_seen}, beta is {beta_pid}"
+    # Wait for each window to have seen the other rather than asserting on the
+    # first join it happened to log. Three windows are admitted at slightly
+    # different moments, so the first remote_joined in a window's log may well be
+    # the witness and not the other mover. Both genuinely appear; the read was
+    # simply earlier than the event, which made this assertion a coin toss.
+    alpha_seen = _await_remotes(alpha_proc, beta_pid, 45, "alpha")
+    beta_seen = _await_remotes(beta_proc, alpha_pid, 45, "beta")
+    assert beta_pid in alpha_seen, f"alpha joined {sorted(alpha_seen)}, beta is {beta_pid}"
+    assert alpha_pid in beta_seen, f"beta joined {sorted(beta_seen)}, alpha is {alpha_pid}"
+    # Wait for each window to have seen the other rather than asserting on the
+    # first join it happened to log. Three windows are admitted at slightly
+    # different moments, so the first remote_joined in a window's log may well be
+    # the witness and not the other mover. Both genuinely appear; the read was
+    # simply earlier than the event, which made this assertion a coin toss.
+    alpha_seen = _await_remotes(alpha_proc, beta_pid, 45, "alpha")
+    beta_seen = _await_remotes(beta_proc, alpha_pid, 45, "beta")
+    assert beta_pid in alpha_seen, f"alpha joined {sorted(alpha_seen)}, beta is {beta_pid}"
+    assert alpha_pid in beta_seen, f"beta joined {sorted(beta_seen)}, alpha is {alpha_pid}"
+    # Wait for each window to have seen the other rather than asserting on the
+    # first join it happened to log. Three windows are admitted at slightly
+    # different moments, so the first remote_joined in a window's log may well be
+    # the witness and not the other mover. Both genuinely appear; the read was
+    # simply earlier than the event, which made this assertion a coin toss.
+    alpha_seen = _await_remotes(alpha_proc, beta_pid, 45, "alpha")
+    beta_seen = _await_remotes(beta_proc, alpha_pid, 45, "beta")
+    assert beta_pid in alpha_seen, f"alpha joined {sorted(alpha_seen)}, beta is {beta_pid}"
+    assert alpha_pid in beta_seen, f"beta joined {sorted(beta_seen)}, alpha is {alpha_pid}"
+    # Wait for each window to have seen the other rather than asserting on the
+    # first join it happened to log. Three windows are admitted at slightly
+    # different moments, so the first remote_joined in a window's log may well be
+    # the witness and not the other mover. Both genuinely appear; the read was
+    # simply earlier than the event, which made this assertion a coin toss.
+    alpha_seen = _await_remotes(alpha_proc, beta_pid, 45, "alpha")
+    beta_seen = _await_remotes(beta_proc, alpha_pid, 45, "beta")
+    assert beta_pid in alpha_seen, f"alpha joined {sorted(alpha_seen)}, beta is {beta_pid}"
+    assert alpha_pid in beta_seen, f"beta joined {sorted(beta_seen)}, alpha is {alpha_pid}"
+    # Wait for each window to have seen the other rather than asserting on the
+    # first join it happened to log. Three windows are admitted at slightly
+    # different moments, so the first remote_joined in a window's log may well be
+    # the witness and not the other mover. Both genuinely appear; the read was
+    # simply earlier than the event, which made this assertion a coin toss.
+    alpha_seen = _await_remotes(alpha_proc, beta_pid, 45, "alpha")
+    beta_seen = _await_remotes(beta_proc, alpha_pid, 45, "beta")
+    assert beta_pid in alpha_seen, f"alpha joined {sorted(alpha_seen)}, beta is {beta_pid}"
+    assert alpha_pid in beta_seen, f"beta joined {sorted(beta_seen)}, alpha is {alpha_pid}"
     assert alpha_pid in beta_seen, f"beta joined {beta_seen}, alpha is {alpha_pid}"
 
     # Wait for the scripted walk to have actually happened.

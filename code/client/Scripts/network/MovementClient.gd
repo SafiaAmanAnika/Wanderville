@@ -44,7 +44,10 @@ const RECONCILE_BLEED := 0.35
 
 ## How many snapshots may arrive with no sign of a remote avatar before it is
 ## dropped as stale.
-const STALE_SNAPSHOTS := 40
+## Seconds without a snapshot before a remote is treated as gone. Generous on
+## purpose: see _process(). A real disconnect is handled by the roster long before
+## this fires.
+const STALE_SECONDS := 3.0
 
 var input_enabled := true
 ## When true the client transmits nothing at all after settling, not even neutral
@@ -248,7 +251,7 @@ func _reconcile(state: Dictionary) -> void:
 
 
 func _apply_remote(id: int, state: Dictionary) -> void:
-	_missed[id] = 0
+	_missed[id] = Time.get_ticks_msec() / 1000.0
 	if _remotes.has(id):
 		(_remotes[id] as RemoteAvatar).apply_snapshot(state)
 		return
@@ -308,9 +311,26 @@ func _drop_remote(id: int) -> void:
 func _process(_delta: float) -> void:
 	# Stale cleanup: a player whose snapshots stop arriving entirely (a half-open
 	# connection, say) is removed rather than frozen on screen forever.
+	#
+	# Measured in seconds, not in frames. This used to count rendered frames and
+	# compare the count against STALE_SNAPSHOTS, which quietly made the threshold
+	# a function of the frame rate and of the snapshot rate at the same time.
+	# Snapshots arrive at 15Hz, so four frames is a healthy margin at 60fps, and
+	# the old limit of forty frames allowed only about two thirds of a second of
+	# silence. Three rendered Vulkan windows sharing one laptop GPU produce gaps
+	# longer than that on their own, so an avatar was destroyed while its owner
+	# sat right there holding still, and the very next snapshot rebuilt it. That
+	# surfaced as one remote_joined event per blip, which is exactly the flicker
+	# that made a reconnect look like it produced several avatars.
+	#
+	# A genuine disconnect does not wait for this: the server calls
+	# server_forget_peer, which republishes the roster without the player, and
+	# _on_roster drops the avatar immediately. This path is only the backstop for
+	# a socket that dies without the server noticing, so it can afford to be
+	# generous without delaying a real leave.
+	var now := Time.get_ticks_msec() / 1000.0
 	for id in _remotes.keys():
-		_missed[id] = int(_missed.get(id, 0)) + 1
-		if int(_missed[id]) > STALE_SNAPSHOTS:
+		if now - float(_missed.get(id, now)) > STALE_SECONDS:
 			_drop_remote(id)
 
 

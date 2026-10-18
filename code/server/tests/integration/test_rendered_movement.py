@@ -50,10 +50,15 @@ HOST = "127.0.0.1"
 
 
 def _launch(user: dict, secret: str, port: int, workdir: Path, shots: Path,
-            script: str, role: str, run_id: str, seconds: float = 0.0):
+            script: str, role: str, run_id: str, seconds: float = 0.0,
+            campus: bool = False):
     """Launch one real rendered window with its own log file."""
     env = dict(os.environ)
-    env.update(movement_env(workdir))
+    env.update(movement_env(workdir, arena=not campus))
+    if campus:
+        # Read the campus collision the server already dumped, rather than
+        # rebuilding the map here.
+        env["GODOT_COLLISION_CACHE"] = str(workdir / "collision.json")
     env.update({
         "TEST_API_URL": API_URL,
         "TEST_TOKEN": user["token"],
@@ -64,6 +69,7 @@ def _launch(user: dict, secret: str, port: int, workdir: Path, shots: Path,
         "TEST_RUN_SECONDS": str(seconds),
         # Animation tracing is cheap and only this file's windows emit it.
         "TEST_TRACE_ANIM": "1",
+        # Campus mode loads the real map scene; otherwise the gray arena.
     })
     if script:
         env["TEST_INPUT_SCRIPT"] = script
@@ -620,3 +626,76 @@ def test_reconciliation_never_pulls_a_walking_player_backwards(backend, harness_
     # Deliberately not asserting on summary["errors"]: the only value seen here is
     # save_png, a known fault reading a Forward+ framebuffer back during shutdown.
     # It says nothing about movement and is tracked separately.
+
+@pytest.mark.timeout(420)
+def test_two_players_meet_on_the_real_campus_map(backend, harness_dir, server_port):
+    """Two rendered clients on the actual Wanderville campus, not the gray arena.
+
+    This is the integration slice. Both ends run the real map: the clients load
+    Scenes/map.tscn for its visuals and its CollisionLayer, and the server builds
+    its collision from the same scene through CampusCollision, so the two cannot
+    disagree about where the walls are by construction.
+    """
+    backend.ensure_accounts(["rmv_campus_a", "rmv_campus_b"])
+    workdir = harness_dir / f"campus-{server_port}"
+    workdir.mkdir(parents=True, exist_ok=True)
+    shots = workdir / "shots"
+    shots.mkdir(parents=True, exist_ok=True)
+    run_id = f"c{server_port}"
+
+    server = start_server(
+        secret=backend.secret, port=server_port, workdir=workdir,
+        extra_env=movement_env(workdir, arena=False),
+    )
+
+    # One shared, versioned collision artifact for both ends. The server writes it
+    # on startup; the clients read it through GODOT_COLLISION_CACHE instead of
+    # instantiating map.tscn, which on this project is slow and floods the log with
+    # TileSet errors.
+    cache = workdir / "collision.json"
+    deadline = time.time() + 90
+    while time.time() < deadline and not cache.exists():
+        time.sleep(1.0)
+    assert cache.exists(), f"server never wrote the shared campus collision: {cache}"
+
+    a = _launch(account("rmv_campus_a"), backend.secret, server_port, workdir,
+                shots, "right:2.5", "ca", run_id, seconds=30.0, campus=True)
+    b = _launch(account("rmv_campus_b"), backend.secret, server_port, workdir,
+                shots, "up:2.5", "cb", run_id, seconds=30.0, campus=True)
+
+    for label, proc in (("campus a", a), ("campus b", b)):
+        text = _wait_for_text(proc, "[RenderedMovement] display=", 60, f"{label} start")
+        assert b"display=headless" not in text, f"{label} came up headless"
+
+    atext = _wait_for_text(a, "RESULT remote_joined", 60, "campus a sees b")
+    btext = _wait_for_text(b, "RESULT remote_joined", 60, "campus b sees a")
+
+    apro = [r for r in _results(atext) if "admitted" in r]
+    bpro = [r for r in _results(btext) if "admitted" in r]
+    assert apro and bpro, "both windows must be admitted"
+    a_pid, b_pid = int(apro[0]["admitted"]), int(bpro[0]["admitted"])
+    assert a_pid != b_pid
+
+# The server must be simulating the real campus, not the gray arena, and the
+    # shared collision artifact the clients read must actually carry shapes.
+    dump = json.loads(cache.read_text(encoding="utf-8"))
+    assert str(dump.get("version", "")), "shared campus collision has no version"
+    assert len(dump.get("shapes", [])) > 0, "shared campus collision is empty"
+    print(f"\ncampus collision version={dump['version']} shapes={len(dump['shapes'])}")
+
+    a_seen = _await_remotes(a, b_pid, 45, "campus a")
+    b_seen = _await_remotes(b, a_pid, 45, "campus b")
+    assert b_pid in a_seen, f"campus a saw {sorted(a_seen)}"
+    assert a_pid in b_seen, f"campus b saw {sorted(b_seen)}"
+
+    for proc in (a, b):
+        try:
+            proc.wait(timeout=90)
+        except subprocess.TimeoutExpired:
+            proc.terminate()
+        reap(proc)
+
+    pngs = sorted(shots.glob("*.png"))
+    assert pngs and any(p.stat().st_size > 1000 for p in pngs), "no campus screenshots"
+    print(f"\ncampus screenshots: {[p.name for p in pngs]}")
+    print(f"campus players: a={a_pid} b={b_pid}")

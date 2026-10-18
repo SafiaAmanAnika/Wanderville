@@ -118,6 +118,103 @@ static func _collect_shape(node: Node, transform: Transform2D, out: Array) -> vo
 ## One body with many shapes rather than many bodies: the shapes are static, so
 ## they all share one broadphase entry and the physics server does far less work
 ## than it would with a body per wall.
+## Version of the harvested geometry.
+##
+## FNV-1a over the exact numbers that define each shape, deliberately sensitive to
+## every coordinate. If a wall moves by a tenth of a unit this is a different
+## world, and the two ends must not pretend otherwise.
+static func shape_version(shapes: Array) -> String:
+	var hash := 2166136261
+	for entry in shapes:
+		var text := "%s|" % str(entry.kind)
+		if entry.kind == "polygon":
+			for point in entry.polygon:
+				text += "%.4f,%.4f;" % [point.x, point.y]
+		elif entry.kind == "rectangle":
+			text += "%.4f,%.4f;" % [entry.size.x, entry.size.y]
+		else:
+			text += "%.4f;" % entry.radius
+		text += "|%.4f,%.4f|" % [
+			entry.transform.origin.x, entry.transform.origin.y,
+		]
+		for byte in text.to_utf8_buffer():
+			hash = (hash ^ byte) & 0xFFFFFFFF
+			hash = (hash * 16777619) & 0xFFFFFFFF
+	return "%08x:%d" % [hash, shapes.size()]
+
+
+## Write the harvested geometry and its version to one file.
+##
+## Sharing this file is what keeps a client and a server on the same campus
+## without either rebuilding the map at startup. Set GODOT_COLLISION_CACHE to the
+## path to have build() prefer it over instantiating map.tscn, which on this
+## project drags in TileMapLayers whose TileSets emit thousands of errors and take
+## far longer than a client can wait.
+static func dump_versioned(path: String) -> int:
+	if path == "":
+		return 0
+	var shapes := extract_shapes()
+	var rows: Array = []
+	for entry in shapes:
+		var pts: Array = []
+		if entry.kind == "polygon":
+			for point in entry.polygon:
+				pts.append([point.x, point.y])
+		else:
+			pts.append([entry.transform.origin.x, entry.transform.origin.y])
+		rows.append({
+			"kind": entry.kind,
+			"radius": entry.radius,
+			"origin": [entry.transform.origin.x, entry.transform.origin.y],
+			"points": pts,
+		})
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		return 0
+	file.store_string(JSON.stringify({
+		"version": shape_version(shapes),
+		"source": MAP_SCENE,
+		"shapes": rows,
+	}))
+	file.close()
+	return shapes.size()
+
+
+## Rebuild shapes from a dumped file. Returns [] when there is nothing usable, so
+## the caller falls back to the map rather than simulating in a void.
+static func load_versioned(path: String) -> Array:
+	if path == "" or not FileAccess.file_exists(path):
+		return []
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return []
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	file.close()
+	if not (parsed is Dictionary):
+		return []
+	var data := parsed as Dictionary
+	if str(data.get("version", "")) == "":
+		return []
+	var shapes: Array = []
+	for row in data.get("shapes", []):
+		if not (row is Dictionary):
+			continue
+		var body := row as Dictionary
+		var entry := ExtractedShape.new()
+		entry.kind = str(body.get("kind", "polygon"))
+		entry.radius = float(body.get("radius", 0.0))
+		var origin: Array = body.get("origin", [0, 0])
+		entry.transform = Transform2D(0.0, Vector2(float(origin[0]), float(origin[1])))
+		if entry.kind == "polygon":
+			entry.polygon = PackedVector2Array()
+			for point in body.get("points", []):
+				if point is Array and (point as Array).size() >= 2:
+					var xy := point as Array
+					entry.polygon.append(Vector2(float(xy[0]), float(xy[1])))
+		shapes.append(entry)
+	return shapes
+
+
 static func build(parent: Node) -> StaticBody2D:
 	var body := StaticBody2D.new()
 	body.name = "CampusCollision"
@@ -129,7 +226,16 @@ static func build(parent: Node) -> StaticBody2D:
 	# StaticBody2D has no per-frame work to suppress in the first place.
 	parent.add_child(body)
 
-	for entry in extract_shapes():
+	# Prefer the shared dumped geometry. Instantiating map.tscn at runtime on a
+	# client is slow and floods the log with TileSet errors, and the client only
+	# needs the collision, not the artwork. Falling back to the live map keeps the
+	# behaviour correct when no cache has been produced.
+	var cache_path := OS.get_environment("GODOT_COLLISION_CACHE")
+	var shapes := load_versioned(cache_path)
+	if shapes.is_empty():
+		shapes = extract_shapes()
+
+	for entry in shapes:
 		match entry.kind:
 			"polygon":
 				var polygon := CollisionPolygon2D.new()
@@ -165,31 +271,7 @@ static func shape_count() -> int:
 ## "the player did not pass through the lake" is verified against the real campus
 ## outline rather than against a hand-copied guess at where the lake is.
 static func dump(path: String) -> int:
-	if path == "":
-		return 0
-	var shapes := extract_shapes()
-	var rows: Array = []
-	for entry in shapes:
-		var points: Array = []
-		if entry.kind == "polygon":
-			for point in entry.polygon:
-				var world: Vector2 = entry.transform * point
-				points.append([world.x, world.y])
-		elif entry.kind == "rectangle":
-			var half: Vector2 = entry.size * 0.5
-			for corner in [
-				Vector2(-half.x, -half.y), Vector2(half.x, -half.y),
-				Vector2(half.x, half.y), Vector2(-half.x, half.y),
-			]:
-				var world: Vector2 = entry.transform * corner
-				points.append([world.x, world.y])
-		elif entry.kind == "circle":
-			var centre: Vector2 = entry.transform * Vector2.ZERO
-			points.append([centre.x, centre.y])
-		rows.append({"kind": entry.kind, "radius": entry.radius, "points": points})
-	var file := FileAccess.open(path, FileAccess.WRITE)
-	if file == null:
-		return 0
-	file.store_string(JSON.stringify({"spawn": [CAMPUS_SPAWN.x, CAMPUS_SPAWN.y], "shapes": rows}))
-	file.close()
-	return shapes.size()
+	# The dump the server already writes is now the shared, versioned artifact.
+	# Clients read it through GODOT_COLLISION_CACHE so neither end has to
+	# instantiate map.tscn at startup.
+	return dump_versioned(path)

@@ -102,8 +102,19 @@ func _ready() -> void:
 	movement.name = "MovementClient"
 	add_child(movement)
 	movement.setup(link)
-	# Identical to the server's world so local prediction collides the same way
-	# and reconciliation has nothing to argue about.
+	# Collision source follows GODOT_MOVEMENT_ARENA exactly as the server does: arena
+	# mode builds the gray test arena, and with it unset MovementClient builds the
+	# real campus through CampusCollision, which harvests Scenes/map.tscn itself.
+	# Client and server therefore read one collision source by construction rather
+	# than two code paths being expected to agree.
+	#
+	# Campus mode currently gives the real campus *collision* but not the campus
+	# *picture*. Loading map.tscn into the tree to draw it fails: its TileMapLayers
+	# reference tiles the saved TileSet no longer contains, and Godot reports
+	# "TileSetAtlasSource has no tile at (22, 63)" while instantiating them. Those
+	# entries were authored in the editor and did not survive being saved. The
+	# tilemap data has to be repaired in the editor before the campus can be drawn
+	# from the scene; nothing here can work around it honestly.
 	movement.build_collision_world(self)
 	_parse_input_script()
 

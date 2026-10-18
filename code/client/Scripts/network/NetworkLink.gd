@@ -32,6 +32,8 @@ class_name NetworkLink
 
 ## Emitted on a client when the server publishes a roster.
 signal roster_received(entries: Array)
+signal world_received(info: Dictionary)
+var world_info: Dictionary = {}
 
 ## Emitted on the server for each inbound movement packet and character claim.
 ##
@@ -104,6 +106,12 @@ func receive_roster(entries: Array) -> void:
 ## Call this only once the peer has fully connected. A peer that is still in the
 ## authenticating state cannot be sent high-level RPCs, so announcing it earlier
 ## produces a roster that silently never reaches it.
+@rpc("authority", "call_remote", "reliable", 0)
+func receive_world(info: Dictionary) -> void:
+	world_info = info
+	world_received.emit(info)
+
+
 func server_track_player(peer_id: int, player_id: int, username: String) -> void:
 	if not is_server():
 		return
@@ -173,4 +181,6 @@ func broadcast_roster() -> void:
 		"[NetworkLink] publishing roster of %d to %d peer(s)"
 		% [entries.size(), multiplayer.get_peers().size()]
 	)
+	if not world_info.is_empty():
+		receive_world.rpc(world_info)
 	receive_roster.rpc(entries)

@@ -53,6 +53,9 @@ const CORRECTION_MAX_SPEED := 450.0
 const STALE_SECONDS := 3.0
 
 var input_enabled := true
+var input_gate: Callable
+var gameplay_presentation := false
+var _awaiting_spawn := false
 ## When true the client transmits nothing at all after settling, not even neutral
 ## packets. Used to exercise the server's input-expiry path directly, which is a
 ## different condition from "client says I am idle".
@@ -67,6 +70,8 @@ var _link: NetworkLink
 var _sequence := 0
 var _input_accumulator := 0.0
 var _predicted: Dictionary = {}
+## True when the scene already provides collision, so none is built here.
+var _uses_scene_collision := false
 var _last_state: Dictionary = {}
 var _remotes: Dictionary = {}
 var _roster: Dictionary = {}
@@ -96,7 +101,19 @@ func setup(link: NetworkLink, character_code: String = "") -> void:
 ##
 ## The arena option must match the server's, which is why the test harness passes
 ## GODOT_MOVEMENT_ARENA through to both ends rather than only to the server.
+## Use collision that already exists in the scene.
+##
+## In the real game the campus map is in the tree carrying its own CollisionLayer,
+## so building the harvested world here as well would put every lake and border
+## into the physics space twice and instantiate map.tscn a second time. This marks
+## the scene as the collision source so build_collision_world stands down.
+func adopt_scene_collision() -> void:
+	_uses_scene_collision = true
+
+
 func build_collision_world(parent: Node) -> int:
+	if _uses_scene_collision:
+		return 0
 	if OS.get_environment("GODOT_MOVEMENT_ARENA") == "1":
 		return MovementArena.build(parent).get_child_count()
 	return CampusCollision.build(parent).get_child_count()
@@ -130,6 +147,64 @@ func _announce_when_connected(character_code: String) -> void:
 	var once := func(_id: int) -> void:
 		_link.announce_character.rpc_id(1, character_code)
 	multiplayer.peer_connected.connect(once, CONNECT_ONE_SHOT)
+
+
+## Drive a player body that already exists in the real game scene.
+##
+## The normal game already has a local CharacterBody2D, its own camera and its own
+## animation. Spawning a second one here would put two characters on the campus and
+## two things trying to move this one. So this adopts the existing body instead of
+## creating anything, and the caller is responsible for stopping the body's own
+## controller first.
+##
+## Everything after the spawn is identical to start(): the same prediction, the
+## same reconciliation, the same remote avatars. Only ownership of the local body
+## differs.
+func start_adopting(body: CharacterBody2D, local_player_id: int, character_code: String) -> void:
+	if body == null or not is_instance_valid(body):
+		push_error("[MovementClient] start_adopting needs a live body")
+		return
+	stop()
+	local = body
+	_awaiting_spawn = true
+	gameplay_presentation = true
+	player_id = local_player_id
+	_label_font = WoodPanel.PIXEL_FONT
+
+	# The body belongs to the real scene, so its collision layers are already
+	# whatever the game uses. What must go is its own controller: two things moving
+	# one body is the duplicate-movement bug this whole path exists to avoid.
+	local.set_physics_process(false)
+	local.velocity = Vector2.ZERO
+	var adopted_sprite := CharacterPresentation.sprite_of(local)
+	if adopted_sprite != null:
+		adopted_sprite.process_mode = Node.PROCESS_MODE_ALWAYS
+
+	_link.roster_received.connect(_on_roster)
+	if not _link.received_snapshots.is_connected(_on_snapshot):
+		_link.received_snapshots.connect(_on_snapshot)
+	_started = true
+	if character_code != "":
+		_announce_when_connected(character_code)
+
+
+func stop() -> void:
+	_started = false
+	_sequence = 0
+	_input_accumulator = 0.0
+	_predicted.clear()
+	_last_state.clear()
+	_roster.clear()
+	_pending_correction = Vector2.ZERO
+	for id in _remotes.keys():
+		_drop_remote(id)
+	if is_instance_valid(local):
+		local.velocity = Vector2.ZERO
+	if _link != null:
+		if _link.roster_received.is_connected(_on_roster):
+			_link.roster_received.disconnect(_on_roster)
+		if _link.received_snapshots.is_connected(_on_snapshot):
+			_link.received_snapshots.disconnect(_on_snapshot)
 
 
 func _spawn_local(character_code: String) -> void:
@@ -172,7 +247,7 @@ func _spawn_point() -> Vector2:
 
 
 func _physics_process(delta: float) -> void:
-	if local == null or not is_instance_valid(local) or not _started:
+	if local == null or not is_instance_valid(local) or not _started or _awaiting_spawn:
 		return
 	var direction := _read_input()
 	if direction != Vector2.ZERO:
@@ -201,7 +276,10 @@ func _physics_process(delta: float) -> void:
 	# This is the same call the remote makes, with the same arguments, so the two
 	# cannot drift apart again. It is presentation only and comes after
 	# move_and_slide: nothing here can influence where the player is.
-	CharacterPresentation.play(local, direction != Vector2.ZERO, direction, _last_facing)
+	if not gameplay_presentation or (local.get("_busy") != true and local.get("fishing") != true):
+		CharacterPresentation.play(local, direction != Vector2.ZERO, direction, _last_facing)
+		if gameplay_presentation and local.has_method("_dir_from_vector") and direction != Vector2.ZERO:
+			local.set("facing", local._dir_from_vector(direction))
 
 	_predicted[_sequence] = local.global_position
 	local_position_changed.emit(local.global_position)
@@ -217,7 +295,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _read_input() -> Vector2:
-	if not input_enabled:
+	if not input_enabled or (input_gate.is_valid() and not input_gate.call()):
 		return Vector2.ZERO
 	if scripted_input != Vector2.ZERO:
 		return scripted_input.normalized()
@@ -229,6 +307,8 @@ func _read_input() -> Vector2:
 
 
 func _send_input(direction: Vector2) -> void:
+	if not multiplayer.get_peers().has(1):
+		return
 	_sequence += 1
 	var packet := MovementProtocol.encode_input(
 		_sequence, direction, _last_facing, direction != Vector2.ZERO
@@ -266,6 +346,10 @@ func _reconcile(state: Dictionary) -> void:
 		return
 	var authoritative := Vector2(float(state["x"]), float(state["y"]))
 	var seq := int(state.get("last_seq", -1))
+	if _awaiting_spawn:
+		local.global_position = authoritative
+		_awaiting_spawn = false
+		return
 
 	# Reconcile against this client's own most recent unacknowledged prediction,
 	# not against wherever the body happens to be right now.
@@ -294,7 +378,13 @@ func _reconcile(state: Dictionary) -> void:
 		if int(key) > seq:
 			newest = maxi(newest, int(key))
 	if newest >= 0:
-		target = _predicted[newest]
+		if gameplay_presentation:
+			# Preserve unacknowledged motion, never replace the server position
+			# with a client position. Unknown acknowledgements use the server.
+			if predicted is Vector2:
+				target = authoritative + (_predicted[newest] - predicted)
+		else:
+			target = _predicted[newest]
 	var error := target - local.global_position
 	var distance := error.length()
 	if distance <= RECONCILE_DEADZONE:
@@ -348,6 +438,8 @@ func _apply_remote(id: int, state: Dictionary) -> void:
 	if not _roster.has(id):
 		return
 	var entry: Dictionary = _roster[id]
+	if gameplay_presentation and not entry.has("character_code"):
+		return
 	_spawn_remote(id, entry, Vector2(float(state["x"]), float(state["y"])))
 
 
@@ -362,6 +454,8 @@ func _spawn_remote(id: int, entry: Dictionary, position: Vector2) -> void:
 		position,
 		_label_font,
 	)
+	if gameplay_presentation:
+		avatar.apply_gameplay_scale(str(entry.get("character_code", "")))
 	_remotes[id] = avatar
 	remote_joined.emit(id)
 

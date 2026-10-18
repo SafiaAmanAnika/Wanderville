@@ -32,6 +32,14 @@ const MAP_SCENE := "res://Scenes/map.tscn"
 const CAMPUS_SPAWN := Vector2(7378, -891)
 
 const PADDING := 2048.0
+const WORLD_OFFSET := Vector2(86, 626)
+
+
+# Read the already instantiated map, without constructing another TileMap.
+static func live_version(map: Node2D) -> String:
+	var shapes: Array = []
+	_walk(map, map.transform.affine_inverse(), shapes)
+	return shape_version(shapes)
 
 
 class ExtractedShape:
@@ -215,7 +223,7 @@ static func load_versioned(path: String) -> Array:
 	return shapes
 
 
-static func build(parent: Node) -> StaticBody2D:
+static func build(parent: Node, use_cache := true) -> StaticBody2D:
 	var body := StaticBody2D.new()
 	body.name = "CampusCollision"
 	body.collision_layer = 1
@@ -231,7 +239,7 @@ static func build(parent: Node) -> StaticBody2D:
 	# needs the collision, not the artwork. Falling back to the live map keeps the
 	# behaviour correct when no cache has been produced.
 	var cache_path := OS.get_environment("GODOT_COLLISION_CACHE")
-	var shapes := load_versioned(cache_path)
+	var shapes: Array = load_versioned(cache_path) if use_cache else []
 	if shapes.is_empty():
 		shapes = extract_shapes()
 

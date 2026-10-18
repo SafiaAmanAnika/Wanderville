@@ -8,6 +8,11 @@ const CHARA_SCALE := Vector2(1.18, 1.18)   # chara sheets are 448px; this matche
 func _ready() -> void:
 	add_child(load("res://Scripts/storage_house.gd").new())   # click the CDS building -> storage menu
 	spawn_selected_character()
+	if OS.get_environment("GODOT_ENET_GAMEPLAY") == "1":
+		var bridge := preload("res://Scripts/network/EnetGameplayBridge.gd").new()
+		bridge.name = "EnetGameplayBridge"
+		add_child(bridge)
+		bridge.attach(get_node("girl"))
 
 
 func spawn_selected_character() -> void:

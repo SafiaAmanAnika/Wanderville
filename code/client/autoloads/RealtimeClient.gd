@@ -13,6 +13,8 @@ signal proximity_updated(data: Dictionary)
 signal voice_updated(data: Dictionary)
 
 var standalone_enabled := false
+# ENet owns positions only; WebSocket gameplay, chat and heartbeat stay live.
+var external_movement := false
 var connection_id := ""
 var _packet_sequence := 0
 var _heartbeat_elapsed := 0.0
@@ -177,7 +179,7 @@ func _process(delta: float) -> void:
 		_heartbeat_elapsed = 0.0
 		_send("heartbeat", {})
 	_move_elapsed += delta
-	if _move_elapsed >= 0.2 and _pending_sequence == 0:
+	if not external_movement and _move_elapsed >= 0.2 and _pending_sequence == 0:
 		_move_elapsed = 0.0
 		var player := get_tree().get_first_node_in_group("player") as Node2D
 		if player != null and player.global_position != _last_sent_position:
@@ -265,7 +267,11 @@ func _handle_packet(packet: Dictionary) -> void:
 			_sequence = maxi(_sequence, accepted)
 			if accepted >= _pending_sequence:
 				_pending_sequence = 0
-			if _correct_position:
+			if external_movement:
+				_correct_position = false
+				_retry_delay = 1.0
+				_set_connected(true)
+			elif _correct_position:
 				var player := get_tree().get_first_node_in_group("player") as Node2D
 				if player != null:
 					player.global_position = Vector2(float(entry["x"]), float(entry["y"]))

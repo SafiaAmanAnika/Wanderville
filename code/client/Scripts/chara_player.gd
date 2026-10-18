@@ -190,3 +190,13 @@ func _add_sheet_animations(prefix: String, file: String, fps: float, loop: bool)
 			tex.atlas = sheet
 			tex.region = Rect2(col * CELL, row * CELL, CELL, CELL)
 			frames.add_frame(a, tex)
+
+
+# The ENet adapter keeps the existing fishing and action input rules.
+func network_input_allowed() -> bool:
+	if fishing or _busy:
+		return false
+	if near_water and Input.is_action_just_pressed("fish"):
+		_open_minigame()
+		return false
+	return true

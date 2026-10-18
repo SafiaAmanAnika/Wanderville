@@ -4,8 +4,8 @@ class_name MultiplayerClient
 ##
 ## Deliberately independent of ``RealtimeClient``. That autoload owns the
 ## Python WebSocket path -- chat, social, voice leases, snapshots -- and this
-## node does not touch it, does not replace it, and is not attached to any
-## gameplay scene in this phase. Two transports are never live at once.
+## node handles only ENet admission. Normal-world integration keeps WebSocket
+## gameplay services active while the bridge selects one movement transport.
 ##
 ## It also deliberately does not move anything. There is no input sampling and
 ## no ``global_position`` write here, so enabling this node cannot create a
@@ -129,6 +129,7 @@ func _attempt() -> void:
 		rejected.emit("No access token: authenticate with the backend first.")
 		return
 
+	_clear_peer()
 	_set_state(State.REQUESTING_TICKET)
 	# A ticket may be supplied directly by the test harness so a replay can be
 	# attempted against an exact value. Never set in normal play.
@@ -293,10 +294,7 @@ func is_admitted() -> bool:
 func disconnect_from_server() -> void:
 	_stopping = true
 	_attempt_id += 1
-	if multiplayer.multiplayer_peer != null:
-		(multiplayer as SceneMultiplayer).disconnect_peer(1)
-		multiplayer.multiplayer_peer.close()
-	multiplayer.multiplayer_peer = null
+	_clear_peer()
 	_pending_ticket = ""
 	identity = {}
 	if state != State.FAILED:
@@ -384,3 +382,23 @@ func _request_ticket() -> Dictionary:
 		return {}
 	_diag("ticket_received", {"expires_in": int(data.get("expires_in", 0))})
 	return data
+
+
+func _exit_tree() -> void:
+	disconnect_from_server()
+
+
+func _clear_peer() -> void:
+	# Cleanup can be requested again by an owner after this child exits.
+	if not is_inside_tree():
+		return
+	for pair in [[multiplayer.connection_failed, _on_connection_failed],
+			[multiplayer.server_disconnected, _on_server_disconnected],
+			[multiplayer.peer_connected, _on_peer_connected],
+			[multiplayer.peer_disconnected, _on_peer_disconnected]]:
+		if pair[0].is_connected(pair[1]):
+			pair[0].disconnect(pair[1])
+	if multiplayer.multiplayer_peer is ENetMultiplayerPeer:
+		multiplayer.multiplayer_peer.close()
+	multiplayer.multiplayer_peer = null
+	(multiplayer as SceneMultiplayer).auth_callback = Callable()

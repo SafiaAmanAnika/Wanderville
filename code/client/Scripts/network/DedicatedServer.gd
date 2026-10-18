@@ -289,7 +289,7 @@ func _on_peer_disconnected(peer_id: int) -> void:
 	# Republish before the registry entry goes: this is what makes every client
 	# drop the leaving avatar in the same frame the server notices.
 	link.server_forget_peer(peer_id)
-	if player_id > 0:
+	if player_id > 0 and movement != null:
 		movement.remove_player(player_id, "disconnect")
 	registry.release(peer_id)
 	if player_id > 0:

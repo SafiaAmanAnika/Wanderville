@@ -6,6 +6,8 @@ var targets: Dictionary = {}
 
 
 func _ready() -> void:
+	if OS.get_environment("GODOT_ENET_GAMEPLAY") == "1":
+		return
 	APIClient.realtime.snapshot_received.connect(_snapshot)
 	APIClient.realtime.connection_changed.connect(_connection)
 

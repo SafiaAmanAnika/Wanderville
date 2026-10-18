@@ -80,6 +80,7 @@ var _rate_window := 0.0
 var _bytes_sent := 0
 var _collision_shapes := 0
 var _collision_built := false
+var _gameplay_mode := OS.get_environment("GODOT_ENET_GAMEPLAY") == "1"
 var _arena_mode := false
 ## Opt-in diagnostics. Off by default so a normal server log stays readable.
 var _trace := OS.get_environment("GODOT_MOVEMENT_TRACE") == "1"
@@ -98,6 +99,8 @@ signal player_removed(player_id: int)
 func setup(server: Node, link: NetworkLink) -> void:
 	_server = server
 	_link = link
+	if not _arena_mode:
+		_link.world_info = {"version": CampusCollision.shape_version(CampusCollision.extract_shapes()), "gameplay": _gameplay_mode}
 	_dump_path = OS.get_environment("GODOT_MOVEMENT_DUMP_FILE")
 	link.input_received.connect(_on_submit_input)
 	link.character_announced.connect(_on_announce_character)
@@ -110,7 +113,11 @@ func _ready() -> void:
 	if _arena_mode:
 		_collision_shapes = MovementArena.build(self).get_child_count()
 	else:
-		_collision_shapes = CampusCollision.build(self).get_child_count()
+		var campus := CampusCollision.build(self, not _gameplay_mode)
+		# Gameplay advertises the source map version; never simulate a stale cache.
+		_collision_shapes = campus.get_child_count()
+		if _gameplay_mode:
+			campus.position = CampusCollision.WORLD_OFFSET
 	# Written once, so a test can check the geometry offline. Crucially this must
 	# match the world that was just built: dumping the campus while running in the
 	# arena instantiated map.tscn purely to serialise shapes nobody was using,
@@ -397,6 +404,8 @@ func _make_body(character_code: String, position: Vector2) -> CharacterBody2D:
 	if not Global.CHARACTER_SCENES.has(code):
 		code = "farmer_female"
 	var body := Global.get_character_scene(code).instantiate() as CharacterBody2D
+	if _gameplay_mode:
+		body.scale = Vector2.ONE * (20.0 if code in ["player1", "farmer_female"] else 1.18)
 	add_child(body)
 	# Stop the character's own controller without taking the body out of the
 	# physics space.
@@ -438,6 +447,10 @@ func set_character(player_id: int, character_code: String) -> void:
 	if not _entities.has(player_id):
 		return
 	var entity: Dictionary = _entities[player_id]
+	if _gameplay_mode and str(entity.get("character_code", "")) != character_code:
+		var old: CharacterBody2D = entity["body"]
+		entity["body"] = _make_body(character_code, old.global_position)
+		old.queue_free()
 	entity["character_code"] = character_code
 	_entities[player_id] = entity
 

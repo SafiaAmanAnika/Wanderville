@@ -79,3 +79,16 @@ static func play(body: Node, moving: bool, direction: Vector2, facing: int) -> v
 				if sprite.animation != candidate:
 					sprite.play(candidate)
 				return
+
+# Approved experimental presentation, applied only to runtime instances.
+static func prepare_gameplay(body: Node) -> void:
+	var sprite := sprite_of(body)
+	if sprite == null or sprite.sprite_frames == null:
+		return
+	sprite.speed_scale = 1.0
+	sprite.sprite_frames = sprite.sprite_frames.duplicate()
+	for animation in sprite.sprite_frames.get_animation_names():
+		if animation.begins_with("run_"):
+			sprite.sprite_frames.set_animation_speed(animation, 10.0)
+		elif animation.begins_with("idle_"):
+			sprite.sprite_frames.set_animation_speed(animation, 6.0)

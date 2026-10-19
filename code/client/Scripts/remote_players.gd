@@ -3,13 +3,27 @@ extends Node2D
 # Presentation only: reuse the actual character scene and animation helper.
 var avatars: Dictionary = {}
 var targets: Dictionary = {}
+var _active := false
 
 
 func _ready() -> void:
+	# ENet owns remote avatars while it is connected. The legacy snapshot stream
+	# is only connected here when ENet is not in use, or later by the bridge if
+	# ENet falls back to the standard connection.
 	if OS.get_environment("GODOT_ENET_GAMEPLAY") == "1":
 		return
-	APIClient.realtime.snapshot_received.connect(_snapshot)
-	APIClient.realtime.connection_changed.connect(_connection)
+	activate()
+
+
+## Connect the WebSocket snapshot stream. Safe to call more than once.
+func activate() -> void:
+	if _active:
+		return
+	_active = true
+	if not APIClient.realtime.snapshot_received.is_connected(_snapshot):
+		APIClient.realtime.snapshot_received.connect(_snapshot)
+	if not APIClient.realtime.connection_changed.is_connected(_connection):
+		APIClient.realtime.connection_changed.connect(_connection)
 
 
 func _connection(connected: bool) -> void:

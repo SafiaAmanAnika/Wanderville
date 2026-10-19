@@ -14,17 +14,21 @@ so the secret and the ticket both travel in the clear unless the pair is kept on
 a trusted network or wrapped in TLS.
 """
 
-import ipaddress
+import math
 
 from fastapi import APIRouter, Depends, Header, Request
 from pydantic import BaseModel, Field
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.clock import utcnow
 from app.core.config import settings
 from app.core.responses import success
 from app.db.session import get_db
-from app.modules.realtime import admission
+from app.modules.realtime import admission, position_projection
+from app.modules.realtime.models import Presence
 from app.modules.realtime.tickets import constant_time_matches
+from app.modules.world.models import CAMPUS_ROOM
 
 router = APIRouter(prefix="/internal/multiplayer", tags=["internal-multiplayer"])
 
@@ -99,6 +103,78 @@ def introspect_ticket(
 ):
     """Inspect a ticket without spending it, for server-side diagnostics."""
     return success(admission.introspect(db, payload.ticket))
+
+
+class PresenceUpdate(BaseModel):
+    player_id: int = Field(gt=0)
+    x: float
+    y: float
+    sequence: int = Field(default=0, ge=0)
+
+
+class PresencePush(BaseModel):
+    """A batch of authoritative campus positions from the movement host."""
+
+    server_id: str = Field(default="", max_length=64)
+    updates: list[PresenceUpdate] = Field(default_factory=list, max_length=256)
+    leaves: list[int] = Field(default_factory=list, max_length=256)
+
+
+@router.post("/presence", dependencies=[Depends(require_host)])
+def push_presence(
+    payload: PresencePush,
+    db: Session = Depends(get_db),
+):
+    """Record the movement host's live campus positions into the projection.
+
+    The host is trusted -- it computed these positions with its own physics --
+    but the *room* is not taken from the host. Each update is matched to the
+    player's own ``player_presence`` row, and only a campus row is accepted, so a
+    host cannot place a player into a farm they are not standing in. Coordinates
+    go to the in-memory projection, never to a per-step PostgreSQL write; the
+    durable row keeps the last committed position and the socket heartbeat keeps
+    it live.
+
+    Unknown players and non-campus rooms are skipped rather than rejected, so one
+    stale row cannot make the whole batch fail.
+    """
+    now = utcnow()
+    for player_id in payload.leaves:
+        position_projection.drop(int(player_id))
+
+    wanted = [int(update.player_id) for update in payload.updates]
+    rows = {}
+    if wanted:
+        rows = {
+            row.player_id: row
+            for row in db.scalars(select(Presence).where(Presence.player_id.in_(wanted)))
+        }
+
+    updated = 0
+    skipped = 0
+    for update in payload.updates:
+        player_id = int(update.player_id)
+        row = rows.get(player_id)
+        if row is None or row.room != CAMPUS_ROOM:
+            skipped += 1
+            continue
+        x, y = float(update.x), float(update.y)
+        if not (math.isfinite(x) and math.isfinite(y)):
+            skipped += 1
+            continue
+        position_projection.commit(
+            player_id, row.room, x, y, int(update.sequence), row.room_epoch, now
+        )
+        updated += 1
+
+    return success(
+        {
+            "ok": True,
+            "updated": updated,
+            "skipped": skipped,
+            "left": len(payload.leaves),
+        }
+    )
 
 
 @router.get("/health", dependencies=[Depends(require_host)])

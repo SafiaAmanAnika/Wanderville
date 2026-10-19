@@ -239,6 +239,20 @@ class RealtimeService:
         row = self.repo.get(Presence, pid)
         self._check_live(row)
         self._check_room(row, session if session is not None else resolve(self.db, pid))
+        if settings.presence_backend != "memory":
+            # A movement host may hold a newer position than the durable row for
+            # this player. Overlaying it onto the in-memory instance means every
+            # reader (snapshot, proximity, chat) centres on where the player
+            # actually is, without a movement write to PostgreSQL per step. The
+            # overlay is a no-op unless a live position exists for the same room
+            # and epoch, so a legacy player is unaffected.
+            live = position_projection.get(pid)
+            if (
+                live is not None
+                and live.room == row.room
+                and live.room_epoch == row.room_epoch
+            ):
+                row.x, row.y, row.sequence = live.x, live.y, live.sequence
         return row
 
     def leave(self, pid, evict_visitors=True):
@@ -385,8 +399,45 @@ class RealtimeService:
         blocked = self.repo.blocked_ids(row.player_id) if exclude_blocks else set()
 
         if settings.presence_backend != "memory":
-            rows = self.repo.nearby(row.room, since, row.x, row.y, radius)
-            visible = [r for r in rows if r.player_id not in blocked]
+            if not position_projection.room_ids(row.room):
+                # Today's behaviour verbatim when no live ENet positions exist for
+                # this room: one distance-ordered query, coordinates from the
+                # durable rows.
+                rows = self.repo.nearby(row.room, since, row.x, row.y, radius)
+                visible = [r for r in rows if r.player_id not in blocked]
+                return visible, self.repo.usernames([r.player_id for r in visible])
+            # A movement host is publishing live campus positions for this room.
+            # Those coordinates are newer than the durable rows -- an ENet player
+            # never writes movement to PostgreSQL -- so eligibility still comes
+            # from ``authorized_presence`` and only the coordinate is overlaid.
+            # Candidates are taken by authorization rather than by a distance
+            # box, because the durable row of an ENet player is its spawn and a
+            # box centred on the caller's live position could miss it.
+            permitted = self.repo.authorized_ids(row.room, since) | {row.player_id}
+            permitted -= blocked
+            if not permitted:
+                return [], {}
+            rows = self.repo.rows_for(permitted)
+            positions = {
+                position.player_id: position
+                for position in position_projection.room_members(row.room)
+            }
+            visible = []
+            for presence in rows:
+                position = positions.get(presence.player_id)
+                if position is not None and position.room_epoch == row.room_epoch:
+                    presence.x = position.x
+                    presence.y = position.y
+                    presence.sequence = position.sequence
+                if math.hypot(presence.x - row.x, presence.y - row.y) > radius:
+                    continue
+                visible.append(presence)
+            visible.sort(
+                key=lambda presence: (
+                    (presence.x - row.x) ** 2 + (presence.y - row.y) ** 2,
+                    presence.player_id,
+                )
+            )
             return visible, self.repo.usernames([r.player_id for r in visible])
 
         live = position_projection.nearby(

@@ -81,9 +81,20 @@ func _start() -> void:
 	else:
 		print(LOG_PREFIX + "movement simulation disabled (GODOT_MOVEMENT_ENABLED!=1)")
 
+	# Plain ENet is unencrypted, so the default is loopback: an unconfigured host
+	# is reachable only from the machine it runs on. A public address must be
+	# opted into explicitly with GODOT_MULTIPLAYER_BIND, which is a deliberate
+	# decision rather than something a forgotten variable does by accident.
 	_bound_address = OS.get_environment("GODOT_MULTIPLAYER_BIND")
 	if _bound_address == "":
-		_bound_address = "0.0.0.0"
+		_bound_address = "127.0.0.1"
+	if _bound_address not in ["127.0.0.1", "::1", "localhost"]:
+		push_warning(
+			LOG_PREFIX
+			+ "binding to %s: ENet is unencrypted, so traffic and the host secret "
+			+ "travel in the clear. Keep this on a trusted network or wrap it in TLS."
+			% _bound_address
+		)
 	_server_id = OS.get_environment("GODOT_MULTIPLAYER_SERVER_ID")
 	if _server_id == "":
 		_server_id = "godot-%d" % OS.get_process_id()
@@ -347,6 +358,11 @@ func authenticating_count() -> int:
 
 func is_running() -> bool:
 	return _running
+
+
+## The stable id this host reports to the backend, for presence attribution.
+func server_id() -> String:
+	return _server_id
 
 
 func shutdown() -> void:

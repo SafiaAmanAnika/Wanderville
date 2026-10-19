@@ -64,6 +64,23 @@ func introspect(ticket: String, server_id := "") -> Dictionary:
 	)
 
 
+## Publish the authoritative campus positions the server just simulated.
+##
+## The WebSocket presence path only ever learns a position when a client sends
+## one, and an ENet client never does -- the server owns the position instead. So
+## without this call every ENet player is present in the database but frozen at
+## their spawn for everyone else's roster and proximity. This sends positions to
+## the in-memory projection only; it is not a per-step database write.
+##
+## ``leaves`` lists players that just left, so a disconnect drops the neighbour
+## immediately rather than waiting for the projection's TTL.
+func push_presence(updates: Array, leaves: Array, server_id := "") -> Dictionary:
+	return await _post(
+		"/internal/multiplayer/presence",
+		{"updates": updates, "leaves": leaves, "server_id": server_id},
+	)
+
+
 func _post(path: String, payload: Dictionary) -> Dictionary:
 	if not configured():
 		return {

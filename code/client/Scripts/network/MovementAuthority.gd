@@ -32,6 +32,11 @@ const SPEED := 300.0
 
 const INPUT_HZ := 25.0
 const SNAPSHOT_HZ := 15.0
+## How often the server publishes live campus positions to the Python presence
+## layer. Slower than the snapshot rate: the roster and proximity checks read it,
+## and neither needs per-frame precision, while the projection's TTL (15s default)
+## still has ample headroom.
+const PRESENCE_HZ := 5.0
 
 ## Per-peer input budget. The bucket allows a burst (so a hiccup does not starve a
 ## player) but refills at slightly more than INPUT_HZ, so a client that floods
@@ -86,6 +91,11 @@ var _arena_mode := false
 var _trace := OS.get_environment("GODOT_MOVEMENT_TRACE") == "1"
 var _world_label := ""
 var _speed_limit_violations := 0
+## Presence bridge bookkeeping. Requests are fire-and-forget but never overlap:
+## a slow backend must not let a second push race the first.
+var _presence_accumulator := 0.0
+var _presence_in_flight := false
+var _pending_leaves: Array = []
 
 signal player_spawned(player_id: int, position: Vector2)
 signal player_removed(player_id: int)
@@ -328,6 +338,52 @@ func _physics_process(delta: float) -> void:
 		_dump_accumulator = 0.0
 		_write_dump()
 
+	# Publish live positions to the presence layer. Only the real gameplay campus
+	# is bridged: the isolated arena is a test harness, and a non-gameplay server
+	# has no clients to reconcile.
+	if _gameplay_mode and not _arena_mode and _server != null:
+		_presence_accumulator += delta
+		if _presence_accumulator >= 1.0 / PRESENCE_HZ:
+			_presence_accumulator = 0.0
+			_push_presence()
+
+
+## Send the current entity positions, plus any players who left, to the backend.
+##
+## Not awaited by the caller: it runs on the physics thread and must never block
+## the simulation on an HTTP round trip. ``_presence_in_flight`` makes a slow or
+## unreachable backend degrade to a slower roster rather than to overlapping
+## requests. A failed send requeues its leaves, so a transient error cannot
+## strand the backend holding a ghost neighbour.
+func _push_presence() -> void:
+	if _presence_in_flight or _server.bridge == null:
+		return
+	if not _server.bridge.configured():
+		return
+	var updates: Array = []
+	for player_id in _entities:
+		var entity: Dictionary = _entities[player_id]
+		var body: CharacterBody2D = entity["body"]
+		if body == null or not is_instance_valid(body):
+			continue
+		updates.append({
+			"player_id": int(player_id),
+			"x": body.global_position.x,
+			"y": body.global_position.y,
+			"sequence": maxi(int(entity.get("last_seq", 0)), 0),
+		})
+	var leaves := _pending_leaves
+	if updates.is_empty() and leaves.is_empty():
+		return
+	_pending_leaves = []
+	_presence_in_flight = true
+	var result: Dictionary = await _server.bridge.push_presence(
+		updates, leaves, _server.server_id()
+	)
+	_presence_in_flight = false
+	if not bool(result.get("ok", false)):
+		_pending_leaves.append_array(leaves)
+
 
 func _publish_snapshot() -> void:
 	if _link == null or _entities.is_empty():
@@ -439,6 +495,10 @@ func remove_player(player_id: int, reason: String = "") -> void:
 	_entities.erase(player_id)
 	if body != null and is_instance_valid(body):
 		body.queue_free()
+	# The backend must be told, or the player lingers as a ghost neighbour until
+	# the projection's TTL expires. Flushed by the next presence push.
+	if _gameplay_mode and not _arena_mode:
+		_pending_leaves.append(player_id)
 	print(LOG_PREFIX + "removed player %d %s" % [player_id, reason])
 	player_removed.emit(player_id)
 

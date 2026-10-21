@@ -19,6 +19,29 @@ from app.core.exceptions import AppError
 from app.modules.realtime.runtime import runtime
 
 
+## A mixed frame whose loudest sample is at or below this is treated as
+## silence. 96 is roughly -50 dBFS: low enough that a microphone's noise floor
+## in a still room falls under it, high enough that a quiet first syllable is
+## never clipped away.
+SILENCE_THRESHOLD = 96
+
+
+def is_silent(samples) -> bool:
+    """Whether a mixed frame carries no audible signal.
+
+    The mixer produces a frame every 20 ms for every listener whether or not
+    anyone is speaking, so a quiet room costs exactly as much as a busy one
+    unless the silent frames are dropped before they reach the socket. At 1,920
+    bytes a frame, an idle room spends 96 kB/s per listener on silence alone.
+
+    The peak is taken with the array's own min and max, which run in C: this
+    check runs 50 times a second for every listener, so it has to be cheap.
+    """
+    if not len(samples):
+        return True
+    return max(max(samples), -min(samples)) <= SILENCE_THRESHOLD
+
+
 def ensure_media_available():
     if not settings.voice_enabled:
         raise AppError("VOICE_DISABLED", "Voice is not enabled on this server", 503)
@@ -57,6 +80,13 @@ class MediaPeer:
     created: float = field(default_factory=time.monotonic)
     negotiated: bool = False
     last_spoke: float = 0
+    ## Transport capabilities the client declared when it opened the socket.
+    ##
+    ## A client that understands silence suppression is told when the room is
+    ## quiet instead of being sent frames of silence. A client that does not
+    ## declare it keeps the old behaviour, so an old client and a new server
+    ## still work together during a rollout.
+    capabilities: tuple = ()
 
 
 def accept_incoming(peer):

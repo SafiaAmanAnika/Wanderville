@@ -4,11 +4,29 @@ extends Node
 signal status_changed(text: String)
 signal changed
 
+## Seconds without any message from the voice server before the session is
+## treated as dead.
+##
+## Deliberately long. The server stops sending frames of silence, so a quiet
+## room is silent on the wire; the server sends a small keepalive instead, and
+## this window has to tolerate a few of those being late. A closed socket is
+## still noticed immediately, because that is the common failure.
+const SIGNAL_TIMEOUT := 15.0
+
+## How fast the level meter falls back to silence, in meters per second.
+const LEVEL_DECAY := 4.0
+
 var session_id := ""
 var output_level := 0.0
 var muted := true
 var deafened := false
 var muted_players: Array[int] = []
+## Audio frames received since the session started. Public because the
+## integration test reads it to prove a quiet room sends nothing.
+var frames_received := 0
+## Keepalives received since the session started. The server sends one while
+## the room is quiet, so this is the client's proof that the session lives.
+var keepalives_received := 0
 var _socket: WebSocketPeer
 var _authenticated := false
 var _ready_audio := false
@@ -20,7 +38,9 @@ var _speaker: AudioStreamPlayer
 var _playback: AudioStreamGeneratorPlayback
 var _bus := -1
 var _elapsed := 0.0
-var _last_audio := 0.0
+## Seconds since the last message of any kind. Silence is not a dead
+## connection, so this counts every message, not only audio frames.
+var _last_signal := 0.0
 
 
 func _ready() -> void:
@@ -57,7 +77,9 @@ func join_voice() -> void:
 		status_changed.emit("Audio connection failed. Join again.")
 		return
 	_elapsed = 0.0
-	_last_audio = 0.0
+	_last_signal = 0.0
+	frames_received = 0
+	keepalives_received = 0
 	changed.emit()
 
 
@@ -72,27 +94,58 @@ func _process(delta: float) -> void:
 		return
 	_socket.poll()
 	_elapsed += delta
-	_last_audio += delta
-	if _socket.get_ready_state() == WebSocketPeer.STATE_CLOSED or (_elapsed > 5 and not _ready_audio) or (_ready_audio and _last_audio > 2):
+	_last_signal += delta
+	# The meter falls on its own. A suppressed frame means the room is quiet,
+	# and the indicator must not stay stuck at the level of the last word that
+	# was spoken.
+	output_level = maxf(0.0, output_level - delta * LEVEL_DECAY)
+	if (
+		_socket.get_ready_state() == WebSocketPeer.STATE_CLOSED
+		or (_elapsed > 5 and not _ready_audio)
+		or (_ready_audio and _last_signal > SIGNAL_TIMEOUT)
+	):
 		leave()
 		status_changed.emit("Voice disconnected. Join again.")
 		return
 	if _socket.get_ready_state() != WebSocketPeer.STATE_OPEN:
 		return
 	if not _authenticated:
-		_socket.send_text(JSON.stringify({"type": "auth", "token": Global.token, "connection_id": APIClient.realtime.connection_id, "session_id": session_id}))
+		# "silence_suppression" says this client can live without frames of
+		# silence: the server will send nothing at all while the room is quiet
+		# and keep the session alive with a small keepalive instead. A server
+		# that does not know the capability still sends frames, and this client
+		# still reads them, so the two ends work either way.
+		_socket.send_text(
+			JSON.stringify(
+				{
+					"type": "auth",
+					"token": Global.token,
+					"connection_id": APIClient.realtime.connection_id,
+					"session_id": session_id,
+					"capabilities": ["silence_suppression"],
+				}
+			)
+		)
 		_authenticated = true
 	while _socket.get_available_packet_count() > 0:
 		var bytes := _socket.get_packet()
+		# Any message proves the session is alive, including the keepalive the
+		# server sends into a quiet room.
+		_last_signal = 0.0
 		if _socket.was_string_packet():
 			var packet: Variant = JSON.parse_string(bytes.get_string_from_utf8())
-			if packet is Dictionary and packet.get("type") == "voice.connected":
-				_ready_audio = true
-				_start_playback()
-				status_changed.emit("Listening. Hold Talk to use your microphone (headphones recommended).")
-				changed.emit()
+			if packet is Dictionary:
+				if packet.get("type") == "voice.connected":
+					_ready_audio = true
+					_start_playback()
+					status_changed.emit("Listening. Hold Talk to use your microphone (headphones recommended).")
+					changed.emit()
+				elif packet.get("type") == "voice.idle":
+					# The server says the room is quiet. It is also the proof
+					# that the session is still alive.
+					keepalives_received += 1
 		elif bytes.size() == 1920 and _ready_audio:
-			_last_audio = 0.0
+			frames_received += 1
 			output_level = 0.0
 			for i in 960:
 				output_level = maxf(output_level, absf(float(bytes.decode_s16(i * 2)) / 32768.0))
@@ -219,6 +272,7 @@ func leave(notify_server := true) -> void:
 	_socket = null
 	_authenticated = false
 	_ready_audio = false
+	_last_signal = 0.0
 	muted = true
 	if not session_id.is_empty() and notify_server:
 		APIClient.realtime.command("voice.leave")

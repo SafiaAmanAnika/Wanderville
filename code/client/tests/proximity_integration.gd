@@ -105,6 +105,19 @@ func _run() -> void:
 			await create_timer(0.02).timeout
 		check(heard, "real_native_pcm_received")
 	await barrier("audio")
+	# A quiet room must cost nothing on the wire and must not look like a dead
+	# connection: the server suppresses the frames of silence and keeps the
+	# session alive with a small keepalive instead. The keepalive interval is
+	# five seconds by default, so the wait has to outlast it.
+	if role == "bob":
+		await create_timer(0.5).timeout
+		var idle_frames: int = ui.voice.frames_received
+		var idle_keepalives: int = ui.voice.keepalives_received
+		await create_timer(6.0).timeout
+		check(ui.voice.frames_received == idle_frames, "idle_room_sends_no_audio")
+		check(ui.voice.keepalives_received > idle_keepalives, "idle_room_is_kept_alive")
+		check(ui.voice._ready_audio, "idle_room_keeps_voice_alive")
+	await barrier("idle")
 	ui.voice.leave()
 	await ui.community.open_for()
 	ui.community._view.select(0)

@@ -3,6 +3,11 @@
 Wire format: little-endian signed PCM16, mono 48 kHz, exactly 960 samples
 (20 ms / 1920 bytes) per binary message. WSS is required outside local dev.
 No microphone is activated by this endpoint; clients explicitly join muted.
+
+A client that declares the ``silence_suppression`` capability is sent nothing
+at all while the room is quiet, and a small keepalive instead. A client that
+does not declare it keeps receiving frames of silence, so an older client and
+this server still work together.
 """
 import asyncio
 import json
@@ -20,9 +25,19 @@ from app.core.exceptions import AppError
 from app.db.session import get_db
 from app.modules.auth.service import AuthService
 from app.modules.realtime.runtime import runtime
-from app.modules.realtime.voice import MediaPeer, accept_incoming, voice_hub
+from app.modules.realtime.voice import (
+    MediaPeer,
+    accept_incoming,
+    is_silent,
+    voice_hub,
+)
 
 router = APIRouter(prefix="/realtime/voice", tags=["realtime"])
+
+## The capability a client declares to say it can live without frames of
+## silence. A client that does not declare it keeps receiving them, so a
+## rollout never breaks a client that is already installed.
+SILENCE_SUPPRESSION = "silence_suppression"
 
 
 class SocketMedia:
@@ -95,19 +110,48 @@ async def native_voice(websocket: WebSocket, db: Session = Depends(get_db)):
             raise ValueError("Invalid session")
         if not runtime.media_valid(pid, generation, session_id) or session_id in voice_hub.peers:
             raise ValueError("Join voice on the game connection first")
-        peer = MediaPeer(pid, generation, session_id, SocketMedia(websocket), negotiated=True)
+        declared = auth.get("capabilities")
+        capabilities = (
+            tuple(name for name in declared if isinstance(name, str))
+            if isinstance(declared, list)
+            else ()
+        )
+        peer = MediaPeer(
+            pid,
+            generation,
+            session_id,
+            SocketMedia(websocket),
+            negotiated=True,
+            capabilities=capabilities,
+        )
         voice_hub.peers[session_id] = peer
         if voice_hub.ticker is None or voice_hub.ticker.done():
             voice_hub.ticker = asyncio.create_task(voice_hub._tick())
         await websocket.send_json({"type": "voice.connected", "sample_rate": 48000, "frame_samples": 960})
 
         async def publish():
+            last_signal = time.monotonic()
             while runtime.connection_valid(pid, generation, session_id):
                 contributions = await peer.outgoing.get()
                 samples = voice_hub.mix(peer, contributions)
+                if SILENCE_SUPPRESSION in peer.capabilities and is_silent(samples):
+                    # A quiet room costs nothing: the frame is dropped here
+                    # instead of being written to the socket as 1,920 bytes of
+                    # silence. A listener who is not being spoken to stops
+                    # paying for the whole room being quiet.
+                    #
+                    # The keepalive replaces the evidence the frame used to
+                    # give, so the client can still tell a silent room from a
+                    # dead connection.
+                    now = time.monotonic()
+                    if now - last_signal >= settings.voice_idle_keepalive_seconds:
+                        await websocket.send_json({"type": "voice.idle"})
+                        last_signal = now
+                    continue
                 if sys.byteorder != "little":
                     samples.byteswap()
                 await asyncio.wait_for(websocket.send_bytes(samples.tobytes()), 0.25)
+                last_signal = time.monotonic()
         sender = asyncio.create_task(publish())
         window, count = time.monotonic(), 0
         while runtime.connection_valid(pid, generation, session_id) and not sender.done():

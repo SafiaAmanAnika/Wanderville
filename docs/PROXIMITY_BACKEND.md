@@ -98,13 +98,24 @@ admission. Guest removal/end invalidates media authorization immediately.
 
 After voice.ready, connect to /realtime/voice/ws and send:
 
-    {"type":"auth","token":"<access token>","connection_id":"<game connection>","session_id":"<voice session>"}
+    {"type":"auth","token":"<access token>","connection_id":"<game connection>","session_id":"<voice session>","capabilities":["silence_suppression"]}
 
 The server replies voice.connected. Each binary message is exactly 960 signed
 PCM16 little-endian mono samples at 48 kHz: 1920 bytes / 20 ms. Clients send only
 while explicitly transmitting. Each listener receives one server mix. Audio
 cannot move the player, grant proximity or renew the game's control lease. This
 socket does not replace the gameplay socket.
+
+A client that declares the `silence_suppression` capability is sent nothing at
+all while the room is quiet: the mixer produces a frame every 20 ms for every
+listener, and without this the server spends 96 kB/s per listener on silence
+alone, whether or not anybody is speaking. A silent room instead produces one
+`{"type":"voice.idle"}` keepalive every `VOICE_IDLE_KEEPALIVE_SECONDS` (five
+seconds by default), which is the client's only evidence that the socket is
+still alive. A client that does not declare the capability keeps receiving the
+frames of silence it always received, so an installed client and a new server
+work together during a rollout. The WebRTC path is unchanged: a media track
+has to produce frames at a steady rate, so its silence is not suppressed.
 
 Every mix checks current room, mutual permissions, blocks, listener mute,
 deafen, distance and fresh control/policy leases. Policies invalidate only after
@@ -115,11 +126,14 @@ Malformed packets, excessive frame rates, slow receivers and stale sessions are
 bounded or disconnected.
 
 This first native transport uses uncompressed PCM: about 768 kbit/s in each
-direction while transmitting/receiving, before network overhead. There is no
-native echo cancellation; headphones and push-to-talk are recommended. TCP can
-stall under packet loss. Hosted deployments require HTTPS/WSS. A future native
-Opus/WebRTC integration can retain the control protocol, authorization and UI.
-This is a small-room MCU, not a production-scale SFU.
+direction while transmitting/receiving, before network overhead. A quiet room
+costs a capable client almost nothing, but a room with one speaker still costs
+every listener the full 768 kbit/s, because the server mixes and sends one PCM
+stream per listener. There is no native echo cancellation; headphones and
+push-to-talk are recommended. TCP can stall under packet loss. Hosted
+deployments require HTTPS/WSS. A future native Opus/WebRTC integration can
+retain the control protocol, authorization and UI. This is a small-room MCU, not
+a production-scale SFU.
 
 Optional WebRTC clients can install requirements-voice.txt, join with transport
 webrtc-mixed-audio, then send voice.offer with session_id and full ICE-gathered

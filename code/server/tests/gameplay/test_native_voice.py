@@ -23,16 +23,33 @@ def command(ws, kind, data=None):
     pytest.fail("No correlated acknowledgement")
 
 
-def connect(stack, client, user):
+def connect(stack, client, user, capabilities=None):
     ws = stack.enter_context(client.websocket_connect("/realtime/ws"))
     ws.send_json({"type": "auth", "protocol_version": 2, "token": user.tokens["access_token"]})
     initial = ws.receive_json()
     joined = command(ws, "voice.join", {"transport": "pcm-websocket"})
     sid = joined["data"]["voice"]["session_id"]
     audio = stack.enter_context(client.websocket_connect("/realtime/voice/ws"))
-    audio.send_json({"type": "auth", "token": user.tokens["access_token"], "connection_id": initial["connection_id"], "session_id": sid})
+    auth = {
+        "type": "auth",
+        "token": user.tokens["access_token"],
+        "connection_id": initial["connection_id"],
+        "session_id": sid,
+    }
+    if capabilities:
+        auth["capabilities"] = list(capabilities)
+    audio.send_json(auth)
     assert audio.receive_json()["type"] == "voice.connected"
     return ws, audio, sid
+
+
+def receive_audio(ws, limit=20):
+    """The next audio frame, stepping over keepalive messages."""
+    for _ in range(limit):
+        message = ws.receive()
+        if message.get("bytes") is not None:
+            return message["bytes"]
+    pytest.fail("No audio frame arrived")
 
 
 def test_native_audio_delivery_mute_block_and_no_control_takeover(client, account, monkeypatch):
@@ -68,6 +85,46 @@ def test_native_audio_delivery_mute_block_and_no_control_takeover(client, accoun
         assert not any(struct.unpack("<960h", raw))
         aa.close()
         assert command(wa, "heartbeat")["data"]["players"]
+
+
+def test_native_silence_is_suppressed_for_capable_clients(client, account, monkeypatch):
+    """A quiet room must cost nothing for a client that can live without it.
+
+    The capable listener is told the room is quiet instead of being sent
+    frames of silence, a client that did not declare the capability keeps
+    receiving the frames it always received, and a speaker who is actually
+    talking is still heard by both.
+    """
+    monkeypatch.setattr(settings, "voice_enabled", True)
+    monkeypatch.setattr(settings, "voice_idle_keepalive_seconds", 0.2)
+    a, b = account("native_quiet_a"), account("native_quiet_b")
+    assert client.post("/social/requests", headers=a.headers, json={"target_id": b.id}).status_code == 200
+    assert client.post(f"/social/friends/{a.id}", headers=b.headers, json={"action": "accept"}).status_code == 200
+    tone = struct.pack("<960h", *([2000] * 960))
+    with ExitStack() as stack:
+        wa, aa, sa = connect(stack, client, a)
+        wb, ab, sb = connect(stack, client, b, capabilities=["silence_suppression"])
+        command(wa, "voice.state", {"session_id": sa, "muted": False})
+        command(wb, "heartbeat")
+        # The capable listener is told the room is quiet. It is not sent a
+        # frame of silence: the keepalive is the only thing on the wire.
+        keepalive = ab.receive_json()
+        assert keepalive["type"] == "voice.idle"
+        # A client that did not declare the capability keeps the frames it
+        # always got, so a rollout cannot break a client that is installed.
+        raw = receive_audio(aa)
+        assert len(raw) == 1920
+        assert not any(struct.unpack("<960h", raw))
+        # A speaker who is talking is still heard by the capable listener.
+        command(wb, "heartbeat")
+        heard = False
+        for _ in range(20):
+            aa.send_bytes(tone)
+            raw = receive_audio(ab)
+            if any(struct.unpack("<960h", raw)):
+                heard = True
+                break
+        assert heard
 
 
 def test_native_requires_current_control_session_and_valid_origin(client, account, monkeypatch):

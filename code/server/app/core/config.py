@@ -121,6 +121,10 @@ class Settings(BaseSettings):
     voice_turn_urls: str = ""
     voice_turn_secret: str = ""
     voice_turn_ttl_seconds: int = Field(600, ge=60, le=3600)
+    # How often a silent voice room tells the client it is still alive. The
+    # server stops sending frames of silence, so this keepalive is the only
+    # evidence the client has that the socket still works.
+    voice_idle_keepalive_seconds: float = Field(5.0, gt=0, le=60)
     # Base shared slot pool; each level adds its own increment on top.
     inventory_partition_slots: int = Field(30, ge=1, le=1000)
     # Balancing choice: no planting XP existed before, so it defaults to a

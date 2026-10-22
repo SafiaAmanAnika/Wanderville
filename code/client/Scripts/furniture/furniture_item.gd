@@ -16,7 +16,7 @@ var _shape: CollisionShape2D
 func setup(item_id: String, facing: String = "front") -> void:
 	id = item_id
 	scale = Vector2.ONE * FURNITURE_SCALE   # picture and collision grow together
-	z_index = int(FurnitureCatalog.info(id).get("z_index", 0))   # rugs = -1
+	z_index = int(FurnitureCatalog.info(id).get("z_index", 0)) + 1 
 	_sprite = Sprite2D.new()
 	_sprite.centered = false
 	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST     # crisp pixels
@@ -55,3 +55,11 @@ func set_ghost(on: bool) -> void:
 	_ghost = on
 	modulate = Color(1, 1, 1, 0.6) if on else Color.WHITE
 	set_dir(dir)
+
+
+
+# the picture's box in world coordinates - used to click a piece to move it
+func picture_rect() -> Rect2:
+	if _sprite == null or _sprite.texture == null:
+		return Rect2(global_position, Vector2.ZERO)
+	return Rect2(global_position + _sprite.offset * scale, _sprite.texture.get_size() * scale)

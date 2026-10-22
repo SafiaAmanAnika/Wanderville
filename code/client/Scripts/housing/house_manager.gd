@@ -22,6 +22,10 @@ var _placing_id := 0
 var _item_ghost: FurnitureItem = null   # the furniture stuck to your mouse
 var _item_name := ""
 
+# rearrange mode (S inside the house)
+var _arranging := false
+var _grab_position := Vector2.ZERO
+var _grab_dir := "front"
 
 func _ready() -> void:
 	GameState.load_house()
@@ -66,6 +70,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if inside and event.is_action_pressed("furniture") and not GameState.menu_open:
 		_open_furniture_menu()
+		return
+	if inside and event.is_action_pressed("rearrange") and not GameState.menu_open:
+		_toggle_arrange()
+		return
+	if _arranging and event is InputEventMouseButton and event.pressed \
+			and event.button_index == MOUSE_BUTTON_LEFT:
+		get_viewport().set_input_as_handled()
+		_grab_under_mouse()
 		return
 	if event.is_action_pressed("house_menu"):
 		_on_house_key()
@@ -231,10 +243,11 @@ func _open_furniture_menu() -> void:
 	if GameState.house["stage"] != "done":
 		HousePrompt.flash("Build the floor first.")
 		return
+	_arranging = false
+	_highlight_furniture(false)
 	var menu = FURNITURE_MENU.new()
 	menu.picked.connect(_start_furniture)
 	get_tree().current_scene.add_child(menu)
-
 
 func _start_furniture(item_name: String) -> void:
 	_item_name = item_name
@@ -263,25 +276,94 @@ func _furniture_input(event: InputEvent) -> void:
 	if not _on_floor(_item_ghost.global_position):
 		HousePrompt.flash("Place it on the floor.")
 		return
-	var cost := FurnitureCatalog.cost(_item_name)
-	if not GameState.spend_wood(cost):
-		HousePrompt.flash("You need %d wood for this." % cost)
-		return
+	if not _arranging:                                     # moving what you own is free
+		var cost := FurnitureCatalog.cost(_item_name)
+		if not GameState.spend_wood(cost):
+			HousePrompt.flash("You need %d wood for this." % cost)
+			return
 	_item_ghost.set_ghost(false)                           # make it real
 	if not GameState.house.has("furniture"):
 		GameState.house["furniture"] = []
 	GameState.house["furniture"].append({"name": _item_name, "x": _item_ghost.position.x, "y": _item_ghost.position.y, "dir": _item_ghost.dir})
 	GameState.save_house()
 	_item_ghost = null
-	HousePrompt.flash("Placed!")
+	if _arranging:
+		_highlight_furniture(true)
+		HousePrompt.show_text("Rearranging  ·  Click a piece to pick it up  ·  R to rotate  ·  S when done")
+	else:
+		HousePrompt.flash("Placed!")
 
 
 func _cancel_furniture() -> void:
 	if _item_ghost:
-		_item_ghost.queue_free()
+		if _arranging:                 # put it back instead of destroying it
+			_item_ghost.position = _grab_position
+			_item_ghost.set_dir(_grab_dir)
+			_item_ghost.set_ghost(false)
+			if not GameState.house.has("furniture"):
+				GameState.house["furniture"] = []
+			GameState.house["furniture"].append({"name": _item_name, "x": _grab_position.x, "y": _grab_position.y, "dir": _grab_dir})
+			GameState.save_house()
+		else:
+			_item_ghost.queue_free()
 	_item_ghost = null
 	HousePrompt.hide_text()
+	
+# S inside the house: put the whole room into rearrange mode, and back out again
+func _toggle_arrange() -> void:
+	if GameState.house["stage"] != "done":
+		HousePrompt.flash("Build the floor first.")
+		return
+	_arranging = not _arranging
+	_highlight_furniture(_arranging)
+	if _arranging:
+		HousePrompt.show_text("Rearranging  ·  Click a piece to pick it up  ·  R to rotate  ·  S when done")
+	else:
+		GameState.save_house()
+		HousePrompt.flash("Arrangement saved.")
 
+
+# a warm tint on every piece while the room is being rearranged
+func _highlight_furniture(on: bool) -> void:
+	for child in interior.get_children():
+		var piece := child as FurnitureItem
+		if piece != null:
+			piece.modulate = Color(1.1, 0.456, 0.782, 1.0) if on else Color.WHITE
+
+
+# picks up whatever the mouse is pointing at
+func _grab_under_mouse() -> void:
+	var piece := _furniture_under_mouse()
+	if piece == null:
+		HousePrompt.flash("Nothing there - click directly on a piece.", 2.0)
+		return
+	_grab_position = piece.position
+	_grab_dir = piece.dir
+	_item_name = piece.id
+	_forget_furniture(piece.id, _grab_position)
+	_item_ghost = piece
+	_item_ghost.set_ghost(true)
+
+
+# the topmost piece whose picture the mouse is over, or null
+func _furniture_under_mouse() -> FurnitureItem:
+	var mouse: Vector2 = interior.get_global_mouse_position()
+	var found: FurnitureItem = null
+	for child in interior.get_children():
+		var piece := child as FurnitureItem
+		if piece != null and piece.picture_rect().has_point(mouse):
+			found = piece       # later children draw on top, so the last match wins
+	return found
+
+
+# drops the saved record of a piece we just picked up, so dropping it does not duplicate it
+func _forget_furniture(id: String, pos: Vector2) -> void:
+	var saved: Array = GameState.house.get("furniture", [])
+	for i in range(saved.size()):
+		var f = saved[i]
+		if String(f["name"]) == id and is_equal_approx(float(f["x"]), pos.x) and is_equal_approx(float(f["y"]), pos.y):
+			saved.remove_at(i)
+			return
 
 # true if there's a floor tile under this point
 func _on_floor(pos: Vector2) -> bool:
@@ -310,7 +392,10 @@ func _load_furniture() -> void:
 func _leave_house() -> void:
 	if not inside:
 		return
-	_cancel_furniture()
+	_cancel_furniture()             # must run while _arranging is still true,
+	if _arranging:                  # otherwise the carried piece gets deleted
+		_arranging = false
+		_highlight_furniture(false)
 	inside = false
 	HousePrompt.hide_text()
 	await _transition(func() -> void:
@@ -364,6 +449,7 @@ func _destroy_house() -> void:
 
 # removes the house on the map, the inside and everything in it, and clears the save
 func _clear_house() -> void:
+	_arranging = false              # the carried piece goes with the house
 	_cancel_furniture()
 	if exterior:
 		exterior.queue_free()

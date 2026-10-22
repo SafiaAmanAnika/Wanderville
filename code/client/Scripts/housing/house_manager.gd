@@ -37,6 +37,9 @@ func _ready() -> void:
 	_fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(_fade)
 
+	if GameState.house["stage"] == "none":
+		HousePrompt.flash("Press J to buy a house", 4.0)
+
 
 # fade to black → do something (teleport) → fade back in; player can't move meanwhile
 func _transition(action: Callable) -> void:
@@ -64,13 +67,26 @@ func _unhandled_input(event: InputEvent) -> void:
 	if inside and event.is_action_pressed("furniture") and not GameState.menu_open:
 		_open_furniture_menu()
 		return
-	if event.is_action_pressed("house_menu") and not GameState.menu_open and not inside:
-		if GameState.house["stage"] != "none":
-			_house_options()
-			return
-		var menu = MENU_SCRIPT.new()
-		menu.picked.connect(_start_placement)
-		get_tree().current_scene.add_child(menu)
+	if event.is_action_pressed("house_menu"):
+		_on_house_key()
+
+
+# J was pressed. Always puts a message on screen, so it can never fail in silence.
+func _on_house_key() -> void:
+	if GameState.menu_open:
+		HousePrompt.flash("J blocked: a menu is already open.", 3.0)
+		return
+	if inside:
+		HousePrompt.flash("J blocked: you are inside the house.", 3.0)
+		return
+	if GameState.house["stage"] != "none":
+		HousePrompt.flash("You already own a house (stage: %s)." % GameState.house["stage"], 3.0)
+		_house_options()
+		return
+	var menu = MENU_SCRIPT.new()
+	menu.picked.connect(_start_placement)
+	get_tree().current_scene.add_child(menu)
+	HousePrompt.flash("House catalog opened.", 2.0)
 
 
 func _process(_delta: float) -> void:
@@ -326,12 +342,12 @@ func _house_options() -> void:
 		if action == "sell":
 			box.hide()
 			_sell_house())
+	get_tree().current_scene.add_child(box)
+	box.popup_centered()
 	box.visibility_changed.connect(func() -> void:
 		if not box.visible:                               # closed any way: Sell, Destroy, Cancel, X
 			GameState.menu_open = false
 			box.queue_free())
-	get_tree().current_scene.add_child(box)
-	box.popup_centered()
 
 
 func _sell_house() -> void:

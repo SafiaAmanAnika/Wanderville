@@ -441,10 +441,11 @@ func load_house() -> void:
 	if data is Dictionary:
 		var p: Array = data.get("position", [0, 0])
 		house = {
-			"id": int(data.get("id", 0)),
-			"position": Vector2(p[0], p[1]),
-			"stage": str(data.get("stage", "none")),
-			"floor": str(data.get("floor", "")),
-		}
+				"id": int(data.get("id", 0)),
+				"position": Vector2(p[0], p[1]),
+				"stage": str(data.get("stage", "none")),
+				"floor": str(data.get("floor", "")),
+				"furniture": data.get("furniture", []),
+			}
 	if not house.has("furniture"):
 		house["furniture"] = []

@@ -3,6 +3,9 @@ extends Node2D
 # One piece of furniture, built in code from furniture_manifest.json.
 # Its position = the bottom-centre (feet) of the picture.
 
+# the art is drawn small; show every piece this much bigger
+const FURNITURE_SCALE := 1.5
+
 var id := ""
 var dir := "front"
 var _ghost := false
@@ -12,6 +15,7 @@ var _shape: CollisionShape2D
 
 func setup(item_id: String, facing: String = "front") -> void:
 	id = item_id
+	scale = Vector2.ONE * FURNITURE_SCALE   # picture and collision grow together
 	z_index = int(FurnitureCatalog.info(id).get("z_index", 0))   # rugs = -1
 	_sprite = Sprite2D.new()
 	_sprite.centered = false

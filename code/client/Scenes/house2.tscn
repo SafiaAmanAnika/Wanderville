@@ -279,7 +279,7 @@ script = ExtResource("door_script")
 scale = Vector2(1.0535715, 0.6458332)
 sprite_frames = SubResource("SpriteFrames_ryxxq")
 animation = &"door"
-frame_progress = 0.6699028
+frame_progress = 0.1295051
 
 [node name="Blocker" type="StaticBody2D" parent="south_door" unique_id=1783757908]
 
@@ -323,7 +323,7 @@ script = ExtResource("door_script")
 scale = Vector2(0.94196403, 0.73177063)
 sprite_frames = SubResource("SpriteFrames_ryxxq")
 animation = &"door"
-frame_progress = 0.8775062
+frame_progress = 0.33709377
 
 [node name="Blocker" type="StaticBody2D" parent="north_door2" unique_id=1477509406]
 
@@ -345,7 +345,7 @@ script = ExtResource("door_script")
 scale = Vector2(0.94196403, 0.77734345)
 sprite_frames = SubResource("SpriteFrames_ryxxq")
 animation = &"door"
-frame_progress = 0.6022278
+frame_progress = 0.061849747
 
 [node name="Blocker" type="StaticBody2D" parent="middle_door" unique_id=1407369588]
 
@@ -368,7 +368,7 @@ rotation = 1.5707964
 scale = Vector2(0.78743327, 0.5943835)
 sprite_frames = SubResource("SpriteFrames_s3g8u")
 animation = &"door"
-frame_progress = 0.60591656
+frame_progress = 0.0655379
 
 [node name="Blocker" type="StaticBody2D" parent="sideways_door" unique_id=1346108039]
 

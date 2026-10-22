@@ -200,3 +200,25 @@ physical microphones, permission dialogs and subjective quality still need a
 two-device manual check. SQLite and isolated PostgreSQL tests cover migrations,
 concurrency, privacy, visits, blocks, receipts and native/WebRTC media enforcement.
 Artifacts stay in ignored code/server/.verification directories.
+
+## Native Opus (compression)
+
+The voice path can use Opus to cut bandwidth by roughly 96% with no unacceptable change in the audio the ear hears. The protocol is negotiated per client rather than forced on everyone, so a client without the decoder keeps using raw PCM and loses nothing except the saving.
+
+### Capabilities
+- silence_suppression: sent in {"type":"auth", ... "capabilities":[...]}. Without it the server assumes the client expects every frame (legacy behaviour) and does not drop silent frames.
+- opus: sent in the same list to ask for compressed audio. The server answers with {"type":"voice.format","encoding":"opus"} if it is enabled; otherwise it falls back to pcm_s16le.
+
+### Framing
+- PCM frames are the raw i16 little-endian mono samples as before.
+- Opus frames are prefixed with a single marker byte  x01 followed by the Opus payload: ytes([1]) + opus_frame. The client strips the marker before handing the bytes to the decoder.
+- oice.format is sent before oice.connected so the client knows which decoder to use for the session.
+
+### Behaviour
+- The server encodes with libopus (CBR, 24 kbit/s, VOIP) in pp/modules/realtime/opus.py. If PyAV/libopus is unavailable or encoding fails, it falls back to PCM for that session.
+- The client uses a native GDExtension (code/client/native/opus/) that wraps libopus. If the extension is not present or cannot be instantiated, the client falls back to PCM.
+- Silence suppression still applies: an idle room produces 0 audio bytes on either path, and the server still sends oice.idle keepalives every oice_idle_keepalive_seconds.
+- Jitter is bounded on the client (target ~3 frames, max ~10). Damaged Opus frames are dropped rather than played as noise; the decoder reports the reason via get_last_error().
+
+### Build
+The extension must be compiled against godot-cpp (pinned) and libopus (pinned). See code/client/native/opus/README.md or uild.ps1/uild.sh. In CI the Opus extension workflow builds it on Windows x64 and macOS arm64/x64 and runs code/client/tests/opus_extension_check.gd after --import.

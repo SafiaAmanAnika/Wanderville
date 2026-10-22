@@ -1,6 +1,10 @@
 extends Node
 ## Native Godot voice. No browser or JavaScript runtime is required.
 ## One 20 ms mono PCM16 frame per binary WebSocket packet at 48 kHz.
+##
+## The server may send Opus instead of raw PCM, which is about thirty times
+## less audio on the wire. The client asks for it only when a native decoder
+## is actually present, so a build without the decoder keeps using raw PCM.
 signal status_changed(text: String)
 signal changed
 
@@ -16,6 +20,25 @@ const SIGNAL_TIMEOUT := 15.0
 ## How fast the level meter falls back to silence, in meters per second.
 const LEVEL_DECAY := 4.0
 
+## The class the native Opus decoder registers as. The extension is
+## optional: when it is missing, the client never asks for Opus.
+const OPUS_DECODER_CLASS := "OpusDecoder"
+
+## The marker that opens a compressed audio packet. Raw PCM is sent as
+## 1,920 bytes with no header at all, so the two can never be confused.
+const OPUS_MARKER := 1
+
+## One audio frame is 20 ms.
+const FRAME_SECONDS := 0.02
+const FRAME_BYTES := 1920
+
+## How many frames the jitter buffer gathers before it starts playing out,
+## and the most it will ever hold. The first number is the jitter it can
+## absorb, the second is the delay it will never exceed: a frame that
+## arrives after the buffer is full is dropped rather than played late.
+const JITTER_TARGET_FRAMES := 3
+const JITTER_MAX_FRAMES := 10
+
 var session_id := ""
 var output_level := 0.0
 var muted := true
@@ -27,6 +50,11 @@ var frames_received := 0
 ## Keepalives received since the session started. The server sends one while
 ## the room is quiet, so this is the client's proof that the session lives.
 var keepalives_received := 0
+## Compressed frames the jitter buffer had to throw away because they
+## arrived too late to be played.
+var frames_dropped := 0
+## Compressed frames that could not be decoded at all.
+var frames_failed := 0
 var _socket: WebSocketPeer
 var _authenticated := false
 var _ready_audio := false
@@ -41,6 +69,18 @@ var _elapsed := 0.0
 ## Seconds since the last message of any kind. Silence is not a dead
 ## connection, so this counts every message, not only audio frames.
 var _last_signal := 0.0
+## The encoding the server said it is using: "pcm_s16le" or "opus".
+var _encoding := "pcm_s16le"
+## The native Opus decoder, when the extension is present.
+var _opus_decoder: Object = null
+## Decoded audio waiting to be played, one entry per 20 ms frame.
+var _jitter: Array[PackedByteArray] = []
+## Decoded audio that has not filled a whole frame yet.
+var _pcm_pending := PackedByteArray()
+## Seconds until the next frame is played out.
+var _jitter_clock := 0.0
+## Whether the jitter buffer has gathered enough to start playing.
+var _jitter_started := false
 
 
 func _ready() -> void:
@@ -52,6 +92,17 @@ func _ready() -> void:
 	APIClient.realtime.room_changed.connect(func(_room: String) -> void: leave(false))
 	_speaker = AudioStreamPlayer.new()
 	add_child(_speaker)
+	_load_opus_decoder()
+
+
+## The native decoder is optional, so its absence is not an error: the client
+## simply never asks for Opus and the server keeps sending raw PCM.
+func _load_opus_decoder() -> void:
+	if not ClassDB.class_exists(OPUS_DECODER_CLASS):
+		return
+	_opus_decoder = ClassDB.instantiate(OPUS_DECODER_CLASS)
+	if _opus_decoder == null:
+		_opus_decoder = null
 
 
 func join_voice() -> void:
@@ -80,6 +131,13 @@ func join_voice() -> void:
 	_last_signal = 0.0
 	frames_received = 0
 	keepalives_received = 0
+	frames_dropped = 0
+	frames_failed = 0
+	_encoding = "pcm_s16le"
+	_jitter.clear()
+	_pcm_pending = PackedByteArray()
+	_jitter_clock = 0.0
+	_jitter_started = false
 	changed.emit()
 
 
@@ -99,6 +157,8 @@ func _process(delta: float) -> void:
 	# and the indicator must not stay stuck at the level of the last word that
 	# was spoken.
 	output_level = maxf(0.0, output_level - delta * LEVEL_DECAY)
+	if _ready_audio:
+		_pump_jitter(delta)
 	if (
 		_socket.get_ready_state() == WebSocketPeer.STATE_CLOSED
 		or (_elapsed > 5 and not _ready_audio)
@@ -115,6 +175,12 @@ func _process(delta: float) -> void:
 		# and keep the session alive with a small keepalive instead. A server
 		# that does not know the capability still sends frames, and this client
 		# still reads them, so the two ends work either way.
+		#
+		# "opus" is only claimed when a decoder is really there. Claiming it
+		# without one would leave the client unable to hear anything.
+		var capabilities := ["silence_suppression"]
+		if _opus_decoder != null:
+			capabilities.append("opus")
 		_socket.send_text(
 			JSON.stringify(
 				{
@@ -122,7 +188,7 @@ func _process(delta: float) -> void:
 					"token": Global.token,
 					"connection_id": APIClient.realtime.connection_id,
 					"session_id": session_id,
-					"capabilities": ["silence_suppression"],
+					"capabilities": capabilities,
 				}
 			)
 		)
@@ -144,18 +210,22 @@ func _process(delta: float) -> void:
 					# The server says the room is quiet. It is also the proof
 					# that the session is still alive.
 					keepalives_received += 1
-		elif bytes.size() == 1920 and _ready_audio:
-			frames_received += 1
-			output_level = 0.0
-			for i in 960:
-				output_level = maxf(output_level, absf(float(bytes.decode_s16(i * 2)) / 32768.0))
-			if not deafened and _playback != null and _playback.get_frames_available() >= 960:
-				var frames := PackedVector2Array()
-				frames.resize(960)
-				for i in 960:
-					var sample := float(bytes.decode_s16(i * 2)) / 32768.0
-					frames[i] = Vector2(sample, sample)
-				_playback.push_buffer(frames)
+				elif packet.get("type") == "voice.format":
+					_encoding = str(packet.get("encoding", "pcm_s16le"))
+					if _encoding == "opus" and _opus_decoder == null:
+						# The server is sending audio this client cannot
+						# decode. The only honest answer is to end the session
+						# and start again without asking for Opus, so the two
+						# ends agree on raw PCM.
+						status_changed.emit("Voice encoding mismatch. Reconnecting.")
+						leave()
+						join_voice()
+						return
+		elif _ready_audio:
+			if _encoding == "opus":
+				_receive_opus(bytes)
+			elif bytes.size() == FRAME_BYTES:
+				_receive_pcm(bytes)
 	if _capture == null or muted or deafened or not _ready_audio:
 		return
 	var input_count := int(round(AudioServer.get_mix_rate() * 0.02))
@@ -188,6 +258,96 @@ func _start_playback() -> void:
 	_speaker.stream = stream
 	_speaker.play()
 	_playback = _speaker.get_stream_playback() as AudioStreamGeneratorPlayback
+
+
+## Raw PCM, the way the client has always received it.
+##
+## The generator's own buffer smooths the arrival of these frames, so they
+## are played as they come.
+func _receive_pcm(bytes: PackedByteArray) -> void:
+	frames_received += 1
+	_measure_level(bytes)
+	if deafened or _playback == null:
+		return
+	if _playback.get_frames_available() < 960:
+		return
+	_playback.push_buffer(_to_samples(bytes))
+
+
+## One compressed frame: decode it and hand the audio to the jitter buffer.
+func _receive_opus(bytes: PackedByteArray) -> void:
+	if bytes.size() < 2 or bytes[0] != OPUS_MARKER:
+		# Not a compressed frame. The server states the encoding before any
+		# audio arrives, so this means the two ends disagree.
+		frames_failed += 1
+		return
+	frames_received += 1
+	var pcm: PackedByteArray = _opus_decoder.decode(bytes.slice(1))
+	if pcm.is_empty():
+		# A frame that arrived damaged is dropped, not played as noise.
+		frames_failed += 1
+		return
+	_pcm_pending.append_array(pcm)
+	while _pcm_pending.size() >= FRAME_BYTES:
+		_jitter.append(_pcm_pending.slice(0, FRAME_BYTES))
+		_pcm_pending = _pcm_pending.slice(FRAME_BYTES)
+	_measure_level(pcm)
+
+
+## Play the decoded audio out at a steady rate.
+##
+## The buffer gathers a few frames before it starts, so the jitter of the
+## network is absorbed instead of turning into gaps in the speech, and it
+## never holds more than a fixed number of frames, so the delay cannot grow
+## without bound. A frame that arrives after the buffer is full is stale and
+## is dropped.
+func _pump_jitter(delta: float) -> void:
+	_jitter_clock += delta
+	while _jitter_clock >= FRAME_SECONDS:
+		_jitter_clock -= FRAME_SECONDS
+		if _jitter.size() > JITTER_MAX_FRAMES:
+			_jitter.pop_front()
+			frames_dropped += 1
+		if not _jitter_started:
+			if _jitter.size() < JITTER_TARGET_FRAMES:
+				continue
+			_jitter_started = true
+		if _jitter.is_empty():
+			# The stream has started but nothing arrived in time. Silence
+			# keeps the speaker from clicking while the buffer refills.
+			if not deafened and _playback != null and _playback.get_frames_available() >= 960:
+				_playback.push_buffer(_silence())
+			continue
+		var frame: PackedByteArray = _jitter.pop_front()
+		if not deafened and _playback != null and _playback.get_frames_available() >= 960:
+			_playback.push_buffer(_to_samples(frame))
+
+
+## The loudest sample in a frame, for the level meter.
+func _measure_level(bytes: PackedByteArray) -> void:
+	output_level = 0.0
+	var count := bytes.size() / 2
+	for i in count:
+		output_level = maxf(output_level, absf(float(bytes.decode_s16(i * 2)) / 32768.0))
+
+
+## PCM16 bytes to the samples the generator plays.
+func _to_samples(bytes: PackedByteArray) -> PackedVector2Array:
+	var count := bytes.size() / 2
+	var frames := PackedVector2Array()
+	frames.resize(count)
+	for i in count:
+		var sample := float(bytes.decode_s16(i * 2)) / 32768.0
+		frames[i] = Vector2(sample, sample)
+	return frames
+
+
+## One frame of silence, to fill a gap without a click.
+func _silence() -> PackedVector2Array:
+	var frames := PackedVector2Array()
+	frames.resize(960)
+	frames.fill(Vector2.ZERO)
+	return frames
 
 
 func talk(pressed: bool) -> void:
@@ -273,6 +433,11 @@ func leave(notify_server := true) -> void:
 	_authenticated = false
 	_ready_audio = false
 	_last_signal = 0.0
+	_encoding = "pcm_s16le"
+	_jitter.clear()
+	_pcm_pending = PackedByteArray()
+	_jitter_clock = 0.0
+	_jitter_started = false
 	muted = true
 	if not session_id.is_empty() and notify_server:
 		APIClient.realtime.command("voice.leave")

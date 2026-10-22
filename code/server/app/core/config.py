@@ -125,6 +125,13 @@ class Settings(BaseSettings):
     # server stops sending frames of silence, so this keepalive is the only
     # evidence the client has that the socket still works.
     voice_idle_keepalive_seconds: float = Field(5.0, gt=0, le=60)
+    # Whether a client that asks for Opus gets it. A host without libopus
+    # keeps sending raw PCM whatever this says, and the client is told which
+    # encoding is really in use.
+    voice_opus_enabled: bool = True
+    # The Opus bitrate for the mixed audio sent to each listener. At 24 kbit/s
+    # a 20 ms frame is 60 bytes, against 1,920 bytes of raw PCM.
+    voice_opus_bitrate: int = Field(24000, ge=6000, le=128000)
     # Base shared slot pool; each level adds its own increment on top.
     inventory_partition_slots: int = Field(30, ge=1, le=1000)
     # Balancing choice: no planting XP existed before, so it defaults to a

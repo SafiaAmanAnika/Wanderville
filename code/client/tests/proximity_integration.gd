@@ -89,14 +89,26 @@ func _run() -> void:
 			break
 		await create_timer(0.05).timeout
 	check(ui.voice._ready_audio and ui.voice.muted and ui.voice._capture == null, "voice_join_microphone_off")
+	# A client with the native decoder asks for Opus and the server compresses.
+	# A client without it keeps the raw PCM path, and the two ends never
+	# disagree about what is on the wire.
+	if ClassDB.class_exists("OpusDecoder"):
+		check(ui.voice._encoding == "opus", "opus_negotiated")
+	else:
+		check(ui.voice._encoding == "pcm_s16le", "pcm_fallback_negotiated")
 	await barrier("voice")
 	if role == "alice":
 		await api.realtime.command("voice.state", {"session_id": ui.voice.session_id, "muted": false})
-		var frame := PackedByteArray()
-		frame.resize(1920)
-		for i in 960:
-			frame.encode_s16(i * 2, 4000)
+		# A tone, not a constant: a constant offset is silence as far as a
+		# compressed stream is concerned, and the other side would have
+		# nothing to hear.
+		var phase := 0.0
 		for _i in 40:
+			var frame := PackedByteArray()
+			frame.resize(1920)
+			for i in 960:
+				frame.encode_s16(i * 2, int(8000.0 * sin(phase)))
+				phase += TAU * 440.0 / 48000.0
 			ui.voice._socket.send(frame)
 			await create_timer(0.02).timeout
 	else:
@@ -104,6 +116,11 @@ func _run() -> void:
 			heard = heard or ui.voice.output_level > 0.01
 			await create_timer(0.02).timeout
 		check(heard, "real_native_pcm_received")
+		# Every compressed frame must decode, and none may be thrown away for
+		# arriving too late on a local connection.
+		check(ui.voice.frames_failed == 0, "opus_no_failed_frames")
+		check(ui.voice.frames_dropped == 0, "opus_no_dropped_frames")
+		check(ui.voice.frames_received > 0, "voice_frames_received")
 	await barrier("audio")
 	# A quiet room must cost nothing on the wire and must not look like a dead
 	# connection: the server suppresses the frames of silence and keeps the

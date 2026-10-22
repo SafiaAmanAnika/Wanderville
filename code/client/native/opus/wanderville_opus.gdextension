@@ -1,0 +1,21 @@
+[configuration]
+
+entry_symbol = "wanderville_opus_library_init"
+compatibility_minimum = "4.4"
+reloadable = false
+
+; The decoder is optional. A platform without a library here simply does not
+; get the OpusDecoder class, and the client falls back to raw PCM: it never
+; asks the server for Opus unless the decoder really loaded.
+;
+; The libraries are built from source by ../CMakeLists.txt and are produced
+; for Windows, macOS and Linux by .github/workflows/opus-extension.yml.
+
+[libraries]
+
+windows.debug.x86_64 = "res://native/opus/bin/libwanderville_opus.windows.template_debug.x86_64.dll"
+windows.release.x86_64 = "res://native/opus/bin/libwanderville_opus.windows.template_release.x86_64.dll"
+macos.debug = "res://native/opus/bin/libwanderville_opus.macos.template_debug.dylib"
+macos.release = "res://native/opus/bin/libwanderville_opus.macos.template_release.dylib"
+linux.debug.x86_64 = "res://native/opus/bin/libwanderville_opus.linux.template_debug.x86_64.so"
+linux.release.x86_64 = "res://native/opus/bin/libwanderville_opus.linux.template_release.x86_64.so"

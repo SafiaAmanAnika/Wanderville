@@ -8,6 +8,12 @@ A client that declares the ``silence_suppression`` capability is sent nothing
 at all while the room is quiet, and a small keepalive instead. A client that
 does not declare it keeps receiving frames of silence, so an older client and
 this server still work together.
+
+A client that also declares the ``opus`` capability receives Opus instead of
+raw PCM, which is roughly thirty times less audio on the wire. The encoding
+actually in use is stated in a ``voice.format`` message before any audio
+arrives, so a compressed frame can never be mistaken for raw PCM, and a
+client that does not ask for Opus is never sent any.
 """
 import asyncio
 import json
@@ -25,6 +31,12 @@ from app.core.exceptions import AppError
 from app.db.session import get_db
 from app.modules.auth.service import AuthService
 from app.modules.realtime.runtime import runtime
+from app.modules.realtime.opus import (
+    FRAME_SAMPLES,
+    OPUS_MARKER,
+    OpusEncoder,
+    OpusUnavailable,
+)
 from app.modules.realtime.voice import (
     MediaPeer,
     accept_incoming,
@@ -38,6 +50,11 @@ router = APIRouter(prefix="/realtime/voice", tags=["realtime"])
 ## silence. A client that does not declare it keeps receiving them, so a
 ## rollout never breaks a client that is already installed.
 SILENCE_SUPPRESSION = "silence_suppression"
+
+## The capability a client declares to say it can decode Opus. A client that
+## does not declare it keeps receiving raw PCM, so a rollout never breaks a
+## client that is already installed.
+OPUS = "opus"
 
 
 class SocketMedia:
@@ -127,7 +144,29 @@ async def native_voice(websocket: WebSocket, db: Session = Depends(get_db)):
         voice_hub.peers[session_id] = peer
         if voice_hub.ticker is None or voice_hub.ticker.done():
             voice_hub.ticker = asyncio.create_task(voice_hub._tick())
-        await websocket.send_json({"type": "voice.connected", "sample_rate": 48000, "frame_samples": 960})
+        # Opus is used only when the client asked for it and this host can
+        # actually encode it. A host without libopus keeps sending raw PCM
+        # and says so, rather than failing the caller's join.
+        encoder = None
+        encoding = "pcm_s16le"
+        if OPUS in capabilities and settings.voice_opus_enabled:
+            try:
+                encoder = OpusEncoder(bitrate=settings.voice_opus_bitrate)
+                encoding = "opus"
+            except OpusUnavailable:
+                encoder = None
+        # The encoding in use is stated before any audio arrives, so a client
+        # never has to guess whether a packet is raw PCM or compressed.
+        await websocket.send_json(
+            {
+                "type": "voice.format",
+                "encoding": encoding,
+                "sample_rate": 48000,
+                "frame_samples": FRAME_SAMPLES,
+                "bitrate": settings.voice_opus_bitrate if encoder else None,
+            }
+        )
+        await websocket.send_json({"type": "voice.connected", "sample_rate": 48000, "frame_samples": FRAME_SAMPLES})
 
         async def publish():
             last_signal = time.monotonic()
@@ -150,7 +189,14 @@ async def native_voice(websocket: WebSocket, db: Session = Depends(get_db)):
                     continue
                 if sys.byteorder != "little":
                     samples.byteswap()
-                await asyncio.wait_for(websocket.send_bytes(samples.tobytes()), 0.25)
+                raw = samples.tobytes()
+                if encoder is not None:
+                    for frame in encoder.encode(raw):
+                        await asyncio.wait_for(
+                            websocket.send_bytes(bytes([OPUS_MARKER]) + frame), 0.25
+                        )
+                else:
+                    await asyncio.wait_for(websocket.send_bytes(raw), 0.25)
                 last_signal = time.monotonic()
         sender = asyncio.create_task(publish())
         window, count = time.monotonic(), 0

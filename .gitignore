@@ -6,6 +6,9 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 
+# Local test logs, screenshots, baseline copies, and disposable databases
+/test-output/
+
 # Virtual environments
 .venv/
 .venv*/
@@ -49,4 +52,8 @@ CHANGES.md
 
 # Godot PNG import metadata (regenerated automatically by the editor)
 *.png.import
+
+# Built native extensions (built by code/client/native/*/build scripts)
+code/client/native/*/bin/
+code/client/native/*/build/
 

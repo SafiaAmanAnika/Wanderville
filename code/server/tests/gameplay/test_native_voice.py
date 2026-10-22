@@ -39,7 +39,11 @@ def connect(stack, client, user, capabilities=None):
     if capabilities:
         auth["capabilities"] = list(capabilities)
     audio.send_json(auth)
-    assert audio.receive_json()["type"] == "voice.connected"
+    message = audio.receive_json()
+    if message["type"] == "voice.format":
+        # The server states the encoding it will use before any audio.
+        message = audio.receive_json()
+    assert message["type"] == "voice.connected"
     return ws, audio, sid
 
 

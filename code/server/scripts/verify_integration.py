@@ -181,7 +181,7 @@ if __name__ == "__main__":
             project.mkdir()
             # Junctions share immutable source resources; each test has its own
             # project config, import cache, user directory, and output log.
-            for name in ("Assets", "Scenes", "Scripts", "autoloads", "tests"):
+            for name in ("Assets", "Scenes", "Scripts", "autoloads", "tests", "native"):
                 if os.name == "nt":
                     subprocess.run(["cmd", "/c", "mklink", "/J", str(project / name), str(source / name)], check=True, capture_output=True)
                 else:

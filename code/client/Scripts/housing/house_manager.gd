@@ -26,6 +26,7 @@ var _item_name := ""
 var _arranging := false
 var _grab_position := Vector2.ZERO
 var _grab_dir := "front"
+var _grab_size := 1.0
 
 func _ready() -> void:
 	GameState.load_house()
@@ -257,13 +258,21 @@ func _start_furniture(item_name: String) -> void:
 		return
 	_item_ghost.set_ghost(true)
 	interior.add_child(_item_ghost)
-	HousePrompt.show_text("Left click to place (%d wood)  ·  R to rotate  ·  Right click to cancel" % FurnitureCatalog.cost(item_name))
+	HousePrompt.show_text("Left click to place (%d wood)  ·  R to rotate · I to increase & O to decrease · Right click to cancel" % FurnitureCatalog.cost(item_name))
 
 
 func _furniture_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_R:   # rotate
 		get_viewport().set_input_as_handled()
 		_item_ghost.rotate_next()
+		return
+	if event is InputEventKey and event.pressed and event.keycode == KEY_I:   # bigger
+		get_viewport().set_input_as_handled()
+		_resize_item(0.1)
+		return
+	if event is InputEventKey and event.pressed and event.keycode == KEY_O:   # smaller
+		get_viewport().set_input_as_handled()
+		_resize_item(-0.1)
 		return
 	if not (event is InputEventMouseButton and event.pressed):
 		return
@@ -284,7 +293,7 @@ func _furniture_input(event: InputEvent) -> void:
 	_item_ghost.set_ghost(false)                           # make it real
 	if not GameState.house.has("furniture"):
 		GameState.house["furniture"] = []
-	GameState.house["furniture"].append({"name": _item_name, "x": _item_ghost.position.x, "y": _item_ghost.position.y, "dir": _item_ghost.dir})
+	GameState.house["furniture"].append({"name": _item_name, "x": _item_ghost.position.x, "y": _item_ghost.position.y, "dir": _item_ghost.dir, "size": _item_ghost.size_factor})
 	GameState.save_house()
 	_item_ghost = null
 	if _arranging:
@@ -299,10 +308,11 @@ func _cancel_furniture() -> void:
 		if _arranging:                 # put it back instead of destroying it
 			_item_ghost.position = _grab_position
 			_item_ghost.set_dir(_grab_dir)
+			_item_ghost.set_size_factor(_grab_size)
 			_item_ghost.set_ghost(false)
 			if not GameState.house.has("furniture"):
 				GameState.house["furniture"] = []
-			GameState.house["furniture"].append({"name": _item_name, "x": _grab_position.x, "y": _grab_position.y, "dir": _grab_dir})
+			GameState.house["furniture"].append({"name": _item_name, "x": _grab_position.x, "y": _grab_position.y, "dir": _grab_dir, "size": _grab_size})
 			GameState.save_house()
 		else:
 			_item_ghost.queue_free()
@@ -317,7 +327,7 @@ func _toggle_arrange() -> void:
 	_arranging = not _arranging
 	_highlight_furniture(_arranging)
 	if _arranging:
-		HousePrompt.show_text("Rearranging  ·  Click a piece to pick it up  ·  R to rotate  ·  S when done")
+				HousePrompt.show_text("Rearranging  ·  Click a piece  ·  R rotate  ·  I to increase & O to decrease  ·  S when done")
 	else:
 		GameState.save_house()
 		HousePrompt.flash("Arrangement saved.")
@@ -339,6 +349,7 @@ func _grab_under_mouse() -> void:
 		return
 	_grab_position = piece.position
 	_grab_dir = piece.dir
+	_grab_size = piece.size_factor
 	_item_name = piece.id
 	_forget_furniture(piece.id, _grab_position)
 	_item_ghost = piece
@@ -365,6 +376,31 @@ func _forget_furniture(id: String, pos: Vector2) -> void:
 			saved.remove_at(i)
 			return
 
+# I / O while carrying: bigger or smaller, but never into a wall
+func _resize_item(step: float) -> void:
+	var before: float = _item_ghost.size_factor
+	_item_ghost.set_size_factor(before + step)
+	if _hits_wall(_item_ghost):
+		_item_ghost.set_size_factor(before)          # undo, it would not fit
+		HousePrompt.flash("It won't fit - that would hit the wall.", 2.0)
+
+
+# true if the piece's box overlaps the house walls at its current size
+func _hits_wall(piece: FurnitureItem) -> bool:
+	var walls := interior.get_node_or_null("WallCollision")
+	if walls == null:
+		return false
+	var rect: Rect2 = piece.picture_rect()
+	var box := RectangleShape2D.new()
+	box.size = rect.size
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = box
+	query.transform = Transform2D(0.0, rect.get_center())
+	query.collide_with_areas = false
+	for hit in piece.get_world_2d().direct_space_state.intersect_shape(query, 16):
+		if hit["collider"] == walls:
+			return true
+	return false
 # true if there's a floor tile under this point
 func _on_floor(pos: Vector2) -> bool:
 	var floor_name: String = GameState.house["floor"]
@@ -385,6 +421,7 @@ func _load_furniture() -> void:
 			continue          # item from the old library, not in the new pack
 		piece.position = Vector2(f["x"], f["y"])
 		interior.add_child(piece)
+		piece.set_size_factor(float(f.get("size", 1.0)))
 
 
 # ─── Leaving ─────────────────────────────────────────────────────────

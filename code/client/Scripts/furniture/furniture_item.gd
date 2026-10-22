@@ -11,11 +11,12 @@ var dir := "front"
 var _ghost := false
 var _sprite: Sprite2D
 var _shape: CollisionShape2D
+var size_factor := 1.0     
 
 
 func setup(item_id: String, facing: String = "front") -> void:
 	id = item_id
-	scale = Vector2.ONE * FURNITURE_SCALE   # picture and collision grow together
+	set_size_factor(size_factor) # picture and collision grow together
 	z_index = int(FurnitureCatalog.info(id).get("z_index", 0)) + 1 
 	_sprite = Sprite2D.new()
 	_sprite.centered = false
@@ -63,3 +64,9 @@ func picture_rect() -> Rect2:
 	if _sprite == null or _sprite.texture == null:
 		return Rect2(global_position, Vector2.ZERO)
 	return Rect2(global_position + _sprite.offset * scale, _sprite.texture.get_size() * scale)
+
+
+# half size to double size; the picture and the collision box both follow
+func set_size_factor(factor: float) -> void:
+	size_factor = clampf(factor, 0.5, 2.0)
+	scale = Vector2.ONE * FURNITURE_SCALE * size_factor

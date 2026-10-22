@@ -1,0 +1,134 @@
+{
+  "id": "string_lights",
+  "name": "String lights",
+  "category": "lights",
+  "size": [
+    175,
+    30
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "toggle",
+  "use_loop": true,
+  "use_description": "Bulbs twinkle in a wave (loop).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/lights/string_lights/front.png",
+    "left": "items/lights/string_lights/left.png",
+    "right": "items/lights/string_lights/right.png",
+    "back": "items/lights/string_lights/back.png"
+  },
+  "frame_size": [
+    79,
+    31
+  ],
+  "anchor": [
+    39,
+    31
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      1,
+      79,
+      30
+    ],
+    "left": [
+      2,
+      0,
+      74,
+      31
+    ],
+    "right": [
+      3,
+      0,
+      73,
+      31
+    ],
+    "back": [
+      0,
+      1,
+      79,
+      30
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    175,
+    30
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "lights_01.png",
+  "source_measured_bounds": {
+    "front": [
+      21,
+      1402,
+      240,
+      1485
+    ],
+    "left": [
+      290,
+      1402,
+      494,
+      1488
+    ],
+    "right": [
+      531,
+      1402,
+      734,
+      1488
+    ],
+    "back": [
+      784,
+      1402,
+      1003,
+      1484
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/lights.png",
+  "atlas_rects": {
+    "front": [
+      8,
+      557,
+      79,
+      31
+    ],
+    "left": [
+      104,
+      557,
+      79,
+      31
+    ],
+    "right": [
+      200,
+      557,
+      79,
+      31
+    ],
+    "back": [
+      296,
+      557,
+      79,
+      31
+    ]
+  }
+}

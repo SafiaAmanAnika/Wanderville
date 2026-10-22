@@ -1,0 +1,159 @@
+{
+  "id": "daybed",
+  "name": "Daybed",
+  "category": "bedroom",
+  "size": [
+    220,
+    115
+  ],
+  "z_index": 0,
+  "wood_cost": 3,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Cushions squish and fluff back.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/bedroom/daybed/front.png",
+    "left": "items/bedroom/daybed/left.png",
+    "right": "items/bedroom/daybed/right.png",
+    "back": "items/bedroom/daybed/back.png"
+  },
+  "frame_size": [
+    201,
+    115
+  ],
+  "anchor": [
+    100,
+    115
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      201,
+      115
+    ],
+    "left": [
+      8,
+      1,
+      185,
+      114
+    ],
+    "right": [
+      7,
+      1,
+      186,
+      114
+    ],
+    "back": [
+      0,
+      0,
+      200,
+      115
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      76,
+      201,
+      39
+    ],
+    "left": [
+      8,
+      77,
+      185,
+      38
+    ],
+    "right": [
+      7,
+      77,
+      186,
+      38
+    ],
+    "back": [
+      0,
+      76,
+      200,
+      39
+    ]
+  },
+  "source_front_size": [
+    220,
+    115
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    76,
+    220,
+    39
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "bedroom_01.png",
+  "source_measured_bounds": {
+    "front": [
+      50,
+      665,
+      242,
+      775
+    ],
+    "left": [
+      316,
+      665,
+      493,
+      774
+    ],
+    "right": [
+      531,
+      665,
+      709,
+      774
+    ],
+    "back": [
+      783,
+      665,
+      974,
+      775
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/bedroom.png",
+  "atlas_rects": {
+    "front": [
+      43,
+      629,
+      201,
+      115
+    ],
+    "left": [
+      331,
+      629,
+      201,
+      115
+    ],
+    "right": [
+      619,
+      629,
+      201,
+      115
+    ],
+    "back": [
+      907,
+      629,
+      201,
+      115
+    ]
+  }
+}

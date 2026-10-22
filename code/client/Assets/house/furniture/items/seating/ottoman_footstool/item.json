@@ -1,0 +1,159 @@
+{
+  "id": "ottoman_footstool",
+  "name": "Ottoman / footstool",
+  "category": "seating",
+  "size": [
+    70,
+    50
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Lid opens to show stored blankets (toggle).",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/seating/ottoman_footstool/front.png",
+    "left": "items/seating/ottoman_footstool/left.png",
+    "right": "items/seating/ottoman_footstool/right.png",
+    "back": "items/seating/ottoman_footstool/back.png"
+  },
+  "frame_size": [
+    64,
+    50
+  ],
+  "anchor": [
+    32,
+    50
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      64,
+      50
+    ],
+    "left": [
+      3,
+      5,
+      58,
+      45
+    ],
+    "right": [
+      3,
+      5,
+      58,
+      45
+    ],
+    "back": [
+      0,
+      0,
+      63,
+      50
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      33,
+      64,
+      17
+    ],
+    "left": [
+      3,
+      35,
+      58,
+      15
+    ],
+    "right": [
+      3,
+      35,
+      58,
+      15
+    ],
+    "back": [
+      0,
+      33,
+      63,
+      17
+    ]
+  },
+  "source_front_size": [
+    70,
+    50
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    33,
+    70,
+    17
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "seating_02.png",
+  "source_measured_bounds": {
+    "front": [
+      81,
+      1047,
+      228,
+      1162
+    ],
+    "left": [
+      342,
+      1057,
+      475,
+      1160
+    ],
+    "right": [
+      558,
+      1057,
+      692,
+      1160
+    ],
+    "back": [
+      800,
+      1047,
+      945,
+      1162
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/seating.png",
+  "atlas_rects": {
+    "front": [
+      128,
+      1534,
+      64,
+      50
+    ],
+    "left": [
+      448,
+      1534,
+      64,
+      50
+    ],
+    "right": [
+      768,
+      1534,
+      64,
+      50
+    ],
+    "back": [
+      1088,
+      1534,
+      64,
+      50
+    ]
+  }
+}

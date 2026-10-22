@@ -1,0 +1,134 @@
+{
+  "id": "picture_frame_on_wall",
+  "name": "Picture frame on wall",
+  "category": "decor",
+  "size": [
+    50,
+    60
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Straightens.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/picture_frame_on_wall/front.png",
+    "left": "items/decor/picture_frame_on_wall/left.png",
+    "right": "items/decor/picture_frame_on_wall/right.png",
+    "back": "items/decor/picture_frame_on_wall/back.png"
+  },
+  "frame_size": [
+    50,
+    50
+  ],
+  "anchor": [
+    25,
+    50
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      3,
+      50,
+      47
+    ],
+    "left": [
+      15,
+      0,
+      20,
+      50
+    ],
+    "right": [
+      15,
+      0,
+      20,
+      50
+    ],
+    "back": [
+      0,
+      3,
+      50,
+      47
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    50,
+    60
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_02.png",
+  "source_measured_bounds": {
+    "front": [
+      112,
+      37,
+      230,
+      148
+    ],
+    "left": [
+      385,
+      37,
+      433,
+      155
+    ],
+    "right": [
+      591,
+      37,
+      639,
+      155
+    ],
+    "back": [
+      795,
+      37,
+      912,
+      148
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      103,
+      1141,
+      50,
+      50
+    ],
+    "left": [
+      359,
+      1141,
+      50,
+      50
+    ],
+    "right": [
+      615,
+      1141,
+      50,
+      50
+    ],
+    "back": [
+      871,
+      1141,
+      50,
+      50
+    ]
+  }
+}

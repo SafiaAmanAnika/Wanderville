@@ -1,0 +1,134 @@
+{
+  "id": "big_rug",
+  "name": "Big rug",
+  "category": "decor",
+  "size": [
+    200,
+    130
+  ],
+  "z_index": -1,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Ripple wave across it.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/big_rug/front.png",
+    "left": "items/decor/big_rug/left.png",
+    "right": "items/decor/big_rug/right.png",
+    "back": "items/decor/big_rug/back.png"
+  },
+  "frame_size": [
+    200,
+    200
+  ],
+  "anchor": [
+    100,
+    200
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      97,
+      200,
+      103
+    ],
+    "left": [
+      48,
+      0,
+      103,
+      200
+    ],
+    "right": [
+      48,
+      0,
+      103,
+      200
+    ],
+    "back": [
+      0,
+      97,
+      200,
+      103
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    200,
+    130
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "flat floor surface; exact cardinal rotations of the same top art",
+  "source_sheet": "decor_01.png",
+  "source_measured_bounds": {
+    "front": [
+      25,
+      772,
+      255,
+      890
+    ],
+    "left": [
+      278,
+      781,
+      497,
+      881
+    ],
+    "right": [
+      527,
+      781,
+      747,
+      881
+    ],
+    "back": [
+      770,
+      772,
+      1000,
+      890
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      28,
+      455,
+      200,
+      200
+    ],
+    "left": [
+      284,
+      455,
+      200,
+      200
+    ],
+    "right": [
+      540,
+      455,
+      200,
+      200
+    ],
+    "back": [
+      796,
+      455,
+      200,
+      200
+    ]
+  }
+}

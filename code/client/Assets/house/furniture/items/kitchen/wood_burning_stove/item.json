@@ -1,0 +1,159 @@
+{
+  "id": "wood_burning_stove",
+  "name": "Wood-burning stove",
+  "category": "kitchen",
+  "size": [
+    100,
+    160
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": true,
+  "use_description": "Door opens, fire flickers (loop), smoke from pipe.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/kitchen/wood_burning_stove/front.png",
+    "left": "items/kitchen/wood_burning_stove/left.png",
+    "right": "items/kitchen/wood_burning_stove/right.png",
+    "back": "items/kitchen/wood_burning_stove/back.png"
+  },
+  "frame_size": [
+    95,
+    160
+  ],
+  "anchor": [
+    47,
+    160
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      95,
+      160
+    ],
+    "left": [
+      8,
+      0,
+      78,
+      160
+    ],
+    "right": [
+      8,
+      0,
+      78,
+      160
+    ],
+    "back": [
+      1,
+      0,
+      93,
+      160
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      106,
+      95,
+      54
+    ],
+    "left": [
+      8,
+      106,
+      78,
+      54
+    ],
+    "right": [
+      8,
+      106,
+      78,
+      54
+    ],
+    "back": [
+      1,
+      106,
+      93,
+      54
+    ]
+  },
+  "source_front_size": [
+    100,
+    160
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    106,
+    100,
+    54
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "kitchen_01.png",
+  "source_measured_bounds": {
+    "front": [
+      107,
+      422,
+      222,
+      616
+    ],
+    "left": [
+      569,
+      422,
+      663,
+      616
+    ],
+    "right": [
+      361,
+      422,
+      456,
+      616
+    ],
+    "back": [
+      803,
+      422,
+      916,
+      616
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/kitchen.png",
+  "atlas_rects": {
+    "front": [
+      64,
+      323,
+      95,
+      160
+    ],
+    "left": [
+      288,
+      323,
+      95,
+      160
+    ],
+    "right": [
+      512,
+      323,
+      95,
+      160
+    ],
+    "back": [
+      736,
+      323,
+      95,
+      160
+    ]
+  }
+}

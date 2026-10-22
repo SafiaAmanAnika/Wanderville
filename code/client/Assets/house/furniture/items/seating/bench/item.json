@@ -1,0 +1,159 @@
+{
+  "id": "bench",
+  "name": "Bench",
+  "category": "seating",
+  "size": [
+    175,
+    70
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Small creak shake.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/seating/bench/front.png",
+    "left": "items/seating/bench/left.png",
+    "right": "items/seating/bench/right.png",
+    "back": "items/seating/bench/back.png"
+  },
+  "frame_size": [
+    171,
+    70
+  ],
+  "anchor": [
+    85,
+    70
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      171,
+      70
+    ],
+    "left": [
+      22,
+      5,
+      126,
+      65
+    ],
+    "right": [
+      22,
+      5,
+      126,
+      65
+    ],
+    "back": [
+      0,
+      0,
+      171,
+      70
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      46,
+      171,
+      24
+    ],
+    "left": [
+      22,
+      48,
+      126,
+      22
+    ],
+    "right": [
+      22,
+      48,
+      126,
+      22
+    ],
+    "back": [
+      0,
+      46,
+      171,
+      24
+    ]
+  },
+  "source_front_size": [
+    175,
+    70
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    46,
+    175,
+    24
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "seating_02.png",
+  "source_measured_bounds": {
+    "front": [
+      36,
+      914,
+      276,
+      1012
+    ],
+    "left": [
+      317,
+      921,
+      493,
+      1012
+    ],
+    "right": [
+      539,
+      921,
+      716,
+      1012
+    ],
+    "back": [
+      752,
+      914,
+      992,
+      1012
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/seating.png",
+  "atlas_rects": {
+    "front": [
+      74,
+      1448,
+      171,
+      70
+    ],
+    "left": [
+      394,
+      1448,
+      171,
+      70
+    ],
+    "right": [
+      714,
+      1448,
+      171,
+      70
+    ],
+    "back": [
+      1034,
+      1448,
+      171,
+      70
+    ]
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "id": "shoe_rack",
+  "name": "Shoe rack",
+  "category": "tables_storage",
+  "size": [
+    100,
+    60
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Shoes pair up neatly.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tables_storage/shoe_rack/front.png",
+    "left": "items/tables_storage/shoe_rack/left.png",
+    "right": "items/tables_storage/shoe_rack/right.png",
+    "back": "items/tables_storage/shoe_rack/back.png"
+  },
+  "frame_size": [
+    100,
+    57
+  ],
+  "anchor": [
+    50,
+    57
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      5,
+      100,
+      52
+    ],
+    "left": [
+      30,
+      0,
+      40,
+      57
+    ],
+    "right": [
+      30,
+      0,
+      40,
+      57
+    ],
+    "back": [
+      1,
+      5,
+      98,
+      52
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      39,
+      100,
+      18
+    ],
+    "left": [
+      30,
+      38,
+      40,
+      19
+    ],
+    "right": [
+      30,
+      38,
+      40,
+      19
+    ],
+    "back": [
+      1,
+      39,
+      98,
+      18
+    ]
+  },
+  "source_front_size": [
+    100,
+    60
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    40,
+    100,
+    20
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tables_storage_03.png",
+  "source_measured_bounds": {
+    "front": [
+      117,
+      199,
+      310,
+      300
+    ],
+    "left": [
+      454,
+      191,
+      532,
+      301
+    ],
+    "right": [
+      650,
+      191,
+      727,
+      301
+    ],
+    "back": [
+      872,
+      199,
+      1062,
+      300
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tables_storage.png",
+  "atlas_rects": {
+    "front": [
+      78,
+      2436,
+      100,
+      57
+    ],
+    "left": [
+      334,
+      2436,
+      100,
+      57
+    ],
+    "right": [
+      590,
+      2436,
+      100,
+      57
+    ],
+    "back": [
+      846,
+      2436,
+      100,
+      57
+    ]
+  }
+}

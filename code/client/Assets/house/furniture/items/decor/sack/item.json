@@ -1,0 +1,134 @@
+{
+  "id": "sack",
+  "name": "Sack",
+  "category": "decor",
+  "size": [
+    50,
+    60
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Slumps and puffs up.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/sack/front.png",
+    "left": "items/decor/sack/left.png",
+    "right": "items/decor/sack/right.png",
+    "back": "items/decor/sack/back.png"
+  },
+  "frame_size": [
+    50,
+    51
+  ],
+  "anchor": [
+    25,
+    51
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      50,
+      51
+    ],
+    "left": [
+      5,
+      1,
+      39,
+      50
+    ],
+    "right": [
+      5,
+      1,
+      39,
+      50
+    ],
+    "back": [
+      0,
+      0,
+      50,
+      51
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    50,
+    60
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_03.png",
+  "source_measured_bounds": {
+    "front": [
+      151,
+      713,
+      271,
+      835
+    ],
+    "left": [
+      415,
+      714,
+      509,
+      835
+    ],
+    "right": [
+      613,
+      714,
+      706,
+      835
+    ],
+    "back": [
+      851,
+      713,
+      971,
+      835
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      103,
+      2676,
+      50,
+      51
+    ],
+    "left": [
+      359,
+      2676,
+      50,
+      51
+    ],
+    "right": [
+      615,
+      2676,
+      50,
+      51
+    ],
+    "back": [
+      871,
+      2676,
+      50,
+      51
+    ]
+  }
+}

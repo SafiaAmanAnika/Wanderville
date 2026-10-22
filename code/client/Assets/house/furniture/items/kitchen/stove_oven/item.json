@@ -1,0 +1,159 @@
+{
+  "id": "stove_oven",
+  "name": "Stove / oven",
+  "category": "kitchen",
+  "size": [
+    100,
+    115
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": true,
+  "use_description": "Burners light up (flames loop); pot on top bubbles. Click again: off.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/kitchen/stove_oven/front.png",
+    "left": "items/kitchen/stove_oven/left.png",
+    "right": "items/kitchen/stove_oven/right.png",
+    "back": "items/kitchen/stove_oven/back.png"
+  },
+  "frame_size": [
+    100,
+    115
+  ],
+  "anchor": [
+    50,
+    115
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      1,
+      100,
+      114
+    ],
+    "left": [
+      11,
+      0,
+      78,
+      115
+    ],
+    "right": [
+      11,
+      1,
+      78,
+      114
+    ],
+    "back": [
+      1,
+      1,
+      98,
+      114
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      77,
+      100,
+      38
+    ],
+    "left": [
+      11,
+      76,
+      78,
+      39
+    ],
+    "right": [
+      11,
+      77,
+      78,
+      38
+    ],
+    "back": [
+      1,
+      77,
+      98,
+      38
+    ]
+  },
+  "source_front_size": [
+    100,
+    115
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    76,
+    100,
+    39
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "kitchen_01.png",
+  "source_measured_bounds": {
+    "front": [
+      97,
+      262,
+      231,
+      415
+    ],
+    "left": [
+      569,
+      260,
+      674,
+      414
+    ],
+    "right": [
+      351,
+      261,
+      455,
+      414
+    ],
+    "back": [
+      796,
+      262,
+      927,
+      415
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/kitchen.png",
+  "atlas_rects": {
+    "front": [
+      62,
+      192,
+      100,
+      115
+    ],
+    "left": [
+      286,
+      192,
+      100,
+      115
+    ],
+    "right": [
+      510,
+      192,
+      100,
+      115
+    ],
+    "back": [
+      734,
+      192,
+      100,
+      115
+    ]
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "id": "ceiling_lamp",
+  "name": "Ceiling lamp",
+  "category": "lights",
+  "size": [
+    70,
+    70
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Swings a little, light turns on.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/lights/ceiling_lamp/front.png",
+    "left": "items/lights/ceiling_lamp/left.png",
+    "right": "items/lights/ceiling_lamp/right.png",
+    "back": "items/lights/ceiling_lamp/back.png"
+  },
+  "frame_size": [
+    70,
+    53
+  ],
+  "anchor": [
+    35,
+    53
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      70,
+      53
+    ],
+    "left": [
+      1,
+      7,
+      67,
+      46
+    ],
+    "right": [
+      1,
+      7,
+      68,
+      46
+    ],
+    "back": [
+      0,
+      0,
+      70,
+      53
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    70,
+    70
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "lights_01.png",
+  "source_measured_bounds": {
+    "front": [
+      42,
+      766,
+      214,
+      897
+    ],
+    "left": [
+      310,
+      768,
+      475,
+      882
+    ],
+    "right": [
+      550,
+      768,
+      717,
+      882
+    ],
+    "back": [
+      809,
+      766,
+      982,
+      897
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/lights.png",
+  "atlas_rects": {
+    "front": [
+      13,
+      333,
+      70,
+      53
+    ],
+    "left": [
+      109,
+      333,
+      70,
+      53
+    ],
+    "right": [
+      205,
+      333,
+      70,
+      53
+    ],
+    "back": [
+      301,
+      333,
+      70,
+      53
+    ]
+  }
+}

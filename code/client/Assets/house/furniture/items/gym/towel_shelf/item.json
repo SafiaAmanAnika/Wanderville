@@ -1,0 +1,159 @@
+{
+  "id": "towel_shelf",
+  "name": "Towel shelf",
+  "category": "gym",
+  "size": [
+    100,
+    115
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Towels fold and stack.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym/towel_shelf/front.png",
+    "left": "items/gym/towel_shelf/left.png",
+    "right": "items/gym/towel_shelf/right.png",
+    "back": "items/gym/towel_shelf/back.png"
+  },
+  "frame_size": [
+    101,
+    98
+  ],
+  "anchor": [
+    50,
+    98
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      100,
+      98
+    ],
+    "left": [
+      22,
+      0,
+      57,
+      98
+    ],
+    "right": [
+      22,
+      0,
+      56,
+      98
+    ],
+    "back": [
+      0,
+      1,
+      101,
+      97
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      65,
+      100,
+      33
+    ],
+    "left": [
+      22,
+      65,
+      57,
+      33
+    ],
+    "right": [
+      22,
+      65,
+      56,
+      33
+    ],
+    "back": [
+      0,
+      65,
+      101,
+      33
+    ]
+  },
+  "source_front_size": [
+    100,
+    115
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    76,
+    100,
+    39
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_03.png",
+  "source_measured_bounds": {
+    "front": [
+      49,
+      1196,
+      208,
+      1352
+    ],
+    "left": [
+      351,
+      1196,
+      441,
+      1352
+    ],
+    "right": [
+      584,
+      1196,
+      673,
+      1352
+    ],
+    "back": [
+      815,
+      1198,
+      976,
+      1352
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym.png",
+  "atlas_rects": {
+    "front": [
+      77,
+      3066,
+      101,
+      98
+    ],
+    "left": [
+      333,
+      3066,
+      101,
+      98
+    ],
+    "right": [
+      589,
+      3066,
+      101,
+      98
+    ],
+    "back": [
+      845,
+      3066,
+      101,
+      98
+    ]
+  }
+}

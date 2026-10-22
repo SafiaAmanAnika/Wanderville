@@ -1,0 +1,159 @@
+{
+  "id": "baby_crib",
+  "name": "Baby crib",
+  "category": "bedroom",
+  "size": [
+    85,
+    130
+  ],
+  "z_index": 0,
+  "wood_cost": 3,
+  "click_mode": "once",
+  "use_loop": true,
+  "use_description": "Rocks gently; mobile above spins (loop).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/bedroom/baby_crib/front.png",
+    "left": "items/bedroom/baby_crib/left.png",
+    "right": "items/bedroom/baby_crib/right.png",
+    "back": "items/bedroom/baby_crib/back.png"
+  },
+  "frame_size": [
+    108,
+    91
+  ],
+  "anchor": [
+    54,
+    91
+  ],
+  "visible_bounds": {
+    "front": [
+      11,
+      0,
+      85,
+      91
+    ],
+    "left": [
+      0,
+      5,
+      108,
+      86
+    ],
+    "right": [
+      0,
+      5,
+      108,
+      86
+    ],
+    "back": [
+      11,
+      0,
+      85,
+      91
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      11,
+      60,
+      85,
+      31
+    ],
+    "left": [
+      0,
+      62,
+      108,
+      29
+    ],
+    "right": [
+      0,
+      62,
+      108,
+      29
+    ],
+    "back": [
+      11,
+      60,
+      85,
+      31
+    ]
+  },
+  "source_front_size": [
+    85,
+    130
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    86,
+    85,
+    44
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "bedroom_01.png",
+  "source_measured_bounds": {
+    "front": [
+      86,
+      781,
+      204,
+      907
+    ],
+    "left": [
+      320,
+      793,
+      470,
+      912
+    ],
+    "right": [
+      554,
+      793,
+      704,
+      912
+    ],
+    "back": [
+      821,
+      781,
+      939,
+      907
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/bedroom.png",
+  "atlas_rects": {
+    "front": [
+      90,
+      760,
+      108,
+      91
+    ],
+    "left": [
+      378,
+      760,
+      108,
+      91
+    ],
+    "right": [
+      666,
+      760,
+      108,
+      91
+    ],
+    "back": [
+      954,
+      760,
+      108,
+      91
+    ]
+  }
+}

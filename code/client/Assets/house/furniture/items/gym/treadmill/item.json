@@ -1,0 +1,159 @@
+{
+  "id": "treadmill",
+  "name": "Treadmill",
+  "category": "gym",
+  "size": [
+    100,
+    205
+  ],
+  "z_index": 0,
+  "wood_cost": 3,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Belt moves, screen counts up (toggle).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym/treadmill/front.png",
+    "left": "items/gym/treadmill/left.png",
+    "right": "items/gym/treadmill/right.png",
+    "back": "items/gym/treadmill/back.png"
+  },
+  "frame_size": [
+    132,
+    121
+  ],
+  "anchor": [
+    66,
+    121
+  ],
+  "visible_bounds": {
+    "front": [
+      16,
+      0,
+      100,
+      121
+    ],
+    "left": [
+      0,
+      5,
+      132,
+      116
+    ],
+    "right": [
+      0,
+      5,
+      132,
+      116
+    ],
+    "back": [
+      16,
+      0,
+      100,
+      121
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      16,
+      80,
+      100,
+      41
+    ],
+    "left": [
+      0,
+      82,
+      132,
+      39
+    ],
+    "right": [
+      0,
+      82,
+      132,
+      39
+    ],
+    "back": [
+      16,
+      80,
+      100,
+      41
+    ]
+  },
+  "source_front_size": [
+    100,
+    205
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    136,
+    100,
+    69
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_01.png",
+  "source_measured_bounds": {
+    "front": [
+      72,
+      19,
+      182,
+      152
+    ],
+    "left": [
+      333,
+      23,
+      478,
+      151
+    ],
+    "right": [
+      548,
+      23,
+      693,
+      151
+    ],
+    "back": [
+      839,
+      19,
+      949,
+      152
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym.png",
+  "atlas_rects": {
+    "front": [
+      62,
+      8,
+      132,
+      121
+    ],
+    "left": [
+      318,
+      8,
+      132,
+      121
+    ],
+    "right": [
+      574,
+      8,
+      132,
+      121
+    ],
+    "back": [
+      830,
+      8,
+      132,
+      121
+    ]
+  }
+}

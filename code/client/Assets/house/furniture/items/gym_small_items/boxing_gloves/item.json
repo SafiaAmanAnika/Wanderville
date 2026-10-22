@@ -1,0 +1,134 @@
+{
+  "id": "boxing_gloves",
+  "name": "Boxing gloves",
+  "category": "gym_small_items",
+  "size": [
+    30,
+    25
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Bump together.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym_small_items/boxing_gloves/front.png",
+    "left": "items/gym_small_items/boxing_gloves/left.png",
+    "right": "items/gym_small_items/boxing_gloves/right.png",
+    "back": "items/gym_small_items/boxing_gloves/back.png"
+  },
+  "frame_size": [
+    30,
+    23
+  ],
+  "anchor": [
+    15,
+    23
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      30,
+      23
+    ],
+    "left": [
+      5,
+      0,
+      19,
+      23
+    ],
+    "right": [
+      5,
+      0,
+      19,
+      23
+    ],
+    "back": [
+      0,
+      0,
+      30,
+      23
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    30,
+    25
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_small_items_02.png",
+  "source_measured_bounds": {
+    "front": [
+      29,
+      880,
+      288,
+      1080
+    ],
+    "left": [
+      360,
+      876,
+      521,
+      1076
+    ],
+    "right": [
+      602,
+      876,
+      762,
+      1076
+    ],
+    "back": [
+      834,
+      880,
+      1093,
+      1076
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym_small_items.png",
+  "atlas_rects": {
+    "front": [
+      17,
+      356,
+      30,
+      23
+    ],
+    "left": [
+      81,
+      356,
+      30,
+      23
+    ],
+    "right": [
+      145,
+      356,
+      30,
+      23
+    ],
+    "back": [
+      209,
+      356,
+      30,
+      23
+    ]
+  }
+}

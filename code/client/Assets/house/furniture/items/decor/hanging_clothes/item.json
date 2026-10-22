@@ -1,0 +1,134 @@
+{
+  "id": "hanging_clothes",
+  "name": "Hanging clothes",
+  "category": "decor",
+  "size": [
+    50,
+    85
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Sway.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/hanging_clothes/front.png",
+    "left": "items/decor/hanging_clothes/left.png",
+    "right": "items/decor/hanging_clothes/right.png",
+    "back": "items/decor/hanging_clothes/back.png"
+  },
+  "frame_size": [
+    50,
+    54
+  ],
+  "anchor": [
+    25,
+    54
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      50,
+      54
+    ],
+    "left": [
+      13,
+      0,
+      23,
+      54
+    ],
+    "right": [
+      13,
+      0,
+      23,
+      54
+    ],
+    "back": [
+      0,
+      1,
+      50,
+      53
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    50,
+    85
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_03.png",
+  "source_measured_bounds": {
+    "front": [
+      142,
+      1088,
+      274,
+      1230
+    ],
+    "left": [
+      440,
+      1087,
+      500,
+      1230
+    ],
+    "right": [
+      620,
+      1087,
+      682,
+      1230
+    ],
+    "back": [
+      842,
+      1088,
+      975,
+      1229
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      103,
+      2847,
+      50,
+      54
+    ],
+    "left": [
+      359,
+      2847,
+      50,
+      54
+    ],
+    "right": [
+      615,
+      2847,
+      50,
+      54
+    ],
+    "back": [
+      871,
+      2847,
+      50,
+      54
+    ]
+  }
+}

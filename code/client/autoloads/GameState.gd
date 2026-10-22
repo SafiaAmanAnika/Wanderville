@@ -400,7 +400,7 @@ const HOUSE_SAVE := "user://house.json"
 
 # id: 0 = no house, 1-6 = which house
 # stage: "none" → "outer" → "walls" → "done"
-var house := {"id": 0, "position": Vector2.ZERO, "stage": "none", "floor": ""}
+var house := {"id": 0, "position": Vector2.ZERO, "stage": "none", "floor": "", "furniture": []}
 
 
 # how much wood is in the bag
@@ -446,3 +446,5 @@ func load_house() -> void:
 			"stage": str(data.get("stage", "none")),
 			"floor": str(data.get("floor", "")),
 		}
+	if not house.has("furniture"):
+		house["furniture"] = []

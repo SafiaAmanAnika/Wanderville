@@ -1,0 +1,159 @@
+{
+  "id": "heater",
+  "name": "Heater",
+  "category": "devices",
+  "size": [
+    70,
+    70
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Coils glow orange, heat waves (toggle).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/heater/front.png",
+    "left": "items/devices/heater/left.png",
+    "right": "items/devices/heater/right.png",
+    "back": "items/devices/heater/back.png"
+  },
+  "frame_size": [
+    70,
+    61
+  ],
+  "anchor": [
+    35,
+    61
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      3,
+      70,
+      58
+    ],
+    "left": [
+      16,
+      0,
+      37,
+      61
+    ],
+    "right": [
+      16,
+      0,
+      37,
+      61
+    ],
+    "back": [
+      0,
+      3,
+      70,
+      58
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      41,
+      70,
+      20
+    ],
+    "left": [
+      16,
+      40,
+      37,
+      21
+    ],
+    "right": [
+      16,
+      40,
+      37,
+      21
+    ],
+    "back": [
+      0,
+      41,
+      70,
+      20
+    ]
+  },
+  "source_front_size": [
+    70,
+    70
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    46,
+    70,
+    24
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_03.png",
+  "source_measured_bounds": {
+    "front": [
+      80,
+      386,
+      242,
+      521
+    ],
+    "left": [
+      357,
+      380,
+      443,
+      521
+    ],
+    "right": [
+      584,
+      380,
+      670,
+      521
+    ],
+    "back": [
+      783,
+      386,
+      945,
+      521
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      77,
+      2203,
+      70,
+      61
+    ],
+    "left": [
+      301,
+      2203,
+      70,
+      61
+    ],
+    "right": [
+      525,
+      2203,
+      70,
+      61
+    ],
+    "back": [
+      749,
+      2203,
+      70,
+      61
+    ]
+  }
+}

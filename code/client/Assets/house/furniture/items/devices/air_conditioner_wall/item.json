@@ -1,0 +1,134 @@
+{
+  "id": "air_conditioner_wall",
+  "name": "Air conditioner (wall)",
+  "category": "devices",
+  "size": [
+    115,
+    45
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Flap opens, cool air lines blow (toggle).",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/air_conditioner_wall/front.png",
+    "left": "items/devices/air_conditioner_wall/left.png",
+    "right": "items/devices/air_conditioner_wall/right.png",
+    "back": "items/devices/air_conditioner_wall/back.png"
+  },
+  "frame_size": [
+    115,
+    46
+  ],
+  "anchor": [
+    57,
+    46
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      3,
+      115,
+      43
+    ],
+    "left": [
+      35,
+      0,
+      44,
+      46
+    ],
+    "right": [
+      35,
+      0,
+      44,
+      46
+    ],
+    "back": [
+      0,
+      4,
+      115,
+      42
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    115,
+    45
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_02.png",
+  "source_measured_bounds": {
+    "front": [
+      30,
+      1407,
+      281,
+      1500
+    ],
+    "left": [
+      346,
+      1401,
+      443,
+      1501
+    ],
+    "right": [
+      582,
+      1401,
+      678,
+      1501
+    ],
+    "back": [
+      743,
+      1408,
+      994,
+      1500
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      54,
+      1998,
+      115,
+      46
+    ],
+    "left": [
+      278,
+      1998,
+      115,
+      46
+    ],
+    "right": [
+      502,
+      1998,
+      115,
+      46
+    ],
+    "back": [
+      726,
+      1998,
+      115,
+      46
+    ]
+  }
+}

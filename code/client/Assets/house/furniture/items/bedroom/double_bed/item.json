@@ -1,0 +1,161 @@
+{
+  "id": "double_bed",
+  "name": "Double bed",
+  "category": "bedroom",
+  "size": [
+    190,
+    230
+  ],
+  "z_index": 0,
+  "wood_cost": 3,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Same as single bed; two pillows fluff.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/bedroom/double_bed/front.png",
+    "left": "items/bedroom/double_bed/left.png",
+    "right": "items/bedroom/double_bed/right.png",
+    "back": "items/bedroom/double_bed/back.png"
+  },
+  "frame_size": [
+    232,
+    152
+  ],
+  "anchor": [
+    116,
+    152
+  ],
+  "visible_bounds": {
+    "front": [
+      21,
+      0,
+      190,
+      152
+    ],
+    "left": [
+      0,
+      9,
+      231,
+      143
+    ],
+    "right": [
+      0,
+      9,
+      232,
+      143
+    ],
+    "back": [
+      22,
+      2,
+      188,
+      150
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      21,
+      101,
+      190,
+      51
+    ],
+    "left": [
+      0,
+      104,
+      231,
+      48
+    ],
+    "right": [
+      0,
+      104,
+      232,
+      48
+    ],
+    "back": [
+      22,
+      102,
+      188,
+      50
+    ]
+  },
+  "source_front_size": [
+    190,
+    230
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    153,
+    190,
+    77
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "bedroom_01.png",
+  "source_measured_bounds": {
+    "front": [
+      58,
+      182,
+      233,
+      322
+    ],
+    "left": [
+      276,
+      182,
+      489,
+      314
+    ],
+    "right": [
+      535,
+      182,
+      749,
+      314
+    ],
+    "back": [
+      792,
+      182,
+      967,
+      322
+    ]
+  },
+  "corrected_views": [
+    "back"
+  ],
+  "source_directions_remapped": false,
+  "atlas": "atlases/bedroom.png",
+  "atlas_rects": {
+    "front": [
+      28,
+      153,
+      232,
+      152
+    ],
+    "left": [
+      316,
+      153,
+      232,
+      152
+    ],
+    "right": [
+      604,
+      153,
+      232,
+      152
+    ],
+    "back": [
+      892,
+      153,
+      232,
+      152
+    ]
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "id": "corner_l_sofa",
+  "name": "Corner / L sofa",
+  "category": "seating",
+  "size": [
+    275,
+    220
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Same as sofa; a blanket unfolds over the arm.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/seating/corner_l_sofa/front.png",
+    "left": "items/seating/corner_l_sofa/left.png",
+    "right": "items/seating/corner_l_sofa/right.png",
+    "back": "items/seating/corner_l_sofa/back.png"
+  },
+  "frame_size": [
+    275,
+    203
+  ],
+  "anchor": [
+    137,
+    203
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      54,
+      275,
+      149
+    ],
+    "left": [
+      49,
+      0,
+      177,
+      203
+    ],
+    "right": [
+      48,
+      0,
+      178,
+      203
+    ],
+    "back": [
+      9,
+      65,
+      257,
+      138
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      153,
+      275,
+      50
+    ],
+    "left": [
+      49,
+      135,
+      177,
+      68
+    ],
+    "right": [
+      48,
+      135,
+      178,
+      68
+    ],
+    "back": [
+      9,
+      157,
+      257,
+      46
+    ]
+  },
+  "source_front_size": [
+    275,
+    220
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    146,
+    275,
+    74
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "seating_02.png",
+  "source_measured_bounds": {
+    "front": [
+      21,
+      711,
+      340,
+      884
+    ],
+    "left": [
+      345,
+      716,
+      498,
+      872
+    ],
+    "right": [
+      540,
+      716,
+      703,
+      872
+    ],
+    "back": [
+      725,
+      711,
+      1000,
+      860
+    ]
+  },
+  "corrected_views": [
+    "left",
+    "right",
+    "back"
+  ],
+  "source_directions_remapped": false,
+  "atlas": "atlases/seating.png",
+  "atlas_rects": {
+    "front": [
+      22,
+      1229,
+      275,
+      203
+    ],
+    "left": [
+      342,
+      1229,
+      275,
+      203
+    ],
+    "right": [
+      662,
+      1229,
+      275,
+      203
+    ],
+    "back": [
+      982,
+      1229,
+      275,
+      203
+    ]
+  }
+}

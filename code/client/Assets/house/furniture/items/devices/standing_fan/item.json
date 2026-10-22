@@ -1,0 +1,159 @@
+{
+  "id": "standing_fan",
+  "name": "Standing fan",
+  "category": "devices",
+  "size": [
+    50,
+    130
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Blades spin, head turns side to side (toggle).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/standing_fan/front.png",
+    "left": "items/devices/standing_fan/left.png",
+    "right": "items/devices/standing_fan/right.png",
+    "back": "items/devices/standing_fan/back.png"
+  },
+  "frame_size": [
+    50,
+    71
+  ],
+  "anchor": [
+    25,
+    71
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      1,
+      50,
+      70
+    ],
+    "left": [
+      4,
+      1,
+      42,
+      70
+    ],
+    "right": [
+      4,
+      1,
+      42,
+      70
+    ],
+    "back": [
+      0,
+      0,
+      50,
+      71
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      47,
+      50,
+      24
+    ],
+    "left": [
+      4,
+      47,
+      42,
+      24
+    ],
+    "right": [
+      4,
+      47,
+      42,
+      24
+    ],
+    "back": [
+      0,
+      47,
+      50,
+      24
+    ]
+  },
+  "source_front_size": [
+    50,
+    130
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    86,
+    50,
+    44
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_03.png",
+  "source_measured_bounds": {
+    "front": [
+      99,
+      25,
+      222,
+      198
+    ],
+    "left": [
+      353,
+      25,
+      456,
+      198
+    ],
+    "right": [
+      569,
+      25,
+      672,
+      198
+    ],
+    "back": [
+      802,
+      25,
+      926,
+      199
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      87,
+      2060,
+      50,
+      71
+    ],
+    "left": [
+      311,
+      2060,
+      50,
+      71
+    ],
+    "right": [
+      535,
+      2060,
+      50,
+      71
+    ],
+    "back": [
+      759,
+      2060,
+      50,
+      71
+    ]
+  }
+}

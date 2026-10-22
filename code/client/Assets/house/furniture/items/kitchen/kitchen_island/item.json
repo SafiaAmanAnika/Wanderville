@@ -1,0 +1,159 @@
+{
+  "id": "kitchen_island",
+  "name": "Kitchen island",
+  "category": "kitchen",
+  "size": [
+    200,
+    115
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Chopping animation: knife chops veggies.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/kitchen/kitchen_island/front.png",
+    "left": "items/kitchen/kitchen_island/left.png",
+    "right": "items/kitchen/kitchen_island/right.png",
+    "back": "items/kitchen/kitchen_island/back.png"
+  },
+  "frame_size": [
+    201,
+    102
+  ],
+  "anchor": [
+    100,
+    102
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      200,
+      102
+    ],
+    "left": [
+      54,
+      0,
+      93,
+      102
+    ],
+    "right": [
+      54,
+      0,
+      92,
+      102
+    ],
+    "back": [
+      0,
+      0,
+      201,
+      102
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      68,
+      200,
+      34
+    ],
+    "left": [
+      54,
+      68,
+      93,
+      34
+    ],
+    "right": [
+      54,
+      68,
+      92,
+      34
+    ],
+    "back": [
+      0,
+      68,
+      201,
+      34
+    ]
+  },
+  "source_front_size": [
+    200,
+    115
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    76,
+    200,
+    39
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "kitchen_01.png",
+  "source_measured_bounds": {
+    "front": [
+      29,
+      1344,
+      310,
+      1488
+    ],
+    "left": [
+      547,
+      1344,
+      677,
+      1488
+    ],
+    "right": [
+      348,
+      1344,
+      477,
+      1488
+    ],
+    "back": [
+      713,
+      1344,
+      995,
+      1488
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/kitchen.png",
+  "atlas_rects": {
+    "front": [
+      11,
+      919,
+      201,
+      102
+    ],
+    "left": [
+      235,
+      919,
+      201,
+      102
+    ],
+    "right": [
+      459,
+      919,
+      201,
+      102
+    ],
+    "back": [
+      683,
+      919,
+      201,
+      102
+    ]
+  }
+}

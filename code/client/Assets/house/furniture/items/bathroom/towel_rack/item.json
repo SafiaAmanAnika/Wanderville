@@ -1,0 +1,134 @@
+{
+  "id": "towel_rack",
+  "name": "Towel rack",
+  "category": "bathroom",
+  "size": [
+    70,
+    45
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Towel folds neatly.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/bathroom/towel_rack/front.png",
+    "left": "items/bathroom/towel_rack/left.png",
+    "right": "items/bathroom/towel_rack/right.png",
+    "back": "items/bathroom/towel_rack/back.png"
+  },
+  "frame_size": [
+    69,
+    54
+  ],
+  "anchor": [
+    34,
+    54
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      9,
+      69,
+      45
+    ],
+    "left": [
+      19,
+      0,
+      31,
+      54
+    ],
+    "right": [
+      19,
+      0,
+      31,
+      54
+    ],
+    "back": [
+      0,
+      9,
+      69,
+      45
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    70,
+    45
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "bathroom_02.png",
+  "source_measured_bounds": {
+    "front": [
+      31,
+      538,
+      227,
+      666
+    ],
+    "left": [
+      532,
+      525,
+      619,
+      680
+    ],
+    "right": [
+      329,
+      525,
+      416,
+      680
+    ],
+    "back": [
+      720,
+      538,
+      917,
+      666
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/bathroom.png",
+  "atlas_rects": {
+    "front": [
+      61,
+      1235,
+      69,
+      54
+    ],
+    "left": [
+      253,
+      1235,
+      69,
+      54
+    ],
+    "right": [
+      445,
+      1235,
+      69,
+      54
+    ],
+    "back": [
+      637,
+      1235,
+      69,
+      54
+    ]
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "id": "flower_vase",
+  "name": "Flower vase",
+  "category": "decor",
+  "size": [
+    35,
+    60
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Flowers rearrange; a petal falls.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/flower_vase/front.png",
+    "left": "items/decor/flower_vase/left.png",
+    "right": "items/decor/flower_vase/right.png",
+    "back": "items/decor/flower_vase/back.png"
+  },
+  "frame_size": [
+    35,
+    46
+  ],
+  "anchor": [
+    17,
+    46
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      35,
+      46
+    ],
+    "left": [
+      2,
+      0,
+      30,
+      46
+    ],
+    "right": [
+      2,
+      0,
+      30,
+      46
+    ],
+    "back": [
+      0,
+      0,
+      35,
+      46
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    35,
+    60
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_01.png",
+  "source_measured_bounds": {
+    "front": [
+      81,
+      494,
+      185,
+      631
+    ],
+    "left": [
+      347,
+      494,
+      437,
+      631
+    ],
+    "right": [
+      588,
+      494,
+      678,
+      631
+    ],
+    "back": [
+      840,
+      494,
+      943,
+      631
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      110,
+      247,
+      35,
+      46
+    ],
+    "left": [
+      366,
+      247,
+      35,
+      46
+    ],
+    "right": [
+      622,
+      247,
+      35,
+      46
+    ],
+    "back": [
+      878,
+      247,
+      35,
+      46
+    ]
+  }
+}

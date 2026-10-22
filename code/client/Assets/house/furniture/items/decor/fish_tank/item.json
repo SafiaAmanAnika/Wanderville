@@ -1,0 +1,159 @@
+{
+  "id": "fish_tank",
+  "name": "Fish tank",
+  "category": "decor",
+  "size": [
+    100,
+    70
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": true,
+  "use_description": "Fish swim, bubbles (loop); click: food drops, fish swim up.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/fish_tank/front.png",
+    "left": "items/decor/fish_tank/left.png",
+    "right": "items/decor/fish_tank/right.png",
+    "back": "items/decor/fish_tank/back.png"
+  },
+  "frame_size": [
+    83,
+    70
+  ],
+  "anchor": [
+    41,
+    70
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      83,
+      70
+    ],
+    "left": [
+      17,
+      2,
+      49,
+      68
+    ],
+    "right": [
+      17,
+      2,
+      48,
+      68
+    ],
+    "back": [
+      0,
+      0,
+      82,
+      70
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      46,
+      83,
+      24
+    ],
+    "left": [
+      17,
+      47,
+      49,
+      23
+    ],
+    "right": [
+      17,
+      47,
+      48,
+      23
+    ],
+    "back": [
+      0,
+      46,
+      82,
+      24
+    ]
+  },
+  "source_front_size": [
+    100,
+    70
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    46,
+    100,
+    24
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_03.png",
+  "source_measured_bounds": {
+    "front": [
+      130,
+      190,
+      291,
+      325
+    ],
+    "left": [
+      418,
+      193,
+      512,
+      325
+    ],
+    "right": [
+      610,
+      194,
+      703,
+      325
+    ],
+    "back": [
+      832,
+      190,
+      991,
+      325
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      86,
+      2399,
+      83,
+      70
+    ],
+    "left": [
+      342,
+      2399,
+      83,
+      70
+    ],
+    "right": [
+      598,
+      2399,
+      83,
+      70
+    ],
+    "back": [
+      854,
+      2399,
+      83,
+      70
+    ]
+  }
+}

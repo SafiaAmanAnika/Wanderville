@@ -1,0 +1,159 @@
+{
+  "id": "stereo_speaker_set",
+  "name": "Stereo / speaker set",
+  "category": "devices",
+  "size": [
+    130,
+    115
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": true,
+  "use_description": "Speakers pulse, music notes float up (loop).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/stereo_speaker_set/front.png",
+    "left": "items/devices/stereo_speaker_set/left.png",
+    "right": "items/devices/stereo_speaker_set/right.png",
+    "back": "items/devices/stereo_speaker_set/back.png"
+  },
+  "frame_size": [
+    130,
+    83
+  ],
+  "anchor": [
+    65,
+    83
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      130,
+      83
+    ],
+    "left": [
+      20,
+      1,
+      89,
+      82
+    ],
+    "right": [
+      19,
+      1,
+      91,
+      82
+    ],
+    "back": [
+      0,
+      0,
+      130,
+      83
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      55,
+      130,
+      28
+    ],
+    "left": [
+      20,
+      55,
+      89,
+      28
+    ],
+    "right": [
+      19,
+      55,
+      91,
+      28
+    ],
+    "back": [
+      0,
+      55,
+      130,
+      28
+    ]
+  },
+  "source_front_size": [
+    130,
+    115
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    76,
+    130,
+    39
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_02.png",
+  "source_measured_bounds": {
+    "front": [
+      52,
+      38,
+      257,
+      169
+    ],
+    "left": [
+      340,
+      39,
+      481,
+      169
+    ],
+    "right": [
+      543,
+      39,
+      686,
+      169
+    ],
+    "back": [
+      767,
+      38,
+      972,
+      169
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      47,
+      1353,
+      130,
+      83
+    ],
+    "left": [
+      271,
+      1353,
+      130,
+      83
+    ],
+    "right": [
+      495,
+      1353,
+      130,
+      83
+    ],
+    "back": [
+      719,
+      1353,
+      130,
+      83
+    ]
+  }
+}

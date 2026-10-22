@@ -1,0 +1,134 @@
+{
+  "id": "wall_sconce",
+  "name": "Wall sconce",
+  "category": "lights",
+  "size": [
+    35,
+    50
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Turns on.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/lights/wall_sconce/front.png",
+    "left": "items/lights/wall_sconce/left.png",
+    "right": "items/lights/wall_sconce/right.png",
+    "back": "items/lights/wall_sconce/back.png"
+  },
+  "frame_size": [
+    46,
+    50
+  ],
+  "anchor": [
+    23,
+    50
+  ],
+  "visible_bounds": {
+    "front": [
+      6,
+      0,
+      33,
+      50
+    ],
+    "left": [
+      0,
+      7,
+      46,
+      43
+    ],
+    "right": [
+      0,
+      7,
+      45,
+      43
+    ],
+    "back": [
+      6,
+      1,
+      33,
+      49
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    35,
+    50
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "lights_01.png",
+  "source_measured_bounds": {
+    "front": [
+      85,
+      619,
+      171,
+      749
+    ],
+    "left": [
+      572,
+      618,
+      692,
+      730
+    ],
+    "right": [
+      333,
+      618,
+      451,
+      730
+    ],
+    "back": [
+      852,
+      618,
+      938,
+      746
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/lights.png",
+  "atlas_rects": {
+    "front": [
+      25,
+      267,
+      46,
+      50
+    ],
+    "left": [
+      121,
+      267,
+      46,
+      50
+    ],
+    "right": [
+      217,
+      267,
+      46,
+      50
+    ],
+    "back": [
+      313,
+      267,
+      46,
+      50
+    ]
+  }
+}

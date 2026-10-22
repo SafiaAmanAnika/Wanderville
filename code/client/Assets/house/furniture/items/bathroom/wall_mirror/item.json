@@ -1,0 +1,134 @@
+{
+  "id": "wall_mirror",
+  "name": "Wall mirror",
+  "category": "bathroom",
+  "size": [
+    70,
+    100
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Shine sweeps across the glass.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/bathroom/wall_mirror/front.png",
+    "left": "items/bathroom/wall_mirror/left.png",
+    "right": "items/bathroom/wall_mirror/right.png",
+    "back": "items/bathroom/wall_mirror/back.png"
+  },
+  "frame_size": [
+    70,
+    91
+  ],
+  "anchor": [
+    35,
+    91
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      2,
+      70,
+      89
+    ],
+    "left": [
+      21,
+      0,
+      27,
+      91
+    ],
+    "right": [
+      21,
+      0,
+      27,
+      91
+    ],
+    "back": [
+      0,
+      2,
+      70,
+      89
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    70,
+    100
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "bathroom_02.png",
+  "source_measured_bounds": {
+    "front": [
+      57,
+      725,
+      200,
+      907
+    ],
+    "left": [
+      354,
+      721,
+      410,
+      907
+    ],
+    "right": [
+      538,
+      721,
+      594,
+      907
+    ],
+    "back": [
+      749,
+      725,
+      892,
+      907
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/bathroom.png",
+  "atlas_rects": {
+    "front": [
+      61,
+      1305,
+      70,
+      91
+    ],
+    "left": [
+      253,
+      1305,
+      70,
+      91
+    ],
+    "right": [
+      445,
+      1305,
+      70,
+      91
+    ],
+    "back": [
+      637,
+      1305,
+      70,
+      91
+    ]
+  }
+}

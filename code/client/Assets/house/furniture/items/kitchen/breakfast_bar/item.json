@@ -1,0 +1,159 @@
+{
+  "id": "breakfast_bar",
+  "name": "Breakfast bar",
+  "category": "kitchen",
+  "size": [
+    200,
+    100
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Stools tuck in neatly.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/kitchen/breakfast_bar/front.png",
+    "left": "items/kitchen/breakfast_bar/left.png",
+    "right": "items/kitchen/breakfast_bar/right.png",
+    "back": "items/kitchen/breakfast_bar/back.png"
+  },
+  "frame_size": [
+    169,
+    100
+  ],
+  "anchor": [
+    84,
+    100
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      169,
+      100
+    ],
+    "left": [
+      40,
+      5,
+      89,
+      95
+    ],
+    "right": [
+      40,
+      5,
+      89,
+      95
+    ],
+    "back": [
+      1,
+      5,
+      166,
+      95
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      66,
+      169,
+      34
+    ],
+    "left": [
+      40,
+      68,
+      89,
+      32
+    ],
+    "right": [
+      40,
+      68,
+      89,
+      32
+    ],
+    "back": [
+      1,
+      68,
+      166,
+      32
+    ]
+  },
+  "source_front_size": [
+    200,
+    100
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    66,
+    200,
+    34
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "kitchen_02.png",
+  "source_measured_bounds": {
+    "front": [
+      20,
+      625,
+      300,
+      791
+    ],
+    "left": [
+      555,
+      628,
+      702,
+      786
+    ],
+    "right": [
+      358,
+      628,
+      505,
+      786
+    ],
+    "back": [
+      764,
+      625,
+      1040,
+      782
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/kitchen.png",
+  "atlas_rects": {
+    "front": [
+      27,
+      1399,
+      169,
+      100
+    ],
+    "left": [
+      251,
+      1399,
+      169,
+      100
+    ],
+    "right": [
+      475,
+      1399,
+      169,
+      100
+    ],
+    "back": [
+      699,
+      1399,
+      169,
+      100
+    ]
+  }
+}

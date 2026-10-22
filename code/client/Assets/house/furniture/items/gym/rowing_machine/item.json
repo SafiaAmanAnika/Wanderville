@@ -1,0 +1,159 @@
+{
+  "id": "rowing_machine",
+  "name": "Rowing machine",
+  "category": "gym",
+  "size": [
+    60,
+    230
+  ],
+  "z_index": 0,
+  "wood_cost": 3,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Seat slides back and forth, handle pulls (toggle).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym/rowing_machine/front.png",
+    "left": "items/gym/rowing_machine/left.png",
+    "right": "items/gym/rowing_machine/right.png",
+    "back": "items/gym/rowing_machine/back.png"
+  },
+  "frame_size": [
+    182,
+    92
+  ],
+  "anchor": [
+    91,
+    92
+  ],
+  "visible_bounds": {
+    "front": [
+      61,
+      0,
+      60,
+      92
+    ],
+    "left": [
+      0,
+      8,
+      182,
+      84
+    ],
+    "right": [
+      0,
+      8,
+      182,
+      84
+    ],
+    "back": [
+      56,
+      1,
+      69,
+      91
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      61,
+      61,
+      60,
+      31
+    ],
+    "left": [
+      0,
+      64,
+      182,
+      28
+    ],
+    "right": [
+      0,
+      64,
+      182,
+      28
+    ],
+    "back": [
+      56,
+      61,
+      69,
+      31
+    ]
+  },
+  "source_front_size": [
+    60,
+    230
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    153,
+    60,
+    77
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_01.png",
+  "source_measured_bounds": {
+    "front": [
+      91,
+      327,
+      165,
+      441
+    ],
+    "left": [
+      260,
+      333,
+      485,
+      436
+    ],
+    "right": [
+      541,
+      332,
+      765,
+      436
+    ],
+    "back": [
+      852,
+      326,
+      937,
+      438
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym.png",
+  "atlas_rects": {
+    "front": [
+      37,
+      263,
+      182,
+      92
+    ],
+    "left": [
+      293,
+      263,
+      182,
+      92
+    ],
+    "right": [
+      549,
+      263,
+      182,
+      92
+    ],
+    "back": [
+      805,
+      263,
+      182,
+      92
+    ]
+  }
+}

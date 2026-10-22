@@ -1,0 +1,134 @@
+{
+  "id": "pot_pan_on_wall",
+  "name": "Pot / pan on wall",
+  "category": "decor",
+  "size": [
+    45,
+    45
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Swings and clinks.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/pot_pan_on_wall/front.png",
+    "left": "items/decor/pot_pan_on_wall/left.png",
+    "right": "items/decor/pot_pan_on_wall/right.png",
+    "back": "items/decor/pot_pan_on_wall/back.png"
+  },
+  "frame_size": [
+    32,
+    45
+  ],
+  "anchor": [
+    16,
+    45
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      32,
+      45
+    ],
+    "left": [
+      7,
+      2,
+      18,
+      43
+    ],
+    "right": [
+      7,
+      2,
+      18,
+      43
+    ],
+    "back": [
+      0,
+      0,
+      31,
+      45
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    45,
+    45
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_03.png",
+  "source_measured_bounds": {
+    "front": [
+      159,
+      1240,
+      262,
+      1385
+    ],
+    "left": [
+      431,
+      1240,
+      488,
+      1380
+    ],
+    "right": [
+      634,
+      1240,
+      691,
+      1380
+    ],
+    "back": [
+      860,
+      1240,
+      961,
+      1385
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      112,
+      2917,
+      32,
+      45
+    ],
+    "left": [
+      368,
+      2917,
+      32,
+      45
+    ],
+    "right": [
+      624,
+      2917,
+      32,
+      45
+    ],
+    "back": [
+      880,
+      2917,
+      32,
+      45
+    ]
+  }
+}

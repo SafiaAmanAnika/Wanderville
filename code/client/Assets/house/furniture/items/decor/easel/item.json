@@ -1,0 +1,159 @@
+{
+  "id": "easel",
+  "name": "Easel",
+  "category": "decor",
+  "size": [
+    85,
+    175
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Brush paints a stroke; picture changes.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/easel/front.png",
+    "left": "items/decor/easel/left.png",
+    "right": "items/decor/easel/right.png",
+    "back": "items/decor/easel/back.png"
+  },
+  "frame_size": [
+    86,
+    116
+  ],
+  "anchor": [
+    43,
+    116
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      85,
+      116
+    ],
+    "left": [
+      13,
+      0,
+      59,
+      116
+    ],
+    "right": [
+      13,
+      0,
+      59,
+      116
+    ],
+    "back": [
+      0,
+      0,
+      86,
+      116
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      77,
+      85,
+      39
+    ],
+    "left": [
+      13,
+      77,
+      59,
+      39
+    ],
+    "right": [
+      13,
+      77,
+      59,
+      39
+    ],
+    "back": [
+      0,
+      77,
+      86,
+      39
+    ]
+  },
+  "source_front_size": [
+    85,
+    175
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    116,
+    85,
+    59
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_03.png",
+  "source_measured_bounds": {
+    "front": [
+      152,
+      15,
+      271,
+      177
+    ],
+    "left": [
+      424,
+      16,
+      506,
+      179
+    ],
+    "right": [
+      616,
+      16,
+      698,
+      179
+    ],
+    "back": [
+      851,
+      15,
+      971,
+      177
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      85,
+      2267,
+      86,
+      116
+    ],
+    "left": [
+      341,
+      2267,
+      86,
+      116
+    ],
+    "right": [
+      597,
+      2267,
+      86,
+      116
+    ],
+    "back": [
+      853,
+      2267,
+      86,
+      116
+    ]
+  }
+}

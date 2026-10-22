@@ -1,0 +1,159 @@
+{
+  "id": "loveseat",
+  "name": "Loveseat",
+  "category": "seating",
+  "size": [
+    160,
+    110
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Cushions squish; a pillow bounces.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/seating/loveseat/front.png",
+    "left": "items/seating/loveseat/left.png",
+    "right": "items/seating/loveseat/right.png",
+    "back": "items/seating/loveseat/back.png"
+  },
+  "frame_size": [
+    160,
+    100
+  ],
+  "anchor": [
+    80,
+    100
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      2,
+      160,
+      98
+    ],
+    "left": [
+      33,
+      0,
+      93,
+      100
+    ],
+    "right": [
+      33,
+      1,
+      93,
+      99
+    ],
+    "back": [
+      1,
+      2,
+      157,
+      98
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      67,
+      160,
+      33
+    ],
+    "left": [
+      33,
+      66,
+      93,
+      34
+    ],
+    "right": [
+      33,
+      67,
+      93,
+      33
+    ],
+    "back": [
+      1,
+      67,
+      157,
+      33
+    ]
+  },
+  "source_front_size": [
+    160,
+    110
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    73,
+    160,
+    37
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "seating_02.png",
+  "source_measured_bounds": {
+    "front": [
+      37,
+      371,
+      270,
+      513
+    ],
+    "left": [
+      334,
+      371,
+      469,
+      516
+    ],
+    "right": [
+      560,
+      371,
+      696,
+      515
+    ],
+    "back": [
+      762,
+      371,
+      990,
+      513
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/seating.png",
+  "atlas_rects": {
+    "front": [
+      80,
+      980,
+      160,
+      100
+    ],
+    "left": [
+      400,
+      980,
+      160,
+      100
+    ],
+    "right": [
+      720,
+      980,
+      160,
+      100
+    ],
+    "back": [
+      1040,
+      980,
+      160,
+      100
+    ]
+  }
+}

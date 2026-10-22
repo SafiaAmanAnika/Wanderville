@@ -1,0 +1,134 @@
+{
+  "id": "globe",
+  "name": "Globe",
+  "category": "decor",
+  "size": [
+    45,
+    65
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Spins, slowly stops.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/globe/front.png",
+    "left": "items/decor/globe/left.png",
+    "right": "items/decor/globe/right.png",
+    "back": "items/decor/globe/back.png"
+  },
+  "frame_size": [
+    45,
+    64
+  ],
+  "anchor": [
+    22,
+    64
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      45,
+      64
+    ],
+    "left": [
+      1,
+      0,
+      42,
+      64
+    ],
+    "right": [
+      1,
+      0,
+      43,
+      64
+    ],
+    "back": [
+      1,
+      0,
+      43,
+      64
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    45,
+    65
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_02.png",
+  "source_measured_bounds": {
+    "front": [
+      122,
+      976,
+      219,
+      1113
+    ],
+    "left": [
+      358,
+      975,
+      449,
+      1113
+    ],
+    "right": [
+      575,
+      975,
+      667,
+      1113
+    ],
+    "back": [
+      805,
+      975,
+      898,
+      1113
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      105,
+      1808,
+      45,
+      64
+    ],
+    "left": [
+      361,
+      1808,
+      45,
+      64
+    ],
+    "right": [
+      617,
+      1808,
+      45,
+      64
+    ],
+    "back": [
+      873,
+      1808,
+      45,
+      64
+    ]
+  }
+}

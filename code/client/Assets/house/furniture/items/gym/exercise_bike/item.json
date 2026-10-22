@@ -1,0 +1,159 @@
+{
+  "id": "exercise_bike",
+  "name": "Exercise bike",
+  "category": "gym",
+  "size": [
+    70,
+    130
+  ],
+  "z_index": 0,
+  "wood_cost": 3,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Pedals and wheel spin, screen counts up (toggle).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym/exercise_bike/front.png",
+    "left": "items/gym/exercise_bike/left.png",
+    "right": "items/gym/exercise_bike/right.png",
+    "back": "items/gym/exercise_bike/back.png"
+  },
+  "frame_size": [
+    88,
+    102
+  ],
+  "anchor": [
+    44,
+    102
+  ],
+  "visible_bounds": {
+    "front": [
+      9,
+      0,
+      70,
+      102
+    ],
+    "left": [
+      0,
+      2,
+      88,
+      100
+    ],
+    "right": [
+      0,
+      2,
+      87,
+      100
+    ],
+    "back": [
+      9,
+      1,
+      69,
+      101
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      9,
+      68,
+      70,
+      34
+    ],
+    "left": [
+      0,
+      68,
+      88,
+      34
+    ],
+    "right": [
+      0,
+      68,
+      87,
+      34
+    ],
+    "back": [
+      9,
+      68,
+      69,
+      34
+    ]
+  },
+  "source_front_size": [
+    70,
+    130
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    86,
+    70,
+    44
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_01.png",
+  "source_measured_bounds": {
+    "front": [
+      81,
+      174,
+      173,
+      308
+    ],
+    "left": [
+      333,
+      174,
+      448,
+      306
+    ],
+    "right": [
+      579,
+      174,
+      693,
+      306
+    ],
+    "back": [
+      851,
+      174,
+      942,
+      307
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym.png",
+  "atlas_rects": {
+    "front": [
+      84,
+      145,
+      88,
+      102
+    ],
+    "left": [
+      340,
+      145,
+      88,
+      102
+    ],
+    "right": [
+      596,
+      145,
+      88,
+      102
+    ],
+    "back": [
+      852,
+      145,
+      88,
+      102
+    ]
+  }
+}

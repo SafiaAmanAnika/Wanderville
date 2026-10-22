@@ -1,0 +1,159 @@
+{
+  "id": "umbrella_stand",
+  "name": "Umbrella stand",
+  "category": "decor",
+  "size": [
+    35,
+    70
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Umbrellas wobble.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/umbrella_stand/front.png",
+    "left": "items/decor/umbrella_stand/left.png",
+    "right": "items/decor/umbrella_stand/right.png",
+    "back": "items/decor/umbrella_stand/back.png"
+  },
+  "frame_size": [
+    35,
+    60
+  ],
+  "anchor": [
+    17,
+    60
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      35,
+      60
+    ],
+    "left": [
+      4,
+      1,
+      26,
+      59
+    ],
+    "right": [
+      4,
+      1,
+      26,
+      59
+    ],
+    "back": [
+      0,
+      0,
+      35,
+      60
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      40,
+      35,
+      20
+    ],
+    "left": [
+      4,
+      40,
+      26,
+      20
+    ],
+    "right": [
+      4,
+      40,
+      26,
+      20
+    ],
+    "back": [
+      0,
+      40,
+      35,
+      20
+    ]
+  },
+  "source_front_size": [
+    35,
+    70
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    46,
+    35,
+    24
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_03.png",
+  "source_measured_bounds": {
+    "front": [
+      171,
+      434,
+      258,
+      582
+    ],
+    "left": [
+      432,
+      435,
+      497,
+      582
+    ],
+    "right": [
+      625,
+      435,
+      690,
+      582
+    ],
+    "back": [
+      864,
+      434,
+      952,
+      582
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      110,
+      2547,
+      35,
+      60
+    ],
+    "left": [
+      366,
+      2547,
+      35,
+      60
+    ],
+    "right": [
+      622,
+      2547,
+      35,
+      60
+    ],
+    "back": [
+      878,
+      2547,
+      35,
+      60
+    ]
+  }
+}

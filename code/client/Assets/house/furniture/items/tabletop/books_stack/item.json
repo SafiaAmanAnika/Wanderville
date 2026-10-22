@@ -1,0 +1,134 @@
+{
+  "id": "books_stack",
+  "name": "Books (stack)",
+  "category": "tabletop",
+  "size": [
+    35,
+    35
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Messy stack \u2192 neat stack.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tabletop/books_stack/front.png",
+    "left": "items/tabletop/books_stack/left.png",
+    "right": "items/tabletop/books_stack/right.png",
+    "back": "items/tabletop/books_stack/back.png"
+  },
+  "frame_size": [
+    35,
+    27
+  ],
+  "anchor": [
+    17,
+    27
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      35,
+      27
+    ],
+    "left": [
+      2,
+      1,
+      30,
+      26
+    ],
+    "right": [
+      2,
+      1,
+      30,
+      26
+    ],
+    "back": [
+      0,
+      0,
+      35,
+      27
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    35,
+    35
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tabletop_03.png",
+  "source_measured_bounds": {
+    "front": [
+      45,
+      1341,
+      238,
+      1488
+    ],
+    "left": [
+      319,
+      1346,
+      483,
+      1488
+    ],
+    "right": [
+      542,
+      1346,
+      706,
+      1488
+    ],
+    "back": [
+      785,
+      1341,
+      980,
+      1488
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tabletop.png",
+  "atlas_rects": {
+    "front": [
+      14,
+      996,
+      35,
+      27
+    ],
+    "left": [
+      78,
+      996,
+      35,
+      27
+    ],
+    "right": [
+      142,
+      996,
+      35,
+      27
+    ],
+    "back": [
+      206,
+      996,
+      35,
+      27
+    ]
+  }
+}

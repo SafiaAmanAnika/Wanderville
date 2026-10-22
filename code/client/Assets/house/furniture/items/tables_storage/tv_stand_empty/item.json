@@ -1,0 +1,159 @@
+{
+  "id": "tv_stand_empty",
+  "name": "TV stand (empty)",
+  "category": "tables_storage",
+  "size": [
+    160,
+    70
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Small door opens (toggle).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tables_storage/tv_stand_empty/front.png",
+    "left": "items/tables_storage/tv_stand_empty/left.png",
+    "right": "items/tables_storage/tv_stand_empty/right.png",
+    "back": "items/tables_storage/tv_stand_empty/back.png"
+  },
+  "frame_size": [
+    160,
+    58
+  ],
+  "anchor": [
+    80,
+    58
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      160,
+      58
+    ],
+    "left": [
+      41,
+      0,
+      77,
+      58
+    ],
+    "right": [
+      41,
+      0,
+      78,
+      58
+    ],
+    "back": [
+      0,
+      0,
+      160,
+      58
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      38,
+      160,
+      20
+    ],
+    "left": [
+      41,
+      38,
+      77,
+      20
+    ],
+    "right": [
+      41,
+      38,
+      78,
+      20
+    ],
+    "back": [
+      0,
+      38,
+      160,
+      20
+    ]
+  },
+  "source_front_size": [
+    160,
+    70
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    46,
+    160,
+    24
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tables_storage_02.png",
+  "source_measured_bounds": {
+    "front": [
+      61,
+      1288,
+      324,
+      1384
+    ],
+    "left": [
+      395,
+      1288,
+      522,
+      1384
+    ],
+    "right": [
+      600,
+      1288,
+      728,
+      1384
+    ],
+    "back": [
+      799,
+      1288,
+      1062,
+      1384
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tables_storage.png",
+  "atlas_rects": {
+    "front": [
+      48,
+      2260,
+      160,
+      58
+    ],
+    "left": [
+      304,
+      2260,
+      160,
+      58
+    ],
+    "right": [
+      560,
+      2260,
+      160,
+      58
+    ],
+    "back": [
+      816,
+      2260,
+      160,
+      58
+    ]
+  }
+}

@@ -1,28 +1,33 @@
 extends Node2D
 # Runs the whole housing flow on the map.
 
-#fading for transition 
-var _fade: ColorRect 
-
 const MENU_SCRIPT := preload("res://Scripts/housing/house_menu.gd")
 const FLOOR_SCRIPT := preload("res://Scripts/housing/floor_picker.gd")
 const EXTERIOR_SCENE := preload("res://Scenes/house_exterior.tscn")
+const FURNITURE_MENU := preload("res://Scripts/furniture/furniture_menu.gd")
 
 var exterior: Node = null     # the house on the map
 var interior: Node = null     # the inside (far away)
 var inside := false
 
-# placement mode
+# fading for transition
+var _fade: ColorRect
+
+# house placement mode
 var _ghost: Sprite2D = null
 var _ghost_area: Area2D = null
 var _placing_id := 0
+
+# furniture placement mode
+var _item_ghost: FurnitureItem = null   # the furniture stuck to your mouse
+var _item_name := ""
 
 
 func _ready() -> void:
 	GameState.load_house()
 	if GameState.house["stage"] != "none":
 		_spawn_exterior.call_deferred()
-	
+
 	var layer := CanvasLayer.new()
 	layer.layer = 60
 	add_child(layer)
@@ -31,6 +36,7 @@ func _ready() -> void:
 	_fade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(_fade)
+
 
 # fade to black → do something (teleport) → fade back in; player can't move meanwhile
 func _transition(action: Callable) -> void:
@@ -45,11 +51,18 @@ func _transition(action: Callable) -> void:
 	await tween.finished
 	GameState.menu_open = false
 
-# ─── J: house menu ───────────────────────────────────────────────────
+
+# ─── Input: J (house menu) and F (furniture) ─────────────────────────
 
 func _unhandled_input(event: InputEvent) -> void:
-	if _ghost:
+	if _ghost:                      # placing the house
 		_placement_input(event)
+		return
+	if _item_ghost:                 # placing furniture
+		_furniture_input(event)
+		return
+	if inside and event.is_action_pressed("furniture") and not GameState.menu_open:
+		_open_furniture_menu()
 		return
 	if event.is_action_pressed("house_menu") and not GameState.menu_open and not inside:
 		if GameState.house["stage"] != "none":
@@ -58,6 +71,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		var menu = MENU_SCRIPT.new()
 		menu.picked.connect(_start_placement)
 		get_tree().current_scene.add_child(menu)
+
+
+func _process(_delta: float) -> void:
+	if _ghost:
+		_ghost.global_position = (get_global_mouse_position() / 32.0).floor() * 32.0   # snap to grid
+		_ghost.modulate = Color(0.6, 1, 0.6, 0.75) if _can_place() else Color(1, 0.5, 0.5, 0.75)
+	if _item_ghost:
+		_item_ghost.global_position = interior.get_global_mouse_position().snapped(Vector2(16, 16))
 
 
 # ─── Placing the outer layer ─────────────────────────────────────────
@@ -79,12 +100,6 @@ func _start_placement(id: int) -> void:
 	_ghost_area.add_child(shape)
 	_ghost.add_child(_ghost_area)
 	HousePrompt.show_text("Left click to place your house  ·  Right click to cancel")
-
-
-func _process(_delta: float) -> void:
-	if _ghost:
-		_ghost.global_position = (get_global_mouse_position() / 32.0).floor() * 32.0   # snap to grid
-		_ghost.modulate = Color(0.6, 1, 0.6, 0.75) if _can_place() else Color(1, 0.5, 0.5, 0.75)
 
 
 func _can_place() -> bool:
@@ -110,7 +125,7 @@ func _placement_input(event: InputEvent) -> void:
 		HousePrompt.flash("You need %d wood to build the outer layer." % HouseCatalog.OUTER_COST)
 		_end_placement()
 		return
-	GameState.house = {"id": _placing_id, "position": _ghost.global_position, "stage": "outer", "floor": ""}
+	GameState.house = {"id": _placing_id, "position": _ghost.global_position, "stage": "outer", "floor": "", "furniture": []}
 	GameState.save_house()
 	_end_placement()
 	_spawn_exterior()
@@ -133,7 +148,7 @@ func _spawn_exterior() -> void:
 	exterior.clicked.connect(_on_exterior_clicked)
 
 
-# ─── Clicking the house: walls + going inside ────────────────────────
+# ─── H at the door: walls + going inside ─────────────────────────────
 
 func _on_exterior_clicked() -> void:
 	match GameState.house["stage"]:
@@ -154,6 +169,7 @@ func _enter_house() -> void:
 		get_parent().add_child(interior)
 		interior.global_position = HouseCatalog.INTERIOR_POSITION
 		interior.exited.connect(_leave_house)
+		_load_furniture()
 	interior.show_floor(GameState.house["floor"])
 	await _transition(func() -> void:
 		APIClient.realtime.pause_movement = true
@@ -162,6 +178,8 @@ func _enter_house() -> void:
 	inside = true
 	if GameState.house["stage"] == "walls":
 		_offer_floor()      # after the fade, so the picker isn't covered
+	else:
+		HousePrompt.flash("Press F to add furniture  ·  Go to the stairs to exit the house", 4.0)
 
 
 # ─── Floor ───────────────────────────────────────────────────────────
@@ -188,19 +206,103 @@ func _on_floor_chosen(floor_name: String) -> void:
 	GameState.house["stage"] = "done"
 	GameState.save_house()
 	interior.show_floor(floor_name)
-	HousePrompt.flash("Your house is finished! Go to the stairs to exit the house", 4.0)
+	HousePrompt.flash("Your house is finished! Press F to add furniture  ·  Go to the stairs to exit", 4.0)
+
+
+# ─── Furniture ───────────────────────────────────────────────────────
+
+func _open_furniture_menu() -> void:
+	if GameState.house["stage"] != "done":
+		HousePrompt.flash("Build the floor first.")
+		return
+	var menu = FURNITURE_MENU.new()
+	menu.picked.connect(_start_furniture)
+	get_tree().current_scene.add_child(menu)
+
+
+func _start_furniture(item_name: String) -> void:
+	_item_name = item_name
+	_item_ghost = FurnitureCatalog.make(item_name)
+	if _item_ghost == null:
+		HousePrompt.flash("That item is missing from the furniture pack.")
+		return
+	_item_ghost.set_ghost(true)
+	interior.add_child(_item_ghost)
+	HousePrompt.show_text("Left click to place (%d wood)  ·  R to rotate  ·  Right click to cancel" % FurnitureCatalog.cost(item_name))
+
+
+func _furniture_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_R:   # rotate
+		get_viewport().set_input_as_handled()
+		_item_ghost.rotate_next()
+		return
+	if not (event is InputEventMouseButton and event.pressed):
+		return
+	get_viewport().set_input_as_handled()
+	if event.button_index == MOUSE_BUTTON_RIGHT:          # cancel
+		_cancel_furniture()
+		return
+	if event.button_index != MOUSE_BUTTON_LEFT:
+		return
+	if not _on_floor(_item_ghost.global_position):
+		HousePrompt.flash("Place it on the floor.")
+		return
+	var cost := FurnitureCatalog.cost(_item_name)
+	if not GameState.spend_wood(cost):
+		HousePrompt.flash("You need %d wood for this." % cost)
+		return
+	_item_ghost.set_ghost(false)                           # make it real
+	if not GameState.house.has("furniture"):
+		GameState.house["furniture"] = []
+	GameState.house["furniture"].append({"name": _item_name, "x": _item_ghost.position.x, "y": _item_ghost.position.y, "dir": _item_ghost.dir})
+	GameState.save_house()
+	_item_ghost = null
+	HousePrompt.flash("Placed!")
+
+
+func _cancel_furniture() -> void:
+	if _item_ghost:
+		_item_ghost.queue_free()
+	_item_ghost = null
+	HousePrompt.hide_text()
+
+
+# true if there's a floor tile under this point
+func _on_floor(pos: Vector2) -> bool:
+	var floor_name: String = GameState.house["floor"]
+	if floor_name == "":
+		return false
+	var floor_layer := interior.get_node_or_null(floor_name) as TileMapLayer
+	if floor_layer == null:
+		return true      # floor isn't a TileMapLayer → allow anywhere
+	var cell := floor_layer.local_to_map(floor_layer.to_local(pos))
+	return floor_layer.get_cell_source_id(cell) != -1
+
+
+# puts back everything that was placed before (after a restart)
+func _load_furniture() -> void:
+	for f in GameState.house.get("furniture", []):
+		var piece := FurnitureCatalog.make(f["name"], f.get("dir", "front"))
+		if piece == null:
+			continue          # item from the old library, not in the new pack
+		piece.position = Vector2(f["x"], f["y"])
+		interior.add_child(piece)
+
+
 # ─── Leaving ─────────────────────────────────────────────────────────
 
 func _leave_house() -> void:
 	if not inside:
 		return
+	_cancel_furniture()
 	inside = false
 	HousePrompt.hide_text()
 	await _transition(func() -> void:
 		var player := get_tree().get_first_node_in_group("player") as Node2D
 		player.global_position = exterior.door_position()
 		APIClient.realtime.pause_movement = false)
-	
+
+
 # ─── Sell / destroy the house ────────────────────────────────────────
 
 func _sell_price() -> int:
@@ -246,13 +348,14 @@ func _destroy_house() -> void:
 
 # removes the house on the map, the inside and everything in it, and clears the save
 func _clear_house() -> void:
+	_cancel_furniture()
 	if exterior:
 		exterior.queue_free()
 		exterior = null
 	if interior:
-		interior.queue_free()      # the inside, with everything placed in it
+		interior.queue_free()      # the inside, with all furniture in it
 		interior = null
 	inside = false
-	GameState.house = {"id": 0, "position": Vector2.ZERO, "stage": "none", "floor": ""}
+	GameState.house = {"id": 0, "position": Vector2.ZERO, "stage": "none", "floor": "", "furniture": []}
 	GameState.save_house()
 	APIClient.realtime.pause_movement = false

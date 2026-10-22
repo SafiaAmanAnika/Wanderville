@@ -1,0 +1,159 @@
+{
+  "id": "floor_speaker",
+  "name": "Floor speaker",
+  "category": "devices",
+  "size": [
+    50,
+    100
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Cone pulses to the beat.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/floor_speaker/front.png",
+    "left": "items/devices/floor_speaker/left.png",
+    "right": "items/devices/floor_speaker/right.png",
+    "back": "items/devices/floor_speaker/back.png"
+  },
+  "frame_size": [
+    51,
+    90
+  ],
+  "anchor": [
+    25,
+    90
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      2,
+      50,
+      88
+    ],
+    "left": [
+      0,
+      3,
+      50,
+      87
+    ],
+    "right": [
+      0,
+      3,
+      50,
+      87
+    ],
+    "back": [
+      0,
+      0,
+      51,
+      90
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      60,
+      50,
+      30
+    ],
+    "left": [
+      0,
+      61,
+      50,
+      29
+    ],
+    "right": [
+      0,
+      61,
+      50,
+      29
+    ],
+    "back": [
+      0,
+      60,
+      51,
+      30
+    ]
+  },
+  "source_front_size": [
+    50,
+    100
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    66,
+    50,
+    34
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_02.png",
+  "source_measured_bounds": {
+    "front": [
+      114,
+      190,
+      194,
+      331
+    ],
+    "left": [
+      578,
+      195,
+      658,
+      334
+    ],
+    "right": [
+      367,
+      195,
+      447,
+      334
+    ],
+    "back": [
+      831,
+      190,
+      912,
+      334
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      86,
+      1452,
+      51,
+      90
+    ],
+    "left": [
+      310,
+      1452,
+      51,
+      90
+    ],
+    "right": [
+      534,
+      1452,
+      51,
+      90
+    ],
+    "back": [
+      758,
+      1452,
+      51,
+      90
+    ]
+  }
+}

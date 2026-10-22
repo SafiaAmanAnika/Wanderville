@@ -1,0 +1,163 @@
+{
+  "id": "workbench",
+  "name": "Workbench",
+  "category": "tables_storage",
+  "size": [
+    175,
+    115
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Hammer taps, sparks/sawdust puff (play once).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tables_storage/workbench/front.png",
+    "left": "items/tables_storage/workbench/left.png",
+    "right": "items/tables_storage/workbench/right.png",
+    "back": "items/tables_storage/workbench/back.png"
+  },
+  "frame_size": [
+    175,
+    94
+  ],
+  "anchor": [
+    87,
+    94
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      6,
+      175,
+      88
+    ],
+    "left": [
+      32,
+      1,
+      111,
+      93
+    ],
+    "right": [
+      32,
+      1,
+      111,
+      93
+    ],
+    "back": [
+      0,
+      0,
+      175,
+      94
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      64,
+      175,
+      30
+    ],
+    "left": [
+      32,
+      63,
+      111,
+      31
+    ],
+    "right": [
+      32,
+      63,
+      111,
+      31
+    ],
+    "back": [
+      0,
+      62,
+      175,
+      32
+    ]
+  },
+  "source_front_size": [
+    175,
+    115
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    76,
+    175,
+    39
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tables_storage_03.png",
+  "source_measured_bounds": {
+    "front": [
+      79,
+      459,
+      326,
+      583
+    ],
+    "left": [
+      365,
+      465,
+      573,
+      580
+    ],
+    "right": [
+      608,
+      465,
+      816,
+      580
+    ],
+    "back": [
+      855,
+      459,
+      1102,
+      583
+    ]
+  },
+  "corrected_views": [
+    "left",
+    "right",
+    "back"
+  ],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tables_storage.png",
+  "atlas_rects": {
+    "front": [
+      40,
+      2627,
+      175,
+      94
+    ],
+    "left": [
+      296,
+      2627,
+      175,
+      94
+    ],
+    "right": [
+      552,
+      2627,
+      175,
+      94
+    ],
+    "back": [
+      808,
+      2627,
+      175,
+      94
+    ]
+  }
+}

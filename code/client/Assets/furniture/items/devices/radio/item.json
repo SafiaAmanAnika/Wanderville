@@ -1,0 +1,134 @@
+{
+  "id": "radio",
+  "name": "Radio",
+  "category": "devices",
+  "size": [
+    50,
+    40
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Dial turns, music notes float (toggle).",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/radio/front.png",
+    "left": "items/devices/radio/left.png",
+    "right": "items/devices/radio/right.png",
+    "back": "items/devices/radio/back.png"
+  },
+  "frame_size": [
+    50,
+    39
+  ],
+  "anchor": [
+    25,
+    39
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      2,
+      50,
+      37
+    ],
+    "left": [
+      12,
+      0,
+      26,
+      39
+    ],
+    "right": [
+      12,
+      0,
+      26,
+      39
+    ],
+    "back": [
+      0,
+      2,
+      50,
+      37
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    50,
+    40
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_02.png",
+  "source_measured_bounds": {
+    "front": [
+      71,
+      550,
+      239,
+      673
+    ],
+    "left": [
+      573,
+      543,
+      662,
+      673
+    ],
+    "right": [
+      363,
+      543,
+      451,
+      673
+    ],
+    "back": [
+      786,
+      550,
+      955,
+      673
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      87,
+      1669,
+      50,
+      39
+    ],
+    "left": [
+      311,
+      1669,
+      50,
+      39
+    ],
+    "right": [
+      535,
+      1669,
+      50,
+      39
+    ],
+    "back": [
+      759,
+      1669,
+      50,
+      39
+    ]
+  }
+}

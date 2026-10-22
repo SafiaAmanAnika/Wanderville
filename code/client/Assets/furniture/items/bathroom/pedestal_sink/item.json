@@ -1,0 +1,159 @@
+{
+  "id": "pedestal_sink",
+  "name": "Pedestal sink",
+  "category": "bathroom",
+  "size": [
+    70,
+    100
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Tap runs.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/bathroom/pedestal_sink/front.png",
+    "left": "items/bathroom/pedestal_sink/left.png",
+    "right": "items/bathroom/pedestal_sink/right.png",
+    "back": "items/bathroom/pedestal_sink/back.png"
+  },
+  "frame_size": [
+    70,
+    94
+  ],
+  "anchor": [
+    35,
+    94
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      70,
+      94
+    ],
+    "left": [
+      3,
+      2,
+      64,
+      92
+    ],
+    "right": [
+      3,
+      2,
+      64,
+      92
+    ],
+    "back": [
+      2,
+      3,
+      66,
+      91
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      62,
+      70,
+      32
+    ],
+    "left": [
+      3,
+      63,
+      64,
+      31
+    ],
+    "right": [
+      3,
+      63,
+      64,
+      31
+    ],
+    "back": [
+      2,
+      63,
+      66,
+      31
+    ]
+  },
+  "source_front_size": [
+    70,
+    100
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    66,
+    70,
+    34
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "bathroom_01.png",
+  "source_measured_bounds": {
+    "front": [
+      74,
+      410,
+      208,
+      589
+    ],
+    "left": [
+      598,
+      408,
+      721,
+      584
+    ],
+    "right": [
+      340,
+      408,
+      463,
+      584
+    ],
+    "back": [
+      855,
+      409,
+      982,
+      584
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/bathroom.png",
+  "atlas_rects": {
+    "front": [
+      61,
+      231,
+      70,
+      94
+    ],
+    "left": [
+      253,
+      231,
+      70,
+      94
+    ],
+    "right": [
+      445,
+      231,
+      70,
+      94
+    ],
+    "back": [
+      637,
+      231,
+      70,
+      94
+    ]
+  }
+}

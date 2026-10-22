@@ -1,0 +1,161 @@
+{
+  "id": "desk",
+  "name": "Desk",
+  "category": "tables_storage",
+  "size": [
+    160,
+    110
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Papers sort into a stack; drawer opens.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tables_storage/desk/front.png",
+    "left": "items/tables_storage/desk/left.png",
+    "right": "items/tables_storage/desk/right.png",
+    "back": "items/tables_storage/desk/back.png"
+  },
+  "frame_size": [
+    160,
+    109
+  ],
+  "anchor": [
+    80,
+    109
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      160,
+      109
+    ],
+    "left": [
+      34,
+      0,
+      92,
+      109
+    ],
+    "right": [
+      34,
+      0,
+      92,
+      109
+    ],
+    "back": [
+      1,
+      8,
+      158,
+      101
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      72,
+      160,
+      37
+    ],
+    "left": [
+      34,
+      72,
+      92,
+      37
+    ],
+    "right": [
+      34,
+      72,
+      92,
+      37
+    ],
+    "back": [
+      1,
+      75,
+      158,
+      34
+    ]
+  },
+  "source_front_size": [
+    160,
+    110
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    73,
+    160,
+    37
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tables_storage_01.png",
+  "source_measured_bounds": {
+    "front": [
+      51,
+      817,
+      250,
+      953
+    ],
+    "left": [
+      556,
+      817,
+      670,
+      952
+    ],
+    "right": [
+      354,
+      817,
+      469,
+      952
+    ],
+    "back": [
+      773,
+      817,
+      974,
+      947
+    ]
+  },
+  "corrected_views": [
+    "back"
+  ],
+  "source_directions_remapped": true,
+  "atlas": "atlases/tables_storage.png",
+  "atlas_rects": {
+    "front": [
+      48,
+      670,
+      160,
+      109
+    ],
+    "left": [
+      304,
+      670,
+      160,
+      109
+    ],
+    "right": [
+      560,
+      670,
+      160,
+      109
+    ],
+    "back": [
+      816,
+      670,
+      160,
+      109
+    ]
+  }
+}

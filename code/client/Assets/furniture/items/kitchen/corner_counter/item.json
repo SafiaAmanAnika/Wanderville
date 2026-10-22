@@ -1,0 +1,159 @@
+{
+  "id": "corner_counter",
+  "name": "Corner counter",
+  "category": "kitchen",
+  "size": [
+    115,
+    115
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Lazy-susan shelf spins.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/kitchen/corner_counter/front.png",
+    "left": "items/kitchen/corner_counter/left.png",
+    "right": "items/kitchen/corner_counter/right.png",
+    "back": "items/kitchen/corner_counter/back.png"
+  },
+  "frame_size": [
+    115,
+    83
+  ],
+  "anchor": [
+    57,
+    83
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      115,
+      83
+    ],
+    "left": [
+      28,
+      2,
+      59,
+      81
+    ],
+    "right": [
+      28,
+      2,
+      58,
+      81
+    ],
+    "back": [
+      0,
+      0,
+      114,
+      83
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      55,
+      115,
+      28
+    ],
+    "left": [
+      28,
+      56,
+      59,
+      27
+    ],
+    "right": [
+      28,
+      56,
+      58,
+      27
+    ],
+    "back": [
+      0,
+      55,
+      114,
+      28
+    ]
+  },
+  "source_front_size": [
+    115,
+    115
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    76,
+    115,
+    39
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "kitchen_01.png",
+  "source_measured_bounds": {
+    "front": [
+      54,
+      796,
+      271,
+      952
+    ],
+    "left": [
+      561,
+      804,
+      672,
+      956
+    ],
+    "right": [
+      354,
+      804,
+      463,
+      956
+    ],
+    "back": [
+      754,
+      796,
+      970,
+      952
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/kitchen.png",
+  "atlas_rects": {
+    "front": [
+      54,
+      592,
+      115,
+      83
+    ],
+    "left": [
+      278,
+      592,
+      115,
+      83
+    ],
+    "right": [
+      502,
+      592,
+      115,
+      83
+    ],
+    "back": [
+      726,
+      592,
+      115,
+      83
+    ]
+  }
+}

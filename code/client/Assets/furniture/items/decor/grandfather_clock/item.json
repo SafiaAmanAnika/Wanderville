@@ -1,0 +1,159 @@
+{
+  "id": "grandfather_clock",
+  "name": "Grandfather clock",
+  "category": "decor",
+  "size": [
+    65,
+    205
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": true,
+  "use_description": "Pendulum swings (loop); click: chime shake.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/grandfather_clock/front.png",
+    "left": "items/decor/grandfather_clock/left.png",
+    "right": "items/decor/grandfather_clock/right.png",
+    "back": "items/decor/grandfather_clock/back.png"
+  },
+  "frame_size": [
+    65,
+    135
+  ],
+  "anchor": [
+    32,
+    135
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      65,
+      135
+    ],
+    "left": [
+      10,
+      2,
+      45,
+      133
+    ],
+    "right": [
+      10,
+      2,
+      45,
+      133
+    ],
+    "back": [
+      1,
+      0,
+      63,
+      135
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      90,
+      65,
+      45
+    ],
+    "left": [
+      10,
+      90,
+      45,
+      45
+    ],
+    "right": [
+      10,
+      90,
+      45,
+      45
+    ],
+    "back": [
+      1,
+      90,
+      63,
+      45
+    ]
+  },
+  "source_front_size": [
+    65,
+    205
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    136,
+    65,
+    69
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_02.png",
+  "source_measured_bounds": {
+    "front": [
+      122,
+      286,
+      218,
+      486
+    ],
+    "left": [
+      379,
+      289,
+      446,
+      486
+    ],
+    "right": [
+      579,
+      289,
+      646,
+      486
+    ],
+    "back": [
+      807,
+      286,
+      900,
+      486
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      95,
+      1273,
+      65,
+      135
+    ],
+    "left": [
+      351,
+      1273,
+      65,
+      135
+    ],
+    "right": [
+      607,
+      1273,
+      65,
+      135
+    ],
+    "back": [
+      863,
+      1273,
+      65,
+      135
+    ]
+  }
+}

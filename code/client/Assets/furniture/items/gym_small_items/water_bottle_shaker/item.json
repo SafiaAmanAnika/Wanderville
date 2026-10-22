@@ -1,0 +1,134 @@
+{
+  "id": "water_bottle_shaker",
+  "name": "Water bottle / shaker",
+  "category": "gym_small_items",
+  "size": [
+    15,
+    30
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Shakes.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym_small_items/water_bottle_shaker/front.png",
+    "left": "items/gym_small_items/water_bottle_shaker/left.png",
+    "right": "items/gym_small_items/water_bottle_shaker/right.png",
+    "back": "items/gym_small_items/water_bottle_shaker/back.png"
+  },
+  "frame_size": [
+    15,
+    25
+  ],
+  "anchor": [
+    7,
+    25
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      15,
+      25
+    ],
+    "left": [
+      0,
+      1,
+      15,
+      24
+    ],
+    "right": [
+      0,
+      1,
+      14,
+      24
+    ],
+    "back": [
+      0,
+      0,
+      15,
+      25
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    15,
+    30
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_small_items_02.png",
+  "source_measured_bounds": {
+    "front": [
+      82,
+      97,
+      216,
+      324
+    ],
+    "left": [
+      370,
+      106,
+      503,
+      324
+    ],
+    "right": [
+      620,
+      106,
+      749,
+      324
+    ],
+    "back": [
+      907,
+      97,
+      1041,
+      324
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym_small_items.png",
+  "atlas_rects": {
+    "front": [
+      24,
+      251,
+      15,
+      25
+    ],
+    "left": [
+      88,
+      251,
+      15,
+      25
+    ],
+    "right": [
+      152,
+      251,
+      15,
+      25
+    ],
+    "back": [
+      216,
+      251,
+      15,
+      25
+    ]
+  }
+}

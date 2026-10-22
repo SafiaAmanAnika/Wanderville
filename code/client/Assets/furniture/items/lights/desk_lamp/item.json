@@ -1,0 +1,134 @@
+{
+  "id": "desk_lamp",
+  "name": "Desk lamp",
+  "category": "lights",
+  "size": [
+    35,
+    50
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Head tilts down, light turns on.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/lights/desk_lamp/front.png",
+    "left": "items/lights/desk_lamp/left.png",
+    "right": "items/lights/desk_lamp/right.png",
+    "back": "items/lights/desk_lamp/back.png"
+  },
+  "frame_size": [
+    37,
+    50
+  ],
+  "anchor": [
+    18,
+    50
+  ],
+  "visible_bounds": {
+    "front": [
+      1,
+      0,
+      35,
+      50
+    ],
+    "left": [
+      0,
+      1,
+      37,
+      49
+    ],
+    "right": [
+      0,
+      1,
+      37,
+      49
+    ],
+    "back": [
+      3,
+      1,
+      30,
+      49
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    35,
+    50
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "lights_01.png",
+  "source_measured_bounds": {
+    "front": [
+      84,
+      199,
+      189,
+      348
+    ],
+    "left": [
+      569,
+      202,
+      680,
+      349
+    ],
+    "right": [
+      344,
+      202,
+      455,
+      348
+    ],
+    "back": [
+      851,
+      202,
+      940,
+      348
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/lights.png",
+  "atlas_rects": {
+    "front": [
+      29,
+      72,
+      37,
+      50
+    ],
+    "left": [
+      125,
+      72,
+      37,
+      50
+    ],
+    "right": [
+      221,
+      72,
+      37,
+      50
+    ],
+    "back": [
+      317,
+      72,
+      37,
+      50
+    ]
+  }
+}

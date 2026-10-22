@@ -1,0 +1,134 @@
+{
+  "id": "speed_bag",
+  "name": "Speed bag",
+  "category": "gym",
+  "size": [
+    50,
+    70
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Bag bounces fast (play once).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym/speed_bag/front.png",
+    "left": "items/gym/speed_bag/left.png",
+    "right": "items/gym/speed_bag/right.png",
+    "back": "items/gym/speed_bag/back.png"
+  },
+  "frame_size": [
+    53,
+    47
+  ],
+  "anchor": [
+    26,
+    47
+  ],
+  "visible_bounds": {
+    "front": [
+      1,
+      0,
+      50,
+      47
+    ],
+    "left": [
+      0,
+      2,
+      53,
+      45
+    ],
+    "right": [
+      0,
+      2,
+      53,
+      45
+    ],
+    "back": [
+      1,
+      0,
+      50,
+      47
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    50,
+    70
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_02.png",
+  "source_measured_bounds": {
+    "front": [
+      56,
+      1379,
+      199,
+      1514
+    ],
+    "left": [
+      309,
+      1380,
+      461,
+      1510
+    ],
+    "right": [
+      563,
+      1380,
+      715,
+      1510
+    ],
+    "back": [
+      825,
+      1379,
+      967,
+      1514
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym.png",
+  "atlas_rects": {
+    "front": [
+      101,
+      2109,
+      53,
+      47
+    ],
+    "left": [
+      357,
+      2109,
+      53,
+      47
+    ],
+    "right": [
+      613,
+      2109,
+      53,
+      47
+    ],
+    "back": [
+      869,
+      2109,
+      53,
+      47
+    ]
+  }
+}

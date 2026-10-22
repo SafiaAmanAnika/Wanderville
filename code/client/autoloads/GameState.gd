@@ -1,5 +1,10 @@
 extends Node
 
+# REMOVE THIS SHITTTTT
+# TEMP: test wood used while logged in (the server has no wood yet). Remove when the server sells wood.
+const TEST_WOOD := 100
+var _test_wood := TEST_WOOD
+
 const MAX_WATER := 20
 var water_drops := 0
 var farm_zone_tilled := false
@@ -298,6 +303,7 @@ const DUMMY_ITEMS := [
 	["garden_lantern", "Garden Lantern", "decoration", "houses", "common", 2],
 	["wheat_seed", "Wheat Seeds", "seed", "seeds", "common", 5],
 	["carrot", "Carrot", "crop", "crops", "common", 4],
+	["wood", "Wood", "material", "tools", "common", 100],
 ]
 
 
@@ -388,3 +394,58 @@ func _rebuild_seed_inventory() -> void:
 		if code.ends_with("_seed"):
 			var crop := code.trim_suffix("_seed")
 			seed_inventory[crop] = int(seed_inventory.get(crop, 0)) + int(row["quantity"])
+
+# ─── Housing ─────────────────────────────────────────────────────────
+const HOUSE_SAVE := "user://house.json"
+
+# id: 0 = no house, 1-6 = which house
+# stage: "none" → "outer" → "walls" → "done"
+var house := {"id": 0, "position": Vector2.ZERO, "stage": "none", "floor": "", "furniture": []}
+
+
+# how much wood is in the bag
+func wood() -> int:
+	#removeeee
+	if Global.is_logged_in():
+		return _test_wood
+	var total := 0
+	for row in inventory:
+		if str(row["item_code"]) == "wood":
+			total += int(row["quantity"])
+	return total
+
+
+# take wood out of the bag; false (and nothing taken) if there isn't enough
+func spend_wood(amount: int) -> bool:
+	if wood() < amount:
+		return false
+	if Global.is_logged_in():
+		_test_wood -= amount
+		return true
+		#remove
+	return remove_item_offline("wood", amount)   # TODO online: ask the server instead
+
+
+func save_house() -> void:
+	var data := house.duplicate()
+	data["position"] = [house["position"].x, house["position"].y]   # JSON can't store Vector2
+	var file := FileAccess.open(HOUSE_SAVE, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify(data))
+
+
+func load_house() -> void:
+	if not FileAccess.file_exists(HOUSE_SAVE):
+		return
+	var data = JSON.parse_string(FileAccess.get_file_as_string(HOUSE_SAVE))
+	if data is Dictionary:
+		var p: Array = data.get("position", [0, 0])
+		house = {
+				"id": int(data.get("id", 0)),
+				"position": Vector2(p[0], p[1]),
+				"stage": str(data.get("stage", "none")),
+				"floor": str(data.get("floor", "")),
+				"furniture": data.get("furniture", []),
+			}
+	if not house.has("furniture"):
+		house["furniture"] = []

@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://dn30wkti03ron" path="res://Scripts/remote_players.gd" id="10_remote"]
 [ext_resource type="Script" uid="uid://bbsefjtcb4mad" path="res://Scripts/day_and_night_cycle.gd" id="11_cycle"]
 [ext_resource type="Script" uid="uid://cspawnesa832b" path="res://Scripts/character_spawner.gd" id="12_spawner"]
+[ext_resource type="Script" uid="uid://2sq7krkfclql" path="res://Scripts/housing/house_manager.gd" id="14_e0ngr"]
 
 [node name="World" type="Node2D" unique_id=1971179881]
 script = ExtResource("12_spawner")
@@ -68,3 +69,6 @@ script = ExtResource("7_o06y3")
 
 [node name="DayNight" type="CanvasModulate" parent="." unique_id=1293019844]
 script = ExtResource("11_cycle")
+
+[node name="HouseManager" type="Node2D" parent="." unique_id=754589155]
+script = ExtResource("14_e0ngr")

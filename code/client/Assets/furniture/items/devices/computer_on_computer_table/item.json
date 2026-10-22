@@ -1,0 +1,159 @@
+{
+  "id": "computer_on_computer_table",
+  "name": "Computer on computer table",
+  "category": "devices",
+  "size": [
+    175,
+    160
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": true,
+  "use_description": "Monitor boots up, cursor blinks, typing (loop while used).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/computer_on_computer_table/front.png",
+    "left": "items/devices/computer_on_computer_table/left.png",
+    "right": "items/devices/computer_on_computer_table/right.png",
+    "back": "items/devices/computer_on_computer_table/back.png"
+  },
+  "frame_size": [
+    175,
+    143
+  ],
+  "anchor": [
+    87,
+    143
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      2,
+      175,
+      141
+    ],
+    "left": [
+      45,
+      2,
+      85,
+      141
+    ],
+    "right": [
+      45,
+      2,
+      85,
+      141
+    ],
+    "back": [
+      1,
+      0,
+      173,
+      143
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      96,
+      175,
+      47
+    ],
+    "left": [
+      45,
+      96,
+      85,
+      47
+    ],
+    "right": [
+      45,
+      96,
+      85,
+      47
+    ],
+    "back": [
+      1,
+      95,
+      173,
+      48
+    ]
+  },
+  "source_front_size": [
+    175,
+    160
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    106,
+    175,
+    54
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_01.png",
+  "source_measured_bounds": {
+    "front": [
+      35,
+      625,
+      244,
+      793
+    ],
+    "left": [
+      353,
+      625,
+      455,
+      793
+    ],
+    "right": [
+      570,
+      625,
+      672,
+      793
+    ],
+    "back": [
+      781,
+      622,
+      988,
+      793
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      24,
+      553,
+      175,
+      143
+    ],
+    "left": [
+      248,
+      553,
+      175,
+      143
+    ],
+    "right": [
+      472,
+      553,
+      175,
+      143
+    ],
+    "back": [
+      696,
+      553,
+      175,
+      143
+    ]
+  }
+}

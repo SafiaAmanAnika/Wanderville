@@ -1,0 +1,134 @@
+{
+  "id": "candle_holder",
+  "name": "Candle holder",
+  "category": "lights",
+  "size": [
+    45,
+    50
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Candles light one by one.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/lights/candle_holder/front.png",
+    "left": "items/lights/candle_holder/left.png",
+    "right": "items/lights/candle_holder/right.png",
+    "back": "items/lights/candle_holder/back.png"
+  },
+  "frame_size": [
+    45,
+    39
+  ],
+  "anchor": [
+    22,
+    39
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      45,
+      39
+    ],
+    "left": [
+      0,
+      0,
+      44,
+      39
+    ],
+    "right": [
+      0,
+      0,
+      45,
+      39
+    ],
+    "back": [
+      3,
+      0,
+      38,
+      39
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    45,
+    50
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "lights_01.png",
+  "source_measured_bounds": {
+    "front": [
+      51,
+      1245,
+      194,
+      1368
+    ],
+    "left": [
+      314,
+      1245,
+      454,
+      1368
+    ],
+    "right": [
+      570,
+      1245,
+      712,
+      1368
+    ],
+    "back": [
+      830,
+      1245,
+      951,
+      1368
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/lights.png",
+  "atlas_rects": {
+    "front": [
+      25,
+      502,
+      45,
+      39
+    ],
+    "left": [
+      121,
+      502,
+      45,
+      39
+    ],
+    "right": [
+      217,
+      502,
+      45,
+      39
+    ],
+    "back": [
+      313,
+      502,
+      45,
+      39
+    ]
+  }
+}

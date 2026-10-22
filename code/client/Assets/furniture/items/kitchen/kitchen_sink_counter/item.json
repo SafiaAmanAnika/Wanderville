@@ -1,0 +1,159 @@
+{
+  "id": "kitchen_sink_counter",
+  "name": "Kitchen sink counter",
+  "category": "kitchen",
+  "size": [
+    100,
+    115
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Tap runs, water splashes, dishes get clean (play once).",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/kitchen/kitchen_sink_counter/front.png",
+    "left": "items/kitchen/kitchen_sink_counter/left.png",
+    "right": "items/kitchen/kitchen_sink_counter/right.png",
+    "back": "items/kitchen/kitchen_sink_counter/back.png"
+  },
+  "frame_size": [
+    100,
+    81
+  ],
+  "anchor": [
+    50,
+    81
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      100,
+      81
+    ],
+    "left": [
+      21,
+      2,
+      57,
+      79
+    ],
+    "right": [
+      21,
+      2,
+      57,
+      79
+    ],
+    "back": [
+      0,
+      0,
+      100,
+      81
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      54,
+      100,
+      27
+    ],
+    "left": [
+      21,
+      54,
+      57,
+      27
+    ],
+    "right": [
+      21,
+      54,
+      57,
+      27
+    ],
+    "back": [
+      0,
+      54,
+      100,
+      27
+    ]
+  },
+  "source_front_size": [
+    100,
+    115
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    76,
+    100,
+    39
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "kitchen_01.png",
+  "source_measured_bounds": {
+    "front": [
+      62,
+      969,
+      266,
+      1135
+    ],
+    "left": [
+      555,
+      973,
+      672,
+      1135
+    ],
+    "right": [
+      353,
+      973,
+      470,
+      1134
+    ],
+    "back": [
+      759,
+      969,
+      962,
+      1134
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/kitchen.png",
+  "atlas_rects": {
+    "front": [
+      62,
+      691,
+      100,
+      81
+    ],
+    "left": [
+      286,
+      691,
+      100,
+      81
+    ],
+    "right": [
+      510,
+      691,
+      100,
+      81
+    ],
+    "back": [
+      734,
+      691,
+      100,
+      81
+    ]
+  }
+}

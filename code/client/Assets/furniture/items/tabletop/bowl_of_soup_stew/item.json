@@ -1,0 +1,134 @@
+{
+  "id": "bowl_of_soup_stew",
+  "name": "Bowl of soup / stew",
+  "category": "tabletop",
+  "size": [
+    30,
+    22
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Steam; spoon stirs.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tabletop/bowl_of_soup_stew/front.png",
+    "left": "items/tabletop/bowl_of_soup_stew/left.png",
+    "right": "items/tabletop/bowl_of_soup_stew/right.png",
+    "back": "items/tabletop/bowl_of_soup_stew/back.png"
+  },
+  "frame_size": [
+    28,
+    22
+  ],
+  "anchor": [
+    14,
+    22
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      28,
+      22
+    ],
+    "left": [
+      0,
+      2,
+      27,
+      20
+    ],
+    "right": [
+      0,
+      2,
+      27,
+      20
+    ],
+    "back": [
+      0,
+      0,
+      28,
+      22
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    30,
+    22
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tabletop_02.png",
+  "source_measured_bounds": {
+    "front": [
+      70,
+      1007,
+      233,
+      1136
+    ],
+    "left": [
+      355,
+      1013,
+      511,
+      1132
+    ],
+    "right": [
+      611,
+      1013,
+      768,
+      1132
+    ],
+    "back": [
+      889,
+      1007,
+      1053,
+      1136
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tabletop.png",
+  "atlas_rects": {
+    "front": [
+      18,
+      600,
+      28,
+      22
+    ],
+    "left": [
+      82,
+      600,
+      28,
+      22
+    ],
+    "right": [
+      146,
+      600,
+      28,
+      22
+    ],
+    "back": [
+      210,
+      600,
+      28,
+      22
+    ]
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "id": "sewing_machine",
+  "name": "Sewing machine",
+  "category": "devices",
+  "size": [
+    50,
+    40
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Needle bobs fast (play once).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/sewing_machine/front.png",
+    "left": "items/devices/sewing_machine/left.png",
+    "right": "items/devices/sewing_machine/right.png",
+    "back": "items/devices/sewing_machine/back.png"
+  },
+  "frame_size": [
+    48,
+    40
+  ],
+  "anchor": [
+    24,
+    40
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      48,
+      40
+    ],
+    "left": [
+      8,
+      0,
+      32,
+      40
+    ],
+    "right": [
+      8,
+      0,
+      32,
+      40
+    ],
+    "back": [
+      0,
+      0,
+      48,
+      40
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    50,
+    40
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_03.png",
+  "source_measured_bounds": {
+    "front": [
+      76,
+      728,
+      245,
+      868
+    ],
+    "left": [
+      346,
+      728,
+      457,
+      868
+    ],
+    "right": [
+      569,
+      728,
+      680,
+      868
+    ],
+    "back": [
+      780,
+      728,
+      949,
+      868
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      88,
+      2350,
+      48,
+      40
+    ],
+    "left": [
+      312,
+      2350,
+      48,
+      40
+    ],
+    "right": [
+      536,
+      2350,
+      48,
+      40
+    ],
+    "back": [
+      760,
+      2350,
+      48,
+      40
+    ]
+  }
+}

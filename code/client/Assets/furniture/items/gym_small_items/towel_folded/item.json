@@ -1,0 +1,134 @@
+{
+  "id": "towel_folded",
+  "name": "Towel (folded)",
+  "category": "gym_small_items",
+  "size": [
+    30,
+    18
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Unfolds and refolds.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym_small_items/towel_folded/front.png",
+    "left": "items/gym_small_items/towel_folded/left.png",
+    "right": "items/gym_small_items/towel_folded/right.png",
+    "back": "items/gym_small_items/towel_folded/back.png"
+  },
+  "frame_size": [
+    30,
+    17
+  ],
+  "anchor": [
+    15,
+    17
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      30,
+      17
+    ],
+    "left": [
+      3,
+      0,
+      23,
+      17
+    ],
+    "right": [
+      3,
+      0,
+      23,
+      17
+    ],
+    "back": [
+      0,
+      0,
+      30,
+      17
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    30,
+    18
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_small_items_02.png",
+  "source_measured_bounds": {
+    "front": [
+      40,
+      393,
+      277,
+      531
+    ],
+    "left": [
+      342,
+      395,
+      521,
+      531
+    ],
+    "right": [
+      601,
+      395,
+      781,
+      531
+    ],
+    "back": [
+      846,
+      393,
+      1083,
+      531
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym_small_items.png",
+  "atlas_rects": {
+    "front": [
+      17,
+      292,
+      30,
+      17
+    ],
+    "left": [
+      81,
+      292,
+      30,
+      17
+    ],
+    "right": [
+      145,
+      292,
+      30,
+      17
+    ],
+    "back": [
+      209,
+      292,
+      30,
+      17
+    ]
+  }
+}

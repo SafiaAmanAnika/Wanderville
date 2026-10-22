@@ -1,0 +1,134 @@
+{
+  "id": "small_potted_plant",
+  "name": "Small potted plant",
+  "category": "decor",
+  "size": [
+    45,
+    60
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": true,
+  "use_description": "Gets watered: water drops, leaves perk up. Idle: leaves sway (loop).",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/small_potted_plant/front.png",
+    "left": "items/decor/small_potted_plant/left.png",
+    "right": "items/decor/small_potted_plant/right.png",
+    "back": "items/decor/small_potted_plant/back.png"
+  },
+  "frame_size": [
+    45,
+    50
+  ],
+  "anchor": [
+    22,
+    50
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      45,
+      50
+    ],
+    "left": [
+      1,
+      0,
+      43,
+      50
+    ],
+    "right": [
+      0,
+      0,
+      44,
+      50
+    ],
+    "back": [
+      0,
+      0,
+      45,
+      50
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    45,
+    60
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_01.png",
+  "source_measured_bounds": {
+    "front": [
+      82,
+      25,
+      185,
+      139
+    ],
+    "left": [
+      344,
+      25,
+      443,
+      139
+    ],
+    "right": [
+      581,
+      25,
+      681,
+      139
+    ],
+    "back": [
+      839,
+      25,
+      942,
+      139
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      105,
+      8,
+      45,
+      50
+    ],
+    "left": [
+      361,
+      8,
+      45,
+      50
+    ],
+    "right": [
+      617,
+      8,
+      45,
+      50
+    ],
+    "back": [
+      873,
+      8,
+      45,
+      50
+    ]
+  }
+}

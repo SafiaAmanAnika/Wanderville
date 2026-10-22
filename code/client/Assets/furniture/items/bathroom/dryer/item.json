@@ -1,0 +1,159 @@
+{
+  "id": "dryer",
+  "name": "Dryer",
+  "category": "bathroom",
+  "size": [
+    100,
+    115
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Drum tumbles, warm air puff.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/bathroom/dryer/front.png",
+    "left": "items/bathroom/dryer/left.png",
+    "right": "items/bathroom/dryer/right.png",
+    "back": "items/bathroom/dryer/back.png"
+  },
+  "frame_size": [
+    89,
+    117
+  ],
+  "anchor": [
+    44,
+    117
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      2,
+      89,
+      115
+    ],
+    "left": [
+      0,
+      0,
+      89,
+      117
+    ],
+    "right": [
+      0,
+      0,
+      89,
+      117
+    ],
+    "back": [
+      0,
+      3,
+      88,
+      114
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      78,
+      89,
+      39
+    ],
+    "left": [
+      0,
+      78,
+      89,
+      39
+    ],
+    "right": [
+      0,
+      78,
+      89,
+      39
+    ],
+    "back": [
+      0,
+      79,
+      88,
+      38
+    ]
+  },
+  "source_front_size": [
+    100,
+    115
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    76,
+    100,
+    39
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "bathroom_02.png",
+  "source_measured_bounds": {
+    "front": [
+      46,
+      274,
+      209,
+      484
+    ],
+    "left": [
+      506,
+      271,
+      669,
+      484
+    ],
+    "right": [
+      280,
+      271,
+      442,
+      484
+    ],
+    "back": [
+      742,
+      276,
+      903,
+      484
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/bathroom.png",
+  "atlas_rects": {
+    "front": [
+      51,
+      1102,
+      89,
+      117
+    ],
+    "left": [
+      243,
+      1102,
+      89,
+      117
+    ],
+    "right": [
+      435,
+      1102,
+      89,
+      117
+    ],
+    "back": [
+      627,
+      1102,
+      89,
+      117
+    ]
+  }
+}

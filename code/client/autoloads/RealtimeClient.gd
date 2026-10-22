@@ -11,6 +11,7 @@ signal room_changed(room: String)
 
 var connected := false
 var players: Array = []
+var pause_movement := false   # NEW: true while inside a house — don't send or correct our position
 var _socket: WebSocketPeer
 var _auth_sent := false
 var _sequence := 0
@@ -158,7 +159,7 @@ func _process(delta: float) -> void:
 	if not connected:
 		return
 	_move_elapsed += delta
-	if _move_elapsed >= 0.2 and _pending_sequence == 0:
+	if _move_elapsed >= 0.2 and _pending_sequence == 0 and not pause_movement:
 		_move_elapsed = 0.0
 		var player := get_tree().get_first_node_in_group("player") as Node2D
 		if player != null:
@@ -224,11 +225,12 @@ func _handle_packet(packet: Dictionary) -> void:
 			if _correct_position:
 				var player := get_tree().get_first_node_in_group("player") as Node2D
 				if player != null:
-					player.global_position = Vector2(float(entry["x"]), float(entry["y"]))
+					if not pause_movement:      # inside a house: don't pull the player back outside
+						player.global_position = Vector2(float(entry["x"]), float(entry["y"]))
 					_sequence = accepted
 					_correct_position = false
 					_retry_delay = 1.0
-					_set_connected(true)
+					_set_connected(true)       
 	for message in data.get("messages", []):
 		var id := int(message.get("id", 0))
 		if not _seen_messages.has(id):

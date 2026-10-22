@@ -1,0 +1,134 @@
+{
+  "id": "scroll_letter",
+  "name": "Scroll / letter",
+  "category": "tabletop",
+  "size": [
+    30,
+    18
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Unrolls / rolls up (toggle).",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tabletop/scroll_letter/front.png",
+    "left": "items/tabletop/scroll_letter/left.png",
+    "right": "items/tabletop/scroll_letter/right.png",
+    "back": "items/tabletop/scroll_letter/back.png"
+  },
+  "frame_size": [
+    30,
+    14
+  ],
+  "anchor": [
+    15,
+    14
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      1,
+      30,
+      13
+    ],
+    "left": [
+      1,
+      0,
+      27,
+      14
+    ],
+    "right": [
+      1,
+      0,
+      27,
+      14
+    ],
+    "back": [
+      0,
+      1,
+      30,
+      13
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    30,
+    18
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tabletop_04.png",
+  "source_measured_bounds": {
+    "front": [
+      64,
+      238,
+      258,
+      324
+    ],
+    "left": [
+      345,
+      233,
+      521,
+      324
+    ],
+    "right": [
+      600,
+      233,
+      775,
+      324
+    ],
+    "back": [
+      861,
+      238,
+      1056,
+      324
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tabletop.png",
+  "atlas_rects": {
+    "front": [
+      17,
+      1080,
+      30,
+      14
+    ],
+    "left": [
+      81,
+      1080,
+      30,
+      14
+    ],
+    "right": [
+      145,
+      1080,
+      30,
+      14
+    ],
+    "back": [
+      209,
+      1080,
+      30,
+      14
+    ]
+  }
+}

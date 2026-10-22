@@ -1,0 +1,134 @@
+{
+  "id": "plate_rack_wall",
+  "name": "Plate rack (wall)",
+  "category": "tables_storage",
+  "size": [
+    100,
+    60
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Plates clink and line up.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tables_storage/plate_rack_wall/front.png",
+    "left": "items/tables_storage/plate_rack_wall/left.png",
+    "right": "items/tables_storage/plate_rack_wall/right.png",
+    "back": "items/tables_storage/plate_rack_wall/back.png"
+  },
+  "frame_size": [
+    100,
+    40
+  ],
+  "anchor": [
+    50,
+    40
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      100,
+      40
+    ],
+    "left": [
+      34,
+      0,
+      32,
+      40
+    ],
+    "right": [
+      34,
+      0,
+      32,
+      40
+    ],
+    "back": [
+      0,
+      0,
+      99,
+      40
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    100,
+    60
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tables_storage_03.png",
+  "source_measured_bounds": {
+    "front": [
+      94,
+      1011,
+      324,
+      1104
+    ],
+    "left": [
+      451,
+      1011,
+      524,
+      1104
+    ],
+    "right": [
+      657,
+      1011,
+      730,
+      1104
+    ],
+    "back": [
+      858,
+      1010,
+      1086,
+      1103
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tables_storage.png",
+  "atlas_rects": {
+    "front": [
+      78,
+      2997,
+      100,
+      40
+    ],
+    "left": [
+      334,
+      2997,
+      100,
+      40
+    ],
+    "right": [
+      590,
+      2997,
+      100,
+      40
+    ],
+    "back": [
+      846,
+      2997,
+      100,
+      40
+    ]
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "id": "desktop_computer_only",
+  "name": "Desktop computer (only)",
+  "category": "devices",
+  "size": [
+    70,
+    60
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Screen turns on (toggle).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/desktop_computer_only/front.png",
+    "left": "items/devices/desktop_computer_only/left.png",
+    "right": "items/devices/desktop_computer_only/right.png",
+    "back": "items/devices/desktop_computer_only/back.png"
+  },
+  "frame_size": [
+    72,
+    47
+  ],
+  "anchor": [
+    36,
+    47
+  ],
+  "visible_bounds": {
+    "front": [
+      1,
+      1,
+      70,
+      46
+    ],
+    "left": [
+      7,
+      0,
+      58,
+      47
+    ],
+    "right": [
+      7,
+      0,
+      57,
+      47
+    ],
+    "back": [
+      0,
+      2,
+      72,
+      45
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    70,
+    60
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_02.png",
+  "source_measured_bounds": {
+    "front": [
+      47,
+      833,
+      240,
+      961
+    ],
+    "left": [
+      323,
+      832,
+      482,
+      961
+    ],
+    "right": [
+      543,
+      832,
+      701,
+      961
+    ],
+    "back": [
+      782,
+      833,
+      980,
+      958
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      76,
+      1768,
+      72,
+      47
+    ],
+    "left": [
+      300,
+      1768,
+      72,
+      47
+    ],
+    "right": [
+      524,
+      1768,
+      72,
+      47
+    ],
+    "back": [
+      748,
+      1768,
+      72,
+      47
+    ]
+  }
+}

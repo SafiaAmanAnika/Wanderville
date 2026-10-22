@@ -1,0 +1,134 @@
+{
+  "id": "toaster",
+  "name": "Toaster",
+  "category": "devices",
+  "size": [
+    40,
+    35
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Toast pops up.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/toaster/front.png",
+    "left": "items/devices/toaster/left.png",
+    "right": "items/devices/toaster/right.png",
+    "back": "items/devices/toaster/back.png"
+  },
+  "frame_size": [
+    35,
+    35
+  ],
+  "anchor": [
+    17,
+    35
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      35,
+      35
+    ],
+    "left": [
+      3,
+      0,
+      29,
+      35
+    ],
+    "right": [
+      3,
+      0,
+      29,
+      35
+    ],
+    "back": [
+      0,
+      0,
+      35,
+      35
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    40,
+    35
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_03.png",
+  "source_measured_bounds": {
+    "front": [
+      92,
+      1025,
+      228,
+      1160
+    ],
+    "left": [
+      342,
+      1025,
+      454,
+      1161
+    ],
+    "right": [
+      572,
+      1025,
+      683,
+      1161
+    ],
+    "back": [
+      798,
+      1025,
+      933,
+      1160
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      94,
+      2463,
+      35,
+      35
+    ],
+    "left": [
+      318,
+      2463,
+      35,
+      35
+    ],
+    "right": [
+      542,
+      2463,
+      35,
+      35
+    ],
+    "back": [
+      766,
+      2463,
+      35,
+      35
+    ]
+  }
+}

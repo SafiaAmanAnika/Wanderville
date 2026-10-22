@@ -1,0 +1,134 @@
+{
+  "id": "monitor_only",
+  "name": "Monitor (only)",
+  "category": "devices",
+  "size": [
+    60,
+    50
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Screen turns on (toggle).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/monitor_only/front.png",
+    "left": "items/devices/monitor_only/left.png",
+    "right": "items/devices/monitor_only/right.png",
+    "back": "items/devices/monitor_only/back.png"
+  },
+  "frame_size": [
+    60,
+    49
+  ],
+  "anchor": [
+    30,
+    49
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      1,
+      60,
+      48
+    ],
+    "left": [
+      16,
+      0,
+      27,
+      49
+    ],
+    "right": [
+      16,
+      0,
+      27,
+      49
+    ],
+    "back": [
+      0,
+      1,
+      60,
+      48
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    60,
+    50
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_02.png",
+  "source_measured_bounds": {
+    "front": [
+      77,
+      990,
+      226,
+      1110
+    ],
+    "left": [
+      366,
+      986,
+      434,
+      1108
+    ],
+    "right": [
+      590,
+      986,
+      658,
+      1108
+    ],
+    "back": [
+      798,
+      990,
+      948,
+      1110
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      82,
+      1831,
+      60,
+      49
+    ],
+    "left": [
+      306,
+      1831,
+      60,
+      49
+    ],
+    "right": [
+      530,
+      1831,
+      60,
+      49
+    ],
+    "back": [
+      754,
+      1831,
+      60,
+      49
+    ]
+  }
+}

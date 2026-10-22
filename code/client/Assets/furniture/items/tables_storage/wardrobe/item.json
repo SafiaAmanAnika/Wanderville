@@ -1,0 +1,159 @@
+{
+  "id": "wardrobe",
+  "name": "Wardrobe",
+  "category": "tables_storage",
+  "size": [
+    145,
+    220
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Doors open, clothes swing on hangers (toggle).",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tables_storage/wardrobe/front.png",
+    "left": "items/tables_storage/wardrobe/left.png",
+    "right": "items/tables_storage/wardrobe/right.png",
+    "back": "items/tables_storage/wardrobe/back.png"
+  },
+  "frame_size": [
+    146,
+    143
+  ],
+  "anchor": [
+    73,
+    143
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      145,
+      143
+    ],
+    "left": [
+      28,
+      0,
+      90,
+      143
+    ],
+    "right": [
+      28,
+      0,
+      90,
+      143
+    ],
+    "back": [
+      0,
+      0,
+      146,
+      143
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      95,
+      145,
+      48
+    ],
+    "left": [
+      28,
+      95,
+      90,
+      48
+    ],
+    "right": [
+      28,
+      95,
+      90,
+      48
+    ],
+    "back": [
+      0,
+      95,
+      146,
+      48
+    ]
+  },
+  "source_front_size": [
+    145,
+    220
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    146,
+    145,
+    74
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tables_storage_02.png",
+  "source_measured_bounds": {
+    "front": [
+      105,
+      1011,
+      282,
+      1185
+    ],
+    "left": [
+      391,
+      1011,
+      501,
+      1185
+    ],
+    "right": [
+      622,
+      1011,
+      732,
+      1185
+    ],
+    "back": [
+      840,
+      1011,
+      1018,
+      1185
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tables_storage.png",
+  "atlas_rects": {
+    "front": [
+      55,
+      2030,
+      146,
+      143
+    ],
+    "left": [
+      311,
+      2030,
+      146,
+      143
+    ],
+    "right": [
+      567,
+      2030,
+      146,
+      143
+    ],
+    "back": [
+      823,
+      2030,
+      146,
+      143
+    ]
+  }
+}

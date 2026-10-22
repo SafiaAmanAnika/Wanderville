@@ -1,0 +1,161 @@
+{
+  "id": "gaming_setup_desk_2_monitors",
+  "name": "Gaming setup (desk + 2 monitors)",
+  "category": "devices",
+  "size": [
+    200,
+    165
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": true,
+  "use_description": "Both screens light up, RGB keyboard waves colours (loop).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/gaming_setup_desk_2_monitors/front.png",
+    "left": "items/devices/gaming_setup_desk_2_monitors/left.png",
+    "right": "items/devices/gaming_setup_desk_2_monitors/right.png",
+    "back": "items/devices/gaming_setup_desk_2_monitors/back.png"
+  },
+  "frame_size": [
+    200,
+    156
+  ],
+  "anchor": [
+    100,
+    156
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      5,
+      200,
+      151
+    ],
+    "left": [
+      46,
+      5,
+      108,
+      151
+    ],
+    "right": [
+      46,
+      5,
+      108,
+      151
+    ],
+    "back": [
+      1,
+      0,
+      198,
+      156
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      105,
+      200,
+      51
+    ],
+    "left": [
+      46,
+      105,
+      108,
+      51
+    ],
+    "right": [
+      46,
+      105,
+      108,
+      51
+    ],
+    "back": [
+      1,
+      104,
+      198,
+      52
+    ]
+  },
+  "source_front_size": [
+    200,
+    165
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    110,
+    200,
+    55
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_01.png",
+  "source_measured_bounds": {
+    "front": [
+      20,
+      1158,
+      259,
+      1339
+    ],
+    "left": [
+      339,
+      1155,
+      468,
+      1336
+    ],
+    "right": [
+      557,
+      1155,
+      686,
+      1336
+    ],
+    "back": [
+      766,
+      1158,
+      1005,
+      1338
+    ]
+  },
+  "corrected_views": [
+    "back"
+  ],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      12,
+      1020,
+      200,
+      156
+    ],
+    "left": [
+      236,
+      1020,
+      200,
+      156
+    ],
+    "right": [
+      460,
+      1020,
+      200,
+      156
+    ],
+    "back": [
+      684,
+      1020,
+      200,
+      156
+    ]
+  }
+}

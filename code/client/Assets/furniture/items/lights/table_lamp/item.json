@@ -1,0 +1,134 @@
+{
+  "id": "table_lamp",
+  "name": "Table lamp",
+  "category": "lights",
+  "size": [
+    35,
+    60
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Turns on with a warm glow.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/lights/table_lamp/front.png",
+    "left": "items/lights/table_lamp/left.png",
+    "right": "items/lights/table_lamp/right.png",
+    "back": "items/lights/table_lamp/back.png"
+  },
+  "frame_size": [
+    35,
+    48
+  ],
+  "anchor": [
+    17,
+    48
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      1,
+      35,
+      47
+    ],
+    "left": [
+      0,
+      1,
+      34,
+      47
+    ],
+    "right": [
+      0,
+      1,
+      34,
+      47
+    ],
+    "back": [
+      0,
+      0,
+      34,
+      48
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    35,
+    60
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "lights_01.png",
+  "source_measured_bounds": {
+    "front": [
+      70,
+      28,
+      186,
+      183
+    ],
+    "left": [
+      338,
+      26,
+      452,
+      183
+    ],
+    "right": [
+      574,
+      26,
+      688,
+      183
+    ],
+    "back": [
+      839,
+      25,
+      953,
+      183
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/lights.png",
+  "atlas_rects": {
+    "front": [
+      30,
+      8,
+      35,
+      48
+    ],
+    "left": [
+      126,
+      8,
+      35,
+      48
+    ],
+    "right": [
+      222,
+      8,
+      35,
+      48
+    ],
+    "back": [
+      318,
+      8,
+      35,
+      48
+    ]
+  }
+}

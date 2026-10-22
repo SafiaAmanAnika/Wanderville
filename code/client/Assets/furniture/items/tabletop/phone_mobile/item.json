@@ -1,0 +1,134 @@
+{
+  "id": "phone_mobile",
+  "name": "Phone (mobile)",
+  "category": "tabletop",
+  "size": [
+    15,
+    22
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Screen lights, buzzes.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tabletop/phone_mobile/front.png",
+    "left": "items/tabletop/phone_mobile/left.png",
+    "right": "items/tabletop/phone_mobile/right.png",
+    "back": "items/tabletop/phone_mobile/back.png"
+  },
+  "frame_size": [
+    15,
+    22
+  ],
+  "anchor": [
+    7,
+    22
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      15,
+      22
+    ],
+    "left": [
+      3,
+      0,
+      8,
+      22
+    ],
+    "right": [
+      3,
+      0,
+      8,
+      22
+    ],
+    "back": [
+      0,
+      0,
+      15,
+      22
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    15,
+    22
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tabletop_05.png",
+  "source_measured_bounds": {
+    "front": [
+      96,
+      1255,
+      204,
+      1412
+    ],
+    "left": [
+      393,
+      1255,
+      453,
+      1412
+    ],
+    "right": [
+      633,
+      1255,
+      693,
+      1412
+    ],
+    "back": [
+      882,
+      1255,
+      990,
+      1412
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tabletop.png",
+  "atlas_rects": {
+    "front": [
+      24,
+      1614,
+      15,
+      22
+    ],
+    "left": [
+      88,
+      1614,
+      15,
+      22
+    ],
+    "right": [
+      152,
+      1614,
+      15,
+      22
+    ],
+    "back": [
+      216,
+      1614,
+      15,
+      22
+    ]
+  }
+}

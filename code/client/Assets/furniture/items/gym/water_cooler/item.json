@@ -1,0 +1,159 @@
+{
+  "id": "water_cooler",
+  "name": "Water cooler",
+  "category": "gym",
+  "size": [
+    50,
+    130
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Bubbles rise in the bottle (glug), cup fills.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym/water_cooler/front.png",
+    "left": "items/gym/water_cooler/left.png",
+    "right": "items/gym/water_cooler/right.png",
+    "back": "items/gym/water_cooler/back.png"
+  },
+  "frame_size": [
+    50,
+    108
+  ],
+  "anchor": [
+    25,
+    108
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      50,
+      108
+    ],
+    "left": [
+      0,
+      0,
+      50,
+      108
+    ],
+    "right": [
+      0,
+      0,
+      50,
+      108
+    ],
+    "back": [
+      0,
+      0,
+      49,
+      108
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      72,
+      50,
+      36
+    ],
+    "left": [
+      0,
+      72,
+      50,
+      36
+    ],
+    "right": [
+      0,
+      72,
+      50,
+      36
+    ],
+    "back": [
+      0,
+      72,
+      49,
+      36
+    ]
+  },
+  "source_front_size": [
+    50,
+    130
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    86,
+    50,
+    44
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_03.png",
+  "source_measured_bounds": {
+    "front": [
+      86,
+      999,
+      171,
+      1182
+    ],
+    "left": [
+      336,
+      999,
+      421,
+      1182
+    ],
+    "right": [
+      604,
+      999,
+      689,
+      1182
+    ],
+    "back": [
+      854,
+      999,
+      938,
+      1182
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym.png",
+  "atlas_rects": {
+    "front": [
+      103,
+      2942,
+      50,
+      108
+    ],
+    "left": [
+      359,
+      2942,
+      50,
+      108
+    ],
+    "right": [
+      615,
+      2942,
+      50,
+      108
+    ],
+    "back": [
+      871,
+      2942,
+      50,
+      108
+    ]
+  }
+}

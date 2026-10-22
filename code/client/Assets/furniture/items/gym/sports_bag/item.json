@@ -1,0 +1,134 @@
+{
+  "id": "sports_bag",
+  "name": "Sports bag",
+  "category": "gym",
+  "size": [
+    50,
+    35
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Zipper opens.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym/sports_bag/front.png",
+    "left": "items/gym/sports_bag/left.png",
+    "right": "items/gym/sports_bag/right.png",
+    "back": "items/gym/sports_bag/back.png"
+  },
+  "frame_size": [
+    50,
+    32
+  ],
+  "anchor": [
+    25,
+    32
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      50,
+      32
+    ],
+    "left": [
+      11,
+      0,
+      27,
+      32
+    ],
+    "right": [
+      11,
+      0,
+      27,
+      32
+    ],
+    "back": [
+      0,
+      0,
+      50,
+      32
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    50,
+    35
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_03.png",
+  "source_measured_bounds": {
+    "front": [
+      36,
+      1371,
+      223,
+      1492
+    ],
+    "left": [
+      335,
+      1371,
+      436,
+      1492
+    ],
+    "right": [
+      588,
+      1371,
+      690,
+      1492
+    ],
+    "back": [
+      801,
+      1371,
+      988,
+      1492
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym.png",
+  "atlas_rects": {
+    "front": [
+      103,
+      3180,
+      50,
+      32
+    ],
+    "left": [
+      359,
+      3180,
+      50,
+      32
+    ],
+    "right": [
+      615,
+      3180,
+      50,
+      32
+    ],
+    "back": [
+      871,
+      3180,
+      50,
+      32
+    ]
+  }
+}

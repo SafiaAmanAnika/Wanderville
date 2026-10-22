@@ -1,0 +1,134 @@
+{
+  "id": "teddy_bear",
+  "name": "Teddy bear",
+  "category": "decor",
+  "size": [
+    35,
+    45
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Waves its arm / squish.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/teddy_bear/front.png",
+    "left": "items/decor/teddy_bear/left.png",
+    "right": "items/decor/teddy_bear/right.png",
+    "back": "items/decor/teddy_bear/back.png"
+  },
+  "frame_size": [
+    35,
+    37
+  ],
+  "anchor": [
+    17,
+    37
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      35,
+      37
+    ],
+    "left": [
+      2,
+      0,
+      30,
+      37
+    ],
+    "right": [
+      2,
+      0,
+      30,
+      37
+    ],
+    "back": [
+      0,
+      0,
+      34,
+      37
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    35,
+    45
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_03.png",
+  "source_measured_bounds": {
+    "front": [
+      157,
+      592,
+      264,
+      706
+    ],
+    "left": [
+      614,
+      592,
+      705,
+      706
+    ],
+    "right": [
+      416,
+      592,
+      508,
+      706
+    ],
+    "back": [
+      859,
+      592,
+      964,
+      706
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      110,
+      2623,
+      35,
+      37
+    ],
+    "left": [
+      366,
+      2623,
+      35,
+      37
+    ],
+    "right": [
+      622,
+      2623,
+      35,
+      37
+    ],
+    "back": [
+      878,
+      2623,
+      35,
+      37
+    ]
+  }
+}

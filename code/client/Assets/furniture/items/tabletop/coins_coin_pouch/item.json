@@ -1,0 +1,134 @@
+{
+  "id": "coins_coin_pouch",
+  "name": "Coins / coin pouch",
+  "category": "tabletop",
+  "size": [
+    25,
+    20
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Coins jingle; a coin flips.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tabletop/coins_coin_pouch/front.png",
+    "left": "items/tabletop/coins_coin_pouch/left.png",
+    "right": "items/tabletop/coins_coin_pouch/right.png",
+    "back": "items/tabletop/coins_coin_pouch/back.png"
+  },
+  "frame_size": [
+    24,
+    20
+  ],
+  "anchor": [
+    12,
+    20
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      24,
+      20
+    ],
+    "left": [
+      1,
+      1,
+      22,
+      19
+    ],
+    "right": [
+      1,
+      1,
+      22,
+      19
+    ],
+    "back": [
+      0,
+      1,
+      23,
+      19
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    25,
+    20
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tabletop_04.png",
+  "source_measured_bounds": {
+    "front": [
+      72,
+      1095,
+      229,
+      1227
+    ],
+    "left": [
+      361,
+      1095,
+      508,
+      1220
+    ],
+    "right": [
+      613,
+      1095,
+      759,
+      1220
+    ],
+    "back": [
+      888,
+      1095,
+      1038,
+      1220
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tabletop.png",
+  "atlas_rects": {
+    "front": [
+      20,
+      1283,
+      24,
+      20
+    ],
+    "left": [
+      84,
+      1283,
+      24,
+      20
+    ],
+    "right": [
+      148,
+      1283,
+      24,
+      20
+    ],
+    "back": [
+      212,
+      1283,
+      24,
+      20
+    ]
+  }
+}

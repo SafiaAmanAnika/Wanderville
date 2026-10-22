@@ -1,0 +1,159 @@
+{
+  "id": "laundry_basket",
+  "name": "Laundry basket",
+  "category": "bathroom",
+  "size": [
+    60,
+    65
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Clothes fold into a neat pile.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/bathroom/laundry_basket/front.png",
+    "left": "items/bathroom/laundry_basket/left.png",
+    "right": "items/bathroom/laundry_basket/right.png",
+    "back": "items/bathroom/laundry_basket/back.png"
+  },
+  "frame_size": [
+    60,
+    52
+  ],
+  "anchor": [
+    30,
+    52
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      60,
+      52
+    ],
+    "left": [
+      6,
+      2,
+      47,
+      50
+    ],
+    "right": [
+      6,
+      2,
+      48,
+      50
+    ],
+    "back": [
+      0,
+      0,
+      60,
+      52
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      34,
+      60,
+      18
+    ],
+    "left": [
+      6,
+      35,
+      47,
+      17
+    ],
+    "right": [
+      6,
+      35,
+      48,
+      17
+    ],
+    "back": [
+      0,
+      34,
+      60,
+      18
+    ]
+  },
+  "source_front_size": [
+    60,
+    65
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    43,
+    60,
+    22
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "bathroom_02.png",
+  "source_measured_bounds": {
+    "front": [
+      37,
+      1266,
+      221,
+      1425
+    ],
+    "left": [
+      293,
+      1272,
+      438,
+      1425
+    ],
+    "right": [
+      510,
+      1272,
+      656,
+      1425
+    ],
+    "back": [
+      728,
+      1266,
+      911,
+      1425
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/bathroom.png",
+  "atlas_rects": {
+    "front": [
+      66,
+      1548,
+      60,
+      52
+    ],
+    "left": [
+      258,
+      1548,
+      60,
+      52
+    ],
+    "right": [
+      450,
+      1548,
+      60,
+      52
+    ],
+    "back": [
+      642,
+      1548,
+      60,
+      52
+    ]
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "id": "fireplace",
+  "name": "Fireplace",
+  "category": "decor",
+  "size": [
+    175,
+    160
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": true,
+  "use_description": "Fire lights and crackles (loop), sparks float up. Click again: embers.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/fireplace/front.png",
+    "left": "items/decor/fireplace/left.png",
+    "right": "items/decor/fireplace/right.png",
+    "back": "items/decor/fireplace/back.png"
+  },
+  "frame_size": [
+    177,
+    129
+  ],
+  "anchor": [
+    88,
+    129
+  ],
+  "visible_bounds": {
+    "front": [
+      1,
+      1,
+      175,
+      128
+    ],
+    "left": [
+      49,
+      0,
+      78,
+      129
+    ],
+    "right": [
+      49,
+      0,
+      78,
+      129
+    ],
+    "back": [
+      0,
+      0,
+      177,
+      129
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      1,
+      86,
+      175,
+      43
+    ],
+    "left": [
+      49,
+      86,
+      78,
+      43
+    ],
+    "right": [
+      49,
+      86,
+      78,
+      43
+    ],
+    "back": [
+      0,
+      86,
+      177,
+      43
+    ]
+  },
+  "source_front_size": [
+    175,
+    160
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    106,
+    175,
+    54
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_02.png",
+  "source_measured_bounds": {
+    "front": [
+      68,
+      637,
+      278,
+      791
+    ],
+    "left": [
+      364,
+      636,
+      457,
+      791
+    ],
+    "right": [
+      566,
+      636,
+      660,
+      791
+    ],
+    "back": [
+      745,
+      636,
+      957,
+      791
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      39,
+      1542,
+      177,
+      129
+    ],
+    "left": [
+      295,
+      1542,
+      177,
+      129
+    ],
+    "right": [
+      551,
+      1542,
+      177,
+      129
+    ],
+    "back": [
+      807,
+      1542,
+      177,
+      129
+    ]
+  }
+}

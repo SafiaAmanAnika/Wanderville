@@ -1,0 +1,134 @@
+{
+  "id": "pair_of_dumbbells",
+  "name": "Pair of dumbbells",
+  "category": "gym_small_items",
+  "size": [
+    40,
+    25
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Clink together.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym_small_items/pair_of_dumbbells/front.png",
+    "left": "items/gym_small_items/pair_of_dumbbells/left.png",
+    "right": "items/gym_small_items/pair_of_dumbbells/right.png",
+    "back": "items/gym_small_items/pair_of_dumbbells/back.png"
+  },
+  "frame_size": [
+    31,
+    26
+  ],
+  "anchor": [
+    15,
+    26
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      1,
+      31,
+      25
+    ],
+    "left": [
+      5,
+      0,
+      21,
+      26
+    ],
+    "right": [
+      4,
+      0,
+      22,
+      26
+    ],
+    "back": [
+      0,
+      1,
+      31,
+      25
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    40,
+    25
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_small_items_01.png",
+  "source_measured_bounds": {
+    "front": [
+      39,
+      343,
+      257,
+      520
+    ],
+    "left": [
+      328,
+      339,
+      480,
+      522
+    ],
+    "right": [
+      544,
+      339,
+      697,
+      522
+    ],
+    "back": [
+      767,
+      343,
+      985,
+      520
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym_small_items.png",
+  "atlas_rects": {
+    "front": [
+      16,
+      41,
+      31,
+      26
+    ],
+    "left": [
+      80,
+      41,
+      31,
+      26
+    ],
+    "right": [
+      144,
+      41,
+      31,
+      26
+    ],
+    "back": [
+      208,
+      41,
+      31,
+      26
+    ]
+  }
+}

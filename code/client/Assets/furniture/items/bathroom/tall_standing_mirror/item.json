@@ -1,0 +1,159 @@
+{
+  "id": "tall_standing_mirror",
+  "name": "Tall standing mirror",
+  "category": "bathroom",
+  "size": [
+    70,
+    190
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Shine sweeps across; mirror tilts a little.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/bathroom/tall_standing_mirror/front.png",
+    "left": "items/bathroom/tall_standing_mirror/left.png",
+    "right": "items/bathroom/tall_standing_mirror/right.png",
+    "back": "items/bathroom/tall_standing_mirror/back.png"
+  },
+  "frame_size": [
+    70,
+    120
+  ],
+  "anchor": [
+    35,
+    120
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      70,
+      120
+    ],
+    "left": [
+      11,
+      0,
+      47,
+      120
+    ],
+    "right": [
+      12,
+      0,
+      46,
+      120
+    ],
+    "back": [
+      0,
+      0,
+      70,
+      120
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      80,
+      70,
+      40
+    ],
+    "left": [
+      11,
+      80,
+      47,
+      40
+    ],
+    "right": [
+      12,
+      80,
+      46,
+      40
+    ],
+    "back": [
+      0,
+      80,
+      70,
+      40
+    ]
+  },
+  "source_front_size": [
+    70,
+    190
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    126,
+    70,
+    64
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "bathroom_02.png",
+  "source_measured_bounds": {
+    "front": [
+      43,
+      942,
+      213,
+      1233
+    ],
+    "left": [
+      312,
+      942,
+      425,
+      1233
+    ],
+    "right": [
+      524,
+      942,
+      636,
+      1233
+    ],
+    "back": [
+      736,
+      942,
+      906,
+      1233
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/bathroom.png",
+  "atlas_rects": {
+    "front": [
+      61,
+      1412,
+      70,
+      120
+    ],
+    "left": [
+      253,
+      1412,
+      70,
+      120
+    ],
+    "right": [
+      445,
+      1412,
+      70,
+      120
+    ],
+    "back": [
+      637,
+      1412,
+      70,
+      120
+    ]
+  }
+}

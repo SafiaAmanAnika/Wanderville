@@ -1,0 +1,134 @@
+{
+  "id": "kettlebell",
+  "name": "Kettlebell",
+  "category": "gym_small_items",
+  "size": [
+    25,
+    30
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Tips and rocks back.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym_small_items/kettlebell/front.png",
+    "left": "items/gym_small_items/kettlebell/left.png",
+    "right": "items/gym_small_items/kettlebell/right.png",
+    "back": "items/gym_small_items/kettlebell/back.png"
+  },
+  "frame_size": [
+    23,
+    31
+  ],
+  "anchor": [
+    11,
+    31
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      1,
+      23,
+      30
+    ],
+    "left": [
+      0,
+      0,
+      22,
+      31
+    ],
+    "right": [
+      0,
+      0,
+      22,
+      31
+    ],
+    "back": [
+      0,
+      1,
+      22,
+      30
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    25,
+    30
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_small_items_01.png",
+  "source_measured_bounds": {
+    "front": [
+      71,
+      568,
+      224,
+      771
+    ],
+    "left": [
+      328,
+      562,
+      475,
+      771
+    ],
+    "right": [
+      549,
+      562,
+      695,
+      771
+    ],
+    "back": [
+      800,
+      568,
+      952,
+      771
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym_small_items.png",
+  "atlas_rects": {
+    "front": [
+      20,
+      83,
+      23,
+      31
+    ],
+    "left": [
+      84,
+      83,
+      23,
+      31
+    ],
+    "right": [
+      148,
+      83,
+      23,
+      31
+    ],
+    "back": [
+      212,
+      83,
+      23,
+      31
+    ]
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "id": "coffee_machine",
+  "name": "Coffee machine",
+  "category": "devices",
+  "size": [
+    40,
+    50
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Coffee drips into a cup, steam rises.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/coffee_machine/front.png",
+    "left": "items/devices/coffee_machine/left.png",
+    "right": "items/devices/coffee_machine/right.png",
+    "back": "items/devices/coffee_machine/back.png"
+  },
+  "frame_size": [
+    41,
+    49
+  ],
+  "anchor": [
+    20,
+    49
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      40,
+      49
+    ],
+    "left": [
+      0,
+      0,
+      41,
+      49
+    ],
+    "right": [
+      0,
+      0,
+      41,
+      49
+    ],
+    "back": [
+      0,
+      0,
+      41,
+      49
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    40,
+    50
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_03.png",
+  "source_measured_bounds": {
+    "front": [
+      99,
+      1343,
+      235,
+      1508
+    ],
+    "left": [
+      557,
+      1343,
+      695,
+      1508
+    ],
+    "right": [
+      331,
+      1343,
+      469,
+      1508
+    ],
+    "back": [
+      789,
+      1343,
+      927,
+      1508
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      91,
+      2565,
+      41,
+      49
+    ],
+    "left": [
+      315,
+      2565,
+      41,
+      49
+    ],
+    "right": [
+      539,
+      2565,
+      41,
+      49
+    ],
+    "back": [
+      763,
+      2565,
+      41,
+      49
+    ]
+  }
+}

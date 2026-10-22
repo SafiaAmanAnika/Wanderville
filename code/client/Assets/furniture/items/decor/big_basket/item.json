@@ -1,0 +1,138 @@
+{
+  "id": "big_basket",
+  "name": "Big basket",
+  "category": "decor",
+  "size": [
+    60,
+    50
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Lid opens (toggle).",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/big_basket/front.png",
+    "left": "items/decor/big_basket/left.png",
+    "right": "items/decor/big_basket/right.png",
+    "back": "items/decor/big_basket/back.png"
+  },
+  "frame_size": [
+    60,
+    37
+  ],
+  "anchor": [
+    30,
+    37
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      2,
+      60,
+      35
+    ],
+    "left": [
+      9,
+      0,
+      41,
+      37
+    ],
+    "right": [
+      9,
+      0,
+      41,
+      37
+    ],
+    "back": [
+      0,
+      4,
+      60,
+      33
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    60,
+    50
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_03.png",
+  "source_measured_bounds": {
+    "front": [
+      126,
+      849,
+      296,
+      949
+    ],
+    "left": [
+      401,
+      849,
+      526,
+      949
+    ],
+    "right": [
+      596,
+      849,
+      721,
+      949
+    ],
+    "back": [
+      827,
+      853,
+      996,
+      949
+    ]
+  },
+  "corrected_views": [
+    "left",
+    "right",
+    "back"
+  ],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      98,
+      2743,
+      60,
+      37
+    ],
+    "left": [
+      354,
+      2743,
+      60,
+      37
+    ],
+    "right": [
+      610,
+      2743,
+      60,
+      37
+    ],
+    "back": [
+      866,
+      2743,
+      60,
+      37
+    ]
+  }
+}

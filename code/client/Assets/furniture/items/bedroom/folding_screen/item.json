@@ -1,0 +1,159 @@
+{
+  "id": "folding_screen",
+  "name": "Folding screen",
+  "category": "bedroom",
+  "size": [
+    145,
+    175
+  ],
+  "z_index": 0,
+  "wood_cost": 3,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Panels fold up / unfold (toggle).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/bedroom/folding_screen/front.png",
+    "left": "items/bedroom/folding_screen/left.png",
+    "right": "items/bedroom/folding_screen/right.png",
+    "back": "items/bedroom/folding_screen/back.png"
+  },
+  "frame_size": [
+    145,
+    123
+  ],
+  "anchor": [
+    72,
+    123
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      9,
+      145,
+      114
+    ],
+    "left": [
+      45,
+      0,
+      55,
+      123
+    ],
+    "right": [
+      45,
+      0,
+      54,
+      123
+    ],
+    "back": [
+      0,
+      10,
+      145,
+      113
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      85,
+      145,
+      38
+    ],
+    "left": [
+      45,
+      82,
+      55,
+      41
+    ],
+    "right": [
+      45,
+      82,
+      54,
+      41
+    ],
+    "back": [
+      0,
+      85,
+      145,
+      38
+    ]
+  },
+  "source_front_size": [
+    145,
+    175
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    116,
+    145,
+    59
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "bedroom_01.png",
+  "source_measured_bounds": {
+    "front": [
+      46,
+      1339,
+      244,
+      1494
+    ],
+    "left": [
+      350,
+      1329,
+      425,
+      1497
+    ],
+    "right": [
+      600,
+      1329,
+      674,
+      1497
+    ],
+    "back": [
+      780,
+      1339,
+      978,
+      1493
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/bedroom.png",
+  "atlas_rects": {
+    "front": [
+      71,
+      1153,
+      145,
+      123
+    ],
+    "left": [
+      359,
+      1153,
+      145,
+      123
+    ],
+    "right": [
+      647,
+      1153,
+      145,
+      123
+    ],
+    "back": [
+      935,
+      1153,
+      145,
+      123
+    ]
+  }
+}

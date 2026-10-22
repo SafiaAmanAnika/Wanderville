@@ -1,0 +1,134 @@
+{
+  "id": "painting_small",
+  "name": "Painting (small)",
+  "category": "decor",
+  "size": [
+    85,
+    65
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Tilted \u2192 straightens itself.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/painting_small/front.png",
+    "left": "items/decor/painting_small/left.png",
+    "right": "items/decor/painting_small/right.png",
+    "back": "items/decor/painting_small/back.png"
+  },
+  "frame_size": [
+    86,
+    75
+  ],
+  "anchor": [
+    43,
+    75
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      11,
+      85,
+      64
+    ],
+    "left": [
+      28,
+      0,
+      29,
+      75
+    ],
+    "right": [
+      28,
+      0,
+      29,
+      75
+    ],
+    "back": [
+      0,
+      11,
+      86,
+      64
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    85,
+    65
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_01.png",
+  "source_measured_bounds": {
+    "front": [
+      69,
+      1216,
+      208,
+      1321
+    ],
+    "left": [
+      368,
+      1207,
+      415,
+      1329
+    ],
+    "right": [
+      609,
+      1207,
+      657,
+      1329
+    ],
+    "back": [
+      816,
+      1216,
+      956,
+      1321
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      85,
+      928,
+      86,
+      75
+    ],
+    "left": [
+      341,
+      928,
+      86,
+      75
+    ],
+    "right": [
+      597,
+      928,
+      86,
+      75
+    ],
+    "back": [
+      853,
+      928,
+      86,
+      75
+    ]
+  }
+}

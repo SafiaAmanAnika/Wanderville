@@ -1,0 +1,134 @@
+{
+  "id": "floor_cushion_pouf",
+  "name": "Floor cushion / pouf",
+  "category": "seating",
+  "size": [
+    60,
+    45
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Squish and bounce.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/seating/floor_cushion_pouf/front.png",
+    "left": "items/seating/floor_cushion_pouf/left.png",
+    "right": "items/seating/floor_cushion_pouf/right.png",
+    "back": "items/seating/floor_cushion_pouf/back.png"
+  },
+  "frame_size": [
+    60,
+    45
+  ],
+  "anchor": [
+    30,
+    45
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      60,
+      45
+    ],
+    "left": [
+      2,
+      4,
+      55,
+      41
+    ],
+    "right": [
+      2,
+      4,
+      56,
+      41
+    ],
+    "back": [
+      1,
+      1,
+      58,
+      44
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    60,
+    45
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "seating_02.png",
+  "source_measured_bounds": {
+    "front": [
+      82,
+      1196,
+      221,
+      1300
+    ],
+    "left": [
+      337,
+      1202,
+      465,
+      1296
+    ],
+    "right": [
+      562,
+      1202,
+      691,
+      1296
+    ],
+    "back": [
+      808,
+      1197,
+      942,
+      1298
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/seating.png",
+  "atlas_rects": {
+    "front": [
+      130,
+      1600,
+      60,
+      45
+    ],
+    "left": [
+      450,
+      1600,
+      60,
+      45
+    ],
+    "right": [
+      770,
+      1600,
+      60,
+      45
+    ],
+    "back": [
+      1090,
+      1600,
+      60,
+      45
+    ]
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "id": "picture_frame_standing",
+  "name": "Picture frame (standing)",
+  "category": "tabletop",
+  "size": [
+    30,
+    35
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Tilts and straightens.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tabletop/picture_frame_standing/front.png",
+    "left": "items/tabletop/picture_frame_standing/left.png",
+    "right": "items/tabletop/picture_frame_standing/right.png",
+    "back": "items/tabletop/picture_frame_standing/back.png"
+  },
+  "frame_size": [
+    30,
+    30
+  ],
+  "anchor": [
+    15,
+    30
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      2,
+      30,
+      28
+    ],
+    "left": [
+      4,
+      0,
+      21,
+      30
+    ],
+    "right": [
+      4,
+      0,
+      21,
+      30
+    ],
+    "back": [
+      1,
+      2,
+      28,
+      28
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    30,
+    35
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tabletop_04.png",
+  "source_measured_bounds": {
+    "front": [
+      74,
+      737,
+      246,
+      899
+    ],
+    "left": [
+      374,
+      729,
+      494,
+      899
+    ],
+    "right": [
+      626,
+      729,
+      746,
+      899
+    ],
+    "back": [
+      877,
+      737,
+      1040,
+      896
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tabletop.png",
+  "atlas_rects": {
+    "front": [
+      17,
+      1196,
+      30,
+      30
+    ],
+    "left": [
+      81,
+      1196,
+      30,
+      30
+    ],
+    "right": [
+      145,
+      1196,
+      30,
+      30
+    ],
+    "back": [
+      209,
+      1196,
+      30,
+      30
+    ]
+  }
+}

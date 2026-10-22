@@ -1,0 +1,159 @@
+{
+  "id": "fridge",
+  "name": "Fridge",
+  "category": "kitchen",
+  "size": [
+    100,
+    205
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Door opens, inside light glows, cold mist puffs (toggle).",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/kitchen/fridge/front.png",
+    "left": "items/kitchen/fridge/left.png",
+    "right": "items/kitchen/fridge/right.png",
+    "back": "items/kitchen/fridge/back.png"
+  },
+  "frame_size": [
+    101,
+    168
+  ],
+  "anchor": [
+    50,
+    168
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      100,
+      168
+    ],
+    "left": [
+      9,
+      0,
+      82,
+      168
+    ],
+    "right": [
+      9,
+      0,
+      82,
+      168
+    ],
+    "back": [
+      0,
+      0,
+      101,
+      168
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      112,
+      100,
+      56
+    ],
+    "left": [
+      9,
+      112,
+      82,
+      56
+    ],
+    "right": [
+      9,
+      112,
+      82,
+      56
+    ],
+    "back": [
+      0,
+      112,
+      101,
+      56
+    ]
+  },
+  "source_front_size": [
+    100,
+    205
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    136,
+    100,
+    69
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "kitchen_01.png",
+  "source_measured_bounds": {
+    "front": [
+      104,
+      38,
+      225,
+      241
+    ],
+    "left": [
+      573,
+      38,
+      672,
+      241
+    ],
+    "right": [
+      352,
+      38,
+      451,
+      241
+    ],
+    "back": [
+      800,
+      38,
+      922,
+      241
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/kitchen.png",
+  "atlas_rects": {
+    "front": [
+      61,
+      8,
+      101,
+      168
+    ],
+    "left": [
+      285,
+      8,
+      101,
+      168
+    ],
+    "right": [
+      509,
+      8,
+      101,
+      168
+    ],
+    "back": [
+      733,
+      8,
+      101,
+      168
+    ]
+  }
+}

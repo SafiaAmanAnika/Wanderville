@@ -1,0 +1,161 @@
+{
+  "id": "computer_table_desk",
+  "name": "Computer table / desk",
+  "category": "tables_storage",
+  "size": [
+    175,
+    115
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Keyboard tray slides out (toggle).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tables_storage/computer_table_desk/front.png",
+    "left": "items/tables_storage/computer_table_desk/left.png",
+    "right": "items/tables_storage/computer_table_desk/right.png",
+    "back": "items/tables_storage/computer_table_desk/back.png"
+  },
+  "frame_size": [
+    126,
+    115
+  ],
+  "anchor": [
+    63,
+    115
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      126,
+      115
+    ],
+    "left": [
+      16,
+      3,
+      94,
+      112
+    ],
+    "right": [
+      16,
+      3,
+      94,
+      112
+    ],
+    "back": [
+      0,
+      13,
+      125,
+      102
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      76,
+      126,
+      39
+    ],
+    "left": [
+      16,
+      77,
+      94,
+      38
+    ],
+    "right": [
+      16,
+      77,
+      94,
+      38
+    ],
+    "back": [
+      0,
+      81,
+      125,
+      34
+    ]
+  },
+  "source_front_size": [
+    175,
+    115
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    76,
+    175,
+    39
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tables_storage_01.png",
+  "source_measured_bounds": {
+    "front": [
+      54,
+      972,
+      254,
+      1154
+    ],
+    "left": [
+      547,
+      971,
+      696,
+      1148
+    ],
+    "right": [
+      329,
+      971,
+      478,
+      1148
+    ],
+    "back": [
+      770,
+      973,
+      970,
+      1148
+    ]
+  },
+  "corrected_views": [
+    "back"
+  ],
+  "source_directions_remapped": true,
+  "atlas": "atlases/tables_storage.png",
+  "atlas_rects": {
+    "front": [
+      65,
+      795,
+      126,
+      115
+    ],
+    "left": [
+      321,
+      795,
+      126,
+      115
+    ],
+    "right": [
+      577,
+      795,
+      126,
+      115
+    ],
+    "back": [
+      833,
+      795,
+      126,
+      115
+    ]
+  }
+}

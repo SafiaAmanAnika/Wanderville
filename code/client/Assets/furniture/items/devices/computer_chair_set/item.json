@@ -1,0 +1,161 @@
+{
+  "id": "computer_chair_set",
+  "name": "Computer + chair set",
+  "category": "devices",
+  "size": [
+    175,
+    175
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Screen turns on and scrolls; chair spins (toggle).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/computer_chair_set/front.png",
+    "left": "items/devices/computer_chair_set/left.png",
+    "right": "items/devices/computer_chair_set/right.png",
+    "back": "items/devices/computer_chair_set/back.png"
+  },
+  "frame_size": [
+    175,
+    163
+  ],
+  "anchor": [
+    87,
+    163
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      6,
+      175,
+      157
+    ],
+    "left": [
+      27,
+      7,
+      120,
+      156
+    ],
+    "right": [
+      27,
+      7,
+      120,
+      156
+    ],
+    "back": [
+      0,
+      0,
+      175,
+      163
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      110,
+      175,
+      53
+    ],
+    "left": [
+      27,
+      111,
+      120,
+      52
+    ],
+    "right": [
+      27,
+      111,
+      120,
+      52
+    ],
+    "back": [
+      0,
+      108,
+      175,
+      55
+    ]
+  },
+  "source_front_size": [
+    175,
+    175
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    116,
+    175,
+    59
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_01.png",
+  "source_measured_bounds": {
+    "front": [
+      41,
+      803,
+      245,
+      986
+    ],
+    "left": [
+      328,
+      804,
+      468,
+      986
+    ],
+    "right": [
+      557,
+      804,
+      697,
+      986
+    ],
+    "back": [
+      781,
+      803,
+      987,
+      986
+    ]
+  },
+  "corrected_views": [
+    "back"
+  ],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      24,
+      712,
+      175,
+      163
+    ],
+    "left": [
+      248,
+      712,
+      175,
+      163
+    ],
+    "right": [
+      472,
+      712,
+      175,
+      163
+    ],
+    "back": [
+      696,
+      712,
+      175,
+      163
+    ]
+  }
+}

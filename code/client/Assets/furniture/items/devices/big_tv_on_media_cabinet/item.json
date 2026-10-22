@@ -1,0 +1,159 @@
+{
+  "id": "big_tv_on_media_cabinet",
+  "name": "Big TV on media cabinet",
+  "category": "devices",
+  "size": [
+    190,
+    175
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Same as TV; screen shows a moving scene.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/big_tv_on_media_cabinet/front.png",
+    "left": "items/devices/big_tv_on_media_cabinet/left.png",
+    "right": "items/devices/big_tv_on_media_cabinet/right.png",
+    "back": "items/devices/big_tv_on_media_cabinet/back.png"
+  },
+  "frame_size": [
+    190,
+    138
+  ],
+  "anchor": [
+    95,
+    138
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      3,
+      190,
+      135
+    ],
+    "left": [
+      61,
+      0,
+      68,
+      138
+    ],
+    "right": [
+      61,
+      0,
+      68,
+      138
+    ],
+    "back": [
+      1,
+      2,
+      188,
+      136
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      93,
+      190,
+      45
+    ],
+    "left": [
+      61,
+      92,
+      68,
+      46
+    ],
+    "right": [
+      61,
+      92,
+      68,
+      46
+    ],
+    "back": [
+      1,
+      92,
+      188,
+      46
+    ]
+  },
+  "source_front_size": [
+    190,
+    175
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    116,
+    190,
+    59
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_01.png",
+  "source_measured_bounds": {
+    "front": [
+      28,
+      184,
+      256,
+      346
+    ],
+    "left": [
+      377,
+      180,
+      459,
+      346
+    ],
+    "right": [
+      566,
+      180,
+      648,
+      346
+    ],
+    "back": [
+      769,
+      183,
+      995,
+      346
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      17,
+      172,
+      190,
+      138
+    ],
+    "left": [
+      241,
+      172,
+      190,
+      138
+    ],
+    "right": [
+      465,
+      172,
+      190,
+      138
+    ],
+    "back": [
+      689,
+      172,
+      190,
+      138
+    ]
+  }
+}

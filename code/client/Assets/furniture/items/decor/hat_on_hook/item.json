@@ -1,0 +1,134 @@
+{
+  "id": "hat_on_hook",
+  "name": "Hat on hook",
+  "category": "decor",
+  "size": [
+    45,
+    35
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Hat spins on the hook.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/hat_on_hook/front.png",
+    "left": "items/decor/hat_on_hook/left.png",
+    "right": "items/decor/hat_on_hook/right.png",
+    "back": "items/decor/hat_on_hook/back.png"
+  },
+  "frame_size": [
+    29,
+    35
+  ],
+  "anchor": [
+    14,
+    35
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      29,
+      35
+    ],
+    "left": [
+      3,
+      0,
+      22,
+      35
+    ],
+    "right": [
+      3,
+      0,
+      22,
+      35
+    ],
+    "back": [
+      0,
+      0,
+      29,
+      35
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    45,
+    35
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_03.png",
+  "source_measured_bounds": {
+    "front": [
+      158,
+      956,
+      262,
+      1080
+    ],
+    "left": [
+      430,
+      958,
+      509,
+      1081
+    ],
+    "right": [
+      613,
+      958,
+      692,
+      1081
+    ],
+    "back": [
+      861,
+      956,
+      964,
+      1080
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      113,
+      2796,
+      29,
+      35
+    ],
+    "left": [
+      369,
+      2796,
+      29,
+      35
+    ],
+    "right": [
+      625,
+      2796,
+      29,
+      35
+    ],
+    "back": [
+      881,
+      2796,
+      29,
+      35
+    ]
+  }
+}

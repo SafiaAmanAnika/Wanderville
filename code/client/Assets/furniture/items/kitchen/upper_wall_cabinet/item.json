@@ -1,0 +1,134 @@
+{
+  "id": "upper_wall_cabinet",
+  "name": "Upper wall cabinet",
+  "category": "kitchen",
+  "size": [
+    100,
+    70
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Door opens (toggle).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/kitchen/upper_wall_cabinet/front.png",
+    "left": "items/kitchen/upper_wall_cabinet/left.png",
+    "right": "items/kitchen/upper_wall_cabinet/right.png",
+    "back": "items/kitchen/upper_wall_cabinet/back.png"
+  },
+  "frame_size": [
+    97,
+    70
+  ],
+  "anchor": [
+    48,
+    70
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      97,
+      70
+    ],
+    "left": [
+      23,
+      0,
+      50,
+      70
+    ],
+    "right": [
+      23,
+      0,
+      50,
+      70
+    ],
+    "back": [
+      0,
+      1,
+      96,
+      69
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    100,
+    70
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "kitchen_02.png",
+  "source_measured_bounds": {
+    "front": [
+      59,
+      254,
+      242,
+      386
+    ],
+    "left": [
+      603,
+      254,
+      697,
+      386
+    ],
+    "right": [
+      363,
+      254,
+      457,
+      386
+    ],
+    "back": [
+      819,
+      254,
+      1000,
+      385
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/kitchen.png",
+  "atlas_rects": {
+    "front": [
+      63,
+      1181,
+      97,
+      70
+    ],
+    "left": [
+      287,
+      1181,
+      97,
+      70
+    ],
+    "right": [
+      511,
+      1181,
+      97,
+      70
+    ],
+    "back": [
+      735,
+      1181,
+      97,
+      70
+    ]
+  }
+}

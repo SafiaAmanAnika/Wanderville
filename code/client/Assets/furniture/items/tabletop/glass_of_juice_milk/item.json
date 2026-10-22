@@ -1,0 +1,134 @@
+{
+  "id": "glass_of_juice_milk",
+  "name": "Glass of juice / milk",
+  "category": "tabletop",
+  "size": [
+    18,
+    30
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Liquid level drops (sip).",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tabletop/glass_of_juice_milk/front.png",
+    "left": "items/tabletop/glass_of_juice_milk/left.png",
+    "right": "items/tabletop/glass_of_juice_milk/right.png",
+    "back": "items/tabletop/glass_of_juice_milk/back.png"
+  },
+  "frame_size": [
+    18,
+    26
+  ],
+  "anchor": [
+    9,
+    26
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      18,
+      26
+    ],
+    "left": [
+      0,
+      0,
+      17,
+      26
+    ],
+    "right": [
+      0,
+      0,
+      17,
+      26
+    ],
+    "back": [
+      0,
+      0,
+      18,
+      26
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    18,
+    30
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tabletop_01.png",
+  "source_measured_bounds": {
+    "front": [
+      120,
+      346,
+      209,
+      476
+    ],
+    "left": [
+      382,
+      346,
+      464,
+      476
+    ],
+    "right": [
+      622,
+      346,
+      704,
+      476
+    ],
+    "back": [
+      875,
+      345,
+      966,
+      476
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tabletop.png",
+  "atlas_rects": {
+    "front": [
+      23,
+      81,
+      18,
+      26
+    ],
+    "left": [
+      87,
+      81,
+      18,
+      26
+    ],
+    "right": [
+      151,
+      81,
+      18,
+      26
+    ],
+    "back": [
+      215,
+      81,
+      18,
+      26
+    ]
+  }
+}

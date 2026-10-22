@@ -1,0 +1,134 @@
+{
+  "id": "bottle_wine_glass",
+  "name": "Bottle (wine / glass)",
+  "category": "tabletop",
+  "size": [
+    18,
+    45
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Wobbles.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tabletop/bottle_wine_glass/front.png",
+    "left": "items/tabletop/bottle_wine_glass/left.png",
+    "right": "items/tabletop/bottle_wine_glass/right.png",
+    "back": "items/tabletop/bottle_wine_glass/back.png"
+  },
+  "frame_size": [
+    18,
+    40
+  ],
+  "anchor": [
+    9,
+    40
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      18,
+      40
+    ],
+    "left": [
+      1,
+      0,
+      16,
+      40
+    ],
+    "right": [
+      1,
+      0,
+      16,
+      40
+    ],
+    "back": [
+      0,
+      0,
+      17,
+      40
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    18,
+    45
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tabletop_01.png",
+  "source_measured_bounds": {
+    "front": [
+      114,
+      667,
+      203,
+      867
+    ],
+    "left": [
+      375,
+      667,
+      455,
+      867
+    ],
+    "right": [
+      631,
+      667,
+      711,
+      867
+    ],
+    "back": [
+      884,
+      667,
+      968,
+      867
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tabletop.png",
+  "atlas_rects": {
+    "front": [
+      23,
+      166,
+      18,
+      40
+    ],
+    "left": [
+      87,
+      166,
+      18,
+      40
+    ],
+    "right": [
+      151,
+      166,
+      18,
+      40
+    ],
+    "back": [
+      215,
+      166,
+      18,
+      40
+    ]
+  }
+}

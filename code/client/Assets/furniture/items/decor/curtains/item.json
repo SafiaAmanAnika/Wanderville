@@ -1,0 +1,134 @@
+{
+  "id": "curtains",
+  "name": "Curtains",
+  "category": "decor",
+  "size": [
+    130,
+    175
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Open / close (toggle).",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/curtains/front.png",
+    "left": "items/decor/curtains/left.png",
+    "right": "items/decor/curtains/right.png",
+    "back": "items/decor/curtains/back.png"
+  },
+  "frame_size": [
+    132,
+    105
+  ],
+  "anchor": [
+    66,
+    105
+  ],
+  "visible_bounds": {
+    "front": [
+      1,
+      1,
+      130,
+      104
+    ],
+    "left": [
+      44,
+      1,
+      43,
+      104
+    ],
+    "right": [
+      44,
+      0,
+      43,
+      105
+    ],
+    "back": [
+      0,
+      2,
+      132,
+      103
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    130,
+    175
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_02.png",
+  "source_measured_bounds": {
+    "front": [
+      75,
+      807,
+      272,
+      965
+    ],
+    "left": [
+      372,
+      806,
+      437,
+      964
+    ],
+    "right": [
+      587,
+      806,
+      652,
+      965
+    ],
+    "back": [
+      750,
+      807,
+      950,
+      963
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      62,
+      1687,
+      132,
+      105
+    ],
+    "left": [
+      318,
+      1687,
+      132,
+      105
+    ],
+    "right": [
+      574,
+      1687,
+      132,
+      105
+    ],
+    "back": [
+      830,
+      1687,
+      132,
+      105
+    ]
+  }
+}

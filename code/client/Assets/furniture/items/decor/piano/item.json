@@ -1,0 +1,159 @@
+{
+  "id": "piano",
+  "name": "Piano",
+  "category": "decor",
+  "size": [
+    200,
+    145
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Keys press in a wave, music notes float.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/piano/front.png",
+    "left": "items/decor/piano/left.png",
+    "right": "items/decor/piano/right.png",
+    "back": "items/decor/piano/back.png"
+  },
+  "frame_size": [
+    197,
+    145
+  ],
+  "anchor": [
+    98,
+    145
+  ],
+  "visible_bounds": {
+    "front": [
+      1,
+      0,
+      194,
+      145
+    ],
+    "left": [
+      50,
+      0,
+      97,
+      145
+    ],
+    "right": [
+      50,
+      0,
+      96,
+      145
+    ],
+    "back": [
+      0,
+      0,
+      197,
+      145
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      1,
+      96,
+      194,
+      49
+    ],
+    "left": [
+      50,
+      96,
+      97,
+      49
+    ],
+    "right": [
+      50,
+      96,
+      96,
+      49
+    ],
+    "back": [
+      0,
+      96,
+      197,
+      49
+    ]
+  },
+  "source_front_size": [
+    200,
+    145
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    96,
+    200,
+    49
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_02.png",
+  "source_measured_bounds": {
+    "front": [
+      66,
+      1122,
+      288,
+      1288
+    ],
+    "left": [
+      360,
+      1122,
+      471,
+      1288
+    ],
+    "right": [
+      554,
+      1122,
+      664,
+      1288
+    ],
+    "back": [
+      734,
+      1122,
+      959,
+      1288
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      29,
+      1888,
+      197,
+      145
+    ],
+    "left": [
+      285,
+      1888,
+      197,
+      145
+    ],
+    "right": [
+      541,
+      1888,
+      197,
+      145
+    ],
+    "back": [
+      797,
+      1888,
+      197,
+      145
+    ]
+  }
+}

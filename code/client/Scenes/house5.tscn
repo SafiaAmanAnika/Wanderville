@@ -144,7 +144,7 @@ texture = ExtResource("3_erxxb")
 sources/0 = SubResource("TileSetAtlasSource_ttofh")
 
 [sub_resource type="RectangleShape2D" id="Exit_shape"]
-size = Vector2(231, 338)
+size = Vector2(231, 378)
 
 [node name="House" type="Node2D" unique_id=1666084513]
 script = ExtResource("1_61a1r")
@@ -290,11 +290,11 @@ tile_set = SubResource("TileSet_61a1r")
 script = ExtResource("wall_collision_script")
 
 [node name="Spawn" type="Marker2D" parent="." unique_id=1318767552]
-position = Vector2(2316, -671)
+position = Vector2(2314, -723)
 
 [node name="Exit" type="Area2D" parent="." unique_id=1040165239]
 position = Vector2(2290.94, -1183)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Exit" unique_id=456725091]
-position = Vector2(18.560059, 774)
+position = Vector2(18.560059, 754)
 shape = SubResource("Exit_shape")

@@ -39,6 +39,7 @@ var _drag_crop: Dictionary = {}     # empty = carrying bare soil
 
 var _cursor: Line2D
 
+var _player_in_zone := false
 
 func _get_tile_visual_size() -> Vector2:
 	return tile_visual_size
@@ -62,6 +63,35 @@ func _ready():
 	_apply_server_plots(GameState.farm_plots)
 	_diag("apply_server_plots returned")
 
+func _connect_farm_zone() -> void:
+	var zone := get_node_or_null("../Map/FarmField/FarmZone") as Area2D
+	if zone == null:
+		push_warning("FarmZone missing — farming stays locked")
+		return
+	zone.body_entered.connect(_on_zone_entered)
+	zone.body_exited.connect(_on_zone_exited)
+	_check_zone_at_start(zone)
+
+
+func _check_zone_at_start(zone: Area2D) -> void:
+	# Area2D only fires when you CROSS the edge — a player who spawns inside
+	# never triggers it, so check for an overlap once on startup.
+	await get_tree().physics_frame
+	for body in zone.get_overlapping_bodies():
+		if body.is_in_group("player"):
+			_player_in_zone = true
+
+
+func _on_zone_entered(body: Node2D) -> void:
+	if body.is_in_group("player"):
+		_player_in_zone = true
+		_diag("entered farm zone")
+
+
+func _on_zone_exited(body: Node2D) -> void:
+	if body.is_in_group("player"):
+		_player_in_zone = false
+		_cursor.visible = false
 
 func _diag(msg: String) -> void:
 	print("[FARMDIAG] %s" % msg)

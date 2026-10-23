@@ -8,7 +8,7 @@ const CHARA_SCALE := Vector2(1.18, 1.18)   # chara sheets are 448px; this matche
 
 
 func _ready() -> void:
-	add_child(load("res://Scripts/storage_house.gd").new())   # click the CDS building -> storage menu
+	add_child(load("res://Scripts/inventory/storage_house.gd").new())   # click the CDS building -> storage menu
 	spawn_selected_character()
 	var player := get_node("girl") as Node2D
 	if not CampusLayout.walkable(player.global_position):

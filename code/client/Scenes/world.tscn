@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://bbsefjtcb4mad" path="res://Scripts/day_and_night_cycle.gd" id="11_cycle"]
 [ext_resource type="Script" uid="uid://cspawnesa832b" path="res://Scripts/character_spawner.gd" id="12_spawner"]
 [ext_resource type="Script" uid="uid://2sq7krkfclql" path="res://Scripts/housing/house_manager.gd" id="14_e0ngr"]
+[ext_resource type="Script" uid="uid://chiqj7r3xupbb" path="res://Scripts/housing/house_area.gd" id="15_hgpy0"]
 [ext_resource type="PackedScene" uid="uid://bwpwbv2wlvfot" path="res://Scenes/map2.tscn" id="15_kn0ld"]
 
 [node name="World" type="Node2D" unique_id=1971179881]
@@ -76,3 +77,9 @@ script = ExtResource("11_cycle")
 
 [node name="HouseManager" type="Node2D" parent="." unique_id=754589155]
 script = ExtResource("14_e0ngr")
+
+[node name="HouseArea" type="Area2D" parent="HouseManager" unique_id=193297254]
+script = ExtResource("15_hgpy0")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HouseManager/HouseArea" unique_id=1877007868]
+polygon = PackedVector2Array(-3417, 1176, 1821, 1176, 1809, 730, 3942, 736, 3954, 2430, -3435, 2448)

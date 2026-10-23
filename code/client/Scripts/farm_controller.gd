@@ -39,10 +39,40 @@ var _drag_crop: Dictionary = {}     # empty = carrying bare soil
 
 var _cursor: Line2D
 
+var _player_in_zone := false
 
 func _get_tile_visual_size() -> Vector2:
 	return tile_visual_size
 
+func _connect_farm_zone() -> void:
+	var zone := get_node_or_null("../Map/FarmField/FarmZone") as Area2D
+	if zone == null:
+		push_warning("FarmZone missing — farming stays locked")
+		return
+	zone.body_entered.connect(_on_zone_entered)
+	zone.body_exited.connect(_on_zone_exited)
+	_check_zone_at_start(zone)
+
+
+func _check_zone_at_start(zone: Area2D) -> void:
+	# Area2D only fires when you CROSS the edge — a player who spawns inside
+	# never triggers it, so check for an overlap once on startup.
+	await get_tree().physics_frame
+	for body in zone.get_overlapping_bodies():
+		if body.is_in_group("player"):
+			_player_in_zone = true
+
+
+func _on_zone_entered(body: Node2D) -> void:
+	if body.is_in_group("player"):
+		_player_in_zone = true
+		_diag("entered farm zone")
+
+
+func _on_zone_exited(body: Node2D) -> void:
+	if body.is_in_group("player"):
+		_player_in_zone = false
+		_cursor.visible = false
 
 # size a tile is DRAWN at (slightly smaller than the grid cell, so a gap shows)
 func _drawn_size() -> Vector2:
@@ -96,9 +126,8 @@ func _diag_dump_plots(plots: Array) -> void:
 # ─── Input ───────────────────────────────────────────────────────────
 
 func _blocked() -> bool:
-	return GameState.menu_open or GameState.social_open or _backend_busy \
+	return not _player_in_zone or GameState.menu_open or GameState.social_open or _backend_busy \
 		or (Global.is_logged_in() and not GameState.backend_ready)
-
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _blocked():
@@ -116,6 +145,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif _is_in_farm_area(_hover_tile()):
 			get_viewport().set_input_as_handled()
 			_pick_up(_hover_tile())
+
 
 
 func _on_click(tile: Vector2i) -> void:
@@ -155,7 +185,7 @@ func _process(_delta):
 	if _cursor == null:
 		return
 	var tile := _hover_tile()
-	var on_farm := _is_in_farm_area(tile) and not GameState.menu_open and not GameState.social_open
+	var on_farm := _player_in_zone and _is_in_farm_area(tile) and not GameState.menu_open and not GameState.social_open
 	_cursor.visible = on_farm or _dragging
 	_cursor.global_position = _tile_to_world(tile)
 	if _dragging:

@@ -18,6 +18,10 @@ config/name="Wanderville"
 run/main_scene="res://Scenes/menus/TitleScreen.tscn"
 config/features=PackedStringArray("4.6")
 
+[audio]
+
+driver/enable_input=true
+
 [autoload]
 
 GameState="*res://autoloads/GameState.gd"
@@ -79,10 +83,6 @@ rearrange={
 [network]
 
 wanderville_api_url="https://wanderville-api.onrender.com"
-
-[audio]
-
-driver/enable_input=true
 
 [rendering]
 

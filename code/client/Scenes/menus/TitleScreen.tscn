@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://b1045q1essdqo"]
 
-[ext_resource type="Script" path="res://Scripts/menus/title_screen.gd" id="1"]
-[ext_resource type="Script" path="res://Scripts/components/wood_panel.gd" id="2"]
+[ext_resource type="Script" uid="uid://low6bsud6wwb" path="res://Scripts/menus/title_screen.gd" id="1"]
+[ext_resource type="Script" uid="uid://c3u3fxgx8n6qq" path="res://Scripts/components/wood_panel.gd" id="2"]
 
-[node name="TitleScreen" type="Control"]
+[node name="TitleScreen" type="Control" unique_id=1786030930]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,7 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=292890404]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -21,10 +21,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 0
-stretch_mode = 6
 expand_mode = 3
+stretch_mode = 6
 
-[node name="Center" type="CenterContainer" parent="."]
+[node name="Center" type="CenterContainer" parent="." unique_id=1458270518]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -33,48 +33,46 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Content" type="VBoxContainer" parent="Center"]
+[node name="Content" type="VBoxContainer" parent="Center" unique_id=318081402]
 unique_name_in_owner = true
-layout_mode = 2
 custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
 size_flags_vertical = 8
 theme_override_constants/separation = 18
 alignment = 1
 
-[node name="WelcomePanel" type="PanelContainer" parent="Center"]
+[node name="WelcomePanel" type="PanelContainer" parent="Center" unique_id=1655912504]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(460, 0)
 visible = false
+custom_minimum_size = Vector2(460, 0)
 layout_mode = 2
 script = ExtResource("2")
 
-[node name="VBox" type="VBoxContainer" parent="Center/WelcomePanel"]
+[node name="VBox" type="VBoxContainer" parent="Center/WelcomePanel" unique_id=646710097]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="WelcomeLabel" type="Label" parent="Center/WelcomePanel/VBox"]
+[node name="WelcomeLabel" type="Label" parent="Center/WelcomePanel/VBox" unique_id=1344429238]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Welcome back!"
 horizontal_alignment = 1
 
-[node name="FlexSpacer" type="Control" parent="Center/WelcomePanel/VBox"]
+[node name="FlexSpacer" type="Control" parent="Center/WelcomePanel/VBox" unique_id=920900846]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="LoadingBar" type="ProgressBar" parent="Center/WelcomePanel/VBox"]
+[node name="LoadingBar" type="ProgressBar" parent="Center/WelcomePanel/VBox" unique_id=1293632194]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(300, 16)
 layout_mode = 2
 size_flags_horizontal = 4
-max_value = 100.0
-value = 0.0
 show_percentage = false
 
-[node name="LoadingLabel" type="Label" parent="Center/WelcomePanel/VBox"]
+[node name="LoadingLabel" type="Label" parent="Center/WelcomePanel/VBox" unique_id=62601169]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Loading..."

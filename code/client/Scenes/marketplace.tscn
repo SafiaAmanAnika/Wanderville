@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://bnurtgwdje5ys"]
+
+[ext_resource type="Script" uid="uid://x24i1yocdmth" path="res://Scripts/marketplace/marketplace.gd" id="1_q1wnj"]
+
+[node name="Marketplace" type="Node2D" unique_id=1396148604]
+script = ExtResource("1_q1wnj")
+
+[node name="Background" type="Node2D" parent="." unique_id=1136400249]
+
+[node name="Shops" type="Node2D" parent="." unique_id=875845806]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=951462885]
+limit_top = 220
+limit_bottom = 540
+
+[node name="PlayerSpawn" type="Marker2D" parent="." unique_id=1398342076]

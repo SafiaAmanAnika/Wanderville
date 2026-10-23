@@ -12,6 +12,7 @@ const WORLD_SCENE := "res://Scenes/world.tscn"
 const PROFILE_SCENE := "res://Scenes/menus/ProfileScene.tscn"
 const SOCIAL_LOBBY_SCENE := "res://Scenes/SocialLobby.tscn"
 const CHARACTER_CUSTOMIZATION_SCENE := "res://Scenes/CustomizationLobby.tscn"
+const MARKETPLACE_SCENE := "res://Scenes/marketplace.tscn"
 
 const FORGOT_PASSWORD_SCENE := "res://Scenes/menus/ForgotPasswordScene.tscn"
 const EMAIL_VERIFICATION_SCENE := "res://Scenes/menus/EmailVerificationScene.tscn"
@@ -169,6 +170,9 @@ func goto_reset_password(token: String = "") -> void:
 	Global.pending_reset_token = token
 	transition_to(RESET_PASSWORD_SCENE)
 
+func goto_marketplace() -> void:
+	if _is_transitioning: return
+	transition_to(MARKETPLACE_SCENE)
 
 func goto_post_login() -> void:
 	if Global.has_completed_setup():

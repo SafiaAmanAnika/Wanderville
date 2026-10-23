@@ -9,6 +9,7 @@ const CHARA_SCALE := Vector2(1.18, 1.18)   # chara sheets are 448px; this matche
 
 func _ready() -> void:
 	add_child(load("res://Scripts/inventory/storage_house.gd").new())   # click the CDS building -> storage menu
+	add_child(load("res://Scripts/marketplace/cafe_entrance.gd").new()) #ehehe <333
 	add_child(load("res://Scripts/social/lobby_entrance.gd").new())   # audi -> social; library -> customization
 	spawn_selected_character()
 	var player := get_node("girl") as Node2D

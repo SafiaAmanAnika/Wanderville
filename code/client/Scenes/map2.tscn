@@ -661,9 +661,6 @@ scale_min = 0.19999999
 scale_max = 0.5
 anim_offset_max = 1.0
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_dl0ew"]
-size = Vector2(141, 124)
-
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_pmuo0"]
 texture = ExtResource("36_6iy20")
 27:6/0 = 0
@@ -2058,6 +2055,9 @@ texture = ExtResource("36_6iy20")
 [sub_resource type="TileSet" id="TileSet_gg4i5"]
 sources/0 = SubResource("TileSetAtlasSource_pmuo0")
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dl0ew"]
+size = Vector2(131, 114)
+
 [node name="Map" type="Node2D" unique_id=1886189494]
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1565318372]
@@ -2186,19 +2186,20 @@ process_material = SubResource("ParticleProcessMaterial_gg4i5")
 [node name="FarmField" type="Node2D" parent="." unique_id=1664821398]
 script = ExtResource("35_kqb6c")
 
+[node name="FarmLayer" type="TileMapLayer" parent="FarmField" unique_id=1636329691]
+z_index = 10
+scale = Vector2(2, 2)
+tile_set = SubResource("TileSet_gg4i5")
+
 [node name="FarmZone" type="Area2D" parent="FarmField" unique_id=1748279136]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FarmField/FarmZone" unique_id=316995681]
-position = Vector2(191.5, -25)
+position = Vector2(192.5, -25)
 shape = SubResource("RectangleShape2D_dl0ew")
-
-[node name="FarmLayer" type="TileMapLayer" parent="." unique_id=1636329691]
-z_index = 10
-tile_set = SubResource("TileSet_gg4i5")
 
 [node name="WaterSource" type="StaticBody2D" parent="." unique_id=754308331]
 
-[node name="WaterInteraction" type="Area2D" parent="WaterSource"]
+[node name="WaterInteraction" type="Area2D" parent="WaterSource" unique_id=1969370701]
 collision_layer = 0
 script = ExtResource("26_d07ij")
 

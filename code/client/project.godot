@@ -83,3 +83,7 @@ wanderville_api_url="https://wanderville-api.onrender.com"
 [audio]
 
 driver/enable_input=true
+
+[rendering]
+
+2d/snap/snap_2d_transforms_to_pixel=true

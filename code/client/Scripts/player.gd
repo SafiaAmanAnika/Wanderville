@@ -11,8 +11,8 @@ var _facing := "south"   # last direction moved, used for the idle pose
 
 
 func _physics_process(delta):
-	# The normal-world bridge disables this controller before ENet connects.
-	if GameState.menu_open or GameState.social_open or get_viewport().gui_get_focus_owner() is LineEdit or (Global.is_logged_in() and not APIClient.realtime.connected):
+	# FREEZE WHEN MENU IS OPEN
+	if GameState.menu_open or GameState.social_open or get_viewport().gui_get_focus_owner() is LineEdit:
 		velocity = Vector2.ZERO
 		_stand_still()
 		return

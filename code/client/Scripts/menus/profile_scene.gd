@@ -100,6 +100,10 @@ func _on_character_pressed(button: Button) -> void:
 			_status_label.text = APIClient.error_text(response)
 			return
 	Global.selected_character = cid
+	# These cards select original character scenes. Clear a previously saved
+	# complete-look overlay so it cannot disguise the newly selected character.
+	Global.modular_look = {}
+	Global.appearance_changed.emit()
 	Global.save_session()
 	_status_label.text = "Character updated!"
 

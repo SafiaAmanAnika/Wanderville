@@ -1,0 +1,54 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/customization_interactions.gd" id="1"]
+[ext_resource type="Script" path="res://Scripts/social/lobby_interactable.gd" id="2"]
+
+[sub_resource type="RectangleShape2D" id="MirrorRange"]
+size = Vector2(220, 120)
+
+[sub_resource type="RectangleShape2D" id="WardrobeRange"]
+size = Vector2(200, 120)
+
+[sub_resource type="RectangleShape2D" id="ExitRange"]
+size = Vector2(220, 90)
+
+[node name="CustomizationInteractions" type="Node2D"]
+script = ExtResource("1")
+
+[node name="InteractionZones" type="Node2D" parent="."]
+
+[node name="Mirror" type="Area2D" parent="InteractionZones"]
+position = Vector2(836, 420)
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+script = ExtResource("2")
+action = &"mirror"
+prompt = "[E] Mirror"
+
+[node name="Detection" type="CollisionShape2D" parent="InteractionZones/Mirror"]
+shape = SubResource("MirrorRange")
+
+[node name="CharacterCustomization" type="Area2D" parent="InteractionZones"]
+position = Vector2(420, 430)
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+script = ExtResource("2")
+action = &"character"
+prompt = "[E] Character Customization"
+
+[node name="Detection" type="CollisionShape2D" parent="InteractionZones/CharacterCustomization"]
+shape = SubResource("WardrobeRange")
+
+[node name="Exit" type="Area2D" parent="InteractionZones"]
+position = Vector2(838, 850)
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+script = ExtResource("2")
+action = &"leave"
+prompt = "[E] Leave"
+
+[node name="Detection" type="CollisionShape2D" parent="InteractionZones/Exit"]
+shape = SubResource("ExitRange")

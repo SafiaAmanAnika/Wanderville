@@ -16,6 +16,9 @@ var _pending: Dictionary = {}
 var _sending := false
 var _connection_version := 0
 var _manual_open := false
+var _panel: PanelContainer
+var _scroll: ScrollContainer
+var _toggle: Button
 
 
 func button(parent: Node, text: String, action: Callable) -> Button:
@@ -32,25 +35,37 @@ func _ready() -> void:
 	add_child(voice)
 	community = preload("res://Scripts/social/community_window.gd").new()
 	add_child(community)
-	var panel := PanelContainer.new()
-	panel.position = Vector2(16, 90)
-	panel.custom_minimum_size.x = 340
-	add_child(panel)
+	_panel = PanelContainer.new()
+	_panel.position = Vector2(16, 90)
+	_panel.theme = preload("res://Scripts/ui/lobby_theme.gd").theme()
+	add_child(_panel)
 	var outer := VBoxContainer.new()
-	panel.add_child(outer)
-	button(outer, "Nearby social / Gifts", func() -> void:
+	_panel.add_child(outer)
+	_toggle = button(outer, "Nearby social / Gifts", func() -> void:
 		_manual_open = not _manual_open
-		_box.visible = _manual_open
+		_scroll.visible = _manual_open
+		if not _manual_open:
+			_text.release_focus()
+			_text.hide()
+		_fit_panel()
 	)
+	_scroll = ScrollContainer.new()
+	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_scroll.visible = false
+	outer.add_child(_scroll)
 	_box = VBoxContainer.new()
-	_box.visible = false
-	outer.add_child(_box)
+	_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_scroll.add_child(_box)
 	_prompt = Label.new()
 	_prompt.text = "Nearby social"
+	_prompt.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_box.add_child(_prompt)
 	_nearby = OptionButton.new()
+	_nearby.fit_to_longest_item = false
+	_nearby.clip_text = true
 	_box.add_child(_nearby)
-	var row := HBoxContainer.new()
+	var row := GridContainer.new()
+	row.columns = 2
 	_box.add_child(row)
 	button(row, "Write", func() -> void: _text.visible = true; _text.grab_focus())
 	_join = button(row, "Join voice", func() -> void: voice.join_voice())
@@ -64,7 +79,8 @@ func _ready() -> void:
 	_text.text_submitted.connect(_send)
 	_text.focus_entered.connect(func() -> void: GameState.social_open = true)
 	_text.focus_exited.connect(func() -> void: GameState.social_open = false)
-	var controls := HBoxContainer.new()
+	var controls := GridContainer.new()
+	controls.columns = 2
 	_box.add_child(controls)
 	_talk = Button.new()
 	_talk.text = "Hold Talk"
@@ -76,17 +92,17 @@ func _ready() -> void:
 	controls.add_child(deafen)
 	deafen.toggled.connect(func(value: bool) -> void: voice.set_deafened(value))
 	button(controls, "Leave voice", func() -> void: voice.leave())
-	button(controls, "Mute / unmute player", func() -> void:
+	button(controls, "Mute / unmute", func() -> void:
 		if _target() > 0:
 			voice.mute_player(_target(), not voice.muted_players.has(_target()))
 	)
-	var safety := HBoxContainer.new()
+	var safety := GridContainer.new()
+	safety.columns = 2
 	_box.add_child(safety)
 	button(safety, "Block player", _block)
-	button(safety, "Report harassment", _report)
-	button(safety, "My wishlist / Privacy", func() -> void: community.open_for())
+	button(safety, "Report player", _report)
+	button(safety, "Wishlist / Privacy", func() -> void: community.open_for())
 	_status = Label.new()
-	_status.custom_minimum_size.x = 340
 	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_box.add_child(_status)
 	voice.status_changed.connect(func(text: String) -> void: _status.text = text)
@@ -112,6 +128,17 @@ func _ready() -> void:
 			_clear()
 		_status.text = "Connected" if connected else "Reconnecting..."
 	)
+	get_viewport().size_changed.connect(_fit_panel)
+	_fit_panel()
+
+
+func _fit_panel() -> void:
+	var viewport := get_viewport().get_visible_rect().size
+	var width := minf(360, maxf(180, viewport.x - 32))
+	_panel.custom_minimum_size.x = width
+	_panel.size.x = width
+	_scroll.custom_minimum_size = Vector2(0, minf(330, maxf(100, viewport.y - 170)))
+	_panel.reset_size()
 
 
 func _target() -> int:
@@ -131,12 +158,18 @@ func _proximity(data: Dictionary) -> void:
 		if peer.get("show_prompt", false):
 			prompts.append(str(peer["username"]))
 	_prompt.text = "Nearby: " + ", ".join(prompts) if not prompts.is_empty() else "Nearby social"
-	_box.visible = _manual_open or not prompts.is_empty() or not voice.session_id.is_empty() or _text.visible
+	_toggle.text = "Nearby social / Gifts (%d)" % _peers.size() if not _peers.is_empty() else "Nearby social / Gifts"
+	# Presence updates must never expand a panel over gameplay.
+	_scroll.visible = _manual_open
 	# No focus is stolen when friends enter the perimeter.
 
 
 func _dismiss() -> void:
 	_manual_open = false
+	_text.release_focus()
+	_text.hide()
+	_scroll.hide()
+	_panel.reset_size()
 	for peer in _peers:
 		if peer.get("show_prompt", false):
 			await APIClient.realtime.command("proximity.dismiss", {"target_id": int(peer["player_id"])})
@@ -237,6 +270,11 @@ func _report() -> void:
 
 func _clear() -> void:
 	_connection_version += 1
+	_text.release_focus()
+	_text.hide()
+	_manual_open = false
+	_scroll.hide()
+	_panel.reset_size()
 	for entry in _bubbles.values():
 		entry["label"].queue_free()
 	_bubbles.clear()

@@ -52,6 +52,7 @@ func _snapshot(snapshot: Dictionary) -> void:
 		if not avatars.has(id):
 			var actor := Global.get_character_scene("player1").instantiate() as CharacterBody2D
 			actor.name = "Remote_%d" % id
+			actor.use_saved_appearance = false
 			actor.remove_from_group("player")
 			actor.process_mode = Node.PROCESS_MODE_DISABLED
 			actor.collision_layer = 0
@@ -70,6 +71,7 @@ func _snapshot(snapshot: Dictionary) -> void:
 			label.position = Vector2(-3, -10)
 			actor.add_child(label)
 			add_child(actor)
+			actor.remove_from_group("player") # _ready adds the controller to this group.
 			actor.global_position = target
 			# Sprite animation is the only remote child allowed to process.
 			actor.get_node("girl").process_mode = Node.PROCESS_MODE_ALWAYS

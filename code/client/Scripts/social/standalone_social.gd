@@ -7,6 +7,7 @@ var _status: Label
 var _actor: Node2D
 var _players: Array = []
 var _logging_in := false
+var _social: Node
 
 
 func _ready() -> void:
@@ -64,7 +65,29 @@ func _sign_in() -> void:
 	var camera := Camera2D.new()
 	_actor.add_child(camera)
 	APIClient.realtime.standalone_enabled = true
-	add_child(preload("res://Scenes/world_hud.tscn").instantiate())
+	var hud: Node = preload("res://Scenes/world_hud.tscn").instantiate()
+	add_child(hud)
+	# The world HUD no longer embeds social; this harness opens the shared panel
+	# directly so proximity chat and friends stay testable without the lobby map.
+	hud.get_node("%SocialButton").hide()
+	var canvas := CanvasLayer.new()
+	canvas.layer = 8
+	add_child(canvas)
+	var area := PanelContainer.new()
+	area.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	area.offset_left = -660.0
+	area.offset_top = 124.0
+	area.offset_right = -16.0
+	area.offset_bottom = -24.0
+	canvas.add_child(area)
+	_social = preload("res://Scenes/social_panel.tscn").instantiate()
+	area.add_child(_social)
+	_social.set_open(false)
+	var social_button := Button.new()
+	social_button.text = "Social [Tab]"
+	social_button.position = Vector2(20, 20)
+	canvas.add_child(social_button)
+	social_button.pressed.connect(func() -> void: _social.set_open(not _social.visible))
 
 
 func _process(delta: float) -> void:

@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://dfp8nduwu883r" path="res://Scripts/world_hud.gd" id="1"]
 [ext_resource type="Script" uid="uid://c3u3fxgx8n6qq" path="res://Scripts/components/wood_panel.gd" id="2"]
 [ext_resource type="Script" uid="uid://d23q1nwytgcdn" path="res://Scripts/components/wood_button.gd" id="3"]
-[ext_resource type="PackedScene" path="res://Scenes/social_panel.tscn" id="4"]
 [ext_resource type="PackedScene" uid="uid://crqpxuqul8co3" path="res://Scenes/menus/SettingsOverlay.tscn" id="5"]
 
 [node name="WorldHUD" type="CanvasLayer" unique_id=1849804373]
@@ -18,93 +17,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-
-[node name="Outside" type="ColorRect" parent="Screen" unique_id=697029917]
-unique_name_in_owner = true
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.05, 0.03, 0.01, 0.2)
-
-[node name="PanelArea" type="PanelContainer" parent="Screen" unique_id=1513814992]
-unique_name_in_owner = true
-visible = false
-layout_mode = 1
-anchors_preset = 11
-anchor_left = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -640.0
-offset_top = 124.0
-offset_right = -16.0
-offset_bottom = -24.0
-grow_horizontal = 0
-script = ExtResource("2")
-
-[node name="Scroll" type="ScrollContainer" parent="Screen/PanelArea" unique_id=1246468514]
-layout_mode = 2
-horizontal_scroll_mode = 0
-
-[node name="Contents" type="VBoxContainer" parent="Screen/PanelArea/Scroll" unique_id=1143628202]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 12
-
-[node name="Heading" type="Label" parent="Screen/PanelArea/Scroll/Contents" unique_id=1868208409]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="SocialPanel" parent="Screen/PanelArea/Scroll/Contents" unique_id=569898475 instance=ExtResource("4")]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 390)
-
-[node name="Notifications" type="VBoxContainer" parent="Screen/PanelArea/Scroll/Contents" unique_id=1523766487]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="Inbox" type="ItemList" parent="Screen/PanelArea/Scroll/Contents/Notifications" unique_id=1456414879]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 220)
-layout_mode = 2
-
-[node name="NoticeDetails" type="Label" parent="Screen/PanelArea/Scroll/Contents/Notifications" unique_id=1248377125]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 70)
-layout_mode = 2
-text = "Select a notification to view it and mark it read."
-autowrap_mode = 3
-
-[node name="NoticeActions" type="HBoxContainer" parent="Screen/PanelArea/Scroll/Contents/Notifications" unique_id=281218150]
-layout_mode = 2
-
-[node name="Dismiss" type="Button" parent="Screen/PanelArea/Scroll/Contents/Notifications/NoticeActions" unique_id=571619679]
-unique_name_in_owner = true
-layout_mode = 2
-disabled = true
-text = "Dismiss"
-script = ExtResource("3")
-
-[node name="More" type="Button" parent="Screen/PanelArea/Scroll/Contents/Notifications/NoticeActions" unique_id=514175490]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Older"
-script = ExtResource("3")
-
-[node name="NoticeRefresh" type="Button" parent="Screen/PanelArea/Scroll/Contents/Notifications/NoticeActions" unique_id=2043328494]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Refresh"
-script = ExtResource("3")
-
-[node name="Status" type="Label" parent="Screen/PanelArea/Scroll/Contents" unique_id=789113095]
-unique_name_in_owner = true
-layout_mode = 2
-autowrap_mode = 3
 
 [node name="Settings" parent="Screen" unique_id=936094496 instance=ExtResource("5")]
 unique_name_in_owner = true
@@ -156,18 +68,11 @@ mouse_filter = 2
 
 [node name="SocialButton" type="Button" parent="Screen/Top/Row" unique_id=1239582121]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(56, 52)
+custom_minimum_size = Vector2(150, 52)
 layout_mode = 2
 size_flags_vertical = 0
-tooltip_text = "Social: nearby chat, friends, private messages"
-script = ExtResource("3")
-
-[node name="NoticeButton" type="Button" parent="Screen/Top/Row" unique_id=1563600209]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(56, 52)
-layout_mode = 2
-size_flags_vertical = 0
-tooltip_text = "Notifications"
+tooltip_text = "Visit the Social Lobby: friends, messages, invitations, notifications"
+text = "Social Lobby"
 script = ExtResource("3")
 
 [node name="SettingsButton" type="Button" parent="Screen/Top/Row" unique_id=1852772784]

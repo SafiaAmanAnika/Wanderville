@@ -8,17 +8,30 @@ const MENU_BLOCK := 2
 const MENU_VISITORS := 3
 const MENU_DECLINE := 4
 const MENU_BACK := 5
+const MENU_SEARCH := 6
+const MENU_BLOCKED := 7
 const VIEW_INVITATIONS := 4
+const VIEW_BLOCKED := 3
+const VIEW_SEARCH := 2
 
 @onready var panel: PanelContainer = %Panel
 @onready var chat: VBoxContainer = %Chat
 @onready var friends: VBoxContainer = %Friends
+@onready var notifications: VBoxContainer = %Notifications
 @onready var mode: OptionButton = %Mode
 @onready var history: RichTextLabel = %History
 @onready var message: LineEdit = %Message
 @onready var view: OptionButton = %View
 @onready var people: ItemList = %Players
 @onready var status: Label = %Status
+var _section := "friends"
+var _nav: Dictionary = {}
+var _notices: Array = []
+var _notice_busy := false
+var _cursor: Variant = null
+var _selected_notice := 0
+var _notice_unread := 0
+var _request_count := 0
 var _nearby: Array = []
 var _private: Dictionary = {}
 var _names: Dictionary = {}
@@ -48,8 +61,8 @@ func _ready() -> void:
 	WoodPanel.apply_field_style(message)
 	WoodPanel.apply_field_style(%Search)
 	WoodPanel.apply_status_label(status)
-	%ChatButton.pressed.connect(func() -> void: _toggle(true))
-	%FriendsButton.pressed.connect(func() -> void: _toggle(false))
+	WoodPanel.apply_status_label(%NoticeDetails)
+	_setup_nav()
 	%Send.pressed.connect(_send)
 	message.text_submitted.connect(func(_text: String) -> void: _send())
 	%Find.pressed.connect(_load_people)
@@ -60,6 +73,10 @@ func _ready() -> void:
 	%Primary.pressed.connect(_primary)
 	%Decline.pressed.connect(_decline)
 	%More.get_popup().id_pressed.connect(_menu_action)
+	%Inbox.item_selected.connect(_view_notice)
+	%NoticeDismiss.pressed.connect(func() -> void: _update_notice(true))
+	%NoticeMore.pressed.connect(func() -> void: refresh_notifications(true))
+	%NoticeRefresh.pressed.connect(func() -> void: refresh_notifications())
 	APIClient.realtime.nearby_message_received.connect(_nearby_message)
 	APIClient.realtime.direct_message_received.connect(_direct_message)
 	APIClient.realtime.conversation_polled.connect(func(target: int) -> void:
@@ -77,22 +94,63 @@ func _ready() -> void:
 	APIClient.session_expired.connect(_expired)
 	_actions()
 	_render_history()
+	_render_notices()
+	_update_nav()
 
 
-func _toggle(show_chat: bool) -> void:
+func _setup_nav() -> void:
+	var group := ButtonGroup.new()
+	_nav = {
+		"friends": %NavFriends,
+		"requests": %NavRequests,
+		"messages": %NavMessages,
+		"invitations": %NavInvitations,
+		"notifications": %NavNotifications,
+	}
+	for key in _nav:
+		var button: Button = _nav[key]
+		button.toggle_mode = true
+		button.button_group = group
+		button.pressed.connect(func() -> void: show_section(key))
+
+
+func _update_nav() -> void:
+	for key in _nav:
+		var button: Button = _nav[key]
+		button.set_pressed_no_signal(key == _section)
+
+
+func show_section(section_name: String) -> void:
 	_drafts[_draft_key] = message.text
-	set_open(true)
-	chat.visible = show_chat
-	friends.visible = not show_chat
+	_section = section_name
 	_revision += 1
 	_loading = false
 	_stop_watch()
-	if panel.visible:
-		if show_chat:
-			_mode_changed(mode.selected)
-			message.grab_focus()
-		else:
-			_load_people()
+	chat.visible = section_name == "messages"
+	notifications.visible = section_name == "notifications"
+	friends.visible = section_name in ["friends", "requests", "invitations", "search", "blocked"]
+	match section_name:
+		"friends":
+			view.select(0)
+		"requests":
+			view.select(1)
+		"invitations":
+			view.select(VIEW_INVITATIONS)
+		"search":
+			view.select(VIEW_SEARCH)
+		"blocked":
+			view.select(VIEW_BLOCKED)
+	_update_nav()
+	set_open(true)
+	if section_name == "notifications":
+		refresh_notifications()
+	elif section_name == "search":
+		%SearchRow.visible = true
+		%Search.grab_focus()
+
+
+func _toggle(show_chat: bool) -> void:
+	show_section("messages" if show_chat else "friends")
 
 
 func set_open(value: bool) -> void:
@@ -133,6 +191,14 @@ func _process(delta: float) -> void:
 		message.clear()
 		people.clear()
 		%Search.clear()
+		_notices.clear()
+		_cursor = null
+		_selected_notice = 0
+		_notice_unread = 0
+		_request_count = 0
+		%Inbox.clear()
+		%NoticeDetails.text = ""
+		_render_notices()
 		_render_history()
 		set_open(false)
 		attention_changed.emit(0)
@@ -243,6 +309,8 @@ func _actions() -> void:
 		popup.add_item("Remove friend", MENU_REMOVE)
 		# Only friends can be invited; being merely searchable is not enough.
 		popup.add_item("Invite to my farm", MENU_INVITE)
+		popup.add_item("Find by username", MENU_SEARCH)
+		popup.add_item("Blocked players", MENU_BLOCKED)
 	if not visitors and not invitations and view.selected != 3:
 		popup.add_item("Block player", MENU_BLOCK)
 	# A visitor always gets an explicit way out; a host can open the occupancy
@@ -264,6 +332,10 @@ func _menu_action(id: int) -> void:
 			_invitation_action("decline")
 		MENU_BACK:
 			_back_to_people()
+		MENU_SEARCH:
+			show_section("search")
+		MENU_BLOCKED:
+			show_section("blocked")
 
 
 func _back_to_people() -> void:
@@ -580,10 +652,110 @@ func _direct_message(record: Dictionary) -> void:
 
 
 func _update_unread() -> void:
+	_emit_attention()
+
+
+func _emit_attention() -> void:
 	_unread = 0
 	for count in _unread_channels.values():
 		_unread += int(count)
-	attention_changed.emit(_unread)
+	attention_changed.emit(_unread + _request_count + _notice_unread)
+
+
+func refresh_attention() -> void:
+	# Recompute every attention source so a badge outside the panel stays honest.
+	await refresh_notifications()
+	var response: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_GET, "/social/requests")
+	if response.get("ok", false) and not response.get("stale", false):
+		_request_count = 0
+		for row in APIClient.data_of(response):
+			if int(row.get("requested_by", 0)) != Global.player_id:
+				_request_count += 1
+	_emit_attention()
+
+
+func refresh_notifications(older := false) -> void:
+	if _notice_busy or (older and _cursor == null):
+		return
+	_notice_busy = true
+	if notifications.visible:
+		status.text = "Loading notifications..."
+	var path := "/notifications?limit=30" + ("&before=%d" % int(_cursor) if older else "")
+	var response: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_GET, path)
+	_notice_busy = false
+	if response.get("stale", false):
+		return
+	if not response.get("ok", false):
+		if notifications.visible:
+			status.text = APIClient.error_text(response)
+		_emit_attention()
+		return
+	var data: Dictionary = APIClient.data_of(response)
+	if older:
+		_notices.append_array(data.get("items", []))
+		_cursor = data.get("next_cursor")
+	else:
+		# Preserve already loaded older pages while merging the authoritative first page.
+		var fresh: Array = data.get("items", [])
+		var ids := {}
+		for item in fresh:
+			ids[item["id"]] = true
+		var oldest := int(fresh[-1]["id"]) if not fresh.is_empty() else 0
+		for item in _notices:
+			if int(item["id"]) < oldest and not ids.has(item["id"]):
+				fresh.append(item)
+		if _notices.size() <= 30:
+			_cursor = data.get("next_cursor")
+		_notices = fresh
+	_notice_unread = int(data.get("unread_count", 0))
+	_render_notices()
+	if notifications.visible:
+		status.text = "No notifications yet." if _notices.is_empty() else "Select a message to read it."
+	_emit_attention()
+
+
+func _render_notices() -> void:
+	%Inbox.clear()
+	%NoticeDismiss.disabled = true
+	for notice in _notices:
+		var index: int = %Inbox.add_item(("• " if not notice.get("is_read", false) else "") + str(notice["message"]))
+		%Inbox.set_item_tooltip(index, str(notice.get("created_at", "")))
+		if int(notice["id"]) == _selected_notice:
+			%Inbox.select(index)
+			%NoticeDismiss.disabled = false
+	%NoticeMore.disabled = _cursor == null
+
+
+func _view_notice(index: int) -> void:
+	var notice: Dictionary = _notices[index]
+	_selected_notice = int(notice["id"])
+	%NoticeDetails.text = str(notice["message"]) + "\n" + str(notice.get("created_at", ""))
+	%NoticeDismiss.disabled = false
+	if not notice.get("is_read", false):
+		await _update_notice(false)
+
+
+func _update_notice(dismiss: bool) -> void:
+	if _selected_notice == 0:
+		return
+	var id := _selected_notice
+	var response: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_POST, "/notifications/%d" % id, {"dismiss": dismiss})
+	if response.get("stale", false):
+		return
+	if not response.get("ok", false):
+		status.text = APIClient.error_text(response)
+		return
+	for item in _notices:
+		if int(item["id"]) == id:
+			if not item.get("is_read", false):
+				_notice_unread = maxi(0, _notice_unread - 1)
+			item["is_read"] = true
+	if dismiss:
+		_notices = _notices.filter(func(item: Dictionary) -> bool: return int(item["id"]) != id)
+		_selected_notice = 0
+		%NoticeDetails.text = "Notification dismissed."
+	_render_notices()
+	await refresh_notifications()
 
 
 func _render_history() -> void:
@@ -605,8 +777,6 @@ func _render_history() -> void:
 
 func _failure(text: String) -> void:
 	status.text = text
-	if not panel.visible:
-		%ChatButton.tooltip_text = text
 
 
 func _connection(connected: bool) -> void:

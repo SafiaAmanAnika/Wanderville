@@ -47,6 +47,7 @@ func setup(player_id_: int, username_: String, character_code: String, position:
 		code = "farmer_female"
 	_body = Global.get_character_scene(code).instantiate() as CharacterBody2D
 	_body.name = "Remote_%d" % player_id
+	_body.use_saved_appearance = false # Appearance is local-only until it is replicated explicitly.
 	add_child(_body)
 
 	# The character's own _physics_process must never run: it reads the keyboard.

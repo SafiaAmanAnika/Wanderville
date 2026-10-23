@@ -64,7 +64,8 @@ def run_godot(binary, render, hud=False, social=False):
         port = listener.getsockname()[1]
     env = {**os.environ, "DATABASE_URL": "sqlite:///" + (run / "client_test.db").as_posix(),
            "WANDERVILLE_ENV": "test", "JWT_SECRET_KEY": secrets.token_urlsafe(48),
-           "EMAIL_DELIVERY": "file", "DEV_ALLOW_WORLD_MUTATION": "false", "STARTING_AURA": "0",
+           "EMAIL_DELIVERY": "file", "REQUIRE_EMAIL_VERIFICATION": "true",
+           "DEV_ALLOW_WORLD_MUTATION": "false", "STARTING_AURA": "0",
            "WANDERVILLE_API_URL": f"http://127.0.0.1:{port}", "WANDERVILLE_TEST_SYNC": str(run),
            "WANDERVILLE_TEST_PASSWORD": "Integration-" + secrets.token_hex(8) + "!", "TEST_PORT": str(port)}
     for command in (("alembic", "upgrade", "head"), ("app.db.seed",)):
@@ -181,7 +182,7 @@ if __name__ == "__main__":
             project.mkdir()
             # Junctions share immutable source resources; each test has its own
             # project config, import cache, user directory, and output log.
-            for name in ("Assets", "Scenes", "Scripts", "autoloads", "tests", "native"):
+            for name in ("Assets", "Assests_2", "Scenes", "Scripts", "autoloads", "tests", "native"):
                 if os.name == "nt":
                     subprocess.run(["cmd", "/c", "mklink", "/J", str(project / name), str(source / name)], check=True, capture_output=True)
                 else:

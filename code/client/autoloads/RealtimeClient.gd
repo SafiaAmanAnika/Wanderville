@@ -226,7 +226,9 @@ func _handle_packet(packet: Dictionary) -> void:
 				var player := get_tree().get_first_node_in_group("player") as Node2D
 				if player != null:
 					if not pause_movement:      # inside a house: don't pull the player back outside
-						player.global_position = Vector2(float(entry["x"]), float(entry["y"]))
+						var target := Vector2(float(entry["x"]), float(entry["y"]))
+						if player.global_position.distance_to(target) > 400.0:
+							player.global_position = target
 					_sequence = accepted
 					_correct_position = false
 					_retry_delay = 1.0

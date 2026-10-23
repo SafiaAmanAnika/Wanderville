@@ -79,3 +79,7 @@ rearrange={
 [network]
 
 wanderville_api_url="https://auditor-ion-derived-subjects.trycloudflare.com/"
+
+[rendering]
+
+2d/snap/snap_2d_transforms_to_pixel=true

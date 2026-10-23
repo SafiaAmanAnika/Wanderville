@@ -2,12 +2,13 @@ extends CharacterBody2D
 
 # --- Settings ---
 const SPEED = 300.0
+@export var require_world_connection := true
+@export var use_saved_appearance := true
 
 # --- Node references ---
 @onready var anim = $girl
 
 var _facing := "south"   # last direction moved, used for the idle pose
-
 
 
 func _physics_process(delta):
@@ -42,7 +43,15 @@ func _update_animation(input: Vector2):
 	# Play animation based on direction
 	var run_anim := _get_direction_animation(input)
 	_facing = run_anim.trim_prefix("run_")
-	anim.play(run_anim)
+	if anim.animation != run_anim:
+		var keep_phase: bool = String(anim.animation).begins_with("run_")
+		var phase: float = (anim.frame + anim.frame_progress) / anim.sprite_frames.get_frame_count(anim.animation)
+		anim.play(run_anim)
+		if keep_phase:
+			var next: float = phase * anim.sprite_frames.get_frame_count(run_anim)
+			anim.set_frame_and_progress(int(next), fposmod(next, 1.0))
+	elif not anim.is_playing():
+		anim.play(run_anim)
 
 
 # New characters have idle animations; the old girl doesn't, so she just stops

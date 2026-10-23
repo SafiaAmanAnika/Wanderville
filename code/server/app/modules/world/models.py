@@ -18,7 +18,9 @@ from app.db.timestamps import Timestamps
 # Where a player stands in the shared map, and therefore where a visitor appears
 # unless the host has moved their farm gate. Defined here so the world schema is
 # the single source of truth and realtime does not have to import a map value.
-CAMPUS_SPAWN = (7377.0, -891.0)
+from app.modules.world.geometry import GEOMETRY
+
+CAMPUS_SPAWN = tuple(GEOMETRY["spawn"])
 
 # The shared map's realtime room key. The two room kinds are "campus" (the
 # shared, stateless map) and "world:{id}" (a persistent world), so this is the

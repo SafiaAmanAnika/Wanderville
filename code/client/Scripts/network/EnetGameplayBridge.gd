@@ -58,7 +58,7 @@ func attach(body: CharacterBody2D) -> void:
 	var world := get_parent()
 	var map := world.get_node("Map") as Node2D
 	_version = CampusCollision.live_version(map)
-	if map.position != CampusCollision.WORLD_OFFSET or map.scale != Vector2.ONE or map.rotation != 0.0:
+	if map.global_position != CampusCollision.WORLD_ORIGIN or map.scale != CampusCollision.MAP_SCALE or map.rotation != 0.0:
 		_fail("Campus transform does not match the dedicated server.")
 		return
 	# Shared geometry currently includes static polygons, not TileSet physics.

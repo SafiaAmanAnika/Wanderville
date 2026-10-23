@@ -1,6 +1,7 @@
 """Static polygon snapshot of the supplied campus map; no client writes."""
 
 import json
+import math
 from pathlib import Path
 
 GEOMETRY = json.loads(Path(__file__).with_name("geometry.json").read_text())
@@ -14,11 +15,32 @@ def inside(x, y, points):
     return result
 
 
+def walkable(x, y):
+    return (math.isfinite(x) and math.isfinite(y)
+            and inside(x, y, GEOMETRY["boundary"])
+            and not any(inside(x, y, p["points"]) for p in GEOMETRY["collision"]))
+
+
+def distance_to_segment(x, y, a, b):
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    length = dx * dx + dy * dy
+    t = max(0., min(1., ((x-a[0])*dx + (y-a[1])*dy) / length)) if length else 0.
+    return math.hypot(x-a[0]-t*dx, y-a[1]-t*dy)
+
+
 def at_water(x, y):
-    return any(inside(x, y, p["points"]) for p in GEOMETRY["water"])
+    # Players stand beside solid pond banks, rather than inside them.
+    reach = GEOMETRY["water_reach"]
+    return any(inside(x, y, p["points"]) or any(
+        distance_to_segment(x, y, a, b) <= reach
+        for a, b in zip(p["points"], p["points"][1:] + p["points"][:1])
+    ) for p in GEOMETRY["water"])
 
 
 def blocked_segment(x, y, nx, ny):
+    if not inside(nx, ny, GEOMETRY["boundary"]):
+        return True
+
     def cross(a, b, c):
         return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
 

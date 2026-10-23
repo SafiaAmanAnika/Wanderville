@@ -1,5 +1,7 @@
 extends Node
 
+const CampusLayout := preload("res://Scripts/network/CampusLayout.gd")
+
 signal connection_changed(connected: bool)
 signal snapshot_received(snapshot: Dictionary)
 signal nearby_message_received(message: Dictionary)
@@ -27,6 +29,9 @@ var _socket: WebSocketPeer
 var _auth_sent := false
 var _sequence := 0
 var _pending_sequence := 0
+var _acknowledged_sequence := 0
+const MAX_IN_FLIGHT_MOVES := 2
+var _force_position_correction := false
 var _move_elapsed := 0.0
 var _last_sent_position := Vector2(INF, INF)
 var _retry_elapsed := 0.0
@@ -66,6 +71,7 @@ func enter_world(owner_id: int) -> void:
 	_correct_position = true
 	_sequence = 0
 	_pending_sequence = 0
+	_acknowledged_sequence = 0
 	if connected:
 		_send("enter", _enter_payload())
 
@@ -92,6 +98,8 @@ func stop() -> void:
 	_socket = null
 	_auth_sent = false
 	_pending_sequence = 0
+	_acknowledged_sequence = _sequence
+	_force_position_correction = false
 	_correct_position = true
 	players.clear()
 	_set_connected(false)
@@ -179,8 +187,16 @@ func _process(delta: float) -> void:
 	if _heartbeat_elapsed >= 0.5:
 		_heartbeat_elapsed = 0.0
 		_send("heartbeat", {})
+	_send_movement(delta)
+	_chat_elapsed += delta
+	if _chat_elapsed >= 2.0 and not _chat_polling:
+		_chat_elapsed = 0.0
+		_poll_direct_messages()
+
+
+func _send_movement(delta: float) -> void:
 	_move_elapsed += delta
-	if not external_movement and not pause_movement and _move_elapsed >= 0.2 and _pending_sequence == 0:
+	if not external_movement and not pause_movement and _move_elapsed >= 0.2 and _sequence - _acknowledged_sequence < MAX_IN_FLIGHT_MOVES:
 		_move_elapsed = 0.0
 		var player := get_tree().get_first_node_in_group("player") as Node2D
 		if player != null and player.global_position != _last_sent_position:
@@ -189,11 +205,8 @@ func _process(delta: float) -> void:
 			if _send("move", {"x": player.global_position.x, "y": player.global_position.y, "sequence": _sequence}):
 				_last_sent_position = player.global_position
 			else:
+				_sequence -= 1
 				_pending_sequence = 0
-	_chat_elapsed += delta
-	if _chat_elapsed >= 2.0 and not _chat_polling:
-		_chat_elapsed = 0.0
-		_poll_direct_messages()
 
 
 func _handle_packet(packet: Dictionary) -> void:
@@ -228,6 +241,8 @@ func _handle_packet(packet: Dictionary) -> void:
 			_send("enter", _enter_payload())
 			return
 		request_failed.emit(str(packet.get("message", "Realtime request failed")))
+		if code in ["COLLISION", "MOVEMENT_TOO_FAST", "STALE_MOVEMENT"]:
+			_force_position_correction = true
 		if int(packet.get("status", 0)) == 401:
 			_reauthenticate()
 		elif not request_id.is_empty():
@@ -265,6 +280,7 @@ func _handle_packet(packet: Dictionary) -> void:
 	for entry in players:
 		if int(entry.get("player_id", 0)) == Global.player_id:
 			var accepted := int(entry.get("sequence", 0))
+			_acknowledged_sequence = maxi(_acknowledged_sequence, accepted)
 			_sequence = maxi(_sequence, accepted)
 			if accepted >= _pending_sequence:
 				_pending_sequence = 0
@@ -275,11 +291,14 @@ func _handle_packet(packet: Dictionary) -> void:
 			elif _correct_position:
 				var player := get_tree().get_first_node_in_group("player") as Node2D
 				if player != null:
+					var target := Vector2(float(entry["x"]), float(entry["y"]))
 					if not pause_movement:      # inside a house: don't pull the player back outside
-						var target := Vector2(float(entry["x"]), float(entry["y"]))
-						if player.global_position.distance_to(target) > 400.0:
+						if _force_position_correction or player.global_position.distance_to(target) > 400.0 or (_room == "campus" and not CampusLayout.walkable(player.global_position)):
 							player.global_position = target
-					_last_sent_position = player.global_position
+					# A reconnect may retain a small local lead. Publish it next tick.
+					_last_sent_position = target if not pause_movement else player.global_position
+					_acknowledged_sequence = accepted
+					_force_position_correction = false
 					_sequence = accepted
 					_correct_position = false
 					_retry_delay = 1.0

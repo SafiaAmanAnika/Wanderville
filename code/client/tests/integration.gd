@@ -128,7 +128,7 @@ func _run() -> void:
 	_mark("moved")
 	await _other_mark("moved")
 	if remotes.targets.size() == 1:
-		_check(remotes.targets.values()[0].x > 7385, "received_other_movement")
+		_check(remotes.targets.values()[0].x > preload("res://Scripts/network/CampusLayout.gd").spawn().x + 8.0, "received_other_movement")
 	ui._toggle(true)
 	ui.message.text = "nearby " + role + " shit"
 	await ui._send()
@@ -326,7 +326,7 @@ func _visit(is_host: bool) -> void:
 		await ui._leave_farm()
 		_mark("visit_left")
 		_check(not state.read_only and not state.is_visiting(), "leave_restores_own_session")
-		_check(api.realtime._room == "campus", "visitor_returned_to_campus")
+		_check(await _wait(func() -> bool: return api.realtime._room == "campus"), "visitor_returned_to_campus")
 		_check(await _other_mark("visit_reinvited", 60), "host_reinvited_guest")
 		ui.view.select(ui.VIEW_INVITATIONS)
 		await _wait(func() -> bool: return not ui._loading)

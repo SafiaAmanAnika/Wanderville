@@ -110,13 +110,13 @@ def test_reconnect_emote_and_private_room_expiry(client, account, db):
     first = service.enter(a.id)
     assert service.enter(a.id)["sequence"] == first["sequence"]
     row = db.get(Presence, a.id)
-    row.x, row.emote, row.emote_until = 7400, "wave", utcnow() - timedelta(seconds=1)
+    row.x, row.emote, row.emote_until = 1950, "wave", utcnow() - timedelta(seconds=1)
     db.commit()
     assert service.snapshot(a.id)["players"][0]["emote"] is None
-    assert service.enter(a.id)["x"] == 7400
+    assert service.enter(a.id)["x"] == 1950
     row.updated_at = utcnow() - timedelta(seconds=61)
     db.commit()
-    assert service.enter(a.id)["x"] == 7400  # Reconnect restores persisted position.
+    assert service.enter(a.id)["x"] == 1950  # Reconnect restores persisted position.
     assert client.post("/realtime/enter", headers=a.headers,
 json={"owner_id": b.id}).status_code == 403
     friends(client, a, b)
@@ -280,7 +280,9 @@ def test_fishing_exact_window_and_server_reward(client, account, db, delay, caug
     from app.modules.fishing.service import FishingService
     from app.modules.fishing.models import FishingSession
     user = account()
-    db.add(Presence(player_id=user.id, room="campus", x=1700, y=-1000,
+    from app.modules.world.geometry import GEOMETRY
+    x, y = GEOMETRY["water"][0]["points"][0]
+    db.add(Presence(player_id=user.id, room="campus", x=x, y=y,
                     updated_at=utcnow(), sequence=0))
     db.commit()
     assert client.post("/fishing/cast", headers=user.headers,
@@ -308,7 +310,10 @@ def test_known_collision_polygon_rejects_move(client, account, db):
     from app.modules.world.geometry import GEOMETRY, inside
     user = account()
     points = GEOMETRY["collision"][0]["points"]
-    x, y = 1700, -1000
+    # Sample the current pond, rather than hardcoding the retired map.
+    xs, ys = zip(*points)
+    x, y = next((x, y) for x in range(int(min(xs))+1, int(max(xs)), 20)
+                for y in range(int(min(ys))+1, int(max(ys)), 20) if inside(x, y, points))
     assert inside(x, y, points)
     db.add(Presence(player_id=user.id, room="campus", x=x-1, y=y,
                     updated_at=utcnow() - timedelta(seconds=1), sequence=0))

@@ -28,7 +28,7 @@ script = ExtResource("10_remote")
 scale = Vector2(15, 15)
 
 [node name="girl" parent="." unique_id=332949648 instance=ExtResource("6_5ukr8")]
-position = Vector2(7377.9995, -891)
+position = Vector2(1658, 677)
 
 [node name="Camera2D" type="Camera2D" parent="girl" unique_id=784418730]
 position = Vector2(-10.149994, -0.6000023)

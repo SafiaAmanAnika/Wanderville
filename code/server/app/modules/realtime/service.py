@@ -53,7 +53,7 @@ from app.modules.realtime.repository import RealtimeRepository
 from app.modules.social.farm_visiting import FarmVisitService
 from app.modules.social.service import filter_message
 from app.modules.world.access import owned_world, resolve
-from app.modules.world.geometry import blocked_segment
+from app.modules.world.geometry import blocked_segment, walkable
 from app.modules.world.models import CAMPUS_ROOM, CAMPUS_SPAWN
 from app.modules.world.repository import WorldRepository
 
@@ -137,6 +137,13 @@ class RealtimeService:
             if row and row.room == room:
                 # Re-entering the same room restores the saved position and
                 # sequence, which is what makes a reconnect seamless.
+                current = self._current_position(pid, row, memory=True)
+                if room == CAMPUS_ROOM and not walkable(current.x, current.y):
+                    row.x, row.y = CAMPUS_SPAWN
+                    row.sequence = 0
+                    row.room_epoch += 1
+                    position_projection.commit(pid, row.room, row.x, row.y,
+                                               row.sequence, row.room_epoch, utcnow())
                 row.updated_at = utcnow()
                 FarmVisitService(self.db).heartbeat_internal(pid)
                 return self._presence_public(row, session)
@@ -186,7 +193,9 @@ class RealtimeService:
         world = WorldRepository(self.db).by_id(room_world_id(room))
         if world is None:
             return 0.0, 0.0
-        return world.farm_entrance_x, world.farm_entrance_y
+        entrance = (world.farm_entrance_x, world.farm_entrance_y)
+        # Old default entrances belong to the retired map; leave custom gates alone.
+        return CAMPUS_SPAWN if entrance == (7377.0, -891.0) else entrance
 
     def _presence_public(self, row, session=None):
         """Public presence row, annotated with the caller's own session when known.

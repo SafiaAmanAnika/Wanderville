@@ -22,7 +22,8 @@ from app.modules.fishing.service import FishingService
 from app.modules.fishing.schemas import CastRequest
 from app.modules.fishing.models import FishingSession
 from app.modules.realtime.models import Presence
-from app.modules.world.geometry import at_water
+from app.modules.world.geometry import GEOMETRY, at_water
+from app.modules.world.models import CAMPUS_SPAWN
 
 
 def data(response):
@@ -413,13 +414,14 @@ def test_trade_atomic_failure_and_acceptance(client, account, db):
 
 def lake_presence(db, pid):
     # Known water interaction polygon from the uploaded map; test setup only.
-    assert at_water(1700, -1000)
+    x, y = GEOMETRY["water"][0]["points"][0]
+    assert at_water(x, y)
     db.add(
         Presence(
             player_id=pid,
             room="campus",
-            x=1700,
-            y=-1000,
+            x=x,
+            y=y,
             updated_at=utcnow(),
             sequence=0,
         )
@@ -557,14 +559,14 @@ def test_realtime_radius_blocking_and_sequence(client, account, db):
         client.post(
             "/realtime/move",
             headers=a.headers,
-            json={"x": 7377, "y": -891, "sequence": 1},
+            json={"x": CAMPUS_SPAWN[0], "y": CAMPUS_SPAWN[1], "sequence": 1},
         )
     )
     assert (
         client.post(
             "/realtime/move",
             headers=a.headers,
-            json={"x": 7377, "y": -891, "sequence": 1},
+            json={"x": CAMPUS_SPAWN[0], "y": CAMPUS_SPAWN[1], "sequence": 1},
         ).status_code
         == 409
     )
@@ -680,7 +682,7 @@ def test_websocket_auth_and_snapshot(client, account):
         result = ws.receive_json()
         assert result["type"] == "snapshot"
         assert result["data"]["players"][0]["player_id"] == a.id
-        ws.send_json({"type": "move", "data": {"x": 7377, "y": -891, "sequence": 1}})
+        ws.send_json({"type": "move", "data": {"x": CAMPUS_SPAWN[0], "y": CAMPUS_SPAWN[1], "sequence": 1}})
         assert ws.receive_json()["type"] == "snapshot"
     with client.websocket_connect("/realtime/ws") as ws:
         ws.send_json({"type": "auth", "token": "invalid"})

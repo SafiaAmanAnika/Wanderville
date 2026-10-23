@@ -1,45 +1,38 @@
 extends RefCounted
 class_name CampusCollision
-## Builds the headless server's collision world from the **existing** campus map.
-##
-## The dedicated server cannot simply run ``Scenes/world.tscn``: that scene drags
-## in the HUD, FarmController, DayNight, WeatherManager's GPU particles, a
-## WaterSource prompt layer and the autoloads, none of which a headless simulation
-## needs and some of which would start HTTP and WebSocket clients on a server that
-## is supposed to have no network presence of its own.
-##
-## So the geometry is lifted out of ``Scenes/map.tscn`` instead, which is the
-## actual collision resource the game uses. Nothing is redrawn and no wall is
-## moved: the polygon points below are read from the map scene itself, so the
-## server collides against exactly the lakes, borders and buildings the player
-## sees.
-##
-## The map is instantiated **outside** the scene tree and never added to it. That
-## matters: no ``_ready`` runs, so no gameplay script, prompt or autoload side
-## effect can fire while harvesting the shapes.
-##
-## Known gap, stated rather than hidden: the TileMapLayer-backed collision (trees
-## and other decor drawn from the TileSet) is **not** reproduced here. Those tiles
-## carry their collision inside the TileSet's atlas data, which is a different
-## mechanism from the declarative polygons harvested below. Campus borders, lake
-## edges and every building *are* reproduced.
+## Shares the exported, world-space campus polygons with the Python backend.
+## Regenerate data/campus_layout.json with scripts/export_campus_geometry.py
+## after editing world.tscn or map2.tscn. TileSet collision remains client-side.
 
-const MAP_SCENE := "res://Scenes/map.tscn"
+const MAP_SCENE := "res://Scenes/map2.tscn"
 
 ## Where the production campus places the player, read from world.tscn. Used as
 ## the centre of the movement area so tests exercise the real walkable region
 ## rather than an empty corner of the map.
-const CAMPUS_SPAWN := Vector2(7378, -891)
+const CAMPUS_SPAWN := Vector2(1900, 500)
 
 const PADDING := 2048.0
-const WORLD_OFFSET := Vector2(86, 626)
+# Exported polygons are already in global world coordinates.
+const WORLD_OFFSET := Vector2.ZERO
+const WORLD_ORIGIN := Vector2(242, -177)
+const MAP_SCALE := Vector2(15, 15)
 
 
 # Read the already instantiated map, without constructing another TileMap.
 static func live_version(map: Node2D) -> String:
 	var shapes: Array = []
-	_walk(map, map.transform.affine_inverse(), shapes)
-	return shape_version(shapes)
+	_walk(map, map.get_parent().global_transform, shapes)
+	var canonical := extract_shapes()
+	if shapes.size() != canonical.size():
+		return "map-shape-count-mismatch"
+	for i in range(shapes.size()):
+		if shapes[i].kind != canonical[i].kind or shapes[i].polygon.size() != canonical[i].polygon.size():
+			return "map-shape-mismatch"
+		for j in range(shapes[i].polygon.size()):
+			# Godot transforms use float32; the exporter uses Python floats.
+			if shapes[i].polygon[j].distance_to(canonical[i].polygon[j]) > 0.1:
+				return "map-transform-mismatch"
+	return shape_version(canonical)
 
 
 class ExtractedShape:
@@ -50,12 +43,7 @@ class ExtractedShape:
 	var radius := 0.0
 
 
-## Harvest every collision shape the map declares. Returns [] if the map is
-## missing, so the caller can fail loudly rather than simulating in a void.
-##
-## Cached. Instantiating map.tscn builds its TileSets, which is expensive and
-## noisy, and this is called both to build the physics world and to dump the
-## outline for tests. Doing it once keeps startup affordable.
+## Cached polygons from the generated map snapshot; no gameplay scene is instantiated.
 static var _cached: Array = []
 static var _loaded := false
 
@@ -64,22 +52,13 @@ static func extract_shapes() -> Array:
 	if _loaded:
 		return _cached
 	_loaded = true
-	_cached = []
-	if not ResourceLoader.exists(MAP_SCENE):
-		push_error("[CampusCollision] " + MAP_SCENE + " is missing")
-		return _cached
-	var packed: PackedScene = load(MAP_SCENE)
-	if packed == null:
-		push_error("[CampusCollision] could not load " + MAP_SCENE)
-		return _cached
-	var instance := packed.instantiate()
-	if instance == null:
-		push_error("[CampusCollision] could not instantiate " + MAP_SCENE)
-		return _cached
-	# Walk with an explicit transform accumulator rather than global_transform,
-	# because these nodes are deliberately not in a tree.
-	_walk(instance, Transform2D.IDENTITY, _cached)
-	instance.free()
+	var layout := preload("res://Scripts/network/CampusLayout.gd")
+	for row in layout.data.collision:
+		var shape := ExtractedShape.new()
+		shape.kind = "polygon"
+		shape.transform = Transform2D.IDENTITY
+		shape.polygon = layout.polygon(row.points)
+		_cached.append(shape)
 	return _cached
 
 
@@ -101,7 +80,9 @@ static func _collect_shape(node: Node, transform: Transform2D, out: Array) -> vo
 		var shape := ExtractedShape.new()
 		shape.transform = transform
 		shape.kind = "polygon"
-		shape.polygon = (node as CollisionPolygon2D).polygon
+		shape.transform = Transform2D.IDENTITY
+		for point in (node as CollisionPolygon2D).polygon:
+			shape.polygon.append(transform * point)
 		if shape.polygon.size() >= 3:
 			out.append(shape)
 		return
@@ -240,7 +221,7 @@ static func build(parent: Node, use_cache := true) -> StaticBody2D:
 	# behaviour correct when no cache has been produced.
 	var cache_path := OS.get_environment("GODOT_COLLISION_CACHE")
 	var shapes: Array = load_versioned(cache_path) if use_cache else []
-	if shapes.is_empty():
+	if shapes.is_empty() or shape_version(shapes) != shape_version(extract_shapes()):
 		shapes = extract_shapes()
 
 	for entry in shapes:

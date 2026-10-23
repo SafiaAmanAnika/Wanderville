@@ -15,6 +15,8 @@ const COLUMNS := 6
 # sheet row -> direction name used in the scenes (idle_front, water_back_left, ...)
 const ROW_DIRS := ["front", "front_right", "right", "back_right", "back", "back_left", "left", "front_left"]
 
+@export var require_world_connection := true
+@export var use_saved_appearance := true
 @export var sheet_folder := ""   # empty = found automatically from the idle animation
 
 @onready var anim: AnimatedSprite2D = $AnimatedSprite2D
@@ -56,8 +58,7 @@ func _physics_process(_delta: float) -> void:
 		velocity = Vector2.ZERO
 		return
 	if _busy or GameState.menu_open or GameState.social_open \
-			or get_viewport().gui_get_focus_owner() is LineEdit \
-			or (Global.is_logged_in() and not APIClient.realtime.connected):
+			or get_viewport().gui_get_focus_owner() is LineEdit:
 		velocity = Vector2.ZERO
 		if not _busy:
 			_play_if_new("idle_" + facing)
@@ -141,6 +142,15 @@ func _simplify_collision() -> void:
 
 func _play_if_new(a: String) -> void:
 	if anim.animation != a and anim.sprite_frames.has_animation(a):
+		# Keep the original stride continuous through turns and Walk/Run changes.
+		var keep_phase: bool = String(anim.animation).get_slice("_", 0) in ["walk", "run"] \
+				and a.get_slice("_", 0) in ["walk", "run"]
+		var phase := (anim.frame + anim.frame_progress) / anim.sprite_frames.get_frame_count(anim.animation)
+		anim.play(a)
+		if keep_phase:
+			var next := phase * anim.sprite_frames.get_frame_count(a)
+			anim.set_frame_and_progress(int(next), fposmod(next, 1.0))
+	elif anim.animation == a and not anim.is_playing():
 		anim.play(a)
 
 

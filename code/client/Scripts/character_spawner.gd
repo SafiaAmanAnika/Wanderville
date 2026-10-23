@@ -2,12 +2,17 @@ extends Node2D
 # Attached to the World scene. Swaps the default "girl" player for the character
 # chosen on the select screen (charagirlA, charaboyB, ...).
 
+const CampusLayout := preload("res://Scripts/network/CampusLayout.gd")
+
 const CHARA_SCALE := Vector2(1.18, 1.18)   # chara sheets are 448px; this matches the old girl's size
 
 
 func _ready() -> void:
 	add_child(load("res://Scripts/storage_house.gd").new())   # click the CDS building -> storage menu
 	spawn_selected_character()
+	var player := get_node("girl") as Node2D
+	if not CampusLayout.walkable(player.global_position):
+		player.global_position = CampusLayout.spawn()
 	if OS.get_environment("GODOT_ENET_GAMEPLAY") == "1":
 		var bridge := preload("res://Scripts/network/EnetGameplayBridge.gd").new()
 		bridge.name = "EnetGameplayBridge"

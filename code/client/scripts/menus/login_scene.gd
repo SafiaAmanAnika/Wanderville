@@ -156,6 +156,12 @@ func _on_google() -> void:
 	_error_label.text = " "
 
 	var response: Dictionary = await APIClient.google_browser_login()
+	if not bool(response.get("ok", false)):
+		_set_busy(false)
+		_loading_label.text = " "
+		# A Google failure says nothing about the username/password fields.
+		_error_label.text = _format_error(response)
+		return
 	await _finish_login(response)
 
 

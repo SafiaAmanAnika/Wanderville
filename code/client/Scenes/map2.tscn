@@ -2197,6 +2197,9 @@ z_index = 10
 tile_set = SubResource("TileSet_gg4i5")
 
 [node name="WaterSource" type="StaticBody2D" parent="." unique_id=754308331]
+
+[node name="WaterInteraction" type="Area2D" parent="WaterSource"]
+collision_layer = 0
 script = ExtResource("26_d07ij")
 
 [node name="Collision_left" type="CollisionPolygon2D" parent="WaterSource" unique_id=377805033]

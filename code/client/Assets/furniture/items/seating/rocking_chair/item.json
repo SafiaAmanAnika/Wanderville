@@ -1,0 +1,159 @@
+{
+  "id": "rocking_chair",
+  "name": "Rocking chair",
+  "category": "seating",
+  "size": [
+    80,
+    110
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": true,
+  "use_description": "Rocks back and forth while sat in (loop); slows to a stop when left.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/seating/rocking_chair/front.png",
+    "left": "items/seating/rocking_chair/left.png",
+    "right": "items/seating/rocking_chair/right.png",
+    "back": "items/seating/rocking_chair/back.png"
+  },
+  "frame_size": [
+    80,
+    81
+  ],
+  "anchor": [
+    40,
+    81
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      80,
+      81
+    ],
+    "left": [
+      1,
+      1,
+      78,
+      80
+    ],
+    "right": [
+      1,
+      1,
+      78,
+      80
+    ],
+    "back": [
+      1,
+      0,
+      77,
+      81
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      54,
+      80,
+      27
+    ],
+    "left": [
+      1,
+      54,
+      78,
+      27
+    ],
+    "right": [
+      1,
+      54,
+      78,
+      27
+    ],
+    "back": [
+      1,
+      54,
+      77,
+      27
+    ]
+  },
+  "source_front_size": [
+    80,
+    110
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    73,
+    80,
+    37
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "seating_01.png",
+  "source_measured_bounds": {
+    "front": [
+      68,
+      704,
+      252,
+      891
+    ],
+    "left": [
+      310,
+      709,
+      489,
+      893
+    ],
+    "right": [
+      535,
+      709,
+      715,
+      893
+    ],
+    "back": [
+      777,
+      704,
+      954,
+      891
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/seating.png",
+  "atlas_rects": {
+    "front": [
+      120,
+      383,
+      80,
+      81
+    ],
+    "left": [
+      440,
+      383,
+      80,
+      81
+    ],
+    "right": [
+      760,
+      383,
+      80,
+      81
+    ],
+    "back": [
+      1080,
+      383,
+      80,
+      81
+    ]
+  }
+}

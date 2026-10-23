@@ -1,0 +1,134 @@
+{
+  "id": "telephone",
+  "name": "Telephone",
+  "category": "devices",
+  "size": [
+    35,
+    30
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Rings and shakes; receiver lifts.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/telephone/front.png",
+    "left": "items/devices/telephone/left.png",
+    "right": "items/devices/telephone/right.png",
+    "back": "items/devices/telephone/back.png"
+  },
+  "frame_size": [
+    35,
+    28
+  ],
+  "anchor": [
+    17,
+    28
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      35,
+      28
+    ],
+    "left": [
+      2,
+      3,
+      30,
+      25
+    ],
+    "right": [
+      2,
+      3,
+      30,
+      25
+    ],
+    "back": [
+      0,
+      0,
+      35,
+      28
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    35,
+    30
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_02.png",
+  "source_measured_bounds": {
+    "front": [
+      84,
+      702,
+      221,
+      812
+    ],
+    "left": [
+      350,
+      703,
+      466,
+      800
+    ],
+    "right": [
+      558,
+      703,
+      675,
+      800
+    ],
+    "back": [
+      804,
+      702,
+      940,
+      812
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      94,
+      1724,
+      35,
+      28
+    ],
+    "left": [
+      318,
+      1724,
+      35,
+      28
+    ],
+    "right": [
+      542,
+      1724,
+      35,
+      28
+    ],
+    "back": [
+      766,
+      1724,
+      35,
+      28
+    ]
+  }
+}

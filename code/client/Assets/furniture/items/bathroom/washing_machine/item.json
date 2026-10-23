@@ -1,0 +1,159 @@
+{
+  "id": "washing_machine",
+  "name": "Washing machine",
+  "category": "bathroom",
+  "size": [
+    100,
+    115
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": true,
+  "use_description": "Drum spins, machine shakes (loop for a few seconds).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/bathroom/washing_machine/front.png",
+    "left": "items/bathroom/washing_machine/left.png",
+    "right": "items/bathroom/washing_machine/right.png",
+    "back": "items/bathroom/washing_machine/back.png"
+  },
+  "frame_size": [
+    92,
+    116
+  ],
+  "anchor": [
+    46,
+    116
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      1,
+      92,
+      115
+    ],
+    "left": [
+      1,
+      0,
+      89,
+      116
+    ],
+    "right": [
+      1,
+      0,
+      89,
+      116
+    ],
+    "back": [
+      0,
+      1,
+      91,
+      115
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      77,
+      92,
+      39
+    ],
+    "left": [
+      1,
+      77,
+      89,
+      39
+    ],
+    "right": [
+      1,
+      77,
+      89,
+      39
+    ],
+    "back": [
+      0,
+      77,
+      91,
+      39
+    ]
+  },
+  "source_front_size": [
+    100,
+    115
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    76,
+    100,
+    39
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "bathroom_02.png",
+  "source_measured_bounds": {
+    "front": [
+      45,
+      38,
+      209,
+      242
+    ],
+    "left": [
+      510,
+      37,
+      668,
+      242
+    ],
+    "right": [
+      280,
+      37,
+      438,
+      242
+    ],
+    "back": [
+      742,
+      38,
+      903,
+      242
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/bathroom.png",
+  "atlas_rects": {
+    "front": [
+      50,
+      970,
+      92,
+      116
+    ],
+    "left": [
+      242,
+      970,
+      92,
+      116
+    ],
+    "right": [
+      434,
+      970,
+      92,
+      116
+    ],
+    "back": [
+      626,
+      970,
+      92,
+      116
+    ]
+  }
+}

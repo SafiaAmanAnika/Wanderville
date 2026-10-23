@@ -1,0 +1,134 @@
+{
+  "id": "printer",
+  "name": "Printer",
+  "category": "devices",
+  "size": [
+    60,
+    40
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "A page slides out.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/printer/front.png",
+    "left": "items/devices/printer/left.png",
+    "right": "items/devices/printer/right.png",
+    "back": "items/devices/printer/back.png"
+  },
+  "frame_size": [
+    60,
+    40
+  ],
+  "anchor": [
+    30,
+    40
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      59,
+      40
+    ],
+    "left": [
+      7,
+      2,
+      45,
+      38
+    ],
+    "right": [
+      8,
+      2,
+      44,
+      38
+    ],
+    "back": [
+      0,
+      1,
+      60,
+      39
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    60,
+    40
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_02.png",
+  "source_measured_bounds": {
+    "front": [
+      67,
+      1261,
+      241,
+      1378
+    ],
+    "left": [
+      547,
+      1266,
+      678,
+      1377
+    ],
+    "right": [
+      347,
+      1266,
+      477,
+      1377
+    ],
+    "back": [
+      784,
+      1264,
+      959,
+      1378
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      82,
+      1942,
+      60,
+      40
+    ],
+    "left": [
+      306,
+      1942,
+      60,
+      40
+    ],
+    "right": [
+      530,
+      1942,
+      60,
+      40
+    ],
+    "back": [
+      754,
+      1942,
+      60,
+      40
+    ]
+  }
+}

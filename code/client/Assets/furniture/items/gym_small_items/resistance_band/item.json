@@ -1,0 +1,134 @@
+{
+  "id": "resistance_band",
+  "name": "Resistance band",
+  "category": "gym_small_items",
+  "size": [
+    30,
+    15
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Stretches and snaps back.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym_small_items/resistance_band/front.png",
+    "left": "items/gym_small_items/resistance_band/left.png",
+    "right": "items/gym_small_items/resistance_band/right.png",
+    "back": "items/gym_small_items/resistance_band/back.png"
+  },
+  "frame_size": [
+    30,
+    16
+  ],
+  "anchor": [
+    15,
+    16
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      3,
+      30,
+      13
+    ],
+    "left": [
+      10,
+      0,
+      9,
+      16
+    ],
+    "right": [
+      10,
+      0,
+      9,
+      16
+    ],
+    "back": [
+      0,
+      3,
+      30,
+      13
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    30,
+    15
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_small_items_01.png",
+  "source_measured_bounds": {
+    "front": [
+      31,
+      1340,
+      284,
+      1449
+    ],
+    "left": [
+      367,
+      1328,
+      445,
+      1464
+    ],
+    "right": [
+      579,
+      1328,
+      657,
+      1464
+    ],
+    "back": [
+      740,
+      1340,
+      993,
+      1449
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym_small_items.png",
+  "atlas_rects": {
+    "front": [
+      17,
+      219,
+      30,
+      16
+    ],
+    "left": [
+      81,
+      219,
+      30,
+      16
+    ],
+    "right": [
+      145,
+      219,
+      30,
+      16
+    ],
+    "back": [
+      209,
+      219,
+      30,
+      16
+    ]
+  }
+}

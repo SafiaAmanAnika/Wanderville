@@ -1,0 +1,134 @@
+{
+  "id": "gym_floor_mat",
+  "name": "Gym floor mat",
+  "category": "gym",
+  "size": [
+    230,
+    230
+  ],
+  "z_index": -1,
+  "wood_cost": 2,
+  "click_mode": "none",
+  "use_loop": false,
+  "use_description": "No animation.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym/gym_floor_mat/front.png",
+    "left": "items/gym/gym_floor_mat/left.png",
+    "right": "items/gym/gym_floor_mat/right.png",
+    "back": "items/gym/gym_floor_mat/back.png"
+  },
+  "frame_size": [
+    230,
+    207
+  ],
+  "anchor": [
+    115,
+    207
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      230,
+      207
+    ],
+    "left": [
+      0,
+      0,
+      230,
+      207
+    ],
+    "right": [
+      0,
+      0,
+      230,
+      207
+    ],
+    "back": [
+      0,
+      0,
+      230,
+      207
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    230,
+    230
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "flat floor surface; exact cardinal rotations of the same top art",
+  "source_sheet": "gym_03.png",
+  "source_measured_bounds": {
+    "front": [
+      44,
+      445,
+      215,
+      599
+    ],
+    "left": [
+      279,
+      518,
+      489,
+      591
+    ],
+    "right": [
+      535,
+      518,
+      746,
+      591
+    ],
+    "back": [
+      810,
+      445,
+      980,
+      599
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym.png",
+  "atlas_rects": {
+    "front": [
+      13,
+      2389,
+      230,
+      207
+    ],
+    "left": [
+      269,
+      2389,
+      230,
+      207
+    ],
+    "right": [
+      525,
+      2389,
+      230,
+      207
+    ],
+    "back": [
+      781,
+      2389,
+      230,
+      207
+    ]
+  }
+}

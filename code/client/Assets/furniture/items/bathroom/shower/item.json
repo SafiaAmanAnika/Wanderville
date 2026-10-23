@@ -1,0 +1,159 @@
+{
+  "id": "shower",
+  "name": "Shower",
+  "category": "bathroom",
+  "size": [
+    115,
+    205
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Water streams down, steam fogs the glass (toggle).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/bathroom/shower/front.png",
+    "left": "items/bathroom/shower/left.png",
+    "right": "items/bathroom/shower/right.png",
+    "back": "items/bathroom/shower/back.png"
+  },
+  "frame_size": [
+    115,
+    183
+  ],
+  "anchor": [
+    57,
+    183
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      115,
+      183
+    ],
+    "left": [
+      6,
+      18,
+      102,
+      165
+    ],
+    "right": [
+      7,
+      18,
+      101,
+      165
+    ],
+    "back": [
+      1,
+      1,
+      113,
+      182
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      122,
+      115,
+      61
+    ],
+    "left": [
+      6,
+      128,
+      102,
+      55
+    ],
+    "right": [
+      7,
+      128,
+      101,
+      55
+    ],
+    "back": [
+      1,
+      122,
+      113,
+      61
+    ]
+  },
+  "source_front_size": [
+    115,
+    205
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    136,
+    115,
+    69
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "bathroom_01.png",
+  "source_measured_bounds": {
+    "front": [
+      63,
+      965,
+      218,
+      1212
+    ],
+    "left": [
+      584,
+      978,
+      721,
+      1200
+    ],
+    "right": [
+      341,
+      978,
+      477,
+      1200
+    ],
+    "back": [
+      843,
+      969,
+      995,
+      1214
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/bathroom.png",
+  "atlas_rects": {
+    "front": [
+      38,
+      625,
+      115,
+      183
+    ],
+    "left": [
+      230,
+      625,
+      115,
+      183
+    ],
+    "right": [
+      422,
+      625,
+      115,
+      183
+    ],
+    "back": [
+      614,
+      625,
+      115,
+      183
+    ]
+  }
+}

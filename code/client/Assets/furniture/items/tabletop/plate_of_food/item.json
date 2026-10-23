@@ -1,0 +1,138 @@
+{
+  "id": "plate_of_food",
+  "name": "Plate of food",
+  "category": "tabletop",
+  "size": [
+    35,
+    30
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Steam rises; click: food gets eaten bite by bite.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tabletop/plate_of_food/front.png",
+    "left": "items/tabletop/plate_of_food/left.png",
+    "right": "items/tabletop/plate_of_food/right.png",
+    "back": "items/tabletop/plate_of_food/back.png"
+  },
+  "frame_size": [
+    35,
+    26
+  ],
+  "anchor": [
+    17,
+    26
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      3,
+      35,
+      23
+    ],
+    "left": [
+      0,
+      1,
+      35,
+      25
+    ],
+    "right": [
+      0,
+      0,
+      35,
+      26
+    ],
+    "back": [
+      0,
+      1,
+      35,
+      25
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    35,
+    30
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tabletop_02.png",
+  "source_measured_bounds": {
+    "front": [
+      63,
+      705,
+      242,
+      824
+    ],
+    "left": [
+      350,
+      722,
+      520,
+      804
+    ],
+    "right": [
+      602,
+      722,
+      772,
+      803
+    ],
+    "back": [
+      879,
+      705,
+      1058,
+      824
+    ]
+  },
+  "corrected_views": [
+    "left",
+    "right",
+    "back"
+  ],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tabletop.png",
+  "atlas_rects": {
+    "front": [
+      14,
+      522,
+      35,
+      26
+    ],
+    "left": [
+      78,
+      522,
+      35,
+      26
+    ],
+    "right": [
+      142,
+      522,
+      35,
+      26
+    ],
+    "back": [
+      206,
+      522,
+      35,
+      26
+    ]
+  }
+}

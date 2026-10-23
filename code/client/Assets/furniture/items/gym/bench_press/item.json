@@ -1,0 +1,159 @@
+{
+  "id": "bench_press",
+  "name": "Bench press",
+  "category": "gym",
+  "size": [
+    175,
+    175
+  ],
+  "z_index": 0,
+  "wood_cost": 3,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Bar lifts up and down (play once).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym/bench_press/front.png",
+    "left": "items/gym/bench_press/left.png",
+    "right": "items/gym/bench_press/right.png",
+    "back": "items/gym/bench_press/back.png"
+  },
+  "frame_size": [
+    175,
+    123
+  ],
+  "anchor": [
+    87,
+    123
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      175,
+      123
+    ],
+    "left": [
+      16,
+      10,
+      143,
+      113
+    ],
+    "right": [
+      17,
+      10,
+      141,
+      113
+    ],
+    "back": [
+      0,
+      4,
+      175,
+      119
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      82,
+      175,
+      41
+    ],
+    "left": [
+      16,
+      85,
+      143,
+      38
+    ],
+    "right": [
+      17,
+      85,
+      141,
+      38
+    ],
+    "back": [
+      0,
+      83,
+      175,
+      40
+    ]
+  },
+  "source_front_size": [
+    175,
+    175
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    116,
+    175,
+    59
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_01.png",
+  "source_measured_bounds": {
+    "front": [
+      20,
+      776,
+      237,
+      928
+    ],
+    "left": [
+      290,
+      778,
+      467,
+      918
+    ],
+    "right": [
+      559,
+      778,
+      734,
+      918
+    ],
+    "back": [
+      787,
+      776,
+      1004,
+      924
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym.png",
+  "atlas_rects": {
+    "front": [
+      40,
+      650,
+      175,
+      123
+    ],
+    "left": [
+      296,
+      650,
+      175,
+      123
+    ],
+    "right": [
+      552,
+      650,
+      175,
+      123
+    ],
+    "back": [
+      808,
+      650,
+      175,
+      123
+    ]
+  }
+}

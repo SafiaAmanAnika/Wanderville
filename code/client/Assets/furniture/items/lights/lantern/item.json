@@ -1,0 +1,134 @@
+{
+  "id": "lantern",
+  "name": "Lantern",
+  "category": "lights",
+  "size": [
+    35,
+    50
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "toggle",
+  "use_loop": true,
+  "use_description": "Flame lights and flickers (loop).",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/lights/lantern/front.png",
+    "left": "items/lights/lantern/left.png",
+    "right": "items/lights/lantern/right.png",
+    "back": "items/lights/lantern/back.png"
+  },
+  "frame_size": [
+    33,
+    50
+  ],
+  "anchor": [
+    16,
+    50
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      33,
+      50
+    ],
+    "left": [
+      1,
+      0,
+      30,
+      50
+    ],
+    "right": [
+      1,
+      0,
+      30,
+      50
+    ],
+    "back": [
+      0,
+      0,
+      32,
+      50
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    35,
+    50
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "lights_01.png",
+  "source_measured_bounds": {
+    "front": [
+      75,
+      907,
+      181,
+      1069
+    ],
+    "left": [
+      344,
+      907,
+      442,
+      1069
+    ],
+    "right": [
+      582,
+      907,
+      680,
+      1069
+    ],
+    "back": [
+      843,
+      907,
+      947,
+      1069
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/lights.png",
+  "atlas_rects": {
+    "front": [
+      31,
+      402,
+      33,
+      50
+    ],
+    "left": [
+      127,
+      402,
+      33,
+      50
+    ],
+    "right": [
+      223,
+      402,
+      33,
+      50
+    ],
+    "back": [
+      319,
+      402,
+      33,
+      50
+    ]
+  }
+}

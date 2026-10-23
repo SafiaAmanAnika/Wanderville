@@ -1,0 +1,134 @@
+{
+  "id": "painting_big",
+  "name": "Painting (big)",
+  "category": "decor",
+  "size": [
+    145,
+    100
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Straightens; shine sweeps across the frame.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/painting_big/front.png",
+    "left": "items/decor/painting_big/left.png",
+    "right": "items/decor/painting_big/right.png",
+    "back": "items/decor/painting_big/back.png"
+  },
+  "frame_size": [
+    145,
+    106
+  ],
+  "anchor": [
+    72,
+    106
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      9,
+      145,
+      97
+    ],
+    "left": [
+      53,
+      0,
+      39,
+      106
+    ],
+    "right": [
+      53,
+      0,
+      39,
+      106
+    ],
+    "back": [
+      0,
+      9,
+      145,
+      97
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    145,
+    100
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_01.png",
+  "source_measured_bounds": {
+    "front": [
+      33,
+      1357,
+      251,
+      1503
+    ],
+    "left": [
+      375,
+      1349,
+      434,
+      1508
+    ],
+    "right": [
+      591,
+      1349,
+      650,
+      1508
+    ],
+    "back": [
+      776,
+      1357,
+      994,
+      1503
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      55,
+      1019,
+      145,
+      106
+    ],
+    "left": [
+      311,
+      1019,
+      145,
+      106
+    ],
+    "right": [
+      567,
+      1019,
+      145,
+      106
+    ],
+    "back": [
+      823,
+      1019,
+      145,
+      106
+    ]
+  }
+}

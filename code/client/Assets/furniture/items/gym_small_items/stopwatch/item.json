@@ -1,0 +1,134 @@
+{
+  "id": "stopwatch",
+  "name": "Stopwatch",
+  "category": "gym_small_items",
+  "size": [
+    15,
+    15
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Hand ticks around.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym_small_items/stopwatch/front.png",
+    "left": "items/gym_small_items/stopwatch/left.png",
+    "right": "items/gym_small_items/stopwatch/right.png",
+    "back": "items/gym_small_items/stopwatch/back.png"
+  },
+  "frame_size": [
+    14,
+    15
+  ],
+  "anchor": [
+    7,
+    15
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      14,
+      15
+    ],
+    "left": [
+      3,
+      0,
+      8,
+      15
+    ],
+    "right": [
+      3,
+      0,
+      8,
+      15
+    ],
+    "back": [
+      0,
+      0,
+      13,
+      15
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    15,
+    15
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_small_items_02.png",
+  "source_measured_bounds": {
+    "front": [
+      63,
+      608,
+      240,
+      804
+    ],
+    "left": [
+      392,
+      607,
+      493,
+      804
+    ],
+    "right": [
+      629,
+      607,
+      731,
+      804
+    ],
+    "back": [
+      882,
+      609,
+      1058,
+      804
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym_small_items.png",
+  "atlas_rects": {
+    "front": [
+      25,
+      325,
+      14,
+      15
+    ],
+    "left": [
+      89,
+      325,
+      14,
+      15
+    ],
+    "right": [
+      153,
+      325,
+      14,
+      15
+    ],
+    "back": [
+      217,
+      325,
+      14,
+      15
+    ]
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "id": "leg_press",
+  "name": "Leg press",
+  "category": "gym",
+  "size": [
+    145,
+    230
+  ],
+  "z_index": 0,
+  "wood_cost": 3,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Sled pushes out and back.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym/leg_press/front.png",
+    "left": "items/gym/leg_press/left.png",
+    "right": "items/gym/leg_press/right.png",
+    "back": "items/gym/leg_press/back.png"
+  },
+  "frame_size": [
+    145,
+    124
+  ],
+  "anchor": [
+    72,
+    124
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      145,
+      124
+    ],
+    "left": [
+      9,
+      3,
+      126,
+      121
+    ],
+    "right": [
+      9,
+      3,
+      126,
+      121
+    ],
+    "back": [
+      0,
+      0,
+      145,
+      124
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      82,
+      145,
+      42
+    ],
+    "left": [
+      9,
+      83,
+      126,
+      41
+    ],
+    "right": [
+      9,
+      83,
+      126,
+      41
+    ],
+    "back": [
+      0,
+      82,
+      145,
+      42
+    ]
+  },
+  "source_front_size": [
+    145,
+    230
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    153,
+    145,
+    77
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_02.png",
+  "source_measured_bounds": {
+    "front": [
+      19,
+      25,
+      235,
+      210
+    ],
+    "left": [
+      295,
+      30,
+      482,
+      210
+    ],
+    "right": [
+      542,
+      30,
+      730,
+      210
+    ],
+    "back": [
+      789,
+      25,
+      1005,
+      210
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym.png",
+  "atlas_rects": {
+    "front": [
+      55,
+      1314,
+      145,
+      124
+    ],
+    "left": [
+      311,
+      1314,
+      145,
+      124
+    ],
+    "right": [
+      567,
+      1314,
+      145,
+      124
+    ],
+    "back": [
+      823,
+      1314,
+      145,
+      124
+    ]
+  }
+}

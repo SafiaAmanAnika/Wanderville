@@ -1,0 +1,159 @@
+{
+  "id": "punching_bag_hanging",
+  "name": "Punching bag (hanging)",
+  "category": "gym",
+  "size": [
+    60,
+    175
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Swings when hit, chain rattles.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym/punching_bag_hanging/front.png",
+    "left": "items/gym/punching_bag_hanging/left.png",
+    "right": "items/gym/punching_bag_hanging/right.png",
+    "back": "items/gym/punching_bag_hanging/back.png"
+  },
+  "frame_size": [
+    60,
+    92
+  ],
+  "anchor": [
+    30,
+    92
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      60,
+      92
+    ],
+    "left": [
+      3,
+      2,
+      53,
+      90
+    ],
+    "right": [
+      3,
+      2,
+      53,
+      90
+    ],
+    "back": [
+      0,
+      0,
+      60,
+      92
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      61,
+      60,
+      31
+    ],
+    "left": [
+      3,
+      62,
+      53,
+      30
+    ],
+    "right": [
+      3,
+      62,
+      53,
+      30
+    ],
+    "back": [
+      0,
+      61,
+      60,
+      31
+    ]
+  },
+  "source_front_size": [
+    60,
+    175
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    116,
+    60,
+    59
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_02.png",
+  "source_measured_bounds": {
+    "front": [
+      57,
+      1130,
+      202,
+      1352
+    ],
+    "left": [
+      316,
+      1135,
+      445,
+      1352
+    ],
+    "right": [
+      579,
+      1135,
+      708,
+      1352
+    ],
+    "back": [
+      821,
+      1130,
+      966,
+      1352
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym.png",
+  "atlas_rects": {
+    "front": [
+      98,
+      2001,
+      60,
+      92
+    ],
+    "left": [
+      354,
+      2001,
+      60,
+      92
+    ],
+    "right": [
+      610,
+      2001,
+      60,
+      92
+    ],
+    "back": [
+      866,
+      2001,
+      60,
+      92
+    ]
+  }
+}

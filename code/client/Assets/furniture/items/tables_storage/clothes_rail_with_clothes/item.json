@@ -1,0 +1,159 @@
+{
+  "id": "clothes_rail_with_clothes",
+  "name": "Clothes rail with clothes",
+  "category": "tables_storage",
+  "size": [
+    175,
+    160
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Clothes slide along the rail and sort by colour.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tables_storage/clothes_rail_with_clothes/front.png",
+    "left": "items/tables_storage/clothes_rail_with_clothes/left.png",
+    "right": "items/tables_storage/clothes_rail_with_clothes/right.png",
+    "back": "items/tables_storage/clothes_rail_with_clothes/back.png"
+  },
+  "frame_size": [
+    175,
+    120
+  ],
+  "anchor": [
+    87,
+    120
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      175,
+      120
+    ],
+    "left": [
+      54,
+      2,
+      66,
+      118
+    ],
+    "right": [
+      54,
+      1,
+      66,
+      119
+    ],
+    "back": [
+      0,
+      0,
+      175,
+      120
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      80,
+      175,
+      40
+    ],
+    "left": [
+      54,
+      80,
+      66,
+      40
+    ],
+    "right": [
+      54,
+      80,
+      66,
+      40
+    ],
+    "back": [
+      0,
+      80,
+      175,
+      40
+    ]
+  },
+  "source_front_size": [
+    175,
+    160
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    106,
+    175,
+    54
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tables_storage_03.png",
+  "source_measured_bounds": {
+    "front": [
+      83,
+      1111,
+      339,
+      1286
+    ],
+    "left": [
+      434,
+      1113,
+      530,
+      1286
+    ],
+    "right": [
+      651,
+      1112,
+      747,
+      1286
+    ],
+    "back": [
+      843,
+      1110,
+      1099,
+      1286
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tables_storage.png",
+  "atlas_rects": {
+    "front": [
+      40,
+      3053,
+      175,
+      120
+    ],
+    "left": [
+      296,
+      3053,
+      175,
+      120
+    ],
+    "right": [
+      552,
+      3053,
+      175,
+      120
+    ],
+    "back": [
+      808,
+      3053,
+      175,
+      120
+    ]
+  }
+}

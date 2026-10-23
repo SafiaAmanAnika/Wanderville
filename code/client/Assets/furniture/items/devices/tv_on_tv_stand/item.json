@@ -1,0 +1,159 @@
+{
+  "id": "tv_on_tv_stand",
+  "name": "TV on TV stand",
+  "category": "devices",
+  "size": [
+    160,
+    145
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": true,
+  "use_description": "Screen turns on, flickers through channels (loop). Click again: off with a \"blip\".",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/tv_on_tv_stand/front.png",
+    "left": "items/devices/tv_on_tv_stand/left.png",
+    "right": "items/devices/tv_on_tv_stand/right.png",
+    "back": "items/devices/tv_on_tv_stand/back.png"
+  },
+  "frame_size": [
+    154,
+    148
+  ],
+  "anchor": [
+    77,
+    148
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      3,
+      154,
+      145
+    ],
+    "left": [
+      39,
+      0,
+      76,
+      148
+    ],
+    "right": [
+      39,
+      0,
+      76,
+      148
+    ],
+    "back": [
+      0,
+      3,
+      153,
+      145
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      99,
+      154,
+      49
+    ],
+    "left": [
+      39,
+      98,
+      76,
+      50
+    ],
+    "right": [
+      39,
+      98,
+      76,
+      50
+    ],
+    "back": [
+      0,
+      99,
+      153,
+      49
+    ]
+  },
+  "source_front_size": [
+    160,
+    145
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    96,
+    160,
+    49
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_01.png",
+  "source_measured_bounds": {
+    "front": [
+      59,
+      17,
+      223,
+      171
+    ],
+    "left": [
+      367,
+      14,
+      448,
+      171
+    ],
+    "right": [
+      577,
+      14,
+      658,
+      171
+    ],
+    "back": [
+      801,
+      17,
+      964,
+      171
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      35,
+      8,
+      154,
+      148
+    ],
+    "left": [
+      259,
+      8,
+      154,
+      148
+    ],
+    "right": [
+      483,
+      8,
+      154,
+      148
+    ],
+    "back": [
+      707,
+      8,
+      154,
+      148
+    ]
+  }
+}

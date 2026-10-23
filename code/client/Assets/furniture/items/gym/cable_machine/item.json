@@ -1,0 +1,159 @@
+{
+  "id": "cable_machine",
+  "name": "Cable machine",
+  "category": "gym",
+  "size": [
+    175,
+    245
+  ],
+  "z_index": 0,
+  "wood_cost": 3,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Weight stack lifts and drops, cables pull.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym/cable_machine/front.png",
+    "left": "items/gym/cable_machine/left.png",
+    "right": "items/gym/cable_machine/right.png",
+    "back": "items/gym/cable_machine/back.png"
+  },
+  "frame_size": [
+    175,
+    163
+  ],
+  "anchor": [
+    87,
+    163
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      175,
+      163
+    ],
+    "left": [
+      25,
+      1,
+      124,
+      162
+    ],
+    "right": [
+      24,
+      1,
+      126,
+      162
+    ],
+    "back": [
+      0,
+      0,
+      174,
+      163
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      108,
+      175,
+      55
+    ],
+    "left": [
+      25,
+      109,
+      124,
+      54
+    ],
+    "right": [
+      24,
+      109,
+      126,
+      54
+    ],
+    "back": [
+      0,
+      108,
+      174,
+      55
+    ]
+  },
+  "source_front_size": [
+    175,
+    245
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    163,
+    175,
+    82
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_01.png",
+  "source_measured_bounds": {
+    "front": [
+      32,
+      1122,
+      224,
+      1301
+    ],
+    "left": [
+      327,
+      1123,
+      463,
+      1301
+    ],
+    "right": [
+      561,
+      1123,
+      699,
+      1301
+    ],
+    "back": [
+      800,
+      1122,
+      991,
+      1301
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym.png",
+  "atlas_rects": {
+    "front": [
+      40,
+      941,
+      175,
+      163
+    ],
+    "left": [
+      296,
+      941,
+      175,
+      163
+    ],
+    "right": [
+      552,
+      941,
+      175,
+      163
+    ],
+    "back": [
+      808,
+      941,
+      175,
+      163
+    ]
+  }
+}

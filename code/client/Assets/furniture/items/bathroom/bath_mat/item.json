@@ -1,0 +1,134 @@
+{
+  "id": "bath_mat",
+  "name": "Bath mat",
+  "category": "bathroom",
+  "size": [
+    100,
+    60
+  ],
+  "z_index": -1,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Straightens out.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/bathroom/bath_mat/front.png",
+    "left": "items/bathroom/bath_mat/left.png",
+    "right": "items/bathroom/bath_mat/right.png",
+    "back": "items/bathroom/bath_mat/back.png"
+  },
+  "frame_size": [
+    98,
+    98
+  ],
+  "anchor": [
+    49,
+    98
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      38,
+      98,
+      60
+    ],
+    "left": [
+      19,
+      0,
+      60,
+      98
+    ],
+    "right": [
+      19,
+      0,
+      60,
+      98
+    ],
+    "back": [
+      0,
+      38,
+      98,
+      60
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    100,
+    60
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "flat floor surface; exact cardinal rotations of the same top art",
+  "source_sheet": "bathroom_02.png",
+  "source_measured_bounds": {
+    "front": [
+      30,
+      1478,
+      248,
+      1612
+    ],
+    "left": [
+      284,
+      1510,
+      451,
+      1561
+    ],
+    "right": [
+      497,
+      1510,
+      664,
+      1561
+    ],
+    "back": [
+      700,
+      1478,
+      918,
+      1612
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/bathroom.png",
+  "atlas_rects": {
+    "front": [
+      47,
+      1616,
+      98,
+      98
+    ],
+    "left": [
+      239,
+      1616,
+      98,
+      98
+    ],
+    "right": [
+      431,
+      1616,
+      98,
+      98
+    ],
+    "back": [
+      623,
+      1616,
+      98,
+      98
+    ]
+  }
+}

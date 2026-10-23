@@ -1,0 +1,159 @@
+{
+  "id": "counter_piece",
+  "name": "Counter piece",
+  "category": "kitchen",
+  "size": [
+    100,
+    115
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Cabinet door opens (toggle).",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/kitchen/counter_piece/front.png",
+    "left": "items/kitchen/counter_piece/left.png",
+    "right": "items/kitchen/counter_piece/right.png",
+    "back": "items/kitchen/counter_piece/back.png"
+  },
+  "frame_size": [
+    100,
+    77
+  ],
+  "anchor": [
+    50,
+    77
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      100,
+      77
+    ],
+    "left": [
+      18,
+      0,
+      64,
+      77
+    ],
+    "right": [
+      18,
+      0,
+      64,
+      77
+    ],
+    "back": [
+      0,
+      0,
+      100,
+      77
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      51,
+      100,
+      26
+    ],
+    "left": [
+      18,
+      51,
+      64,
+      26
+    ],
+    "right": [
+      18,
+      51,
+      64,
+      26
+    ],
+    "back": [
+      0,
+      51,
+      100,
+      26
+    ]
+  },
+  "source_front_size": [
+    100,
+    115
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    76,
+    100,
+    39
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "kitchen_01.png",
+  "source_measured_bounds": {
+    "front": [
+      75,
+      638,
+      254,
+      776
+    ],
+    "left": [
+      562,
+      639,
+      676,
+      776
+    ],
+    "right": [
+      348,
+      638,
+      462,
+      776
+    ],
+    "back": [
+      770,
+      639,
+      949,
+      776
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": true,
+  "atlas": "atlases/kitchen.png",
+  "atlas_rects": {
+    "front": [
+      62,
+      499,
+      100,
+      77
+    ],
+    "left": [
+      286,
+      499,
+      100,
+      77
+    ],
+    "right": [
+      510,
+      499,
+      100,
+      77
+    ],
+    "back": [
+      734,
+      499,
+      100,
+      77
+    ]
+  }
+}

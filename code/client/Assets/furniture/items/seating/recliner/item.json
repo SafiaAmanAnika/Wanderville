@@ -1,0 +1,159 @@
+{
+  "id": "recliner",
+  "name": "Recliner",
+  "category": "seating",
+  "size": [
+    105,
+    115
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Footrest pops up, back leans (toggle).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/seating/recliner/front.png",
+    "left": "items/seating/recliner/left.png",
+    "right": "items/seating/recliner/right.png",
+    "back": "items/seating/recliner/back.png"
+  },
+  "frame_size": [
+    105,
+    108
+  ],
+  "anchor": [
+    52,
+    108
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      1,
+      105,
+      107
+    ],
+    "left": [
+      8,
+      1,
+      89,
+      107
+    ],
+    "right": [
+      7,
+      0,
+      90,
+      108
+    ],
+    "back": [
+      0,
+      0,
+      104,
+      108
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      72,
+      105,
+      36
+    ],
+    "left": [
+      8,
+      72,
+      89,
+      36
+    ],
+    "right": [
+      7,
+      72,
+      90,
+      36
+    ],
+    "back": [
+      0,
+      72,
+      104,
+      36
+    ]
+  },
+  "source_front_size": [
+    105,
+    115
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    76,
+    105,
+    39
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "seating_02.png",
+  "source_measured_bounds": {
+    "front": [
+      67,
+      28,
+      235,
+      199
+    ],
+    "left": [
+      335,
+      28,
+      478,
+      199
+    ],
+    "right": [
+      558,
+      26,
+      702,
+      199
+    ],
+    "back": [
+      794,
+      26,
+      960,
+      199
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/seating.png",
+  "atlas_rects": {
+    "front": [
+      107,
+      774,
+      105,
+      108
+    ],
+    "left": [
+      427,
+      774,
+      105,
+      108
+    ],
+    "right": [
+      747,
+      774,
+      105,
+      108
+    ],
+    "back": [
+      1067,
+      774,
+      105,
+      108
+    ]
+  }
+}

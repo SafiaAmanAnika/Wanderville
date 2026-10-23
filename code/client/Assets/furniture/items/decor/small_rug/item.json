@@ -1,0 +1,134 @@
+{
+  "id": "small_rug",
+  "name": "Small rug",
+  "category": "decor",
+  "size": [
+    130,
+    85
+  ],
+  "z_index": -1,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Corners flatten.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/small_rug/front.png",
+    "left": "items/decor/small_rug/left.png",
+    "right": "items/decor/small_rug/right.png",
+    "back": "items/decor/small_rug/back.png"
+  },
+  "frame_size": [
+    130,
+    130
+  ],
+  "anchor": [
+    65,
+    130
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      61,
+      130,
+      69
+    ],
+    "left": [
+      30,
+      0,
+      69,
+      130
+    ],
+    "right": [
+      30,
+      0,
+      69,
+      130
+    ],
+    "back": [
+      0,
+      61,
+      130,
+      69
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    130,
+    85
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "flat floor surface; exact cardinal rotations of the same top art",
+  "source_sheet": "decor_01.png",
+  "source_measured_bounds": {
+    "front": [
+      49,
+      650,
+      227,
+      744
+    ],
+    "left": [
+      296,
+      655,
+      486,
+      729
+    ],
+    "right": [
+      540,
+      655,
+      729,
+      729
+    ],
+    "back": [
+      798,
+      650,
+      976,
+      744
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      63,
+      309,
+      130,
+      130
+    ],
+    "left": [
+      319,
+      309,
+      130,
+      130
+    ],
+    "right": [
+      575,
+      309,
+      130,
+      130
+    ],
+    "back": [
+      831,
+      309,
+      130,
+      130
+    ]
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "id": "desk_fan",
+  "name": "Desk fan",
+  "category": "devices",
+  "size": [
+    35,
+    40
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Blades spin (toggle).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/desk_fan/front.png",
+    "left": "items/devices/desk_fan/left.png",
+    "right": "items/devices/desk_fan/right.png",
+    "back": "items/devices/desk_fan/back.png"
+  },
+  "frame_size": [
+    30,
+    40
+  ],
+  "anchor": [
+    15,
+    40
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      30,
+      40
+    ],
+    "left": [
+      1,
+      0,
+      28,
+      40
+    ],
+    "right": [
+      1,
+      0,
+      28,
+      40
+    ],
+    "back": [
+      0,
+      0,
+      29,
+      40
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    35,
+    40
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_03.png",
+  "source_measured_bounds": {
+    "front": [
+      107,
+      218,
+      214,
+      362
+    ],
+    "left": [
+      353,
+      218,
+      452,
+      362
+    ],
+    "right": [
+      573,
+      218,
+      672,
+      362
+    ],
+    "back": [
+      812,
+      218,
+      916,
+      362
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      97,
+      2147,
+      30,
+      40
+    ],
+    "left": [
+      321,
+      2147,
+      30,
+      40
+    ],
+    "right": [
+      545,
+      2147,
+      30,
+      40
+    ],
+    "back": [
+      769,
+      2147,
+      30,
+      40
+    ]
+  }
+}

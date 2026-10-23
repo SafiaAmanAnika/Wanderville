@@ -1,0 +1,159 @@
+{
+  "id": "tall_dresser",
+  "name": "Tall dresser",
+  "category": "tables_storage",
+  "size": [
+    100,
+    160
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Top drawer opens, a sock pops out.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tables_storage/tall_dresser/front.png",
+    "left": "items/tables_storage/tall_dresser/left.png",
+    "right": "items/tables_storage/tall_dresser/right.png",
+    "back": "items/tables_storage/tall_dresser/back.png"
+  },
+  "frame_size": [
+    100,
+    127
+  ],
+  "anchor": [
+    50,
+    127
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      1,
+      100,
+      126
+    ],
+    "left": [
+      12,
+      1,
+      76,
+      126
+    ],
+    "right": [
+      11,
+      0,
+      77,
+      127
+    ],
+    "back": [
+      1,
+      0,
+      98,
+      127
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      85,
+      100,
+      42
+    ],
+    "left": [
+      12,
+      85,
+      76,
+      42
+    ],
+    "right": [
+      11,
+      84,
+      77,
+      43
+    ],
+    "back": [
+      1,
+      84,
+      98,
+      43
+    ]
+  },
+  "source_front_size": [
+    100,
+    160
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    106,
+    100,
+    54
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tables_storage_02.png",
+  "source_measured_bounds": {
+    "front": [
+      131,
+      249,
+      254,
+      404
+    ],
+    "left": [
+      402,
+      249,
+      496,
+      404
+    ],
+    "right": [
+      622,
+      248,
+      717,
+      404
+    ],
+    "back": [
+      870,
+      248,
+      990,
+      404
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tables_storage.png",
+  "atlas_rects": {
+    "front": [
+      78,
+      1380,
+      100,
+      127
+    ],
+    "left": [
+      334,
+      1380,
+      100,
+      127
+    ],
+    "right": [
+      590,
+      1380,
+      100,
+      127
+    ],
+    "back": [
+      846,
+      1380,
+      100,
+      127
+    ]
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "id": "candle",
+  "name": "Candle",
+  "category": "lights",
+  "size": [
+    15,
+    30
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "toggle",
+  "use_loop": true,
+  "use_description": "Lights; flame flickers (loop); click again: blown out, smoke curl.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/lights/candle/front.png",
+    "left": "items/lights/candle/left.png",
+    "right": "items/lights/candle/right.png",
+    "back": "items/lights/candle/back.png"
+  },
+  "frame_size": [
+    15,
+    18
+  ],
+  "anchor": [
+    7,
+    18
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      15,
+      18
+    ],
+    "left": [
+      0,
+      0,
+      14,
+      18
+    ],
+    "right": [
+      0,
+      0,
+      14,
+      18
+    ],
+    "back": [
+      0,
+      0,
+      15,
+      18
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    15,
+    30
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "lights_01.png",
+  "source_measured_bounds": {
+    "front": [
+      78,
+      1098,
+      179,
+      1220
+    ],
+    "left": [
+      343,
+      1098,
+      439,
+      1220
+    ],
+    "right": [
+      586,
+      1098,
+      681,
+      1220
+    ],
+    "back": [
+      845,
+      1098,
+      945,
+      1220
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/lights.png",
+  "atlas_rects": {
+    "front": [
+      40,
+      468,
+      15,
+      18
+    ],
+    "left": [
+      136,
+      468,
+      15,
+      18
+    ],
+    "right": [
+      232,
+      468,
+      15,
+      18
+    ],
+    "back": [
+      328,
+      468,
+      15,
+      18
+    ]
+  }
+}

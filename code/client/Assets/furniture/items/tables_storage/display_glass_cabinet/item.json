@@ -1,0 +1,159 @@
+{
+  "id": "display_glass_cabinet",
+  "name": "Display / glass cabinet",
+  "category": "tables_storage",
+  "size": [
+    115,
+    205
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Inside light turns on and items sparkle (toggle).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tables_storage/display_glass_cabinet/front.png",
+    "left": "items/tables_storage/display_glass_cabinet/left.png",
+    "right": "items/tables_storage/display_glass_cabinet/right.png",
+    "back": "items/tables_storage/display_glass_cabinet/back.png"
+  },
+  "frame_size": [
+    115,
+    114
+  ],
+  "anchor": [
+    57,
+    114
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      115,
+      114
+    ],
+    "left": [
+      20,
+      0,
+      74,
+      114
+    ],
+    "right": [
+      20,
+      0,
+      74,
+      114
+    ],
+    "back": [
+      0,
+      0,
+      114,
+      114
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      76,
+      115,
+      38
+    ],
+    "left": [
+      20,
+      76,
+      74,
+      38
+    ],
+    "right": [
+      20,
+      76,
+      74,
+      38
+    ],
+    "back": [
+      0,
+      76,
+      114,
+      38
+    ]
+  },
+  "source_front_size": [
+    115,
+    205
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    136,
+    115,
+    69
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tables_storage_02.png",
+  "source_measured_bounds": {
+    "front": [
+      111,
+      847,
+      275,
+      1010
+    ],
+    "left": [
+      396,
+      847,
+      501,
+      1010
+    ],
+    "right": [
+      622,
+      847,
+      727,
+      1010
+    ],
+    "back": [
+      848,
+      847,
+      1011,
+      1010
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tables_storage.png",
+  "atlas_rects": {
+    "front": [
+      70,
+      1900,
+      115,
+      114
+    ],
+    "left": [
+      326,
+      1900,
+      115,
+      114
+    ],
+    "right": [
+      582,
+      1900,
+      115,
+      114
+    ],
+    "back": [
+      838,
+      1900,
+      115,
+      114
+    ]
+  }
+}

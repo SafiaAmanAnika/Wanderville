@@ -1,0 +1,163 @@
+{
+  "id": "crafting_table",
+  "name": "Crafting table",
+  "category": "tables_storage",
+  "size": [
+    145,
+    115
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Tools rattle, a small \"item made\" sparkle.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tables_storage/crafting_table/front.png",
+    "left": "items/tables_storage/crafting_table/left.png",
+    "right": "items/tables_storage/crafting_table/right.png",
+    "back": "items/tables_storage/crafting_table/back.png"
+  },
+  "frame_size": [
+    145,
+    77
+  ],
+  "anchor": [
+    72,
+    77
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      3,
+      145,
+      74
+    ],
+    "left": [
+      32,
+      1,
+      80,
+      76
+    ],
+    "right": [
+      32,
+      2,
+      80,
+      75
+    ],
+    "back": [
+      0,
+      0,
+      144,
+      77
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      52,
+      145,
+      25
+    ],
+    "left": [
+      32,
+      51,
+      80,
+      26
+    ],
+    "right": [
+      32,
+      52,
+      80,
+      25
+    ],
+    "back": [
+      0,
+      51,
+      144,
+      26
+    ]
+  },
+  "source_front_size": [
+    145,
+    115
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    76,
+    145,
+    39
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tables_storage_03.png",
+  "source_measured_bounds": {
+    "front": [
+      75,
+      756,
+      331,
+      887
+    ],
+    "left": [
+      417,
+      756,
+      549,
+      887
+    ],
+    "right": [
+      633,
+      756,
+      765,
+      887
+    ],
+    "back": [
+      850,
+      773,
+      1107,
+      887
+    ]
+  },
+  "corrected_views": [
+    "left",
+    "right",
+    "back"
+  ],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tables_storage.png",
+  "atlas_rects": {
+    "front": [
+      55,
+      2850,
+      145,
+      77
+    ],
+    "left": [
+      311,
+      2850,
+      145,
+      77
+    ],
+    "right": [
+      567,
+      2850,
+      145,
+      77
+    ],
+    "back": [
+      823,
+      2850,
+      145,
+      77
+    ]
+  }
+}

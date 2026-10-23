@@ -1,0 +1,134 @@
+{
+  "id": "microwave",
+  "name": "Microwave",
+  "category": "devices",
+  "size": [
+    65,
+    45
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Plate turns, light on, \"ding\" bounce at the end.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/microwave/front.png",
+    "left": "items/devices/microwave/left.png",
+    "right": "items/devices/microwave/right.png",
+    "back": "items/devices/microwave/back.png"
+  },
+  "frame_size": [
+    65,
+    41
+  ],
+  "anchor": [
+    32,
+    41
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      65,
+      41
+    ],
+    "left": [
+      8,
+      0,
+      49,
+      41
+    ],
+    "right": [
+      8,
+      0,
+      49,
+      41
+    ],
+    "back": [
+      0,
+      0,
+      65,
+      41
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    65,
+    45
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_03.png",
+  "source_measured_bounds": {
+    "front": [
+      65,
+      892,
+      259,
+      1013
+    ],
+    "left": [
+      328,
+      892,
+      475,
+      1013
+    ],
+    "right": [
+      551,
+      892,
+      698,
+      1013
+    ],
+    "back": [
+      766,
+      892,
+      959,
+      1013
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      79,
+      2406,
+      65,
+      41
+    ],
+    "left": [
+      303,
+      2406,
+      65,
+      41
+    ],
+    "right": [
+      527,
+      2406,
+      65,
+      41
+    ],
+    "back": [
+      751,
+      2406,
+      65,
+      41
+    ]
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "id": "tall_bookshelf",
+  "name": "Tall bookshelf",
+  "category": "tables_storage",
+  "size": [
+    145,
+    205
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Books sort by colour and size; one book wiggles out and back.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tables_storage/tall_bookshelf/front.png",
+    "left": "items/tables_storage/tall_bookshelf/left.png",
+    "right": "items/tables_storage/tall_bookshelf/right.png",
+    "back": "items/tables_storage/tall_bookshelf/back.png"
+  },
+  "frame_size": [
+    145,
+    154
+  ],
+  "anchor": [
+    72,
+    154
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      1,
+      145,
+      153
+    ],
+    "left": [
+      31,
+      1,
+      83,
+      153
+    ],
+    "right": [
+      31,
+      0,
+      82,
+      154
+    ],
+    "back": [
+      0,
+      1,
+      145,
+      153
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      103,
+      145,
+      51
+    ],
+    "left": [
+      31,
+      103,
+      83,
+      51
+    ],
+    "right": [
+      31,
+      102,
+      82,
+      52
+    ],
+    "back": [
+      0,
+      103,
+      145,
+      51
+    ]
+  },
+  "source_front_size": [
+    145,
+    205
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    136,
+    145,
+    69
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tables_storage_02.png",
+  "source_measured_bounds": {
+    "front": [
+      111,
+      534,
+      274,
+      706
+    ],
+    "left": [
+      403,
+      534,
+      496,
+      706
+    ],
+    "right": [
+      627,
+      533,
+      719,
+      706
+    ],
+    "back": [
+      849,
+      534,
+      1012,
+      706
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tables_storage.png",
+  "atlas_rects": {
+    "front": [
+      55,
+      1620,
+      145,
+      154
+    ],
+    "left": [
+      311,
+      1620,
+      145,
+      154
+    ],
+    "right": [
+      567,
+      1620,
+      145,
+      154
+    ],
+    "back": [
+      823,
+      1620,
+      145,
+      154
+    ]
+  }
+}

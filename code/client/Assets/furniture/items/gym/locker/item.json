@@ -1,0 +1,159 @@
+{
+  "id": "locker",
+  "name": "Locker",
+  "category": "gym",
+  "size": [
+    70,
+    205
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Door swings open (toggle).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym/locker/front.png",
+    "left": "items/gym/locker/left.png",
+    "right": "items/gym/locker/right.png",
+    "back": "items/gym/locker/back.png"
+  },
+  "frame_size": [
+    70,
+    152
+  ],
+  "anchor": [
+    35,
+    152
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      70,
+      152
+    ],
+    "left": [
+      2,
+      0,
+      66,
+      152
+    ],
+    "right": [
+      2,
+      0,
+      66,
+      152
+    ],
+    "back": [
+      0,
+      0,
+      70,
+      152
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      101,
+      70,
+      51
+    ],
+    "left": [
+      2,
+      101,
+      66,
+      51
+    ],
+    "right": [
+      2,
+      101,
+      66,
+      51
+    ],
+    "back": [
+      0,
+      101,
+      70,
+      51
+    ]
+  },
+  "source_front_size": [
+    70,
+    205
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    136,
+    70,
+    69
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_03.png",
+  "source_measured_bounds": {
+    "front": [
+      81,
+      774,
+      177,
+      983
+    ],
+    "left": [
+      346,
+      774,
+      437,
+      983
+    ],
+    "right": [
+      588,
+      774,
+      679,
+      983
+    ],
+    "back": [
+      847,
+      774,
+      943,
+      983
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym.png",
+  "atlas_rects": {
+    "front": [
+      93,
+      2774,
+      70,
+      152
+    ],
+    "left": [
+      349,
+      2774,
+      70,
+      152
+    ],
+    "right": [
+      605,
+      2774,
+      70,
+      152
+    ],
+    "back": [
+      861,
+      2774,
+      70,
+      152
+    ]
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "id": "dumbbell_rack",
+  "name": "Dumbbell rack",
+  "category": "gym",
+  "size": [
+    175,
+    100
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Dumbbells sort lightest \u2192 heaviest.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym/dumbbell_rack/front.png",
+    "left": "items/gym/dumbbell_rack/left.png",
+    "right": "items/gym/dumbbell_rack/right.png",
+    "back": "items/gym/dumbbell_rack/back.png"
+  },
+  "frame_size": [
+    163,
+    101
+  ],
+  "anchor": [
+    81,
+    101
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      1,
+      163,
+      100
+    ],
+    "left": [
+      41,
+      0,
+      81,
+      101
+    ],
+    "right": [
+      41,
+      0,
+      81,
+      101
+    ],
+    "back": [
+      0,
+      0,
+      162,
+      101
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      67,
+      163,
+      34
+    ],
+    "left": [
+      41,
+      67,
+      81,
+      34
+    ],
+    "right": [
+      41,
+      67,
+      81,
+      34
+    ],
+    "back": [
+      0,
+      67,
+      162,
+      34
+    ]
+  },
+  "source_front_size": [
+    175,
+    100
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    66,
+    175,
+    34
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_02.png",
+  "source_measured_bounds": {
+    "front": [
+      18,
+      461,
+      238,
+      596
+    ],
+    "left": [
+      334,
+      460,
+      443,
+      596
+    ],
+    "right": [
+      581,
+      460,
+      691,
+      596
+    ],
+    "back": [
+      787,
+      460,
+      1006,
+      596
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym.png",
+  "atlas_rects": {
+    "front": [
+      46,
+      1621,
+      163,
+      101
+    ],
+    "left": [
+      302,
+      1621,
+      163,
+      101
+    ],
+    "right": [
+      558,
+      1621,
+      163,
+      101
+    ],
+    "back": [
+      814,
+      1621,
+      163,
+      101
+    ]
+  }
+}

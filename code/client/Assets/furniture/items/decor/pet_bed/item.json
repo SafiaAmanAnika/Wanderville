@@ -1,0 +1,134 @@
+{
+  "id": "pet_bed",
+  "name": "Pet bed",
+  "category": "decor",
+  "size": [
+    80,
+    50
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Blanket fluffs.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/pet_bed/front.png",
+    "left": "items/decor/pet_bed/left.png",
+    "right": "items/decor/pet_bed/right.png",
+    "back": "items/decor/pet_bed/back.png"
+  },
+  "frame_size": [
+    81,
+    46
+  ],
+  "anchor": [
+    40,
+    46
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      80,
+      46
+    ],
+    "left": [
+      12,
+      3,
+      57,
+      43
+    ],
+    "right": [
+      12,
+      3,
+      57,
+      43
+    ],
+    "back": [
+      0,
+      0,
+      81,
+      46
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    80,
+    50
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "decor_03.png",
+  "source_measured_bounds": {
+    "front": [
+      134,
+      337,
+      288,
+      426
+    ],
+    "left": [
+      408,
+      339,
+      518,
+      421
+    ],
+    "right": [
+      604,
+      339,
+      714,
+      421
+    ],
+    "back": [
+      834,
+      337,
+      989,
+      426
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      87,
+      2485,
+      81,
+      46
+    ],
+    "left": [
+      343,
+      2485,
+      81,
+      46
+    ],
+    "right": [
+      599,
+      2485,
+      81,
+      46
+    ],
+    "back": [
+      855,
+      2485,
+      81,
+      46
+    ]
+  }
+}

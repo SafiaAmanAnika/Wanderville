@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://b1s1qb5kfvvn"]
 
 [ext_resource type="Script" uid="uid://dm02ewxbg8o22" path="res://Scripts/fishing_game.gd" id="1_f6wi8"]
-[ext_resource type="Texture2D" uid="uid://d874clr263ii" path="res://Scenes/orangebox.png" id="1_i7yw2"]
+[ext_resource type="Texture2D" uid="uid://d874clr263ii" path="res://Assets/inventory/orangebox.png" id="1_i7yw2"]
 [ext_resource type="Texture2D" uid="uid://bv2o6qn4a1ulh" path="res://Assets/ui_stuffs/SlimSlider_Background.png" id="2_d4jer"]
 [ext_resource type="Texture2D" uid="uid://xtlhmwbermdt" path="res://Assets/ui_stuffs/fishgamebg.jpeg" id="2_f7mym"]
 [ext_resource type="Texture2D" uid="uid://c4sps0x5cs4wo" path="res://Assets/ui_stuffs/SlimSlider_Base.png" id="3_av1u1"]

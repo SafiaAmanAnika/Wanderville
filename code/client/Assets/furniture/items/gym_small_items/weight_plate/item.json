@@ -1,0 +1,134 @@
+{
+  "id": "weight_plate",
+  "name": "Weight plate",
+  "category": "gym_small_items",
+  "size": [
+    30,
+    30
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Spins on its edge.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym_small_items/weight_plate/front.png",
+    "left": "items/gym_small_items/weight_plate/left.png",
+    "right": "items/gym_small_items/weight_plate/right.png",
+    "back": "items/gym_small_items/weight_plate/back.png"
+  },
+  "frame_size": [
+    30,
+    31
+  ],
+  "anchor": [
+    15,
+    31
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      1,
+      30,
+      30
+    ],
+    "left": [
+      8,
+      0,
+      14,
+      31
+    ],
+    "right": [
+      8,
+      0,
+      14,
+      31
+    ],
+    "back": [
+      0,
+      1,
+      30,
+      30
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    30,
+    30
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_small_items_01.png",
+  "source_measured_bounds": {
+    "front": [
+      50,
+      816,
+      248,
+      1017
+    ],
+    "left": [
+      361,
+      812,
+      452,
+      1018
+    ],
+    "right": [
+      572,
+      812,
+      664,
+      1018
+    ],
+    "back": [
+      776,
+      816,
+      974,
+      1017
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym_small_items.png",
+  "atlas_rects": {
+    "front": [
+      17,
+      130,
+      30,
+      31
+    ],
+    "left": [
+      81,
+      130,
+      30,
+      31
+    ],
+    "right": [
+      145,
+      130,
+      30,
+      31
+    ],
+    "back": [
+      209,
+      130,
+      30,
+      31
+    ]
+  }
+}

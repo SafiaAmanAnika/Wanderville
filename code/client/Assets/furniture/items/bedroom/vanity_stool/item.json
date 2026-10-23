@@ -1,0 +1,159 @@
+{
+  "id": "vanity_stool",
+  "name": "Vanity stool",
+  "category": "bedroom",
+  "size": [
+    50,
+    50
+  ],
+  "z_index": 0,
+  "wood_cost": 3,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Stool squish.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/bedroom/vanity_stool/front.png",
+    "left": "items/bedroom/vanity_stool/left.png",
+    "right": "items/bedroom/vanity_stool/right.png",
+    "back": "items/bedroom/vanity_stool/back.png"
+  },
+  "frame_size": [
+    50,
+    43
+  ],
+  "anchor": [
+    25,
+    43
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      50,
+      43
+    ],
+    "left": [
+      2,
+      0,
+      45,
+      43
+    ],
+    "right": [
+      2,
+      0,
+      45,
+      43
+    ],
+    "back": [
+      0,
+      0,
+      50,
+      43
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      28,
+      50,
+      15
+    ],
+    "left": [
+      2,
+      28,
+      45,
+      15
+    ],
+    "right": [
+      2,
+      28,
+      45,
+      15
+    ],
+    "back": [
+      0,
+      28,
+      50,
+      15
+    ]
+  },
+  "source_front_size": [
+    50,
+    50
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    33,
+    50,
+    17
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "bedroom_01.png",
+  "source_measured_bounds": {
+    "front": [
+      91,
+      1093,
+      199,
+      1186
+    ],
+    "left": [
+      345,
+      1093,
+      442,
+      1186
+    ],
+    "right": [
+      582,
+      1093,
+      679,
+      1186
+    ],
+    "back": [
+      826,
+      1093,
+      934,
+      1186
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/bedroom.png",
+  "atlas_rects": {
+    "front": [
+      119,
+      1013,
+      50,
+      43
+    ],
+    "left": [
+      407,
+      1013,
+      50,
+      43
+    ],
+    "right": [
+      695,
+      1013,
+      50,
+      43
+    ],
+    "back": [
+      983,
+      1013,
+      50,
+      43
+    ]
+  }
+}

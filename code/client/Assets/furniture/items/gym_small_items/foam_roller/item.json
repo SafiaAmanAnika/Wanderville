@@ -1,0 +1,134 @@
+{
+  "id": "foam_roller",
+  "name": "Foam roller",
+  "category": "gym_small_items",
+  "size": [
+    40,
+    18
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Rolls.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym_small_items/foam_roller/front.png",
+    "left": "items/gym_small_items/foam_roller/left.png",
+    "right": "items/gym_small_items/foam_roller/right.png",
+    "back": "items/gym_small_items/foam_roller/back.png"
+  },
+  "frame_size": [
+    40,
+    20
+  ],
+  "anchor": [
+    20,
+    20
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      2,
+      40,
+      18
+    ],
+    "left": [
+      10,
+      0,
+      20,
+      20
+    ],
+    "right": [
+      10,
+      0,
+      20,
+      20
+    ],
+    "back": [
+      0,
+      2,
+      40,
+      18
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    40,
+    18
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_small_items_02.png",
+  "source_measured_bounds": {
+    "front": [
+      15,
+      1170,
+      317,
+      1306
+    ],
+    "left": [
+      369,
+      1158,
+      519,
+      1311
+    ],
+    "right": [
+      602,
+      1158,
+      753,
+      1311
+    ],
+    "back": [
+      806,
+      1170,
+      1108,
+      1306
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym_small_items.png",
+  "atlas_rects": {
+    "front": [
+      12,
+      395,
+      40,
+      20
+    ],
+    "left": [
+      76,
+      395,
+      40,
+      20
+    ],
+    "right": [
+      140,
+      395,
+      40,
+      20
+    ],
+    "back": [
+      204,
+      395,
+      40,
+      20
+    ]
+  }
+}

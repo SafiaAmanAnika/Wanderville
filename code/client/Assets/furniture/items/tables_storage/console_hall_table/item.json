@@ -1,0 +1,159 @@
+{
+  "id": "console_hall_table",
+  "name": "Console / hall table",
+  "category": "tables_storage",
+  "size": [
+    145,
+    70
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Keys on it jingle.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tables_storage/console_hall_table/front.png",
+    "left": "items/tables_storage/console_hall_table/left.png",
+    "right": "items/tables_storage/console_hall_table/right.png",
+    "back": "items/tables_storage/console_hall_table/back.png"
+  },
+  "frame_size": [
+    90,
+    72
+  ],
+  "anchor": [
+    45,
+    72
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      2,
+      90,
+      70
+    ],
+    "left": [
+      25,
+      1,
+      39,
+      71
+    ],
+    "right": [
+      25,
+      0,
+      39,
+      72
+    ],
+    "back": [
+      0,
+      2,
+      90,
+      70
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      48,
+      90,
+      24
+    ],
+    "left": [
+      25,
+      48,
+      39,
+      24
+    ],
+    "right": [
+      25,
+      48,
+      39,
+      24
+    ],
+    "back": [
+      0,
+      48,
+      90,
+      24
+    ]
+  },
+  "source_front_size": [
+    145,
+    70
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    46,
+    145,
+    24
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tables_storage_01.png",
+  "source_measured_bounds": {
+    "front": [
+      59,
+      1357,
+      251,
+      1506
+    ],
+    "left": [
+      361,
+      1354,
+      445,
+      1506
+    ],
+    "right": [
+      580,
+      1353,
+      663,
+      1506
+    ],
+    "back": [
+      774,
+      1357,
+      966,
+      1506
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tables_storage.png",
+  "atlas_rects": {
+    "front": [
+      83,
+      1100,
+      90,
+      72
+    ],
+    "left": [
+      339,
+      1100,
+      90,
+      72
+    ],
+    "right": [
+      595,
+      1100,
+      90,
+      72
+    ],
+    "back": [
+      851,
+      1100,
+      90,
+      72
+    ]
+  }
+}

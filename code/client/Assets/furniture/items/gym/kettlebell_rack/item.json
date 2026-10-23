@@ -1,0 +1,159 @@
+{
+  "id": "kettlebell_rack",
+  "name": "Kettlebell rack",
+  "category": "gym",
+  "size": [
+    145,
+    85
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Kettlebells line up.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym/kettlebell_rack/front.png",
+    "left": "items/gym/kettlebell_rack/left.png",
+    "right": "items/gym/kettlebell_rack/right.png",
+    "back": "items/gym/kettlebell_rack/back.png"
+  },
+  "frame_size": [
+    145,
+    73
+  ],
+  "anchor": [
+    72,
+    73
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      2,
+      145,
+      71
+    ],
+    "left": [
+      36,
+      0,
+      73,
+      73
+    ],
+    "right": [
+      36,
+      0,
+      73,
+      73
+    ],
+    "back": [
+      0,
+      2,
+      145,
+      71
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      49,
+      145,
+      24
+    ],
+    "left": [
+      36,
+      48,
+      73,
+      25
+    ],
+    "right": [
+      36,
+      48,
+      73,
+      25
+    ],
+    "back": [
+      0,
+      49,
+      145,
+      24
+    ]
+  },
+  "source_front_size": [
+    145,
+    85
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    56,
+    145,
+    29
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_02.png",
+  "source_measured_bounds": {
+    "front": [
+      19,
+      990,
+      259,
+      1107
+    ],
+    "left": [
+      336,
+      986,
+      457,
+      1107
+    ],
+    "right": [
+      567,
+      986,
+      688,
+      1107
+    ],
+    "back": [
+      766,
+      990,
+      1006,
+      1107
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym.png",
+  "atlas_rects": {
+    "front": [
+      55,
+      1912,
+      145,
+      73
+    ],
+    "left": [
+      311,
+      1912,
+      145,
+      73
+    ],
+    "right": [
+      567,
+      1912,
+      145,
+      73
+    ],
+    "back": [
+      823,
+      1912,
+      145,
+      73
+    ]
+  }
+}

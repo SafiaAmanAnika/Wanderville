@@ -1,0 +1,134 @@
+{
+  "id": "barbell_on_floor",
+  "name": "Barbell on floor",
+  "category": "gym",
+  "size": [
+    230,
+    40
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Rolls a little.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym/barbell_on_floor/front.png",
+    "left": "items/gym/barbell_on_floor/left.png",
+    "right": "items/gym/barbell_on_floor/right.png",
+    "back": "items/gym/barbell_on_floor/back.png"
+  },
+  "frame_size": [
+    135,
+    42
+  ],
+  "anchor": [
+    67,
+    42
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      2,
+      135,
+      40
+    ],
+    "left": [
+      47,
+      0,
+      41,
+      42
+    ],
+    "right": [
+      47,
+      0,
+      41,
+      42
+    ],
+    "back": [
+      0,
+      2,
+      135,
+      40
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    230,
+    40
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_02.png",
+  "source_measured_bounds": {
+    "front": [
+      13,
+      631,
+      320,
+      722
+    ],
+    "left": [
+      374,
+      631,
+      467,
+      726
+    ],
+    "right": [
+      557,
+      631,
+      650,
+      726
+    ],
+    "back": [
+      703,
+      631,
+      1011,
+      721
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym.png",
+  "atlas_rects": {
+    "front": [
+      60,
+      1738,
+      135,
+      42
+    ],
+    "left": [
+      316,
+      1738,
+      135,
+      42
+    ],
+    "right": [
+      572,
+      1738,
+      135,
+      42
+    ],
+    "back": [
+      828,
+      1738,
+      135,
+      42
+    ]
+  }
+}

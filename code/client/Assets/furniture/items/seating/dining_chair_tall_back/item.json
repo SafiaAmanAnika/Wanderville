@@ -1,0 +1,159 @@
+{
+  "id": "dining_chair_tall_back",
+  "name": "Dining chair (tall back)",
+  "category": "seating",
+  "size": [
+    65,
+    110
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Chair slides out from the table (toggle).",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/seating/dining_chair_tall_back/front.png",
+    "left": "items/seating/dining_chair_tall_back/left.png",
+    "right": "items/seating/dining_chair_tall_back/right.png",
+    "back": "items/seating/dining_chair_tall_back/back.png"
+  },
+  "frame_size": [
+    71,
+    97
+  ],
+  "anchor": [
+    35,
+    97
+  ],
+  "visible_bounds": {
+    "front": [
+      3,
+      2,
+      65,
+      95
+    ],
+    "left": [
+      0,
+      0,
+      71,
+      97
+    ],
+    "right": [
+      0,
+      0,
+      71,
+      97
+    ],
+    "back": [
+      2,
+      2,
+      66,
+      95
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      3,
+      65,
+      65,
+      32
+    ],
+    "left": [
+      0,
+      64,
+      71,
+      33
+    ],
+    "right": [
+      0,
+      64,
+      71,
+      33
+    ],
+    "back": [
+      2,
+      65,
+      66,
+      32
+    ]
+  },
+  "source_front_size": [
+    65,
+    110
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    73,
+    65,
+    37
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "seating_01.png",
+  "source_measured_bounds": {
+    "front": [
+      96,
+      198,
+      222,
+      383
+    ],
+    "left": [
+      327,
+      195,
+      465,
+      383
+    ],
+    "right": [
+      559,
+      195,
+      697,
+      383
+    ],
+    "back": [
+      801,
+      198,
+      929,
+      383
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/seating.png",
+  "atlas_rects": {
+    "front": [
+      124,
+      109,
+      71,
+      97
+    ],
+    "left": [
+      444,
+      109,
+      71,
+      97
+    ],
+    "right": [
+      764,
+      109,
+      71,
+      97
+    ],
+    "back": [
+      1084,
+      109,
+      71,
+      97
+    ]
+  }
+}

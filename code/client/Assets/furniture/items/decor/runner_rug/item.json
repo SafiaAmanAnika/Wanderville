@@ -1,0 +1,134 @@
+{
+  "id": "runner_rug",
+  "name": "Runner rug",
+  "category": "decor",
+  "size": [
+    70,
+    200
+  ],
+  "z_index": -1,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Ripple wave.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/decor/runner_rug/front.png",
+    "left": "items/decor/runner_rug/left.png",
+    "right": "items/decor/runner_rug/right.png",
+    "back": "items/decor/runner_rug/back.png"
+  },
+  "frame_size": [
+    125,
+    125
+  ],
+  "anchor": [
+    62,
+    125
+  ],
+  "visible_bounds": {
+    "front": [
+      27,
+      0,
+      70,
+      125
+    ],
+    "left": [
+      0,
+      55,
+      125,
+      70
+    ],
+    "right": [
+      0,
+      55,
+      125,
+      70
+    ],
+    "back": [
+      27,
+      0,
+      70,
+      125
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    70,
+    200
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "flat floor surface; exact cardinal rotations of the same top art",
+  "source_sheet": "decor_01.png",
+  "source_measured_bounds": {
+    "front": [
+      94,
+      1044,
+      180,
+      1198
+    ],
+    "left": [
+      259,
+      1083,
+      497,
+      1160
+    ],
+    "right": [
+      527,
+      1083,
+      766,
+      1159
+    ],
+    "back": [
+      844,
+      1044,
+      931,
+      1198
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/decor.png",
+  "atlas_rects": {
+    "front": [
+      65,
+      787,
+      125,
+      125
+    ],
+    "left": [
+      321,
+      787,
+      125,
+      125
+    ],
+    "right": [
+      577,
+      787,
+      125,
+      125
+    ],
+    "back": [
+      833,
+      787,
+      125,
+      125
+    ]
+  }
+}

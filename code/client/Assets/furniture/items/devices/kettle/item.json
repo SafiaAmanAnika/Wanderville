@@ -1,0 +1,134 @@
+{
+  "id": "kettle",
+  "name": "Kettle",
+  "category": "devices",
+  "size": [
+    35,
+    40
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Steam puffs, lid rattles.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/kettle/front.png",
+    "left": "items/devices/kettle/left.png",
+    "right": "items/devices/kettle/right.png",
+    "back": "items/devices/kettle/back.png"
+  },
+  "frame_size": [
+    35,
+    35
+  ],
+  "anchor": [
+    17,
+    35
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      35,
+      35
+    ],
+    "left": [
+      4,
+      0,
+      27,
+      35
+    ],
+    "right": [
+      1,
+      0,
+      33,
+      35
+    ],
+    "back": [
+      3,
+      0,
+      28,
+      35
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    35,
+    40
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_03.png",
+  "source_measured_bounds": {
+    "front": [
+      88,
+      1175,
+      233,
+      1321
+    ],
+    "left": [
+      341,
+      1175,
+      454,
+      1321
+    ],
+    "right": [
+      554,
+      1175,
+      689,
+      1321
+    ],
+    "back": [
+      808,
+      1175,
+      923,
+      1321
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      94,
+      2514,
+      35,
+      35
+    ],
+    "left": [
+      318,
+      2514,
+      35,
+      35
+    ],
+    "right": [
+      542,
+      2514,
+      35,
+      35
+    ],
+    "back": [
+      766,
+      2514,
+      35,
+      35
+    ]
+  }
+}

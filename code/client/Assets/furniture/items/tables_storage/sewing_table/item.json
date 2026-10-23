@@ -1,0 +1,159 @@
+{
+  "id": "sewing_table",
+  "name": "Sewing table",
+  "category": "tables_storage",
+  "size": [
+    115,
+    100
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Needle goes up and down, fabric moves (play once).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tables_storage/sewing_table/front.png",
+    "left": "items/tables_storage/sewing_table/left.png",
+    "right": "items/tables_storage/sewing_table/right.png",
+    "back": "items/tables_storage/sewing_table/back.png"
+  },
+  "frame_size": [
+    115,
+    97
+  ],
+  "anchor": [
+    57,
+    97
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      115,
+      97
+    ],
+    "left": [
+      23,
+      1,
+      68,
+      96
+    ],
+    "right": [
+      24,
+      1,
+      67,
+      96
+    ],
+    "back": [
+      1,
+      0,
+      112,
+      97
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      64,
+      115,
+      33
+    ],
+    "left": [
+      23,
+      65,
+      68,
+      32
+    ],
+    "right": [
+      24,
+      65,
+      67,
+      32
+    ],
+    "back": [
+      1,
+      64,
+      112,
+      33
+    ]
+  },
+  "source_front_size": [
+    115,
+    100
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    66,
+    115,
+    34
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tables_storage_03.png",
+  "source_measured_bounds": {
+    "front": [
+      113,
+      589,
+      293,
+      741
+    ],
+    "left": [
+      437,
+      591,
+      543,
+      742
+    ],
+    "right": [
+      638,
+      591,
+      743,
+      742
+    ],
+    "back": [
+      889,
+      589,
+      1065,
+      741
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tables_storage.png",
+  "atlas_rects": {
+    "front": [
+      70,
+      2737,
+      115,
+      97
+    ],
+    "left": [
+      326,
+      2737,
+      115,
+      97
+    ],
+    "right": [
+      582,
+      2737,
+      115,
+      97
+    ],
+    "back": [
+      838,
+      2737,
+      115,
+      97
+    ]
+  }
+}

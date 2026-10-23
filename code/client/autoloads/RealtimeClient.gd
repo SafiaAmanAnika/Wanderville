@@ -22,6 +22,7 @@ var _room_epoch := -1
 var _requests: Dictionary = {}
 var connected := false
 var players: Array = []
+var pause_movement := false   # NEW: true while inside a house — don't send or correct our position
 var _socket: WebSocketPeer
 var _auth_sent := false
 var _sequence := 0
@@ -179,7 +180,7 @@ func _process(delta: float) -> void:
 		_heartbeat_elapsed = 0.0
 		_send("heartbeat", {})
 	_move_elapsed += delta
-	if not external_movement and _move_elapsed >= 0.2 and _pending_sequence == 0:
+	if not external_movement and not pause_movement and _move_elapsed >= 0.2 and _pending_sequence == 0:
 		_move_elapsed = 0.0
 		var player := get_tree().get_first_node_in_group("player") as Node2D
 		if player != null and player.global_position != _last_sent_position:
@@ -274,7 +275,8 @@ func _handle_packet(packet: Dictionary) -> void:
 			elif _correct_position:
 				var player := get_tree().get_first_node_in_group("player") as Node2D
 				if player != null:
-					player.global_position = Vector2(float(entry["x"]), float(entry["y"]))
+					if not pause_movement:
+						player.global_position = Vector2(float(entry["x"]), float(entry["y"]))
 					_last_sent_position = player.global_position
 					_sequence = accepted
 					_correct_position = false

@@ -1,0 +1,159 @@
+{
+  "id": "record_player_on_cabinet",
+  "name": "Record player on cabinet",
+  "category": "devices",
+  "size": [
+    100,
+    130
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": true,
+  "use_description": "Record spins, needle drops, notes float (loop).",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/devices/record_player_on_cabinet/front.png",
+    "left": "items/devices/record_player_on_cabinet/left.png",
+    "right": "items/devices/record_player_on_cabinet/right.png",
+    "back": "items/devices/record_player_on_cabinet/back.png"
+  },
+  "frame_size": [
+    100,
+    95
+  ],
+  "anchor": [
+    50,
+    95
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      100,
+      95
+    ],
+    "left": [
+      13,
+      7,
+      73,
+      88
+    ],
+    "right": [
+      13,
+      7,
+      74,
+      88
+    ],
+    "back": [
+      0,
+      1,
+      99,
+      94
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      63,
+      100,
+      32
+    ],
+    "left": [
+      13,
+      65,
+      73,
+      30
+    ],
+    "right": [
+      13,
+      65,
+      74,
+      30
+    ],
+    "back": [
+      0,
+      63,
+      99,
+      32
+    ]
+  },
+  "source_front_size": [
+    100,
+    130
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    86,
+    100,
+    44
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "devices_02.png",
+  "source_measured_bounds": {
+    "front": [
+      60,
+      350,
+      248,
+      528
+    ],
+    "left": [
+      339,
+      362,
+      477,
+      527
+    ],
+    "right": [
+      547,
+      362,
+      686,
+      527
+    ],
+    "back": [
+      778,
+      350,
+      964,
+      527
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/devices.png",
+  "atlas_rects": {
+    "front": [
+      62,
+      1558,
+      100,
+      95
+    ],
+    "left": [
+      286,
+      1558,
+      100,
+      95
+    ],
+    "right": [
+      510,
+      1558,
+      100,
+      95
+    ],
+    "back": [
+      734,
+      1558,
+      100,
+      95
+    ]
+  }
+}

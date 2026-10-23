@@ -1,0 +1,159 @@
+{
+  "id": "round_table",
+  "name": "Round table",
+  "category": "tables_storage",
+  "size": [
+    100,
+    85
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Tablecloth flutters; items on it shift neatly.",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tables_storage/round_table/front.png",
+    "left": "items/tables_storage/round_table/left.png",
+    "right": "items/tables_storage/round_table/right.png",
+    "back": "items/tables_storage/round_table/back.png"
+  },
+  "frame_size": [
+    84,
+    86
+  ],
+  "anchor": [
+    42,
+    86
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      1,
+      84,
+      85
+    ],
+    "left": [
+      6,
+      1,
+      71,
+      85
+    ],
+    "right": [
+      6,
+      0,
+      71,
+      86
+    ],
+    "back": [
+      0,
+      1,
+      84,
+      85
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      57,
+      84,
+      29
+    ],
+    "left": [
+      6,
+      57,
+      71,
+      29
+    ],
+    "right": [
+      6,
+      57,
+      71,
+      29
+    ],
+    "back": [
+      0,
+      57,
+      84,
+      29
+    ]
+  },
+  "source_front_size": [
+    100,
+    85
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    56,
+    100,
+    29
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tables_storage_01.png",
+  "source_measured_bounds": {
+    "front": [
+      77,
+      177,
+      224,
+      325
+    ],
+    "left": [
+      337,
+      176,
+      460,
+      324
+    ],
+    "right": [
+      564,
+      176,
+      688,
+      325
+    ],
+    "back": [
+      801,
+      177,
+      947,
+      325
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tables_storage.png",
+  "atlas_rects": {
+    "front": [
+      86,
+      89,
+      84,
+      86
+    ],
+    "left": [
+      342,
+      89,
+      84,
+      86
+    ],
+    "right": [
+      598,
+      89,
+      84,
+      86
+    ],
+    "back": [
+      854,
+      89,
+      84,
+      86
+    ]
+  }
+}

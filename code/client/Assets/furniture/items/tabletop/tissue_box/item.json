@@ -1,0 +1,134 @@
+{
+  "id": "tissue_box",
+  "name": "Tissue box",
+  "category": "tabletop",
+  "size": [
+    30,
+    20
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Tissue pops up.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tabletop/tissue_box/front.png",
+    "left": "items/tabletop/tissue_box/left.png",
+    "right": "items/tabletop/tissue_box/right.png",
+    "back": "items/tabletop/tissue_box/back.png"
+  },
+  "frame_size": [
+    27,
+    22
+  ],
+  "anchor": [
+    13,
+    22
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      2,
+      27,
+      20
+    ],
+    "left": [
+      4,
+      0,
+      19,
+      22
+    ],
+    "right": [
+      4,
+      0,
+      19,
+      22
+    ],
+    "back": [
+      0,
+      2,
+      27,
+      20
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    30,
+    20
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tabletop_05.png",
+  "source_measured_bounds": {
+    "front": [
+      58,
+      753,
+      237,
+      884
+    ],
+    "left": [
+      353,
+      742,
+      477,
+      884
+    ],
+    "right": [
+      609,
+      742,
+      733,
+      884
+    ],
+    "back": [
+      849,
+      753,
+      1029,
+      884
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tabletop.png",
+  "atlas_rects": {
+    "front": [
+      18,
+      1505,
+      27,
+      22
+    ],
+    "left": [
+      82,
+      1505,
+      27,
+      22
+    ],
+    "right": [
+      146,
+      1505,
+      27,
+      22
+    ],
+    "back": [
+      210,
+      1505,
+      27,
+      22
+    ]
+  }
+}

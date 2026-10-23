@@ -1,0 +1,134 @@
+{
+  "id": "yoga_mat_rolled_up",
+  "name": "Yoga mat (rolled up)",
+  "category": "gym",
+  "size": [
+    50,
+    25
+  ],
+  "z_index": -1,
+  "wood_cost": 2,
+  "click_mode": "once",
+  "use_loop": false,
+  "use_description": "Unrolls.",
+  "idle_description": "Still.",
+  "reference_star": false,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/gym/yoga_mat_rolled_up/front.png",
+    "left": "items/gym/yoga_mat_rolled_up/left.png",
+    "right": "items/gym/yoga_mat_rolled_up/right.png",
+    "back": "items/gym/yoga_mat_rolled_up/back.png"
+  },
+  "frame_size": [
+    45,
+    25
+  ],
+  "anchor": [
+    22,
+    25
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      45,
+      25
+    ],
+    "left": [
+      11,
+      1,
+      22,
+      24
+    ],
+    "right": [
+      11,
+      1,
+      22,
+      24
+    ],
+    "back": [
+      0,
+      0,
+      45,
+      25
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    50,
+    25
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "gym_03.png",
+  "source_measured_bounds": {
+    "front": [
+      40,
+      175,
+      215,
+      273
+    ],
+    "left": [
+      346,
+      179,
+      434,
+      274
+    ],
+    "right": [
+      590,
+      179,
+      678,
+      274
+    ],
+    "back": [
+      809,
+      175,
+      984,
+      273
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/gym.png",
+  "atlas_rects": {
+    "front": [
+      105,
+      2262,
+      45,
+      25
+    ],
+    "left": [
+      361,
+      2262,
+      45,
+      25
+    ],
+    "right": [
+      617,
+      2262,
+      45,
+      25
+    ],
+    "back": [
+      873,
+      2262,
+      45,
+      25
+    ]
+  }
+}

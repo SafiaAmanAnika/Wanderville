@@ -1,0 +1,134 @@
+{
+  "id": "candle_on_dish",
+  "name": "Candle on dish",
+  "category": "tabletop",
+  "size": [
+    22,
+    30
+  ],
+  "z_index": 0,
+  "wood_cost": 1,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Lights / blows out (toggle).",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tabletop/candle_on_dish/front.png",
+    "left": "items/tabletop/candle_on_dish/left.png",
+    "right": "items/tabletop/candle_on_dish/right.png",
+    "back": "items/tabletop/candle_on_dish/back.png"
+  },
+  "frame_size": [
+    22,
+    21
+  ],
+  "anchor": [
+    11,
+    21
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      0,
+      22,
+      21
+    ],
+    "left": [
+      1,
+      0,
+      19,
+      21
+    ],
+    "right": [
+      1,
+      0,
+      19,
+      21
+    ],
+    "back": [
+      0,
+      0,
+      21,
+      21
+    ]
+  },
+  "blockers_by_direction": {
+    "front": null,
+    "left": null,
+    "right": null,
+    "back": null
+  },
+  "source_front_size": [
+    22,
+    30
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": null,
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tabletop_05.png",
+  "source_measured_bounds": {
+    "front": [
+      70,
+      210,
+      224,
+      358
+    ],
+    "left": [
+      351,
+      210,
+      483,
+      358
+    ],
+    "right": [
+      603,
+      210,
+      736,
+      358
+    ],
+    "back": [
+      863,
+      210,
+      1013,
+      358
+    ]
+  },
+  "corrected_views": [],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tabletop.png",
+  "atlas_rects": {
+    "front": [
+      21,
+      1385,
+      22,
+      21
+    ],
+    "left": [
+      85,
+      1385,
+      22,
+      21
+    ],
+    "right": [
+      149,
+      1385,
+      22,
+      21
+    ],
+    "back": [
+      213,
+      1385,
+      22,
+      21
+    ]
+  }
+}

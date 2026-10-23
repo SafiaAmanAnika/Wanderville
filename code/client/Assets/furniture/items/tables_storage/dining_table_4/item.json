@@ -1,0 +1,163 @@
+{
+  "id": "dining_table_4",
+  "name": "Dining table (4)",
+  "category": "tables_storage",
+  "size": [
+    200,
+    130
+  ],
+  "z_index": 0,
+  "wood_cost": 2,
+  "click_mode": "toggle",
+  "use_loop": false,
+  "use_description": "Table gets set: plates and cups appear (toggle).",
+  "idle_description": "Still.",
+  "reference_star": true,
+  "view": "reference-matched elevated top-down, cardinal directions only",
+  "direction_order": [
+    "front",
+    "left",
+    "right",
+    "back"
+  ],
+  "files": {
+    "front": "items/tables_storage/dining_table_4/front.png",
+    "left": "items/tables_storage/dining_table_4/left.png",
+    "right": "items/tables_storage/dining_table_4/right.png",
+    "back": "items/tables_storage/dining_table_4/back.png"
+  },
+  "frame_size": [
+    164,
+    148
+  ],
+  "anchor": [
+    82,
+    148
+  ],
+  "visible_bounds": {
+    "front": [
+      0,
+      18,
+      164,
+      130
+    ],
+    "left": [
+      20,
+      0,
+      123,
+      148
+    ],
+    "right": [
+      20,
+      0,
+      123,
+      148
+    ],
+    "back": [
+      1,
+      11,
+      162,
+      137
+    ]
+  },
+  "blockers_by_direction": {
+    "front": [
+      0,
+      104,
+      164,
+      44
+    ],
+    "left": [
+      20,
+      98,
+      123,
+      50
+    ],
+    "right": [
+      20,
+      98,
+      123,
+      50
+    ],
+    "back": [
+      1,
+      102,
+      162,
+      46
+    ]
+  },
+  "source_front_size": [
+    200,
+    130
+  ],
+  "render_scale": 1.0,
+  "animation_frames": 0,
+  "animation_note": "Four static orientation sprites. Interaction descriptions are catalog data, not implemented animation.",
+  "source_spec_blocker": [
+    0,
+    86,
+    200,
+    44
+  ],
+  "direction_source": "individually generated cardinal sides",
+  "source_sheet": "tables_storage_01.png",
+  "source_measured_bounds": {
+    "front": [
+      51,
+      479,
+      251,
+      638
+    ],
+    "left": [
+      301,
+      480,
+      485,
+      622
+    ],
+    "right": [
+      539,
+      480,
+      724,
+      622
+    ],
+    "back": [
+      774,
+      479,
+      973,
+      638
+    ]
+  },
+  "corrected_views": [
+    "left",
+    "right",
+    "back"
+  ],
+  "source_directions_remapped": false,
+  "atlas": "atlases/tables_storage.png",
+  "atlas_rects": {
+    "front": [
+      46,
+      304,
+      164,
+      148
+    ],
+    "left": [
+      302,
+      304,
+      164,
+      148
+    ],
+    "right": [
+      558,
+      304,
+      164,
+      148
+    ],
+    "back": [
+      814,
+      304,
+      164,
+      148
+    ]
+  }
+}

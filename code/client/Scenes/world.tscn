@@ -1,6 +1,5 @@
 [gd_scene format=3 uid="uid://bp82py5pxy8s4"]
 
-[ext_resource type="PackedScene" uid="uid://b7esfm8fd2mm3" path="res://Scenes/map.tscn" id="1_5a7ea"]
 [ext_resource type="PackedScene" uid="uid://0on5q8sndxdt" path="res://Scenes/catto_og.tscn" id="3_5a7ea"]
 [ext_resource type="PackedScene" uid="uid://dyi8ni3f8ofed" path="res://Scenes/farm_menu.tscn" id="4_fo5ed"]
 [ext_resource type="PackedScene" uid="uid://clwliaqe8bb1k" path="res://Scenes/sign_board.tscn" id="5_5ukr8"]
@@ -14,8 +13,10 @@
 [ext_resource type="Script" uid="uid://bbsefjtcb4mad" path="res://Scripts/day_and_night_cycle.gd" id="11_cycle"]
 [ext_resource type="Script" uid="uid://cspawnesa832b" path="res://Scripts/character_spawner.gd" id="12_spawner"]
 [ext_resource type="Script" uid="uid://2sq7krkfclql" path="res://Scripts/housing/house_manager.gd" id="14_e0ngr"]
+[ext_resource type="PackedScene" uid="uid://bwpwbv2wlvfot" path="res://Scenes/map2.tscn" id="15_kn0ld"]
 
 [node name="World" type="Node2D" unique_id=1971179881]
+position = Vector2(242, -177)
 script = ExtResource("12_spawner")
 
 [node name="WorldHUD" parent="." unique_id=1841561272 instance=ExtResource("9_social")]
@@ -23,9 +24,8 @@ script = ExtResource("12_spawner")
 [node name="RemotePlayers" type="Node2D" parent="." unique_id=1352013942]
 script = ExtResource("10_remote")
 
-[node name="Map" parent="." unique_id=2061458601 instance=ExtResource("1_5a7ea")]
-texture_filter = 1
-position = Vector2(86, 626)
+[node name="Map" parent="." unique_id=1886189494 instance=ExtResource("15_kn0ld")]
+scale = Vector2(20, 20)
 
 [node name="girl" parent="." unique_id=332949648 instance=ExtResource("6_5ukr8")]
 position = Vector2(7377.9995, -891)
@@ -57,15 +57,19 @@ tile_visual_size = Vector2(150, 150)
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1011606990]
 
 [node name="WaterPanel" type="Panel" parent="HUD" unique_id=110732403]
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 242.0
+offset_top = -177.0
+offset_right = 282.0
+offset_bottom = -137.0
 script = ExtResource("8_k7acu")
+metadata/_edit_use_anchors_ = true
 
 [node name="WaterAmount" type="Label" parent="HUD/WaterPanel" unique_id=984837588]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
 script = ExtResource("7_o06y3")
+metadata/_edit_use_anchors_ = true
 
 [node name="DayNight" type="CanvasModulate" parent="." unique_id=1293019844]
 script = ExtResource("11_cycle")

@@ -2,13 +2,8 @@ extends CanvasLayer
 
 var active := ""
 var _switching := false
-var _notices: Array = []
-var _notice_busy := false
-var _cursor: Variant = null
-var _selected_notice := 0
 var _notice_unread := 0
 var _request_count := 0
-var _chat_unread := 0
 var _toast_version := 0
 var _error_version := 0
 
@@ -16,40 +11,20 @@ var _error_version := 0
 func _ready() -> void:
 	var proximity_social := preload("res://Scripts/social/proximity_social.gd").new()
 	add_child(proximity_social)
-	for label in [%Balance, %ProgressText, %WorldLabel, %NoticeDetails, %Status, %LevelToastText]:
+	for label in [%Balance, %ProgressText, %WorldLabel, %LevelToastText]:
 		WoodPanel.apply_status_label(label)
 	%Balance.add_theme_font_size_override("font_size", 18)
 	%ProgressText.add_theme_font_size_override("font_size", 16)
 	%WorldLabel.add_theme_font_size_override("font_size", 16)
 	%ToastClose.pressed.connect(func() -> void: %LevelToast.hide())
-	WoodPanel.apply_panel_title_style(%Heading)
-	%Inbox.add_theme_font_override("font", WoodPanel.PIXEL_FONT)
-	%Inbox.add_theme_font_size_override("font_size", 18)
-	%Inbox.add_theme_color_override("font_color", WoodPanel.TEXT_COLOR)
-	for pair in [[%SocialButton, "social"], [%NoticeButton, "notifications"], [%SettingsButton, "settings"]]:
-		var button: Button = pair[0]
-		var kind: String = pair[1]
-		button.pressed.connect(func() -> void: switch_panel(kind))
-		button.draw.connect(_draw_icon.bind(button, kind))
-	%Outside.gui_input.connect(func(event: InputEvent) -> void:
-		if event is InputEventMouseButton and event.pressed:
-			switch_panel("")
-			get_viewport().set_input_as_handled()
-	)
+	%SocialButton.pressed.connect(func() -> void: SceneManager.goto_social_lobby())
+	%SocialButton.draw.connect(_draw_badge)
+	%SettingsButton.pressed.connect(func() -> void: switch_panel("settings"))
+	%SettingsButton.draw.connect(func() -> void: _draw_settings_icon(%SettingsButton))
 	%Settings.closed.connect(func() -> void:
 		active = ""
-		%Outside.hide()
 		GameState.social_open = false
 	)
-	%SocialPanel.set_open(false)
-	%SocialPanel.attention_changed.connect(func(count: int) -> void:
-		_chat_unread = count
-		%SocialButton.queue_redraw()
-	)
-	%Inbox.item_selected.connect(_view_notice)
-	%Dismiss.pressed.connect(func() -> void: _update_notice(true))
-	%More.pressed.connect(func() -> void: refresh_notifications(true))
-	%NoticeRefresh.pressed.connect(func() -> void: refresh_notifications())
 	GameState.economy_updated.connect(func(_data: Dictionary) -> void: _counters())
 	GameState.experience_updated.connect(func(_data: Dictionary) -> void: _counters())
 	GameState.level_advanced.connect(_show_level_up)
@@ -65,8 +40,6 @@ func _ready() -> void:
 	APIClient.realtime.visit_ended.connect(_visit_ended)
 	APIClient.realtime.room_changed.connect(func(_room: String) -> void: GameState.refresh_gameplay())
 	Global.session_changed.connect(_clear_account)
-	get_viewport().size_changed.connect(_resize)
-	_resize()
 	_counters()
 	if not Global.is_logged_in():
 		GameState.load_dummy_inventory()  # TEMP offline test
@@ -97,13 +70,6 @@ func _visit_ended(message: String) -> void:
 	GameState.refresh_gameplay()
 
 
-func _resize() -> void:
-	var viewport_size := get_viewport().get_visible_rect().size
-	%PanelArea.offset_left = -minf(640.0, viewport_size.x - 16.0)
-	%PanelArea.anchor_bottom = 0.0
-	%PanelArea.offset_bottom = minf(730.0, viewport_size.y - 24.0)
-
-
 func switch_panel(kind: String) -> void:
 	if _switching or GameState.menu_open:
 		return
@@ -112,19 +78,10 @@ func switch_panel(kind: String) -> void:
 	if active == "settings" and not await %Settings.request_close():
 		_switching = false
 		return
-	%SocialPanel.set_open(false)
 	active = next
-	%Outside.visible = active != ""
-	%PanelArea.visible = active in ["social", "notifications"]
-	%SocialPanel.visible = active == "social"
-	%Notifications.visible = active == "notifications"
-	%Status.text = ""
-	%Heading.text = active.capitalize()
 	GameState.social_open = active != ""
-	match active:
-		"social": %SocialPanel.set_open(true)
-		"notifications": refresh_notifications()
-		"settings": %Settings.show_overlay()
+	if active == "settings":
+		%Settings.show_overlay()
 	_switching = false
 
 
@@ -189,98 +146,17 @@ func _show_action_error(message: String) -> void:
 func _refresh_badges() -> void:
 	if not Global.is_logged_in():
 		return
-	# One bounded inbox refresh; counters share GameState's gameplay refresh.
-	await refresh_notifications()
-	var response: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_GET, "/social/requests")
+	# One bounded inbox read; the Social Lobby recomputes the rest when opened.
+	var response: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_GET, "/notifications?limit=1")
+	if response.get("ok", false) and not response.get("stale", false):
+		_notice_unread = int(APIClient.data_of(response).get("unread_count", 0))
+	response = await APIClient.authenticated(HTTPClient.METHOD_GET, "/social/requests")
 	if response.get("ok", false) and not response.get("stale", false):
 		_request_count = 0
 		for row in APIClient.data_of(response):
 			if int(row.get("requested_by", 0)) != Global.player_id:
 				_request_count += 1
-		%SocialButton.queue_redraw()
-
-
-func refresh_notifications(older := false) -> void:
-	if _notice_busy or (older and _cursor == null):
-		return
-	_notice_busy = true
-	if active == "notifications":
-		%Status.text = "Loading notifications..."
-	var path := "/notifications?limit=30" + ("&before=%d" % int(_cursor) if older else "")
-	var response: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_GET, path)
-	_notice_busy = false
-	if response.get("stale", false):
-		return
-	if not response.get("ok", false):
-		if active == "notifications":
-			%Status.text = APIClient.error_text(response)
-		return
-	var data: Dictionary = APIClient.data_of(response)
-	if older:
-		_notices.append_array(data.get("items", []))
-		_cursor = data.get("next_cursor")
-	else:
-		# Preserve already loaded older pages while merging the authoritative first page.
-		var fresh: Array = data.get("items", [])
-		var ids := {}
-		for item in fresh:
-			ids[item["id"]] = true
-		var oldest := int(fresh[-1]["id"]) if not fresh.is_empty() else 0
-		for item in _notices:
-			if int(item["id"]) < oldest and not ids.has(item["id"]):
-				fresh.append(item)
-		if _notices.size() <= 30:
-			_cursor = data.get("next_cursor")
-		_notices = fresh
-	_notice_unread = int(data.get("unread_count", 0))
-	_render_notices()
-	if active == "notifications":
-		%Status.text = "No notifications yet." if _notices.is_empty() else "Select a message to read it."
-
-
-func _render_notices() -> void:
-	%Inbox.clear()
-	%Dismiss.disabled = true
-	for notice in _notices:
-		var index: int = %Inbox.add_item(("• " if not notice.get("is_read", false) else "") + str(notice["message"]))
-		%Inbox.set_item_tooltip(index, str(notice.get("created_at", "")))
-		if int(notice["id"]) == _selected_notice:
-			%Inbox.select(index)
-			%Dismiss.disabled = false
-	%More.disabled = _cursor == null
-	%NoticeButton.queue_redraw()
-
-
-func _view_notice(index: int) -> void:
-	var notice: Dictionary = _notices[index]
-	_selected_notice = int(notice["id"])
-	%NoticeDetails.text = str(notice["message"]) + "\n" + str(notice.get("created_at", ""))
-	%Dismiss.disabled = false
-	if not notice.get("is_read", false):
-		await _update_notice(false)
-
-
-func _update_notice(dismiss: bool) -> void:
-	if _selected_notice == 0:
-		return
-	var id := _selected_notice
-	var response: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_POST, "/notifications/%d" % id, {"dismiss": dismiss})
-	if response.get("stale", false):
-		return
-	if not response.get("ok", false):
-		%Status.text = APIClient.error_text(response)
-		return
-	for item in _notices:
-		if int(item["id"]) == id:
-			if not item.get("is_read", false):
-				_notice_unread = maxi(0, _notice_unread - 1)
-			item["is_read"] = true
-	if dismiss:
-		_notices = _notices.filter(func(item: Dictionary) -> bool: return int(item["id"]) != id)
-		_selected_notice = 0
-		%NoticeDetails.text = "Notification dismissed."
-	_render_notices()
-	await refresh_notifications()
+	%SocialButton.queue_redraw()
 
 
 func _clear_account() -> void:
@@ -288,48 +164,29 @@ func _clear_account() -> void:
 	_error_version += 1
 	%LevelToast.hide()
 	%ActionError.hide()
-	_notices.clear()
-	_cursor = null
-	_selected_notice = 0
 	_notice_unread = 0
 	_request_count = 0
-	_chat_unread = 0
-	%NoticeDetails.text = ""
-	%Status.text = ""
-	_render_notices()
 	%SocialButton.queue_redraw()
 	active = ""
 	%Settings.hide()
-	%PanelArea.hide()
-	%Outside.hide()
-	%SocialPanel.set_open(false)
 	GameState.social_open = false
 	_world_label()
 
 
-func _draw_icon(button: Button, kind: String) -> void:
+func _draw_badge() -> void:
+	var count := _notice_unread + _request_count
+	if count <= 0:
+		return
+	var corner := Vector2(%SocialButton.size.x - 12, 12)
+	%SocialButton.draw_circle(corner, 10, Color(0.65, 0.18, 0.12))
+	%SocialButton.draw_string(WoodPanel.PIXEL_FONT, corner + Vector2(-10, 4), str(mini(count, 99)), HORIZONTAL_ALIGNMENT_CENTER, 20, 12, Color.WHITE)
+
+
+func _draw_settings_icon(button: Button) -> void:
 	var c := button.size / 2.0
 	var ink := WoodPanel.TEXT_COLOR
-	match kind:
-		"social":
-			button.draw_arc(c, 13, 0, TAU, 32, ink, 2)
-			button.draw_line(c + Vector2(-13, 0), c + Vector2(13, 0), ink, 2)
-			button.draw_arc(c, 7, 0, TAU, 24, ink, 2)
-			button.draw_line(c + Vector2(0, -13), c + Vector2(0, 13), ink, 2)
-		"notifications":
-			button.draw_arc(c, 10, PI, TAU, 20, ink, 2)
-			button.draw_line(c + Vector2(-10, 0), c + Vector2(-12, 9), ink, 2)
-			button.draw_line(c + Vector2(10, 0), c + Vector2(12, 9), ink, 2)
-			button.draw_line(c + Vector2(-12, 9), c + Vector2(12, 9), ink, 2)
-			button.draw_circle(c + Vector2(0, 12), 2, ink)
-		"settings":
-			button.draw_arc(c, 9, 0, TAU, 20, ink, 2)
-			button.draw_circle(c, 3, ink)
-			for i in 8:
-				var direction := Vector2.RIGHT.rotated(i * TAU / 8)
-				button.draw_line(c + direction * 9, c + direction * 14, ink, 3)
-	var count := _notice_unread if kind == "notifications" else (_request_count + _chat_unread if kind == "social" else 0)
-	if count > 0:
-		var corner := Vector2(button.size.x - 12, 12)
-		button.draw_circle(corner, 10, Color(0.65, 0.18, 0.12))
-		button.draw_string(WoodPanel.PIXEL_FONT, corner + Vector2(-10, 4), str(mini(count, 99)), HORIZONTAL_ALIGNMENT_CENTER, 20, 12, Color.WHITE)
+	button.draw_arc(c, 9, 0, TAU, 20, ink, 2)
+	button.draw_circle(c, 3, ink)
+	for i in 8:
+		var direction := Vector2.RIGHT.rotated(i * TAU / 8)
+		button.draw_line(c + direction * 9, c + direction * 14, ink, 3)

@@ -1,0 +1,66 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/social/lobby_interactions.gd" id="1"]
+[ext_resource type="Script" path="res://Scripts/social/lobby_interactable.gd" id="2"]
+
+[sub_resource type="RectangleShape2D" id="ReceptionRange"]
+size = Vector2(360, 150)
+
+[sub_resource type="RectangleShape2D" id="BoardRange"]
+size = Vector2(180, 150)
+
+[sub_resource type="RectangleShape2D" id="ExitRange"]
+size = Vector2(300, 190)
+
+[node name="LobbyInteractions" type="Node2D"]
+script = ExtResource("1")
+
+[node name="InteractionZones" type="Node2D" parent="."]
+
+[node name="Reception" type="Area2D" parent="InteractionZones"]
+position = Vector2(960, 420)
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+script = ExtResource("2")
+action = &"reception"
+prompt = "[E] Talk"
+
+[node name="Detection" type="CollisionShape2D" parent="InteractionZones/Reception"]
+shape = SubResource("ReceptionRange")
+
+[node name="FriendsBoard" type="Area2D" parent="InteractionZones"]
+position = Vector2(250, 420)
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+script = ExtResource("2")
+action = &"friends"
+prompt = "[E] Friends"
+
+[node name="Detection" type="CollisionShape2D" parent="InteractionZones/FriendsBoard"]
+shape = SubResource("BoardRange")
+
+[node name="RequestsBoard" type="Area2D" parent="InteractionZones"]
+position = Vector2(1670, 420)
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+script = ExtResource("2")
+action = &"requests"
+prompt = "[E] Requests"
+
+[node name="Detection" type="CollisionShape2D" parent="InteractionZones/RequestsBoard"]
+shape = SubResource("BoardRange")
+
+[node name="Entrance" type="Area2D" parent="InteractionZones"]
+position = Vector2(960, 1000)
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+script = ExtResource("2")
+action = &"leave"
+prompt = "[E] Leave"
+
+[node name="Detection" type="CollisionShape2D" parent="InteractionZones/Entrance"]
+shape = SubResource("ExitRange")

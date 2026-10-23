@@ -1,0 +1,80 @@
+extends RefCounted
+## Room-local parchment styling; the farm/menu theme stays independent.
+const INK := Color("382820")
+const PAPER := Color("f5e7d3")
+const MAROON := Color("85353e")
+const SAGE := Color("627c59")
+const EDGE := Color("c79a75")
+const FONT := preload("res://Assets/fonts/BoldPixels.ttf")
+
+static func box(color: Color = PAPER, margin: int = 14) -> StyleBoxFlat:
+	var s := StyleBoxFlat.new()
+	s.bg_color = color
+	s.border_color = EDGE
+	s.set_border_width_all(2)
+	s.set_corner_radius_all(3)
+	s.content_margin_left = margin
+	s.content_margin_right = margin
+	s.content_margin_top = margin
+	s.content_margin_bottom = margin
+	return s
+
+static func theme() -> Theme:
+	var t := Theme.new()
+	t.default_font = FONT
+	t.default_font_size = 20
+	for type in ["Label", "Button", "LineEdit", "OptionButton", "MenuButton", "ItemList", "RichTextLabel"]:
+		t.set_color("font_color", type, INK)
+	t.set_color("default_color", "RichTextLabel", INK)
+	t.set_color("font_placeholder_color", "LineEdit", Color("9a7d63"))
+	for type in ["PanelContainer", "Panel"]:
+		t.set_stylebox("panel", type, box())
+	for type in ["Button", "OptionButton", "MenuButton"]:
+		t.set_stylebox("normal", type, box(Color("efd6b4"), 10))
+		t.set_stylebox("hover", type, box(Color("ffe9c8"), 10))
+		t.set_stylebox("pressed", type, box(MAROON, 10))
+		t.set_stylebox("disabled", type, box(Color("e5d4bc"), 10))
+		t.set_stylebox("focus", type, box(Color(0, 0, 0, 0), 0))
+		t.set_color("font_pressed_color", type, Color("fff0d9"))
+		t.set_color("font_hover_color", type, INK)
+		t.set_color("font_disabled_color", type, Color("9a8472"))
+	for type in ["LineEdit", "TextEdit", "ItemList", "RichTextLabel"]:
+		t.set_stylebox("normal", type, box(Color("fff0d9"), 10))
+		t.set_stylebox("focus", type, box(Color("fff4df"), 10))
+	t.set_stylebox("selected", "ItemList", box(Color("e5c399"), 4))
+	t.set_stylebox("selected_focus", "ItemList", box(Color("e5c399"), 4))
+	t.set_stylebox("scroll", "VScrollBar", box(Color("ead2b2"), 0))
+	t.set_stylebox("grabber", "VScrollBar", box(SAGE, 0))
+	return t
+
+static func button(text: String, primary: bool = false) -> Button:
+	var b := Button.new()
+	b.text = text
+	b.theme = theme()
+	b.custom_minimum_size.y = 36
+	if primary:
+		b.add_theme_stylebox_override("normal", box(SAGE, 10))
+		b.add_theme_color_override("font_color", Color("fff0d9"))
+	return b
+
+static func label(text: String, size: int = 20) -> Label:
+	var l := Label.new()
+	l.text = text
+	l.add_theme_font_override("font", FONT)
+	l.add_theme_font_size_override("font_size", size)
+	l.add_theme_color_override("font_color", INK)
+	return l
+
+static func apply_tree(node: Node) -> void:
+	if node is Control:
+		node.theme = theme()
+		for key in ["font_color", "font_hover_color", "font_pressed_color", "font_disabled_color", "font_placeholder_color"]:
+			node.remove_theme_color_override(key)
+		for key in ["normal", "hover", "pressed", "disabled", "focus", "panel"]:
+			node.remove_theme_stylebox_override(key)
+		if node is Label:
+			node.add_theme_color_override("font_color", INK)
+		if node is RichTextLabel:
+			node.add_theme_color_override("default_color", INK)
+	for child in node.get_children():
+		apply_tree(child)

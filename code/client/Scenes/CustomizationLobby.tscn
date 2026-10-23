@@ -1,0 +1,106 @@
+[gd_scene format=3 uid="uid://bfj78qs83ebvk"]
+
+[ext_resource type="Texture2D" uid="uid://8ij31afah4h5" path="res://Assets/Character/CharacterCustomizationLobby.png" id="1_bg"]
+[ext_resource type="Script" path="res://Scripts/customization_lobby.gd" id="2_setup"]
+[ext_resource type="PackedScene" path="res://Scenes/customization_interactions.tscn" id="3_interactions"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_room"]
+texture = ExtResource("1_bg")
+texture_region_size = Vector2i(1672, 941)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_room"]
+tile_size = Vector2i(1672, 941)
+sources/0 = SubResource("TileSetAtlasSource_room")
+
+[node name="CustomizationLobby" type="Node2D"]
+script = ExtResource("2_setup")
+
+[node name="OldLobbyTileMap" type="TileMapLayer" parent="."]
+editor_description = "The whole 1672x941 room image is one tile, matching the SocialLobby migration pattern. The visible Sprite2D below draws it; this layer keeps the image editable as tiles."
+visible = false
+z_index = -10
+texture_filter = 1
+tile_map_data = PackedByteArray("AAAAAAAAAAAAAAAAAAA=")
+tile_set = SubResource("TileSet_room")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(836, 560)
+zoom = Vector2(1.2, 1.2)
+process_callback = 0
+limit_left = 0
+limit_top = 0
+limit_right = 1672
+limit_bottom = 941
+position_smoothing_enabled = true
+position_smoothing_speed = 6.0
+
+[node name="LobbyBackground" type="Sprite2D" parent="."]
+z_index = -10
+texture_filter = 1
+texture = ExtResource("1_bg")
+centered = false
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(836, 640)
+
+[node name="StaticCollisions" type="Node2D" parent="."]
+editor_description = "Lobby-only collision geometry traced in background pixels. Layer 1 matches the existing player mask. The front stairs stay walkable down to the exit; backstops prevent walking past the room edges."
+
+[node name="NorthWallAndFurniture" type="StaticBody2D" parent="StaticCollisions"]
+editor_description = "Back wall, cabinets, windows and the floor shadows they cast: everything above the traced floor line. The slope on the right is the tall cabinet meeting the floor."
+collision_mask = 0
+
+[node name="Footprint" type="CollisionPolygon2D" parent="StaticCollisions/NorthWallAndFurniture"]
+polygon = PackedVector2Array(0, 0, 1576, 0, 1576, 545, 1544, 506, 1520, 460, 1496, 400, 1472, 366, 1448, 348, 1400, 348, 1376, 330, 1352, 344, 1328, 364, 1304, 374, 1280, 378, 1256, 380, 1232, 380, 1208, 376, 1184, 420, 1160, 430, 1136, 326, 1112, 330, 1064, 330, 1016, 342, 968, 330, 920, 356, 872, 370, 824, 408, 776, 370, 728, 348, 680, 328, 632, 340, 584, 330, 536, 326, 488, 335, 440, 324, 392, 322, 344, 328, 296, 330, 272, 462, 224, 441, 176, 444, 128, 481, 80, 584, 32, 708, 0, 708)
+
+[node name="WestOuterWall" type="StaticBody2D" parent="StaticCollisions"]
+editor_description = "Left wall and the tall cabinet standing against it."
+collision_mask = 0
+
+[node name="Footprint" type="CollisionPolygon2D" parent="StaticCollisions/WestOuterWall"]
+polygon = PackedVector2Array(0, 0, 96, 0, 96, 941, 0, 941)
+
+[node name="EastOuterWall" type="StaticBody2D" parent="StaticCollisions"]
+editor_description = "Right wall and the cabinet sloping into the room on that side."
+collision_mask = 0
+
+[node name="Footprint" type="CollisionPolygon2D" parent="StaticCollisions/EastOuterWall"]
+polygon = PackedVector2Array(1576, 0, 1672, 0, 1672, 941, 1576, 941)
+
+[node name="SouthWestBalustrade" type="StaticBody2D" parent="StaticCollisions"]
+editor_description = "Front rail left of the entrance stairs; the dark cut face below the floor line."
+collision_mask = 0
+
+[node name="Footprint" type="CollisionPolygon2D" parent="StaticCollisions/SouthWestBalustrade"]
+polygon = PackedVector2Array(0, 780, 700, 780, 700, 941, 0, 941)
+
+[node name="SouthEastBalustrade" type="StaticBody2D" parent="StaticCollisions"]
+editor_description = "Front rail right of the entrance stairs."
+collision_mask = 0
+
+[node name="Footprint" type="CollisionPolygon2D" parent="StaticCollisions/SouthEastBalustrade"]
+polygon = PackedVector2Array(976, 780, 1672, 780, 1672, 941, 976, 941)
+
+[node name="EntranceStop" type="StaticBody2D" parent="StaticCollisions"]
+editor_description = "Backstop below the last entrance step, so the player stops at the exit instead of walking off the image."
+collision_mask = 0
+
+[node name="Footprint" type="CollisionPolygon2D" parent="StaticCollisions/EntranceStop"]
+polygon = PackedVector2Array(700, 905, 976, 905, 976, 941, 700, 941)
+
+[node name="WestSeat" type="StaticBody2D" parent="StaticCollisions"]
+editor_description = "Red armchair in front of the left wall cabinets."
+collision_mask = 0
+
+[node name="Footprint" type="CollisionPolygon2D" parent="StaticCollisions/WestSeat"]
+polygon = PackedVector2Array(150, 376, 300, 376, 300, 470, 150, 470)
+
+[node name="EastSeat" type="StaticBody2D" parent="StaticCollisions"]
+editor_description = "Red armchair in front of the right wall cabinets."
+collision_mask = 0
+
+[node name="Footprint" type="CollisionPolygon2D" parent="StaticCollisions/EastSeat"]
+polygon = PackedVector2Array(1152, 330, 1352, 330, 1352, 382, 1152, 382)
+
+[node name="CustomizationInteractions" parent="." instance=ExtResource("3_interactions")]

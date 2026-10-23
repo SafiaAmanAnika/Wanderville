@@ -8,9 +8,11 @@ const CHARA_SCALE := Vector2(1.18, 1.18)   # chara sheets are 448px; this matche
 
 
 func _ready() -> void:
-	add_child(load("res://Scripts/inventory/storage_house.gd").new())   # click the CDS building -> storage menu
+	add_child(load("res://Scripts/storage_house.gd").new())   # click the CDS building -> storage menu
+	add_child(load("res://Scripts/social/lobby_entrance.gd").new())   # audi -> social; library -> customization
 	spawn_selected_character()
 	var player := get_node("girl") as Node2D
+	SceneManager.restore_customization_return(player)
 	if not CampusLayout.walkable(player.global_position):
 		player.global_position = CampusLayout.spawn()
 	if OS.get_environment("GODOT_ENET_GAMEPLAY") == "1":
@@ -28,7 +30,12 @@ func spawn_selected_character() -> void:
 	var old := get_node_or_null("girl") as Node2D
 	if old == null:
 		return
-	var player := (load(path) as PackedScene).instantiate() as Node2D
+	var packed := Global.get_character_scene(Global.selected_character)
+	if packed == null or packed.resource_path.ends_with("player1.tscn"):
+		return # Leave the world's existing farmer intact when a replacement is unavailable.
+	var player := packed.instantiate() as CharacterBody2D
+	if player == null:
+		return
 	player.position = old.position
 	player.scale = CHARA_SCALE
 

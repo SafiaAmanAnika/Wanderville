@@ -5,6 +5,7 @@ var api: Node
 var session: Node
 var state: Node
 var hud: Node
+var social: Node
 var stage: Node
 var output := ""
 
@@ -84,28 +85,34 @@ func _run() -> void:
 	await settle()
 	check(hud.active == "" and not state.social_open, "initial_compact_hud")
 	check(hud.get_node("%Balance").text.contains("Aura %d" % int(state.economy["aura_balance"])) and hud.get_node("%Balance").text.contains("Level %d" % int(state.experience["level"])), "authoritative_counters")
-	for kind in ["social", "notifications", "settings"]:
-		await hud.switch_panel(kind)
-		await settle()
-		check(hud.active == kind and state.social_open, kind + "_opens_blocks_world")
-		await shot(kind)
-		await hud.switch_panel(kind)
-		check(hud.active == "" and not state.social_open, kind + "_toggle_closes")
-	await hud.switch_panel("social")
-	var social: Node = hud.get_node("%SocialPanel")
-	social.message.text = "unsent nearby draft"
-	social._toggle(false)
-	social._toggle(true)
-	check(social.message.text == "unsent nearby draft", "social_tab_draft_preserved")
-	await hud.switch_panel("notifications")
-	await hud.switch_panel("social")
-	check(social.message.text == "unsent nearby draft", "social_close_draft_preserved")
+	check(hud.get_node("%SocialButton").text == "Social Lobby", "visit_social_lobby_action")
+	await hud.switch_panel("settings")
+	await settle()
+	check(hud.active == "settings" and state.social_open, "settings_opens_blocks_world")
+	await shot("settings")
+	await hud.switch_panel("settings")
+	check(hud.active == "" and not state.social_open, "settings_toggle_closes")
 	var escape := InputEventAction.new()
 	escape.action = "ui_cancel"
 	escape.pressed = true
+	await hud.switch_panel("settings")
+	await settle()
 	hud._input(escape)
 	await settle()
 	check(hud.active == "" and not state.social_open, "escape_closes_restores_input")
+	# Social lives in the Social Lobby now; the shared panel still owns the
+	# notification inbox, so exercise it directly against the real backend.
+	social = load("res://Scenes/social_panel.tscn").instantiate()
+	stage.add_child(social)
+	await settle()
+	await social.refresh_notifications()
+	check(social._notice_unread == 35 and social._notices.size() == 30, "notifications_real_badge_no_bulk_read")
+	await social.refresh_notifications(true)
+	check(social._notices.size() == 35 and social._cursor == null, "notifications_cursor_pagination")
+	await social._view_notice(0)
+	check(social._notice_unread == 34, "view_marks_only_selected_read")
+	await social._update_notice(true)
+	check(social._notices.size() == 34 and social._notice_unread == 34, "dismiss_updates_server_and_badge")
 	# The storage menu replaces the old bag panel: it lists the seeds section
 	# with the real stack counts, icon and Aura / slot header.
 	var storage: Node = open_storage("seeds")
@@ -117,23 +124,6 @@ func _run() -> void:
 	check(storage._aura_text().contains("Aura %d" % int(state.economy["aura_balance"])) and storage._aura_text().contains("Slots"), "storage_header_aura_and_capacity")
 	storage.close()
 	await settle()
-	await hud.switch_panel("notifications")
-	await settle()
-	var mouse := InputEventMouseButton.new()
-	mouse.button_index = MOUSE_BUTTON_LEFT
-	mouse.pressed = true
-	hud.get_node("%Outside").gui_input.emit(mouse)
-	await settle()
-	check(hud.active == "" and not state.social_open, "outside_click_closes")
-	await hud.switch_panel("notifications")
-	await settle()
-	check(hud._notice_unread == 35 and hud._notices.size() == 30, "notifications_real_badge_no_bulk_read")
-	await hud.refresh_notifications(true)
-	check(hud._notices.size() == 35 and hud._cursor == null, "notifications_cursor_pagination")
-	await hud._view_notice(0)
-	check(hud._notice_unread == 34, "view_marks_only_selected_read")
-	await hud._update_notice(true)
-	check(hud._notices.size() == 34 and hud._notice_unread == 34, "dismiss_updates_server_and_badge")
 	await hud.switch_panel("settings")
 	var settings: Node = hud.get_node("%Settings")
 	settings.get_node("%MusicSlider").value = 37
@@ -193,15 +183,9 @@ func _run() -> void:
 	state.world_updated.emit(state.world_state)
 	root.content_scale_size = Vector2i(800, 600)
 	root.size = Vector2i(800, 600)
-	await hud.switch_panel("notifications")
-	await settle()
-	check(hud.get_node("%PanelArea").get_global_rect().end.x <= 800 and hud.get_node("%PanelArea").position.x >= 0, "small_viewport_panel_bounds")
-	await shot("notifications_800x600")
-	await hud.switch_panel("social")
-	await settle()
-	await shot("social_800x600")
 	await hud.switch_panel("settings")
 	await settle()
+	check(hud.get_node("%Settings").get_global_rect().end.x <= 800 and hud.get_node("%Settings").get_global_rect().position.x >= 0, "small_viewport_settings_bounds")
 	await shot("settings_800x600")
 	await hud.switch_panel("")
 	# Starter seeds are claimed straight from the API; the storage menu is the
@@ -358,7 +342,7 @@ func _run() -> void:
 	var saved_aura := int(state.economy["aura_balance"])
 	await api.logout()
 	await settle()
-	check(hud._notices.is_empty() and social._private.is_empty() and social.message.text == "" and hud.active == "", "logout_private_state_cleared")
+	check(social._notices.is_empty() and social._private.is_empty() and social.message.text == "" and hud.active == "", "logout_private_state_cleared")
 	response = await api.login("integration_alice", OS.get_environment("WANDERVILLE_TEST_PASSWORD"))
 	login = api.data_of(response)
 	session.set_session(login["access_token"], login["player"], login["refresh_token"])

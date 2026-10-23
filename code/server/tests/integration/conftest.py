@@ -841,7 +841,7 @@ def diagnose(server, clients) -> str:
 
 #: The campus spawn the server and clients both use, mirrored from
 #: CampusCollision.CAMPUS_SPAWN, which reads it from world.tscn.
-CAMPUS_SPAWN = (7378.0, -891.0)
+CAMPUS_SPAWN = (1900.0, 500.0)
 
 #: MovementAuthority.SPEED, which is the same 300 units/second the single-player
 #: controllers use.

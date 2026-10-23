@@ -108,7 +108,10 @@ func _run() -> void:
 	world = world_scene.instantiate()
 	root.add_child(world)
 	current_scene = world
-	ui = world.get_node("WorldHUD/Screen/PanelArea/Scroll/Contents/SocialPanel")
+	# Social lives in the Social Lobby now; drive the same shared panel directly
+	# against the world's authenticated transport and backend.
+	ui = load("res://Scenes/social_panel.tscn").instantiate()
+	world.add_child(ui)
 	_check(await _wait(func() -> bool: return api.realtime.connected), "websocket_authenticated")
 	_mark("world")
 	_check(await _other_mark("world", 120), "other_world_ready")
@@ -243,7 +246,8 @@ func _farm() -> void:
 	world = load("res://Scenes/world.tscn").instantiate()
 	root.add_child(world)
 	current_scene = world
-	ui = world.get_node("WorldHUD/Screen/PanelArea/Scroll/Contents/SocialPanel")
+	ui = load("res://Scenes/social_panel.tscn").instantiate()
+	world.add_child(ui)
 	farm = world.get_node("FarmController")
 	_check(farm.get_node_or_null("CropVisual_3,2/AnimatedSprite2D") != null, "saved_crop_scene_restored")
 	await create_timer(13.0).timeout

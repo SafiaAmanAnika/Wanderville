@@ -11,13 +11,14 @@ extends CharacterBody2D
 const SPEED = 300.0
 const CELL := 448   # every sprite sheet frame is 448x448
 const COLUMNS := 6
+const CharaFrames := preload("res://Scripts/chara_frames.gd")
 
 # sheet row -> direction name used in the scenes (idle_front, water_back_left, ...)
 const ROW_DIRS := ["front", "front_right", "right", "back_right", "back", "back_left", "left", "front_left"]
 
-@export var require_world_connection := true
-@export var use_saved_appearance := true
 @export var sheet_folder := ""   # empty = found automatically from the idle animation
+@export var require_world_connection := true # Local-only rooms do not join campus presence.
+@export var use_saved_appearance := true # Remote players must never inherit this client's look.
 
 @onready var anim: AnimatedSprite2D = $AnimatedSprite2D
 
@@ -42,8 +43,13 @@ func _ready() -> void:
 	if sheet_folder == "":
 		sheet_folder = _find_sheet_folder()
 	_add_sheet_animations("run", "run.png", 10.0, true)
+	_add_sheet_animations("walk", "run.png", 6.0, true)
 	_add_sheet_animations("idle", "idle.png", 6.0, true)   # fills in the diagonal idles the scene doesn't have
-	for action in ["hoe", "water", "fish", "death"]:
+	_add_sheet_animations("scythe", "scythe.png", 8.0, false)
+	if not CharaFrames.longer_leg_folder(sheet_folder).is_empty():
+		for action in ["hoe", "water", "fish"]:
+			CharaFrames.add_sheet_animations(anim.sprite_frames, sheet_folder, action, CharaFrames.FILES[action], 8.0, false, true)
+	for action in ["hoe", "water", "fish", "scythe", "axe", "death"]:
 		for dir in ROW_DIRS:
 			var a: String = "%s_%s" % [action, dir]
 			if anim.sprite_frames.has_animation(a):
@@ -183,23 +189,8 @@ func _find_sheet_folder() -> String:
 # Cut one sprite sheet (6 columns x 8 rows) into 8 animations: <prefix>_front, <prefix>_right, ...
 # Animations the scene already has are kept as they are.
 func _add_sheet_animations(prefix: String, file: String, fps: float, loop: bool) -> void:
-	var path := sheet_folder + "/" + file
-	if not ResourceLoader.exists(path):
-		return
-	var sheet: Texture2D = load(path)
-	var frames := anim.sprite_frames
-	for row in ROW_DIRS.size():
-		var a: String = prefix + "_" + ROW_DIRS[row]
-		if frames.has_animation(a):
-			continue
-		frames.add_animation(a)
-		frames.set_animation_speed(a, fps)
-		frames.set_animation_loop(a, loop)
-		for col in COLUMNS:
-			var tex := AtlasTexture.new()
-			tex.atlas = sheet
-			tex.region = Rect2(col * CELL, row * CELL, CELL, CELL)
-			frames.add_frame(a, tex)
+	var replace := prefix in ["idle", "walk", "run"] or not CharaFrames.longer_leg_folder(sheet_folder).is_empty()
+	CharaFrames.add_sheet_animations(anim.sprite_frames, sheet_folder, prefix, file, fps, loop, replace)
 
 
 # The ENet adapter keeps the existing fishing and action input rules.

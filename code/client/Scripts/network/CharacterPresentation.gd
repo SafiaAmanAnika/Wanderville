@@ -63,8 +63,7 @@ static func play(body: Node, moving: bool, direction: Vector2, facing: int) -> v
 			name = "idle_front" if not moving else "run_front"
 			if not sprite.sprite_frames.has_animation(name):
 				return
-		if sprite.animation != name:
-			sprite.play(name)
+		body._play_if_new(name)
 		return
 	if body.has_method("_update_animation"):
 		# player.gd family. It has run_* but no idle*, and its own method already

@@ -62,6 +62,11 @@ const LAYER_PLAYER := 2
 
 const ROOM_CAMPUS := "campus"
 
+## Proximity filtering: only send snapshots for players within range.
+## Use hysteresis to prevent flickering when moving at the boundary.
+const VISIBILITY_ENTER_DISTANCE := 1200.0
+const VISIBILITY_EXIT_DISTANCE := 1400.0
+
 ## Distance a player may legitimately cover in one server tick, with a small
 ## margin for float error. Nothing enforces this, because the server computes the
 ## movement itself; it is measured instead, and a breach would mean the server had

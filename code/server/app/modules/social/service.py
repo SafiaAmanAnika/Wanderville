@@ -183,6 +183,7 @@ class SocialService:
                 "username": p.username,
                 "display_name": p.display_name,
                 "online": p.id in online,
+                "character_code": s.character_code if s else None,
             }
             for p, s in rows
         ]
@@ -211,6 +212,7 @@ class SocialService:
                 "status_message": s.status_message if s else "",
                 "last_online": s.last_seen_at if s else None,
                 "online": p.id in online,
+                "character_code": s.character_code if s else None,
                 "house_tier": h.tier if h else 1,
                 "level": x.level if x else 1,
             }

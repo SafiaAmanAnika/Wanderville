@@ -3,6 +3,8 @@ extends Control
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
 const BG_TEXTURE := preload("res://Assets/background/bg.png")
 const CharaFrames := preload("res://Scripts/chara_frames.gd")
+const Avatar := preload("res://Scripts/customization/character_preview.gd")
+const LobbyStyle := preload("res://Scripts/ui/lobby_theme.gd")
 
 @onready var _bg: TextureRect = %Background
 @onready var _grid: GridContainer = %CharacterGrid
@@ -28,6 +30,7 @@ func _ready() -> void:
 	_populate_characters()
 	_build_grid()
 	_select_previous_character()
+	_style_selection.call_deferred()
 
 	WoodPanel.play_entrance(_form_panel)
 
@@ -39,7 +42,8 @@ func _populate_characters() -> void:
 	for id in Global.CHARACTERS:
 		var info: Dictionary = Global.CHARACTERS[id]
 		var folder: String = info["folder"]
-		var portrait: Texture2D = portrait_farmer_female if folder == "" else CharaFrames.portrait(folder)
+		var portrait: Texture2D = portrait_farmer_female if folder == "" else null
+		if folder != "": portrait = CharaFrames.portrait(folder)
 		_characters.append({"id": id, "name": info["name"], "portrait": portrait})
 
 
@@ -53,12 +57,42 @@ func _build_grid() -> void:
 			card.button_group = _button_group
 		_grid.add_child(card)
 		card.set_character(c.id, c.name, c.get("portrait"))
+		if c.id != "farmer_female": _add_preview(card, c.id)
 
 	var create_card := _preload_card.instantiate()
 	create_card.button_group = _button_group
 	_grid.add_child(create_card)
 	create_card.set_character("", "Create New", null)
-	create_card.modulate = Color(0.65, 0.75, 0.55, 1.0)
+	_add_preview(create_card, Global.selected_character)
+
+
+func _add_preview(card: Button, code: String) -> void:
+	var portrait := card.get_node("VBox/Portrait") as TextureRect
+	portrait.texture = null
+	portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.get_node("VBox").mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var avatar := Avatar.new()
+	avatar.name = "CharacterPreview"
+	avatar.character = code
+	avatar.scale = Vector2.ONE * 0.65
+	portrait.add_child(avatar)
+	portrait.resized.connect(func(): avatar.position = portrait.size / 2.0 - Vector2(0, 6))
+	avatar.position = portrait.size / 2.0
+
+
+func _style_selection() -> void:
+	LobbyStyle.apply_tree(self)
+	var title := _form_panel.get_node("VBox/Title") as Label
+	title.add_theme_stylebox_override("normal", LobbyStyle.box(LobbyStyle.MAROON, 12))
+	title.add_theme_color_override("font_color", Color("fff0d9"))
+	for card in _grid.get_children():
+		card._style_normal = LobbyStyle.box(Color("efd6b4"), 12)
+		card._style_hover = LobbyStyle.box(Color("ffe9c8"), 12)
+		card._style_selected = LobbyStyle.box(Color("e1c49b"), 12)
+		card._style_selected.border_color = LobbyStyle.MAROON
+		card._update_visuals()
+		card.modulate = Color.WHITE
+		card.toggled.connect(func(_pressed: bool): card.modulate = Color.WHITE)
 
 
 func _select_previous_character() -> void:
@@ -82,7 +116,9 @@ func _on_confirm() -> void:
 	if pressed and pressed.has_method("get_character_id"):
 		var cid: String = pressed.character_id
 		if cid == "":
-			_status_label.text = "Create New coming soon!"
+			# The customization room previews the current character in place;
+			# no character is created or saved until its panels exist.
+			SceneManager.goto_character_customization()
 			return
 		if Global.is_logged_in():   # offline: just remember it locally
 			_confirm_button.disabled = true
@@ -91,6 +127,10 @@ func _on_confirm() -> void:
 			if not bool(response.get("ok", false)):
 				_status_label.text = APIClient.error_text(response)
 				return
+		# Original character IDs and artwork; no generated appearance overlay.
+		if cid != Global.selected_character:
+			Global.modular_look = {}
+			Global.appearance_changed.emit()
 		Global.selected_character = cid
 		Global.selected_world_id = ""
 		Global.save_session()

@@ -14,6 +14,41 @@ script = ExtResource("1")
 layout_mode = 2
 theme_override_constants/separation = 8
 
+[node name="Sections" type="HFlowContainer" parent="Dock"]
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+
+[node name="NavFriends" type="Button" parent="Dock/Sections"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Friends"
+script = ExtResource("3")
+
+[node name="NavRequests" type="Button" parent="Dock/Sections"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Requests"
+script = ExtResource("3")
+
+[node name="NavMessages" type="Button" parent="Dock/Sections"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Messages"
+script = ExtResource("3")
+
+[node name="NavInvitations" type="Button" parent="Dock/Sections"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Invitations"
+script = ExtResource("3")
+
+[node name="NavNotifications" type="Button" parent="Dock/Sections"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Notifications"
+script = ExtResource("3")
+
 [node name="Panel" type="PanelContainer" parent="Dock"]
 unique_name_in_owner = true
 visible = false
@@ -74,6 +109,7 @@ theme_override_constants/separation = 8
 
 [node name="View" type="OptionButton" parent="Dock/Panel/Body/Friends"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4")
 theme_override_font_sizes/font_size = 22
@@ -138,23 +174,52 @@ text = "More..."
 theme_override_fonts/font = ExtResource("4")
 theme_override_font_sizes/font_size = 22
 
+[node name="Notifications" type="VBoxContainer" parent="Dock/Panel/Body"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Inbox" type="ItemList" parent="Dock/Panel/Body/Notifications"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 210)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 20
+
+[node name="NoticeDetails" type="Label" parent="Dock/Panel/Body/Notifications"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+text = "Select a notification to view it and mark it read."
+autowrap_mode = 3
+
+[node name="NoticeActions" type="HBoxContainer" parent="Dock/Panel/Body/Notifications"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="NoticeDismiss" type="Button" parent="Dock/Panel/Body/Notifications/NoticeActions"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "Dismiss"
+script = ExtResource("3")
+
+[node name="NoticeMore" type="Button" parent="Dock/Panel/Body/Notifications/NoticeActions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Older"
+script = ExtResource("3")
+
+[node name="NoticeRefresh" type="Button" parent="Dock/Panel/Body/Notifications/NoticeActions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Refresh"
+script = ExtResource("3")
+
 [node name="Status" type="Label" parent="Dock/Panel/Body"]
 unique_name_in_owner = true
 layout_mode = 2
 custom_minimum_size = Vector2(0, 44)
 autowrap_mode = 3
 
-[node name="Buttons" type="HBoxContainer" parent="Dock"]
-layout_mode = 2
-
-[node name="ChatButton" type="Button" parent="Dock/Buttons"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Chat"
-script = ExtResource("3")
-
-[node name="FriendsButton" type="Button" parent="Dock/Buttons"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Friends"
-script = ExtResource("3")

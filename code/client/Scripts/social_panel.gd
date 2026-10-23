@@ -290,7 +290,7 @@ func _actions() -> void:
 	if visitors:
 		%Primary.text = "Remove visitor"
 	elif invitations:
-		%Primary.text = "Visit farm"
+		%Primary.text = "Accept"
 	elif view.selected == 3:
 		%Primary.text = "Unblock"
 	else:
@@ -367,51 +367,113 @@ func _primary() -> void:
 		_act(action if view.selected == 1 else ("request" if view.selected == 2 else "unblock"))
 
 
+
 func _decline() -> void:
-	# The same button declines a friend request and an unanswered farm
-	# invitation, depending on which list is open.
+	var row := _selected()
+
+	if row.is_empty() or _acting:
+		return
+
+	# Farm invitation.
 	if view.selected == VIEW_INVITATIONS:
 		_invitation_action("decline")
-	else:
-		_act("decline")
+		return
+
+	# Only incoming friend requests can be declined.
+	if view.selected != 1:
+		return
+
+	if int(row.get("requested_by", 0)) == Global.player_id:
+		return
+
+	_act("decline")
 
 
 func _invitation_action(action: String) -> void:
 	var row := _selected()
+
 	if row.is_empty() or _acting:
 		return
-	var invitation_id := int(row["id"])
+
+	if view.selected != VIEW_INVITATIONS:
+		return
+
+	var invitation_id := int(row.get("id", 0))
+
+	if invitation_id <= 0:
+		status.text = "Invalid invitation ID."
+		return
+
 	_acting = true
 	_actions()
-	var response: Dictionary
-	match action:
-		"accept":
-			response = await APIClient.accept_farm_invitation(invitation_id)
-		_:
-			response = await APIClient.decline_farm_invitation(invitation_id)
-	_acting = false
-	if response.get("stale", false):
+
+	var response: Dictionary = {}
+
+	if action == "accept":
+		response = await APIClient.accept_farm_invitation(
+			invitation_id
+		)
+	elif action == "decline":
+		response = await APIClient.decline_farm_invitation(
+			invitation_id
+		)
+	else:
+		_acting = false
+		_actions()
 		return
+
+	_acting = false
+
+	if response.get("stale", false):
+		_actions()
+		return
+
 	if not bool(response.get("ok", false)):
 		status.text = APIClient.error_text(response)
 		_actions()
 		return
-	var data: Variant = APIClient.data_of(response)
-	if action == "accept" and data is Dictionary:
-		# The accept payload describes the new visit, but only /farm/visiting/
-		# session is the authoritative owned/current pair, so the session is
-		# re-read rather than guessed from the accept response.
-		GameState.apply_session(await _visit_session())
-		# Move the socket to the host's world before reloading, so the first
-		# snapshot rendered is the farm the player was just admitted to.
-		APIClient.realtime.enter_world(GameState.current_world_id())
-		await GameState.refresh_gameplay()
-		status.text = "You are visiting this farm. Everything here is read-only until you leave."
-	else:
-		status.text = "Invitation declined."
-	await _load_people()
-	_actions()
 
+	var success_message := "Invitation declined."
+
+	if action == "accept":
+		var session_response: Dictionary = await APIClient.visit_session()
+
+		if bool(session_response.get("ok", false)):
+			var session_data: Variant = APIClient.data_of(
+				session_response
+			)
+
+			if session_data is Dictionary and not session_data.is_empty():
+				GameState.apply_session(session_data)
+
+				APIClient.realtime.enter_world(
+					GameState.current_world_id()
+				)
+
+				await GameState.refresh_gameplay()
+
+				success_message = (
+					"Invitation accepted. "
+					+ "You are visiting this farm."
+				)
+			else:
+				success_message = (
+					"Invitation accepted, but the visit "
+					+ "session could not be loaded."
+				)
+		else:
+			success_message = (
+				"Invitation accepted, but refreshing "
+				+ "the visit session failed: "
+				+ APIClient.error_text(session_response)
+			)
+
+	# Refresh the list first.
+	await _load_people()
+
+	# Then display the action result so loading doesn't erase it.
+	status.text = success_message
+	_actions()
 
 func _visit_session() -> Dictionary:
 	var response: Dictionary = await APIClient.visit_session()
@@ -446,6 +508,7 @@ func _act(action: String) -> void:
 	var response: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_POST, path, body)
 	_acting = false
 	if response.get("stale", false):
+		_actions()
 		return
 	if action in ["block", "remove"] and target == _target:
 		_stop_watch()
@@ -467,6 +530,7 @@ func _invite_to_farm(target: int) -> void:
 	var response: Dictionary = await APIClient.invite_to_farm(target)
 	_acting = false
 	if response.get("stale", false):
+		_actions()
 		return
 	status.text = (
 		"Invitation sent. It lapses if they ignore it."

@@ -135,68 +135,290 @@ func _build_people_cards() -> void:
 
 func _actions() -> void:
 	super._actions()
-	if _cards != null: _render_people_cards()
+	if _cards != null:
+		_render_people_cards()
+
 
 func _render_people_cards() -> void:
+	if _cards == null:
+		return
+
+	# Remove previous visual cards.
+	# The hidden ItemList remains the source of selection state.
 	for child in _cards.get_children():
 		_cards.remove_child(child)
 		child.queue_free()
-	for i in _rows.size():
+
+	var selected_items := people.get_selected_items()
+
+	for i in range(_rows.size()):
 		var row: Dictionary = _rows[i]
-		var name := str(row.get("username", row.get("host_username", "Player")))
-		var button := Style.button("")
-		button.custom_minimum_size = Vector2(360, 78)
-		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		var selected := people.get_selected_items()
-		if not selected.is_empty() and selected[0] == i: button.add_theme_stylebox_override("normal", Style.box(Color("e9c9a1"), 8))
+		var name := str(
+			row.get(
+				"username",
+				row.get("host_username", "Player")
+			)
+		)
+
+		var is_selected := (
+			not selected_items.is_empty()
+			and selected_items[0] == i
+		)
+
+		# The card is a container, NOT a Button.
+		# Select / Accept / Decline are independent buttons.
+		var card := PanelContainer.new()
+		card.name = "PlayerCard_%d" % i
+		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+		var bg := Color("e9c9a1") if is_selected else Color("fff0d9")
+		card.add_theme_stylebox_override(
+			"panel",
+			Style.box(bg, 10)
+		)
+
+		_cards.add_child(card)
+
+		var content := VBoxContainer.new()
+		content.name = "Content"
+		content.add_theme_constant_override("separation", 5)
+		card.add_child(content)
+
+		# Player selection button.
+		var select_button := Style.button("")
+		select_button.name = "SelectPlayer"
+		select_button.custom_minimum_size = Vector2(340, 76)
+		select_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		content.add_child(select_button)
+
 		var line := HBoxContainer.new()
 		line.name = "Row"
 		line.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		line.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		line.add_theme_constant_override("separation", 12)
+		select_button.add_child(line)
+
+		line.set_anchors_and_offsets_preset(
+			Control.PRESET_FULL_RECT
+		)
 		line.offset_left = 8
 		line.offset_right = -8
 		line.offset_top = 6
 		line.offset_bottom = -6
-		button.add_child(line)
+
+		# Character preview.
 		var picture := Control.new()
 		picture.custom_minimum_size = Vector2(44, 62)
 		picture.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		line.add_child(picture)
+
 		_add_avatar(picture, row, false)
+
+		# Username and current relationship state.
 		var words := VBoxContainer.new()
 		words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		words.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		line.add_child(words)
+
 		var caption := Style.label(name, 21)
 		caption.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		words.add_child(caption)
+
 		var state := "Online" if row.get("online", false) else "Offline"
-		if view.selected == 1: state = "Sent request" if int(row.get("requested_by", 0)) == Global.player_id else "Incoming request"
-		if view.selected == 4: state = str(row.get("world_name", "Farm invitation"))
+
+		if view.selected == 1:
+			state = (
+				"Sent request"
+				if int(row.get("requested_by", 0)) == Global.player_id
+				else "Incoming request"
+			)
+		elif view.selected == VIEW_INVITATIONS:
+			state = str(row.get("world_name", "Farm invitation"))
+
 		var detail := Style.label(state, 17)
-		detail.modulate = Style.SAGE if row.get("online", false) else Color("8b735e")
+		detail.modulate = (
+			Style.SAGE if row.get("online", false)
+			else Color("8b735e")
+		)
 		detail.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		words.add_child(detail)
-		button.pressed.connect(func(): people.select(i); _actions())
-		_cards.add_child(button)
-		var action_text := "Remove visitor" if _people_kind == "visitor" else "Message" if view.selected == 0 else "Cancel" if view.selected == 1 and int(row.get("requested_by", 0)) == Global.player_id else "Accept" if view.selected == 1 else "Visit farm" if view.selected == 4 else "Add friend" if view.selected == 2 else "Unblock"
-		var action := Style.button(action_text, true)
-		action.name = "PrimaryAction"
-		action.add_theme_font_size_override("font_size", 16)
-		action.disabled = _acting
-		line.add_child(action)
-		action.pressed.connect(func(): people.select(i); _actions(); _primary())
+
+		select_button.pressed.connect(
+			_on_card_selected.bind(i)
+		)
+
+		# Separate action row.
+		var buttons := HBoxContainer.new()
+		buttons.name = "Buttons"
+		buttons.add_theme_constant_override("separation", 8)
+		content.add_child(buttons)
+
+		var primary_button := Style.button(
+			_card_primary_label(row),
+			true
+		)
+		primary_button.name = "PrimaryAction"
+		primary_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		primary_button.add_theme_font_size_override("font_size", 16)
+		primary_button.disabled = _acting
+
+		buttons.add_child(primary_button)
+
+		primary_button.pressed.connect(
+			_on_card_primary.bind(i)
+		)
+
+		# Only recipients may decline a pending friend request.
+		# Farm invitations shown here are incoming invitations.
+		var incoming_request := (
+			view.selected == 1
+			and int(row.get("requested_by", 0)) != Global.player_id
+		)
+
+		var can_decline := (
+			_people_kind != "visitor"
+			and (
+				incoming_request
+				or view.selected == VIEW_INVITATIONS
+			)
+		)
+
+		if can_decline:
+			var decline_button := Style.button("Decline")
+			decline_button.name = "DeclineAction"
+			decline_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			decline_button.add_theme_font_size_override("font_size", 16)
+			decline_button.disabled = _acting
+
+			buttons.add_child(decline_button)
+
+			decline_button.pressed.connect(
+				_on_card_decline.bind(i)
+			)
+
+	# Empty state.
 	if _rows.is_empty():
-		var empty := Style.label("Search for a username at reception." if _section == "search" else "No results yet.", 20)
+		var text := (
+			"Search for a username at reception."
+			if _section == "search"
+			else "No results yet."
+		)
+		var empty := Style.label(text, 20)
 		empty.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		_cards.add_child(empty)
+
+	# Keep the existing right-side player profile.
 	var selected := _selected()
+
 	_profile_help.visible = selected.is_empty()
-	_profile_name.text = str(selected.get("username", selected.get("host_username", "Choose a player")))
-	_profile_state.text = "" if selected.is_empty() else "Online" if selected.get("online", false) else "Offline"
-	for child in _profile_picture.get_children(): child.queue_free()
-	if not selected.is_empty(): _add_avatar(_profile_picture, selected, true)
+
+	_profile_name.text = str(
+		selected.get(
+			"username",
+			selected.get("host_username", "Choose a player")
+		)
+	)
+
+	if selected.is_empty():
+		_profile_state.text = ""
+	elif _people_kind == "visitor":
+		_profile_state.text = "Farm visitor"
+	elif view.selected == 1:
+		_profile_state.text = (
+			"Sent request" if int(selected.get("requested_by", 0)) == Global.player_id
+			else "Incoming request"
+		)
+	elif view.selected == VIEW_INVITATIONS:
+		_profile_state.text = "Farm invitation"
+	else:
+		_profile_state.text = "Online" if selected.get("online", false) else "Offline"
+
+	for child in _profile_picture.get_children():
+		child.queue_free()
+
+	if not selected.is_empty():
+		_add_avatar(_profile_picture, selected, true)
+
+
+func _card_primary_label(row: Dictionary) -> String:
+	if _people_kind == "visitor":
+		return "Remove visitor"
+
+	match view.selected:
+		0:
+			return "Message"
+		1:
+			if int(row.get("requested_by", 0)) == Global.player_id:
+				return "Cancel"
+			return "Accept"
+		2:
+			return "Add friend"
+		3:
+			return "Unblock"
+		VIEW_INVITATIONS:
+			return "Accept"
+
+	return "Select"
+
+
+func _on_card_selected(index: int) -> void:
+	if _acting or index < 0 or index >= _rows.size():
+		return
+	people.select(index)
+	# Defer the redraw so the button isn't destroyed while handling its click.
+	call_deferred("_actions")
+
+
+func _on_card_primary(index: int) -> void:
+	_queue_card_action(index, false)
+
+
+func _on_card_decline(index: int) -> void:
+	if _people_kind != "people":
+		return
+	if view.selected == 1:
+		if index < 0 or index >= _rows.size():
+			return
+		if int((_rows[index] as Dictionary).get("requested_by", 0)) == Global.player_id:
+			return
+	elif view.selected != VIEW_INVITATIONS:
+		return
+	_queue_card_action(index, true)
+
+
+func _card_row_id(row: Dictionary, kind: String) -> int:
+	# Visitor rows are keyed by visit_session_id, not player id.
+	return int(row.get("visit_session_id", 0)) if kind == "visitor" else int(row.get("id", 0))
+
+
+func _queue_card_action(index: int, decline: bool) -> void:
+	if _acting or index < 0 or index >= _rows.size():
+		return
+	var row: Dictionary = _rows[index]
+	var target_id := _card_row_id(row, _people_kind)
+	if target_id <= 0:
+		status.text = "Invalid player or invitation ID."
+		return
+	var expected_view := view.selected
+	var expected_kind := _people_kind
+	# Dispatch outside the GUI signal. Capture the target's ID, not just an
+	# index which could select another player after a background refresh.
+	call_deferred("_perform_card_action", target_id, expected_view, expected_kind, decline)
+
+
+func _perform_card_action(target_id: int, expected_view: int, expected_kind: String, decline: bool) -> void:
+	if _acting or view.selected != expected_view or _people_kind != expected_kind:
+		return
+	for index in range(_rows.size()):
+		if _card_row_id(_rows[index], expected_kind) == target_id:
+			people.select(index)
+			if decline:
+				_decline()
+			else:
+				_primary()
+			return
+	status.text = "This request is no longer in the list. Refresh to see its current state."
+
 
 func _add_avatar(parent: Control, row: Dictionary, large: bool) -> void:
 	var code := str(row.get("character_code", ""))

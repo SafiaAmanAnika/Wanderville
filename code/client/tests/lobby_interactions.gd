@@ -136,13 +136,21 @@ func run() -> void:
 		check(social._rows.size() == 1 and social._rows[0].username == "lobby_friend", "real_search_result")
 		check(social._rows[0].get("character_code", "") == "boy_a", "real_profile_character_in_search")
 		check(social._cards.get_child_count() == 1, "real_result_has_visual_card")
-		social._cards.get_child(0).pressed.emit()
-		check(social._profile_name.text == "lobby_friend", "card_selects_real_profile")
-		check(social._profile_picture.get_child(social._profile_picture.get_child_count() - 1) is Node2D, "profile_renders_actual_character")
+		# The new lobby cards are PanelContainers, not Buttons. The independent
+		# selection button is at Content/SelectPlayer.
+		var search_card: Control = social._cards.get_child(0)
+		var select_player: Button = search_card.get_node("Content/SelectPlayer")
+		select_player.pressed.emit()
+		check(await wait_for(func(): return social._profile_name.text == "lobby_friend", 3.0), "card_selects_real_profile")
+		check(social._profile_picture.get_child_count() > 0 and social._profile_picture.get_child(social._profile_picture.get_child_count() - 1) is Node2D, "profile_renders_actual_character")
 		await screenshot("search-results")
 		check(not social.get_node("%Primary").disabled and social.get_node("%Primary").text == "Add friend", "existing_search_action")
-		social._cards.get_child(0).get_node("Row/PrimaryAction").pressed.emit()
-		check(await wait_for(func(): return not social._acting and not social._loading), "real_friend_request_sent")
+		var add_friend: Button = social._cards.get_child(0).get_node("Content/Buttons/PrimaryAction")
+		check(add_friend.text == "Add friend" and not add_friend.disabled, "card_add_friend_action_available")
+		add_friend.pressed.emit()
+		# Card actions are deferred. Waiting only for !_acting and !_loading can
+		# pass BEFORE the action even starts, producing a false-positive test.
+		check(await wait_for(func(): return social.status.text == "Updated." and not social._acting and not social._loading), "real_friend_request_sent")
 		check(social.status.text == "Updated.", "friend_request_success")
 		social.get_node("%Search").text = "no_match_xyz123"
 		social.get_node("%Find").pressed.emit()
@@ -167,11 +175,13 @@ func run() -> void:
 			if social._rows[i].username == "lobby_request": incoming = i
 		check(incoming >= 0, "seeded_real_incoming_request")
 		if incoming >= 0:
-			social.people.select(incoming)
-			social.people.item_selected.emit(incoming)
-			social.get_node("%Primary").pressed.emit()
-			await wait_for(func(): return not social._acting and not social._loading)
-			check(social.status.text == "Updated.", "accept_real_request")
+			var incoming_card: Control = social._cards.get_child(incoming)
+			var accept_button: Button = incoming_card.get_node("Content/Buttons/PrimaryAction")
+			var decline_button: Node = incoming_card.get_node_or_null("Content/Buttons/DeclineAction")
+			check(accept_button.text == "Accept" and not accept_button.disabled, "incoming_accept_button_available")
+			check(decline_button is Button and not (decline_button as Button).disabled, "incoming_decline_button_available")
+			accept_button.pressed.emit()
+			check(await wait_for(func(): return social.status.text == "Updated." and not social._acting and not social._loading), "accept_real_request")
 		press(KEY_ESCAPE)
 		await approach(Vector2(250,380))
 		check(interactions.nearest != null and interactions.nearest.name == "FriendsBoard", "friends_prompt")
@@ -179,7 +189,9 @@ func run() -> void:
 		await wait_for(func(): return not social._loading)
 		check(social.view.selected == 0 and social._rows.size() == 1 and social._rows[0].username == "lobby_request", "real_friend_list")
 		check(not social.get_node("%SearchRow").visible, "friends_hide_reception_query")
-		social._cards.get_child(0).pressed.emit()
+		var friend_select: Button = social._cards.get_child(0).get_node("Content/SelectPlayer")
+		friend_select.pressed.emit()
+		check(await wait_for(func(): return social._profile_name.text == "lobby_request", 3.0), "friend_card_selection_after_accept")
 		await screenshot("friends")
 		press(KEY_ESCAPE)
 	else:

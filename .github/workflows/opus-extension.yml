@@ -25,6 +25,7 @@ jobs:
   extension:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
     strategy:
       fail-fast: false
       matrix:
@@ -32,17 +33,17 @@ jobs:
           - name: Windows x64
             os: windows-latest
             godot: win64
-            godot_file: Godot_v4.6.2-stable_win64.exe
+            godot_file: Godot_v4.6.2-stable_win64_console.exe
             godot_zip: Godot_v4.6.2-stable_win64.exe.zip
           - name: macOS arm64
-            os: macos-14
+            os: macos-15
             godot: macos
-            godot_file: Godot_v4.6.2-stable_macos.universal
+            godot_file: Godot.app/Contents/MacOS/Godot
             godot_zip: Godot_v4.6.2-stable_macos.universal.zip
           - name: macOS x64
-            os: macos-13
+            os: macos-15-intel
             godot: macos
-            godot_file: Godot_v4.6.2-stable_macos.universal
+            godot_file: Godot.app/Contents/MacOS/Godot
             godot_zip: Godot_v4.6.2-stable_macos.universal.zip
 
     steps:
@@ -77,27 +78,13 @@ jobs:
           unzip -q godot.zip
           ls -la
 
-      - name: Import the project
-        shell: bash
-        run: |
-          if [ "$RUNNER_OS" = "Windows" ]; then
-            GODOT="./${{ matrix.godot_file }}"
-          else
-            GODOT="./${{ matrix.godot_file }}.app/Contents/MacOS/${{ matrix.godot_file }}"
-            chmod +x "$GODOT"
-          fi
-          timeout 300 "$GODOT" --headless --path code/client --import || true
-
       - name: Check the decoder
         shell: bash
         run: |
-          if [ "$RUNNER_OS" = "Windows" ]; then
-            GODOT="./${{ matrix.godot_file }}"
-          else
-            GODOT="./${{ matrix.godot_file }}.app/Contents/MacOS/${{ matrix.godot_file }}"
-            chmod +x "$GODOT"
+          if [ "$RUNNER_OS" != "Windows" ]; then
+            chmod +x "${{ matrix.godot_file }}"
           fi
-          "$GODOT" --headless --path code/client --script res://tests/opus_extension_check.gd
+          python code/client/native/opus/check.py --godot "${{ matrix.godot_file }}"
 
       - name: Upload the libraries
         uses: actions/upload-artifact@v4

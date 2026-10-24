@@ -8,7 +8,7 @@ extends SceneTree
 ## encoder and decoded by the server's own decoder, so the two ends of the
 ## voice path are compared against each other.
 ##
-##   godot --headless --path code/client --script res://tests/opus_extension_check.gd
+##   python code/client/native/opus/check.py --godot /path/to/godot
 ##
 ## A folder can be given instead, to check a stream that is not the one in
 ## the repository.

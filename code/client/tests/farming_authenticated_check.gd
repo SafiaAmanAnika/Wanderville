@@ -44,6 +44,8 @@ func run() -> void:
 	click.button_index = MOUSE_BUTTON_LEFT
 	root.push_input(click, true)
 	check(await wait_for(func(): return farm.tilled_tiles.has("9,10")), "rendered viewport click sends a real till request")
+	await process_frame
+	check(farm._cursor.visible and farm._hover_tile() == Vector2i(9,10), "signed-in tile outline follows the same mouse coordinates")
 	response = await api.authenticated(HTTPClient.METHOD_GET,"/farm/plots")
 	var plots: Array = api.data_of(response).get("plots",[])
 	check(plots.any(func(plot: Dictionary): return int(plot.x)==9 and int(plot.y)==10 and plot.is_tilled), "clicked soil is persisted by the server")

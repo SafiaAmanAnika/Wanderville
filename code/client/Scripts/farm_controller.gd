@@ -43,6 +43,8 @@ var _drag_crop: Dictionary = {}     # empty = carrying bare soil
 var _cursor: Line2D
 
 var _player_in_zone := false
+var _mouse_position := Vector2.ZERO
+var _mouse_seen := false
 
 func _get_tile_visual_size() -> Vector2:
 	return tile_visual_size
@@ -152,6 +154,9 @@ func _blocked() -> bool:
 		or (Global.is_logged_in() and not GameState.backend_ready)
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventMouse:
+		_mouse_position = event.position
+		_mouse_seen = true
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var point: Vector2 = get_canvas_transform().affine_inverse() * event.position
 		var tile := _get_tile_pos(point)
@@ -476,6 +481,9 @@ func _toast(text: String, tile: Vector2i) -> void:
 # ─── Tile math ───────────────────────────────────────────────────────
 
 func _hover_tile() -> Vector2i:
+	# Keep hover, E interaction and clicks on the same viewport input coordinates.
+	if _mouse_seen:
+		return _get_tile_pos(get_canvas_transform().affine_inverse() * _mouse_position)
 	return _get_tile_pos(get_global_mouse_position())
 
 

@@ -20,6 +20,7 @@ func click_tile(farm: Node, tile: Vector2i) -> void:
 	click.pressed = false
 	root.push_input(click, true)
 	await process_frame
+	await process_frame
 
 func run() -> void:
 	root.size = Vector2i(1578, 997)
@@ -47,8 +48,16 @@ func run() -> void:
 	camera.reset_smoothing()
 	await create_timer(0.2).timeout
 	check(farm._player_in_zone, "player entering the field enables farming")
+	var motion := InputEventMouseMotion.new()
+	motion.position = root.get_canvas_transform() * farm._tile_to_world(Vector2i(8,10))
+	root.push_input(motion, true)
+	await process_frame
+	await process_frame
+	check(farm._cursor.visible and farm._hover_tile() == Vector2i(8,10), "moving the mouse shows the tile outline before clicking")
 	await click_tile(farm, Vector2i(8,10))
 	check(farm.tilled_tiles.has("8,10"), "viewport click tills a reachable tile")
+	check(farm._hover_tile() == Vector2i(8,10), "hover and click resolve the same viewport position")
+	check(farm._cursor.visible and farm._cursor.global_position.is_equal_approx(farm._tile_to_world(Vector2i(8,10))), "tile outline appears at the clicked cell")
 	await click_tile(farm, Vector2i(9,10))
 	var soil: Sprite2D = farm.get_node("Soil_9,10")
 	check(soil.texture.get_image().get_used_rect().intersects(Rect2i(soil.region_rect)), "soil crop contains visible artwork")

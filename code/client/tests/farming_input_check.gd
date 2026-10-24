@@ -31,7 +31,7 @@ func run() -> void:
 	var world: Node = load("res://Scenes/world.tscn").instantiate()
 	root.add_child(world)
 	current_scene = world
-	await create_timer(0.5).timeout
+	await create_timer(4.0 if DisplayServer.get_name() != "headless" else 0.5).timeout
 	var farm: Node = world.get_node("FarmController")
 	var player: CharacterBody2D = world.get_node("girl")
 	player.set_physics_process(false)
@@ -49,6 +49,12 @@ func run() -> void:
 	check(farm._player_in_zone, "player entering the field enables farming")
 	await click_tile(farm, Vector2i(8,10))
 	check(farm.tilled_tiles.has("8,10"), "viewport click tills a reachable tile")
+	await click_tile(farm, Vector2i(9,10))
+	var soil: Sprite2D = farm.get_node("Soil_9,10")
+	check(soil.texture.get_image().get_used_rect().intersects(Rect2i(soil.region_rect)), "soil crop contains visible artwork")
+	if DisplayServer.get_name() != "headless":
+		await RenderingServer.frame_post_draw
+		root.get_texture().get_image().save_png("res://../../test-output/farming-input/rendered-till.png")
 	await click_tile(farm, Vector2i(8,10))
 	check(farm.seed_picker.visible, "second click opens seed selection")
 	var seeds: Array = farm.seed_picker.grid.get_children()
@@ -97,6 +103,8 @@ func run() -> void:
 	farm.seed_picker.hide_menu()
 	state.backend_ready = false
 	check(farm._blocked(), "signed-in farming waits for authoritative state")
+	await click_tile(farm, Vector2i(16,20))
+	check("has not loaded" in root.get_node("HousePrompt")._label.text, "unloaded farm explains why a click was rejected")
 	state.backend_ready = true
 	check(not farm._blocked(), "signed-in farming enables after state loads")
 	state.social_open = true
@@ -104,6 +112,10 @@ func run() -> void:
 	state.social_open = false
 	session.token = ""
 	session.player_id = 0
+	player.global_position = farm.FARM_AREA_MAX + Vector2(100,100)
+	await create_timer(0.15).timeout
+	await click_tile(farm, Vector2i(16,20))
+	check("Step into" in root.get_node("HousePrompt")._label.text, "clicking from outside the field explains where to stand")
 	world.queue_free()
 	await process_frame
 	quit(1 if failures else 0)

@@ -151,17 +151,37 @@ func _blocked() -> bool:
 	return not _player_in_zone or GameState.menu_open or GameState.social_open or _backend_busy \
 		or (Global.is_logged_in() and not GameState.backend_ready)
 
-func _unhandled_input(event: InputEvent) -> void:
-	if _blocked():
-		return
+func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		var point: Vector2 = get_canvas_transform().affine_inverse() * event.position
+		var tile := _get_tile_pos(point)
+		var control := get_viewport().gui_get_hovered_control()
+		_diag("click world=%s tile=%s in_grid=%s in_zone=%s menu=%s social=%s busy=%s ready=%s ui=%s" % [
+			point, tile, _is_in_farm_area(tile), _player_in_zone, GameState.menu_open,
+			GameState.social_open, _backend_busy, GameState.backend_ready,
+			str(control.get_path()) if control != null else "none"])
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		var tile := _get_tile_pos(get_canvas_transform().affine_inverse() * event.position)
+		if not _is_in_farm_area(tile):
+			return
+		if _blocked():
+			var reason := "Step into the farm field to start farming"
+			if GameState.menu_open or GameState.social_open:
+				reason = "Close the open menu to farm"
+			elif _backend_busy:
+				reason = "Finishing your previous farm action..."
+			elif Global.is_logged_in() and not GameState.backend_ready:
+				reason = "Your farm has not loaded. Leave the world and try Continue again."
+			HousePrompt.flash(reason, 4.0)
+			return
 		if _dragging:
 			return  # carrying: only E puts the tile down
-		var tile := _get_tile_pos(get_canvas_transform().affine_inverse() * event.position)
 		if _is_in_farm_area(tile):
 			get_viewport().set_input_as_handled()
 			_on_click(tile)
-	elif event.is_action_pressed("interact"):
+	elif event.is_action_pressed("interact") and not _blocked():
 		if _dragging:
 			get_viewport().set_input_as_handled()
 			_drop(_hover_tile())
@@ -208,7 +228,7 @@ func _process(_delta):
 	if _cursor == null:
 		return
 	var tile := _hover_tile()
-	var on_farm := _player_in_zone and _is_in_farm_area(tile) and not GameState.menu_open and not GameState.social_open
+	var on_farm := _is_in_farm_area(tile) and not GameState.menu_open and not GameState.social_open
 	_cursor.visible = on_farm or _dragging
 	_cursor.global_position = _tile_to_world(tile)
 	if _dragging:
@@ -218,7 +238,7 @@ func _process(_delta):
 		for node in _carried_nodes(_drag_key):
 			_place(node, spot)
 	elif on_farm:
-		_cursor.default_color = Color(1, 1, 1, 0.9) if _in_reach(tile) else Color(1, 0.3, 0.3, 0.7)
+		_cursor.default_color = Color(1, 1, 1, 0.9) if _player_in_zone and _in_reach(tile) else Color(1, 0.3, 0.3, 0.7)
 
 
 # ─── Carrying a whole tile (E) ───────────────────────────────────────
@@ -536,7 +556,6 @@ func _apply_server_plots(plots: Array) -> void:
 	if _backend_busy or _dragging:
 		return
 	for plot in plots:
-		_diag("applying plot %s" % str(plot))
 		_apply_plot(plot)
 
 

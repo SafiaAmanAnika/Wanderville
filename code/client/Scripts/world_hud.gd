@@ -225,7 +225,7 @@ func _build_quick_actions() -> void:
 	actions.name = "QuickActions"
 	%Settings.get_parent().add_child(actions)
 	actions.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
-	actions.offset_left = -128
+	actions.offset_left = -188
 	actions.offset_top = -70
 	actions.offset_right = -24
 	actions.offset_bottom = -24
@@ -234,4 +234,19 @@ func _build_quick_actions() -> void:
 	actions.add_child(voice_button)
 	voice_button.pressed.connect(func():
 		if active.is_empty() and not GameState.menu_open: proximity_social.open_voice()
+	)
+	var pet_button := Style.button("")
+	pet_button.name = "PetButton"
+	pet_button.tooltip_text = "Your pets"
+	pet_button.custom_minimum_size = Vector2(48,46)
+	actions.add_child(pet_button)
+	pet_button.draw.connect(func():
+		var c := pet_button.size/2
+		pet_button.draw_circle(c+Vector2(0,5),7,Style.INK)
+		for offset in [Vector2(-10,-5),Vector2(-4,-11),Vector2(4,-11),Vector2(10,-5)]:
+			pet_button.draw_circle(c+offset,3.4,Style.INK)
+	)
+	pet_button.pressed.connect(func():
+		var pets := get_parent().get_node_or_null("Pets")
+		if pets!=null and active.is_empty(): pets.open_menu()
 	)

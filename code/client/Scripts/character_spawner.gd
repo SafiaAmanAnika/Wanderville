@@ -31,6 +31,9 @@ func _ready() -> void:
 	SceneManager.restore_customization_return(player)
 	if not CampusLayout.walkable(player.global_position):
 		player.global_position = CampusLayout.spawn()
+	var pets := preload("res://Scripts/pets/pet_manager.gd").new()
+	pets.name = "Pets"
+	add_child(pets)
 	add_child(preload("res://Scripts/ui/onboarding_guide.gd").new())
 	if OS.get_environment("GODOT_ENET_GAMEPLAY") == "1":
 		var bridge := preload("res://Scripts/network/EnetGameplayBridge.gd").new()

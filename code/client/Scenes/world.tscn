@@ -1,6 +1,5 @@
 [gd_scene format=3 uid="uid://bp82py5pxy8s4"]
 
-[ext_resource type="PackedScene" uid="uid://0on5q8sndxdt" path="res://Scenes/catto_og.tscn" id="3_5a7ea"]
 [ext_resource type="PackedScene" uid="uid://dyi8ni3f8ofed" path="res://Scenes/farm_menu.tscn" id="4_fo5ed"]
 [ext_resource type="PackedScene" uid="uid://clwliaqe8bb1k" path="res://Scenes/sign_board.tscn" id="5_5ukr8"]
 [ext_resource type="PackedScene" uid="uid://dnjgimyfr24k8" path="res://Scenes/player1.tscn" id="6_5ukr8"]
@@ -34,12 +33,6 @@ position = Vector2(1658, 677)
 [node name="Camera2D" type="Camera2D" parent="girl" unique_id=784418730]
 position = Vector2(-10.149994, -0.6000023)
 zoom = Vector2(0.3, 0.3)
-
-[node name="catto_og" parent="." unique_id=1448107131 instance=ExtResource("3_5a7ea")]
-position = Vector2(7475, -771)
-scale = Vector2(3, 3)
-collision_layer = 0
-collision_mask = 0
 
 [node name="FarmMenu" parent="." unique_id=886063808 instance=ExtResource("4_fo5ed")]
 

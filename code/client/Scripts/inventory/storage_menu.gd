@@ -275,6 +275,7 @@ func _build_section_view(root: Control) -> void:
 	details.add_child(gap)
 	_status = _dark_label(WoodPanel.SIZE_SMALL)
 	details.add_child(_status)
+	preload("res://Scripts/ui/loading_progress.gd").attach(_status)
 	# amount to trade: - / + with the current amount between them
 	var qty_row := HBoxContainer.new()
 	qty_row.custom_minimum_size.x = 230

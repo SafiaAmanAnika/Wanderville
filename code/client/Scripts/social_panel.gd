@@ -61,6 +61,7 @@ func _ready() -> void:
 	WoodPanel.apply_field_style(message)
 	WoodPanel.apply_field_style(%Search)
 	WoodPanel.apply_status_label(status)
+	preload("res://Scripts/ui/loading_progress.gd").attach(status)
 	WoodPanel.apply_status_label(%NoticeDetails)
 	_setup_nav()
 	%Send.pressed.connect(_send)

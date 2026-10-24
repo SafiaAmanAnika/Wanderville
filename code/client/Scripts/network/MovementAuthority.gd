@@ -466,7 +466,7 @@ func _make_body(character_code: String, position: Vector2) -> CharacterBody2D:
 		code = "farmer_female"
 	var body := Global.get_character_scene(code).instantiate() as CharacterBody2D
 	if _gameplay_mode:
-		body.scale = Vector2.ONE * (20.0 if code in ["player1", "farmer_female"] else 1.18)
+		body.scale = Vector2.ONE * (20.0 if code in ["player1", "farmer_female"] else preload("res://Scripts/chara_frames.gd").GAMEPLAY_SCALE.x)
 	add_child(body)
 	# Stop the character's own controller without taking the body out of the
 	# physics space.

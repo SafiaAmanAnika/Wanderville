@@ -72,7 +72,7 @@ func run() -> void:
 	await physics_frame
 	await physics_frame
 	await process_frame
-	check(player.position == Vector2(960,544) and player.scale == Vector2(0.75,0.75), "spawn_and_scale_preserved")
+	check(player.position == Vector2(960,544) and player.scale == Vector2(0.72,0.72), "spawn_and_room_scale")
 	check(lobby.get_node("Camera2D").zoom.is_equal_approx(Vector2(1.2,1.2)), "camera_preserved")
 	check(lobby.get_node("StaticCollisions").get_child_count() == 24, "solid_collision_count_preserved")
 	check(not interactions.prompt.visible and interactions.modal == "", "no_center_prompt_or_auto_open")
@@ -175,7 +175,7 @@ func run() -> void:
 			if social._rows[i].username == "lobby_request": incoming = i
 		check(incoming >= 0, "seeded_real_incoming_request")
 		if incoming >= 0:
-			var incoming_card: Control = social._cards.get_child(incoming)
+			var incoming_card: Control = social._cards.get_node("PlayerCard_%d" % incoming)
 			var accept_button: Button = incoming_card.get_node("Content/Buttons/PrimaryAction")
 			var decline_button: Node = incoming_card.get_node_or_null("Content/Buttons/DeclineAction")
 			check(accept_button.text == "Accept" and not accept_button.disabled, "incoming_accept_button_available")

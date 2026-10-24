@@ -1,18 +1,20 @@
 extends Control
 
+const AuthShell := preload("res://Scripts/menus/auth_shell.gd")
+
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
 const BG_TEXTURE := preload("res://Assets/background/bg.png")
 
-const TEXT_SUCCESS := Color(0.50, 0.78, 0.45)
-const TEXT_FAIL := Color(0.90, 0.38, 0.30)
-const TEXT_WARNING := Color(0.85, 0.75, 0.35)
+const TEXT_SUCCESS := Color("4d6c43")
+const TEXT_FAIL := Color("994239")
+const TEXT_WARNING := Color("876120")
 
 @onready var _bg: TextureRect = %Background
 @onready var _panel: PanelContainer = %FormPanel
 @onready var _title: Label = %Title
 @onready var _message: Label = %MessageLabel
-@onready var _continue_btn: WoodButton = %ContinueBtn
-@onready var _resend_btn: WoodButton = %ResendBtn
+@onready var _continue_btn: Button = %ContinueBtn
+@onready var _resend_btn: Button = %ResendBtn
 @onready var _loading_label: Label = %LoadingLabel
 
 var _user_email: String = ""
@@ -42,6 +44,8 @@ func _ready() -> void:
 		_apply_state(Global._ev_state, Global._ev_message, Global._ev_success)
 	else:
 		_apply_state("waiting", "Please check your email for a verification link.", true)
+
+	AuthShell.install(self)
 
 
 func _apply_state(state: String, message: String, success: bool) -> void:
@@ -88,7 +92,7 @@ func _apply_state(state: String, message: String, success: bool) -> void:
 			_continue_btn.show()
 			_continue_btn.text = "Go to Login"
 
-	WoodPanel.play_entrance(_panel)
+	AuthShell.reveal(_panel)
 
 
 func _verify_token(token: String) -> void:

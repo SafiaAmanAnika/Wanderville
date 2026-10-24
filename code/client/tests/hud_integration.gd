@@ -66,6 +66,16 @@ func _run() -> void:
 		print("HUD_RESTART_RESULT failures=", failures)
 		quit(0 if failures == 0 else 1)
 		return
+	# Continue validates the saved session and loads the actual existing world.
+	var title: Control = load("res://Scenes/menus/TitleScreen.tscn").instantiate()
+	root.add_child(title); current_scene = title
+	check(title.continue_button.visible, "saved_setup_has_continue")
+	await title._continue_journey()
+	var title_deadline := Time.get_ticks_msec() + 10000
+	while root.get_node("SceneManager")._is_transitioning and Time.get_ticks_msec() < title_deadline:
+		await create_timer(0.05).timeout
+	check(current_scene.scene_file_path == "res://Scenes/world.tscn" and state.backend_ready, "continue_loads_real_saved_world")
+	current_scene.queue_free(); await process_frame; current_scene = null
 	# Real UI scenes, a lightweight background, and the supplied player artwork.
 	# This is explicitly UI rendering, separate from full-world gameplay checks.
 	stage = Node2D.new()
@@ -322,7 +332,7 @@ func _run() -> void:
 	check(not hud.get_node("%LevelToast").visible, "poll_does_not_repeat_level_toast")
 	await api.authenticated(HTTPClient.METHOD_POST, "/integration/progress/1980", {})
 	await state.refresh_gameplay()
-	check(hud.get_node("%Balance").text.contains("Level 10 — Landkeeper") and hud.get_node("%ProgressText").text == "Max level" and hud.get_node("%XP").value == hud.get_node("%XP").max_value, "max_level_hud_without_level_eleven")
+	check(hud.get_node("%Balance").text.contains("Level 10 · Landkeeper") and hud.get_node("%ProgressText").text == "Max level" and hud.get_node("%XP").value == hud.get_node("%XP").max_value, "max_level_hud_without_level_eleven")
 	check(int(state.inventory_summary["capacity"]) == 76 and hud.get_node("%LevelToastText").text.contains("+40 inventory slots") and hud.get_node("%LevelToastText").text.contains("+100 Aura"), "multi_level_jump_exact_rewards")
 	await shot("max_level_800x600")
 	# A full storage refuses one stack more than fits, but accepts what remains.

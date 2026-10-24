@@ -120,11 +120,15 @@ class AuthService:
     def login(self, request, ip=None):
         now, failed = utcnow(), False
         with transaction(self.db):
-            player = self.players.by_username(request.username)
+            player = (
+                self.players.by_email(request.username)
+                if "@" in request.username
+                else self.players.by_username(request.username)
+            )
             if player is None:
                 security.verify_password(request.password, _DUMMY_HASH)
                 raise AppError(
-                    "INVALID_CREDENTIALS", "Invalid username or password", 401
+                    "INVALID_CREDENTIALS", "Invalid username, email or password", 401
                 )
             self.players.lock(player.id)
             if player.locked_until and as_utc(player.locked_until) > now:
@@ -149,7 +153,7 @@ class AuthService:
                 result = self._login_result(player, now, ip)
         # Failed-attempt persistence is itself a complete transaction.
         if failed:
-            raise AppError("INVALID_CREDENTIALS", "Invalid username or password", 401)
+            raise AppError("INVALID_CREDENTIALS", "Invalid username, email or password", 401)
         return result
 
     def authenticate(self, raw):

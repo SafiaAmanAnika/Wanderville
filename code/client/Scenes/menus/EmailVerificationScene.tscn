@@ -1,8 +1,6 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=2 format=3]
 
 [ext_resource type="Script" path="res://Scripts/menus/email_verification.gd" id="1"]
-[ext_resource type="Script" path="res://Scripts/components/wood_panel.gd" id="2"]
-[ext_resource type="Script" path="res://Scripts/components/wood_button.gd" id="3"]
 
 [node name="EmailVerificationScene" type="Control"]
 layout_mode = 3
@@ -38,10 +36,8 @@ mouse_filter = 2
 unique_name_in_owner = true
 custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
-script = ExtResource("2")
 
 [node name="VBox" type="VBoxContainer" parent="Center/FormPanel"]
-unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 8
 theme_override_constants/separation = 14
@@ -80,7 +76,6 @@ custom_minimum_size = Vector2(320, 52)
 visible = false
 layout_mode = 2
 text = "Continue to Login"
-script = ExtResource("3")
 
 [node name="Spacer3" type="Control" parent="Center/FormPanel/VBox"]
 custom_minimum_size = Vector2(0, 2)
@@ -93,4 +88,3 @@ custom_minimum_size = Vector2(320, 52)
 visible = false
 layout_mode = 2
 text = "Resend Verification Email"
-script = ExtResource("3")

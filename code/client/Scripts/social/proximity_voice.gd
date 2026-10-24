@@ -41,6 +41,9 @@ const JITTER_MAX_FRAMES := 10
 
 var session_id := ""
 var output_level := 0.0
+var input_level := 0.0
+var frames_sent := 0
+var last_transmit_ms := 0
 var muted := true
 var deafened := false
 var muted_players: Array[int] = []
@@ -59,6 +62,7 @@ var _socket: WebSocketPeer
 var _authenticated := false
 var _ready_audio := false
 var _joining := false
+var _join_version := 0
 var _talk_version := 0
 var _capture: AudioEffectCapture
 var _microphone: AudioStreamPlayer
@@ -84,6 +88,7 @@ var _jitter_started := false
 
 
 func _ready() -> void:
+	Global.session_changed.connect(func(): leave(false))
 	APIClient.realtime.connection_changed.connect(func(connected: bool) -> void:
 		if not connected:
 			leave(false)
@@ -109,11 +114,16 @@ func join_voice() -> void:
 	if _joining or not session_id.is_empty():
 		return
 	_joining = true
+	_join_version += 1
+	var version := _join_version
+	changed.emit()
 	status_changed.emit("Joining voice, microphone off...")
 	var result: Dictionary = await APIClient.realtime.command("voice.join", {"transport": "pcm-websocket"})
+	if version != _join_version: return
 	_joining = false
 	if not result.get("ok", false):
 		status_changed.emit(str(result.get("message", "Voice unavailable")))
+		changed.emit()
 		return
 	session_id = str(result["data"]["session_id"])
 	muted = true
@@ -130,6 +140,7 @@ func join_voice() -> void:
 	_elapsed = 0.0
 	_last_signal = 0.0
 	frames_received = 0
+	frames_sent = 0
 	keepalives_received = 0
 	frames_dropped = 0
 	frames_failed = 0
@@ -157,6 +168,7 @@ func _process(delta: float) -> void:
 	# and the indicator must not stay stuck at the level of the last word that
 	# was spoken.
 	output_level = maxf(0.0, output_level - delta * LEVEL_DECAY)
+	input_level = maxf(0.0, input_level - delta * LEVEL_DECAY)
 	if _ready_audio:
 		_pump_jitter(delta)
 	if (
@@ -235,6 +247,8 @@ func _process(delta: float) -> void:
 	var sent := 0
 	while _capture.can_get_buffer(input_count) and sent < 3:
 		var samples := _capture.get_buffer(input_count)
+		for sample in samples:
+			input_level = maxf(input_level, maxf(absf(sample.x), absf(sample.y)))
 		var bytes := PackedByteArray()
 		bytes.resize(1920)
 		for i in 960:
@@ -246,7 +260,9 @@ func _process(delta: float) -> void:
 			leave()
 			status_changed.emit("Voice network too slow. Join again.")
 			return
-		_socket.send(bytes)
+		if _socket.send(bytes) == OK:
+			frames_sent += 1
+			last_transmit_ms = Time.get_ticks_msec()
 		sent += 1
 
 
@@ -395,6 +411,7 @@ func _start_capture() -> void:
 
 
 func _stop_capture() -> void:
+	input_level = 0.0
 	if is_instance_valid(_microphone):
 		_microphone.stop()
 		_microphone.queue_free()
@@ -422,6 +439,8 @@ func mute_player(player_id: int, value: bool) -> void:
 
 
 func leave(notify_server := true) -> void:
+	_join_version += 1
+	_joining = false
 	_talk_version += 1
 	_stop_capture()
 	if is_instance_valid(_speaker):
@@ -447,6 +466,15 @@ func leave(notify_server := true) -> void:
 	muted_players.clear()
 	status_changed.emit("Voice off. Join when you are ready.")
 	changed.emit()
+
+func connection_state() -> String:
+	if _joining: return "Connecting"
+	if _ready_audio: return "Connected"
+	if not session_id.is_empty(): return "Connecting"
+	return "Not joined"
+
+func is_transmitting() -> bool:
+	return _ready_audio and not muted and not deafened and input_level > 0.015 and Time.get_ticks_msec() - last_transmit_ms < 200
 
 
 func _notification(what: int) -> void:

@@ -1,15 +1,46 @@
-# Original character restoration
+# Character animation foundation
 
-The game uses the original six in Assets/charas: CharacterA/B/C and CharacterA_Male/B_Male. The original PNG files are unchanged. Generated complete_cast_v1, modular_base_v1, modular_rig_v2, replacement overlays, skin masks/shader, authoring tools and abandoned character drafts were removed. CharacterCustomizationLobby.png and the existing room artwork/collisions remain.
+The six original character designs remain the playable cast. Girl A (`CharacterA`) is the visual reference. No hair, skin, outfit or accessory customization was added.
 
-CharaFrames reuses the original 448-pixel, six-column/eight-row sheets. Idle and Walk play at6 FPS; Run at10 FPS. Walk reuses run.png because these originals have no separate walk sheet. Movement controls/speed remain unchanged at300 units/second; no new walk key or movement authority was added. Turning and switching Walk/Run keep the stride phase, and stopped clips resume. Original action artwork is used for Hoe, Water, Fishing and Scythe. No new Bow, Axe, Sleep or Death art was introduced.
+## Shared standard
 
-The creator is now an original-character picker with direction/action playback and pause/frame step. It previews only within the panel; explicit Save updates the existing profile character_code, retains world/session state and respawns the existing lobby player at its current position. Escape discards unsaved choices. Saved character IDs remain valid, and the original farmer remains the fallback. Retired appearance preferences are ignored; they are cleared only when the player explicitly saves/selects another character.
+- Each action uses a 2688 x 3584 PNG: six columns, eight rows, 448 x 448 cells.
+- Rows are front, front-right, right, back-right, back, back-left, left, front-left.
+- Every atlas region stays inside its exported cell. There is no runtime head registration or shifted sampling window.
+- Ground contact is at the bottom edge of source pixel row 320, or `y = 321` exclusive. With centered 448 px frames, that is 97 px below the sprite origin, matching the existing foot-area collision geometry.
+- All six character scenes, the main world, remote avatars and authority bodies use a uniform `Vector2(1.18, 1.18)` world scale. The smaller lobby artwork uses `Vector2(0.72, 0.72)` for room characters, matching the existing receptionist. Portraits and the UI preview use their own display scales.
+- Idle and Walk use 6 FPS, Run uses 10 FPS, and tools use 8 FPS. Gameplay tools play once; the review preview loops them for inspection.
 
-SocialLobby's receptionist is a stationary AnimatedSprite2D using the original Girl C idle.png. Its six-frame idle_front loops at6 FPS behind the existing counter foreground. Position stays(960,215), uniform scale is0.72. It has no player controller, collision body or player-group membership.
+The original palette, hats, hair, faces and proportions are retained. Front idle heights span 167-174 source pixels across the cast; small silhouette differences are mainly hat styles, and are not corrected by stretching individual characters.
 
-Verification logs/screenshots are under ignored test-output/original-characters. Tests use isolated APPDATA and loopback-only inactive API URLs. No real player settings/database or running editor was touched. No commit/push was made. Rendered Godot4.6.2 checks passed: original_characters_check (2016 original frame slots), lobby_spawner_check (12 character/room pairs), lobby_interactions, customization_lobby_check and load_check. The scene-load check retains an unrelated existing duplicate-unique-name VBox warning in the auth UI, with no script/load errors. Original PNGs/project settings/customization scene match their pre-change SHA-256 hashes; reconstructing SocialLobby before the NPC-only edit matches its baseline hash. Live social/backend, farming/inventory and two-client networking were not retested in this restoration.
+## Artwork and playback corrections
 
-## Sideways stride registration
+70 displaced source frames in 13 PNG sheets were translated vertically inside their cells. This includes Boy B's side-running third pose (24 px downward in the original) and Girl C's scythe poses. Translations preserve the original pixels and tool effects, with bounds checks preventing clipping. The original idle, watering and fishing PNGs are unchanged. Tool alignment ignores rods, blades and water and tolerates up to two source pixels of sole-outline/antialias variation. The exact translations are recorded in [animation-registration.json](animation-registration.json).
 
-CharaFrames now measures the hat/head silhouette of every original Walk/Run pose against its directional idle reference, then shifts only the AtlasTexture sampling window. Original PNG pixels, body proportions, collision origin and movement speed remain untouched. This removes horizontal drift and abrupt vertical drops (particularly Boy B). It does not author new leg poses or a separate Walk sheet. The rendered regression checks every movement head anchor is within1pixel of its reference, along with original frame order, stride phase and saved-character compatibility.
+Each character now has a separate `walk.png`. These are six-pose, eight-direction walks articulated from the original idle artwork, with a smaller stride, alternating foot lifts and restrained upper-body motion. They are distinct image sequences, not slowed Run frames. The new sheets do not introduce the experimental long-leg proportions. The optional `GODOT_LONG_LEG_ART=1` path remains opt-in.
+
+The shared controller rebuilds all seven actions from the same sheets used by the preview, including every tool direction. Movement speed remains 300 units/second. Network facing numbers now correctly map front-left, back-left and back-right, and stopping retains the last facing. Turning preserves Walk/Run phase.
+
+The shared character editor provides rotation through all eight directions, Idle/Walk/Run, Play/Pause and one-frame stepping. The underlying animation loader and art review still cover all seven actions. First-time selection, Wardrobe Save/Cancel and read-only Mirror share this component; six small cards use static portraits. Existing character IDs are retained.
+
+## Verification
+
+Godot 4.6.2 checks completed with an isolated test profile under `test-output/animation-foundation/profile`:
+
+- `animation_visual_review.gd`: 2,016 frame slots, 336 character/action/direction combinations, exact locomotion ground contact and actual AnimatedSprite2D advancement. A renderer exported all six poses of each action to 42 fixed-size 1440 x 1280 captures; all eight direction rows fit independently of monitor size.
+- `reference_motion_check.gd`: the real Girl A controller moves, turns and stops in all eight directions at the existing speed. Stopping retains facing and has no position drift. Sixteen moving/standing captures were exported.
+- `original_characters_check.gd`: all six character/action sets, direction round trips, preview rotation, pause/step/play controls, selection, cancellation, save/respawn and receptionist behavior.
+- `lobby_spawner_check.gd`: all 12 character/lobby pairs use the selected scene and room scale.
+- `lobby_interactions.gd`, `customization_lobby_check.gd` and `load_check.gd`: existing interaction, customization and script/scene loading checks.
+- A recovery-mode editor import completed without script or import errors. The load check reports the existing duplicate `VBox` unique-name warning in the authentication UI.
+
+Review artifacts:
+
+- [Interactive capture review](../test-output/animation-foundation/review.html)
+- [All six characters running in all eight directions](../test-output/animation-foundation/godot/run-2.png)
+- [All six characters walking in all eight directions](../test-output/animation-foundation/godot/walk-1.png)
+- [The actual in-game preview controls](../test-output/animation-foundation/lobby/original-picker.png)
+
+The offline authoring tool is `code/client/tools/build_character_art.gd`. Run it with an empty Godot project and pass absolute client/output directory arguments after `--`. It writes drafts; it does not overwrite the source directory. Original modified PNG backups are in the ignored `.verification/animation-foundation-art-backup` directory, and helper-script backups are in `.verification/animation-foundation-backup`.
+
+Voice, social/backend behavior, inventory, farming, network room membership and saved appearance schema are outside this change. Live multiplayer/backend flows were not rerun for these animation changes.

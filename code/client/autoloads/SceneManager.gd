@@ -18,21 +18,28 @@ const FORGOT_PASSWORD_SCENE := "res://Scenes/menus/ForgotPasswordScene.tscn"
 const EMAIL_VERIFICATION_SCENE := "res://Scenes/menus/EmailVerificationScene.tscn"
 const RESET_PASSWORD_SCENE := "res://Scenes/menus/ResetPasswordScene.tscn"
 
-# One short warm-dark fade is shared by every scene change. There is no status
-# text and no progress bar, and the overlay is fully opaque while the next
-# scene builds and initialises its camera, so no gray frame can ever show.
+# A shared illustrated progress screen covers scene loading and initialization.
 const FADE_TIME := 0.15
-const FADE_COLOR := Color(0.14, 0.08, 0.03)
 
 var _transition_layer: CanvasLayer
-var _overlay: ColorRect
 var _is_transitioning: bool = false
 var _customization_from_world := false
+var _customization_return_scene := CHARACTER_SELECT_SCENE
 var _customization_return_position := Vector2.ZERO
 var _customization_return_session := -1
 var _social_return_position := Vector2.ZERO
 var _social_return_session := -1
 var _social_from_world := false
+var journey_backdrop: CanvasLayer
+var _loading_screen: Control
+
+
+func show_journey_background(owner: Node, darkness: float = 0.0, stream: VideoStream = null) -> CanvasLayer:
+	if not is_instance_valid(journey_backdrop):
+		journey_backdrop = preload("res://Scripts/menus/journey_backdrop.gd").new()
+		add_child(journey_backdrop)
+	journey_backdrop.present(owner,darkness,stream)
+	return journey_backdrop
 
 
 func _ready() -> void:
@@ -44,13 +51,23 @@ func _build_transition_ui() -> void:
 	_transition_layer.layer = 100
 	add_child(_transition_layer)
 
-	_overlay = ColorRect.new()
-	_overlay.color = Color(FADE_COLOR.r, FADE_COLOR.g, FADE_COLOR.b, 0.0)
-	_overlay.anchors_preset = Control.PRESET_FULL_RECT
-	_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
-	_transition_layer.add_child(_overlay)
-
 	_transition_layer.visible = false
+	_loading_screen = preload("res://Scripts/ui/loading_screen.gd").new()
+	_transition_layer.add_child(_loading_screen)
+	_loading_screen.hide()
+
+
+func show_loading(message: String = "Purring...") -> void:
+	_transition_layer.show()
+	_loading_screen.start(message)
+	_loading_screen.modulate.a = 1.0
+	_loading_screen.show()
+
+
+func hide_loading() -> void:
+	if _is_transitioning: return
+	_loading_screen.hide()
+	_transition_layer.hide()
 
 
 func transition_to(scene_path: String) -> void:
@@ -58,24 +75,55 @@ func transition_to(scene_path: String) -> void:
 		return
 	_is_transitioning = true
 
-	_transition_layer.visible = true
-	_overlay.color.a = 0.0
-
-	var fade_out := create_tween().set_ease(Tween.EASE_IN_OUT)
-	fade_out.tween_property(_overlay, "color:a", 1.0, FADE_TIME)
-	await fade_out.finished
-
-	get_tree().change_scene_to_file(scene_path)
-	# Let the destination build and initialise its camera while it is hidden.
+	show_loading()
+	# Present a rendered cover before requesting or instantiating the next scene.
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var requested := ResourceLoader.load_threaded_request(scene_path)
+	if requested != OK:
+		_is_transitioning = false; hide_loading()
+		GameState.report_error({"message":"This place could not be loaded. Please try again."})
+		return
+	var progress: Array = []
+	while ResourceLoader.load_threaded_get_status(scene_path,progress) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+		if not progress.is_empty(): _loading_screen.set_progress(float(progress[0])*0.9)
+		await get_tree().process_frame
+	var packed := ResourceLoader.load_threaded_get(scene_path) as PackedScene
+	if packed == null:
+		_is_transitioning = false; hide_loading()
+		GameState.report_error({"message":"This place could not be loaded. Please try again."})
+		return
+	get_tree().change_scene_to_packed(packed)
+	_loading_screen.set_progress(0.95)
 	await get_tree().process_frame
 	await get_tree().process_frame
 
 	var fade_in := create_tween().set_ease(Tween.EASE_IN_OUT)
-	fade_in.tween_property(_overlay, "color:a", 0.0, FADE_TIME)
+	_loading_screen.set_progress(1.0)
+	fade_in.tween_property(_loading_screen, "modulate:a", 0.0, FADE_TIME)
 	await fade_in.finished
 
 	_transition_layer.visible = false
+	_loading_screen.hide()
 	_is_transitioning = false
+
+
+func leave_world() -> Dictionary:
+	if _is_transitioning: return {"ok":false,"message":"Please wait for the current journey to finish."}
+	var version := Global.session_version
+	if GameState.is_visiting():
+		var response: Dictionary = await APIClient.leave_farm()
+		if not response.get("ok",false): return response
+		var session: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_GET,"/farm/visiting/session")
+		if not session.get("ok",false): return session
+		if version!=Global.session_version: return {"ok":false,"stale":true,"message":"The signed-in account changed."}
+		GameState.apply_session(APIClient.data_of(session))
+	GameState.save_house()
+	APIClient.realtime.clear_session()
+	GameState.menu_open = false; GameState.social_open = false
+	_social_from_world = false; _customization_from_world = false
+	transition_to(TITLE_SCENE)
+	return {"ok":true}
 
 
 func goto_login() -> void:
@@ -95,11 +143,11 @@ func goto_title() -> void:
 
 
 func goto_map_selection() -> void:
-	transition_to(MAP_SELECTION_SCENE)
+	goto_post_login()
 
 
 func goto_map_showcase() -> void:
-	transition_to(MAP_SHOWCASE_SCENE)
+	goto_post_login()
 
 
 func goto_character_select() -> void:
@@ -132,6 +180,7 @@ func leave_social_lobby() -> void:
 func goto_character_customization(from_world: bool = false) -> void:
 	if _is_transitioning: return
 	_customization_from_world = from_world
+	_customization_return_scene = SOCIAL_LOBBY_SCENE if get_tree().current_scene != null and get_tree().current_scene.scene_file_path == SOCIAL_LOBBY_SCENE else CHARACTER_SELECT_SCENE
 	_customization_return_session = Global.session_version
 	if from_world:
 		var player := get_tree().current_scene.get_node_or_null("girl") as Node2D
@@ -144,7 +193,7 @@ func leave_character_customization() -> void:
 		goto_world()
 	else:
 		_customization_from_world = false
-		goto_character_select()
+		transition_to(_customization_return_scene if _customization_return_session == Global.session_version else CHARACTER_SELECT_SCENE)
 
 
 func restore_customization_return(player: Node2D) -> void:
@@ -178,4 +227,23 @@ func goto_post_login() -> void:
 	if Global.has_completed_setup():
 		goto_world()
 	else:
-		goto_map_selection()
+		goto_character_select()
+
+
+func save_initial_character(code: String) -> Dictionary:
+	var version := Global.session_version
+	if Global.is_logged_in():
+		var world: Dictionary = GameState.owned_world
+		if not world.has("id"):
+			var fetched: Dictionary = await APIClient.get_my_world(Global.token)
+			if not fetched.get("ok",false): return fetched
+			world = APIClient.data_of(fetched)
+		if not world.has("id"): return {"ok":false,"message":"Your world is not available yet. Please try again."}
+		var response: Dictionary = await APIClient.update_profile({"character_code":code,"map_code":"campus"})
+		if not response.get("ok",false): return response
+		if version!=Global.session_version: return {"ok":false,"stale":true}
+		Global.selected_world_id=str(world.id)
+		GameState.profile=APIClient.data_of(response)
+	else:
+		Global.selected_world_id="campus"
+	return {"ok":true}

@@ -1,181 +1,298 @@
 extends Control
+## Presentation only; Continue uses the existing authenticated save-loading flow.
+@export var background_video: VideoStream
+@export var trailer_video: VideoStream
 
-const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
-const BG_TEXTURE := preload("res://Assets/background/bg.png")
+const Style := preload("res://Scripts/ui/lobby_theme.gd")
+const SoundToggle := preload("res://Scripts/ui/sound_toggle.gd")
+const Card := preload("res://Scripts/ui/title_card.gd")
+const LOGO := preload("res://Assets/ui/title/logo.res")
+const DESIGN := Vector2(1920, 1088)
 
-const TEXT_COLOR := Color(0.95, 0.91, 0.80)
-const TEXT_SECONDARY := Color(0.82, 0.74, 0.58)
-
-@onready var _bg: TextureRect = %Background
-@onready var _content: VBoxContainer = %Content
-@onready var _welcome_panel: PanelContainer = %WelcomePanel
-@onready var _welcome_label: Label = %WelcomeLabel
-@onready var _loading_bar: ProgressBar = %LoadingBar
-@onready var _loading_label: Label = %LoadingLabel
-
-var _signup_btn: WoodButton
-var _login_btn: WoodButton
-var _exit_btn: WoodButton
-var _banner: TitleBanner
+var canvas: Control
+var menu: VBoxContainer
+var continue_button: Button
+var begin_button: Button
+var music_button: Button
+var status: Label
+var settings: Control
+var popup: Control
+var background_player: VideoStreamPlayer
+var trailer_player: VideoStreamPlayer
+var _busy := false
+var _session := -1
+var _selected_card: Button
+var _selection_cat: TextureRect
+var _cat_tween: Tween
 
 
 func _ready() -> void:
-	_bg.texture = BG_TEXTURE
-	_content.hide()
-	_welcome_panel.hide()
-	_loading_bar.hide()
-	_loading_label.hide()
-
-	_welcome_label.add_theme_font_override("font", PIXEL_FONT)
-	_welcome_label.add_theme_font_size_override("font_size", WoodPanel.SIZE_PANEL_TITLE)
-	_welcome_label.add_theme_color_override("font_color", TEXT_COLOR)
-	_welcome_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-
-	_loading_label.add_theme_font_override("font", PIXEL_FONT)
-	_loading_label.add_theme_font_size_override("font_size", WoodPanel.SIZE_STATUS)
-	_loading_label.add_theme_color_override("font_color", TEXT_SECONDARY)
-	_loading_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-
-	_apply_loading_bar_style()
-
-	# Deep link routing
 	if Global.pending_verify_token != "":
 		SceneManager.goto_email_verification()
 		return
 	if Global.pending_reset_token != "":
 		SceneManager.goto_reset_password(Global.pending_reset_token)
 		return
-
-	# Session restore path
-	if Global.load_session():
-		_show_welcome_and_load()
-		return
-
-	_build_ui()
-	_play_entrance()
-
-
-func _apply_loading_bar_style() -> void:
-	var bg_sb := StyleBoxFlat.new()
-	bg_sb.bg_color = Color(0.22, 0.15, 0.08)
-	bg_sb.set_corner_radius_all(4)
-	bg_sb.set_border_width_all(2)
-	bg_sb.border_color = Color(0.38, 0.25, 0.13)
-	bg_sb.content_margin_left = 2
-	bg_sb.content_margin_right = 2
-	bg_sb.content_margin_top = 2
-	bg_sb.content_margin_bottom = 2
-	_loading_bar.add_theme_stylebox_override("background", bg_sb)
-
-	var fill_sb := StyleBoxFlat.new()
-	fill_sb.bg_color = Color(0.60, 0.78, 0.35)
-	fill_sb.set_corner_radius_all(3)
-	_loading_bar.add_theme_stylebox_override("fill", fill_sb)
+	# A remembered account makes Continue available; it never bypasses the menu.
+	if not Global.is_logged_in(): Global.load_session()
+	_build_background()
+	_build_title()
+	_build_settings()
+	get_viewport().size_changed.connect(_fit)
+	Global.session_changed.connect(_refresh_continue)
+	_fit()
+	_refresh_continue()
+	_focus_menu()
 
 
-func _show_welcome_and_load() -> void:
-	_welcome_panel.show()
-	_welcome_label.text = "Welcome back, %s!" % Global.display_name
-	_welcome_label.modulate.a = 0.0
-	_welcome_panel.modulate.a = 0.0
-
-	var tw := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-	tw.tween_property(_welcome_panel, "modulate:a", 1.0, 0.4)
-	tw.parallel().tween_property(_welcome_label, "modulate:a", 1.0, 0.5)
-	await tw.finished
-
-	# Show loading bar
-	_loading_bar.show()
-	_loading_label.show()
-	_loading_bar.value = 0.0
-	_loading_bar.modulate.a = 0.0
-	_loading_label.modulate.a = 0.0
-	var tw2 := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-	tw2.tween_property(_loading_bar, "modulate:a", 1.0, 0.3)
-	tw2.parallel().tween_property(_loading_label, "modulate:a", 1.0, 0.3)
-
-	# Animate loading bar
-	_loading_label.text = "Loading..."
-	var bar_tween := create_tween()
-	bar_tween.tween_property(_loading_bar, "value", 30.0, 0.3)
-	bar_tween.tween_interval(0.2)
-	bar_tween.tween_property(_loading_bar, "value", 60.0, 0.3)
-
-	var response: Dictionary = await APIClient.me(Global.token)
-	if not bool(response.get("ok", false)):
-		bar_tween.kill()
-		if int(response.get("status_code", 0)) == 401:
-			Global.clear_session()
-		SceneManager.goto_login()
-		return
-	bar_tween.kill()
-	_loading_bar.value = 80.0
-
-	if not await GameState.load_from_backend():
-		SceneManager.goto_login()
-		return
-	_loading_bar.value = 100.0
-	_loading_label.text = "Ready!"
-
-	await get_tree().create_timer(0.4).timeout
-	SceneManager.goto_post_login()
+func _full(control: Control, parent: Node) -> void:
+	parent.add_child(control)
+	control.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 
-func _build_ui() -> void:
-	_banner = TitleBanner.new()
-	_banner.custom_minimum_size = Vector2(460, 100)
-	_content.add_child(_banner)
-
-	var spacer := Control.new()
-	spacer.custom_minimum_size = Vector2(0, 12)
-	_content.add_child(spacer)
-
-	_signup_btn = WoodButton.new()
-	_signup_btn.text = "Sign Up"
-	_signup_btn.icon_type = "key"
-	_signup_btn.custom_minimum_size = Vector2(360, 58)
-	_signup_btn.pressed.connect(_on_signup)
-	_content.add_child(_signup_btn)
-
-	_login_btn = WoodButton.new()
-	_login_btn.text = "Log In"
-	_login_btn.icon_type = "lock"
-	_login_btn.custom_minimum_size = Vector2(360, 58)
-	_login_btn.pressed.connect(_on_login)
-	_content.add_child(_login_btn)
-
-	_exit_btn = WoodButton.new()
-	_exit_btn.text = "Exit"
-	_exit_btn.custom_minimum_size = Vector2(360, 58)
-	_exit_btn.pressed.connect(_on_exit)
-	_content.add_child(_exit_btn)
+func _build_background() -> void:
+	var backdrop := SceneManager.show_journey_background(self,0.0,background_video)
+	background_player = backdrop.player
 
 
-func _play_entrance() -> void:
-	_content.show()
-
-	_banner.modulate.a = 0.0
-	_signup_btn.modulate.a = 0.0
-	_login_btn.modulate.a = 0.0
-	_exit_btn.modulate.a = 0.0
-
-	var tw := create_tween()
-	tw.tween_property(_banner, "modulate:a", 1.0, 0.5).set_ease(Tween.EASE_OUT)
-	tw.tween_interval(0.2)
-	tw.tween_property(_signup_btn, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
-	tw.tween_interval(0.1)
-	tw.tween_property(_login_btn, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
-	tw.tween_interval(0.1)
-	tw.tween_property(_exit_btn, "modulate:a", 1.0, 0.35).set_ease(Tween.EASE_OUT)
+func _label(text: String, font_size: int, color: Color = Style.PAPER) -> Label:
+	var label := Style.label(text, font_size)
+	label.add_theme_font_override("font",Style.FONT if font_size >= 28 else Style.body_font())
+	label.add_theme_color_override("font_color", color)
+	return label
 
 
-func _on_signup() -> void:
-	SceneManager.goto_signup()
+func _build_title() -> void:
+	canvas = Control.new(); canvas.name = "TitleComposition"
+	canvas.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(canvas); canvas.size = DESIGN
+	var logo := TextureRect.new(); logo.texture = LOGO; logo.name = "Wordmark"
+	logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE; logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	logo.position = Vector2(430,125); logo.size = Vector2(1060,340)
+	logo.mouse_filter = Control.MOUSE_FILTER_IGNORE; canvas.add_child(logo)
+	menu = VBoxContainer.new(); menu.name = "JourneyMenu"
+	menu.position = Vector2(710,510); menu.custom_minimum_size.x = 500
+	menu.add_theme_constant_override("separation", -12); canvas.add_child(menu)
+	continue_button = _menu_button("Continue Journey", "")
+	continue_button.name = "ContinueJourney"; menu.add_child(continue_button)
+	continue_button.pressed.connect(_continue_journey)
+	begin_button = _menu_button("Begin Adventure", "")
+	begin_button.name = "BeginAdventure"; menu.add_child(begin_button)
+	begin_button.pressed.connect(_begin_adventure)
+	var trailer := _menu_button("Watch Trailer", "play"); trailer.name = "WatchTrailer"; menu.add_child(trailer)
+	trailer.tooltip_text = "Trailer coming soon" if trailer_video == null else "Watch the Wanderville trailer"
+	trailer.pressed.connect(_watch_trailer)
+	var settings_button := _menu_button("Settings","settings"); settings_button.name = "SettingsButton"
+	menu.add_child(settings_button); settings_button.pressed.connect(_open_settings)
+	_selection_cat = TextureRect.new(); _selection_cat.name = "SelectionCat"
+	_selection_cat.texture = preload("res://Assets/ui/title/selection-cat.res")
+	_selection_cat.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_selection_cat.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_selection_cat.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_selection_cat.size = Vector2(100,76); _selection_cat.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_selection_cat.hide(); canvas.add_child(_selection_cat)
+	for card in menu.get_children():
+		card.focus_entered.connect(_select_card.bind(card))
+	status = _label("", 20); status.name = "TitleStatus"
+	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	status.position = Vector2(650,1000); status.size = Vector2(620,60)
+	status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	status.add_theme_color_override("font_shadow_color",Color("30241e"))
+	status.add_theme_constant_override("shadow_offset_y",2); status.hide(); canvas.add_child(status)
+	var footer := HBoxContainer.new(); footer.name = "Footer"
+	footer.position = Vector2(70, 994); footer.add_theme_constant_override("separation", 16); canvas.add_child(footer)
+	var credits := _quiet_button("Credits"); footer.add_child(credits); credits.pressed.connect(_credits)
+	if not OS.has_feature("web") and not OS.has_feature("mobile"):
+		var exit_button := _quiet_button("Exit"); footer.add_child(exit_button)
+		exit_button.pressed.connect(func(): get_tree().quit())
+	music_button = SoundToggle.new(); music_button.name = "MusicToggle"
+	music_button.theme=Style.theme()
+	for state in ["normal","hover","pressed","focus"]:
+		var sound_backing := StyleBoxTexture.new(); sound_backing.texture = Card.CREAM
+		# Use the painted frame itself, excluding the card's transparent padding.
+		# The square control can then fill its complete visible and clickable area.
+		sound_backing.region_rect = Rect2(37,77,2099,515)
+		sound_backing.modulate_color = Color("a46d46")
+		music_button.add_theme_stylebox_override(state,sound_backing)
+	music_button.position = Vector2(1762, 978); music_button.size = Vector2(86,86)
+	canvas.add_child(music_button); music_button.pressed.connect(_toggle_music); _update_music()
+	var account := Card.new(); account.configure("Log In / Sign Up","",true,22)
+	account.name = "AccountButton"; account.custom_minimum_size = Vector2(300,90)
+	account.position = Vector2(1540,34); account.size = Vector2(300,90)
+	canvas.add_child(account); account.pressed.connect(_open_account)
 
 
-func _on_login() -> void:
+func _menu_button(text: String, icon: String) -> Button:
+	var button := Card.new(); button.configure(text,icon)
+	return button
+
+
+func _quiet_button(text: String) -> Button:
+	var button := Style.button(text); button.custom_minimum_size.y = 48
+	button.add_theme_font_size_override("font_size", 23)
+	var normal := Style.box(Color("241f1880"), 10); normal.set_border_width_all(0)
+	button.add_theme_stylebox_override("normal", normal)
+	button.add_theme_color_override("font_color", Style.PAPER)
+	return button
+
+
+func _build_settings() -> void:
+	settings = preload("res://Scenes/menus/SettingsOverlay.tscn").instantiate()
+	settings.name = "SharedSettings"; add_child(settings)
+	settings.closed.connect(func(): _update_music(); _focus_menu())
+
+
+func _fit() -> void:
+	if canvas == null: return
+	var viewport := get_viewport_rect().size
+	var factor := minf(viewport.x / DESIGN.x, viewport.y / DESIGN.y)
+	canvas.scale = Vector2.ONE * factor; canvas.position = (viewport - DESIGN * factor) / 2.0
+	if settings != null:
+		var center := settings.get_node("Center") as CenterContainer
+		center.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+		var settings_factor := minf(1.0, minf(viewport.x / 560.0, viewport.y / 620.0))
+		center.scale = Vector2.ONE * settings_factor; center.size = viewport / settings_factor
+
+
+func _refresh_continue() -> void:
+	if continue_button != null:
+		continue_button.visible = Global.is_logged_in() and Global.has_completed_setup()
+		if _selected_card == null or not _selected_card.visible:
+			_select_card(continue_button if continue_button.visible else begin_button, false)
+		var cards: Array[Button] = []
+		for card in menu.get_children():
+			if card.visible: cards.append(card)
+		for index in cards.size():
+			cards[index].focus_neighbor_top = cards[posmod(index-1,cards.size())].get_path()
+			cards[index].focus_neighbor_bottom = cards[(index+1)%cards.size()].get_path()
+		_move_selection_cat.call_deferred(false)
+
+func _select_card(card: Button, animate: bool = true) -> void:
+	if not is_instance_valid(card) or not card.visible: return
+	_selected_card = card
+	for button in menu.get_children(): button.set_active(button == card, animate)
+	_move_selection_cat.call_deferred(animate)
+
+func _move_selection_cat(animate: bool) -> void:
+	if not is_inside_tree() or _selected_card == null or not is_instance_valid(_selection_cat): return
+	var target := menu.position + _selected_card.position + Vector2(_selected_card.size.x-116,-38)
+	if _cat_tween != null: _cat_tween.kill()
+	if animate and _selection_cat.visible:
+		_cat_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		_cat_tween.tween_property(_selection_cat,"position",target,0.2)
+	else: _selection_cat.position = target
+	_selection_cat.show()
+
+func _open_account() -> void:
+	if _busy or settings.visible or is_instance_valid(popup): return
 	SceneManager.goto_login()
 
 
-func _on_exit() -> void:
-	get_tree().quit()
+func _focus_menu() -> void:
+	if continue_button.visible: continue_button.grab_focus()
+	else: begin_button.grab_focus()
+
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		if is_instance_valid(popup):
+			_close_popup(); get_viewport().set_input_as_handled()
+		elif settings != null and settings.visible:
+			settings.request_close(); get_viewport().set_input_as_handled()
+	elif event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
+		if _busy or settings.visible or is_instance_valid(popup): return
+		var cards: Array[Button] = []
+		for card in menu.get_children():
+			if card.visible and not card.disabled: cards.append(card)
+		var index := cards.find(_selected_card)
+		index = clampi(index + (1 if event.button_index == MOUSE_BUTTON_WHEEL_DOWN else -1),0,cards.size()-1)
+		cards[index].grab_focus(); _select_card(cards[index]); get_viewport().set_input_as_handled()
+
+
+func _open_settings() -> void:
+	if _busy or is_instance_valid(popup): return
+	settings.show_overlay(); settings.get_node("%CloseButton").grab_focus()
+
+
+func _toggle_music() -> void:
+	AudioManager.set_music_muted(not AudioManager.music_muted); _update_music()
+
+
+func _update_music() -> void:
+	music_button.muted = AudioManager.music_muted
+
+
+func _begin_adventure() -> void:
+	if _busy or settings.visible or is_instance_valid(popup): return
+	if Global.is_logged_in() and not Global.has_completed_setup():
+		SceneManager.goto_post_login()
+		return
+	SceneManager.goto_login()
+
+
+func _continue_journey() -> void:
+	if _busy or settings.visible or is_instance_valid(popup) or not Global.is_logged_in(): return
+	_busy = true; _session = Global.session_version
+	continue_button.disabled = true; begin_button.disabled = true
+	status.text = "Purring..."; status.show()
+	SceneManager.show_loading()
+	await get_tree().process_frame
+	var response: Dictionary = await APIClient.me(Global.token)
+	if not is_inside_tree() or _session != Global.session_version:
+		_end_loading(); return
+	if not bool(response.get("ok", false)):
+		_end_loading()
+		if int(response.get("status_code", 0)) == 401:
+			Global.clear_session(); SceneManager.goto_login()
+		else: status.text = "Could not reach your world. Check your connection and try again."
+		return
+	if not await GameState.load_from_backend():
+		_end_loading(); status.text = "Your save could not be loaded. Please try again."
+		return
+	if _session == Global.session_version: SceneManager.goto_post_login()
+	else: _end_loading()
+
+
+func _end_loading() -> void:
+	SceneManager.hide_loading()
+	_busy = false; continue_button.disabled = false; begin_button.disabled = false; _refresh_continue()
+
+
+func _open_popup(title: String) -> VBoxContainer:
+	_close_popup()
+	popup = Control.new(); popup.name = "TitleDialog"; _full(popup, self)
+	var shade := ColorRect.new(); shade.color = Color("16140fce"); _full(shade, popup)
+	var center := CenterContainer.new(); _full(center, popup)
+	var panel := PanelContainer.new(); panel.theme = Style.theme()
+	panel.add_theme_stylebox_override("panel", Style.box(Style.PAPER, 24)); center.add_child(panel)
+	var column := VBoxContainer.new(); column.add_theme_constant_override("separation", 18); panel.add_child(column)
+	var header := HBoxContainer.new(); column.add_child(header)
+	var heading := _label(title, 30, Style.INK); heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL; header.add_child(heading)
+	var close := Style.button("X"); header.add_child(close); close.pressed.connect(_close_popup)
+	return column
+
+
+func _close_popup() -> void:
+	if is_instance_valid(trailer_player): trailer_player.stop()
+	if is_instance_valid(popup): popup.queue_free()
+	popup = null; trailer_player = null
+	if background_video != null and background_player.paused: background_player.paused = false
+	if begin_button != null: _focus_menu()
+
+
+func _credits() -> void:
+	if _busy or settings.visible or is_instance_valid(popup): return
+	var column := _open_popup("Wanderville")
+	column.add_child(_label("Made with Godot Engine.\nFeaturing Wanderville's world\nand character artwork.", 24, Style.INK))
+
+
+func _watch_trailer() -> void:
+	if _busy or settings.visible or is_instance_valid(popup): return
+	if trailer_video == null:
+		var message := _open_popup("Watch Trailer")
+		message.add_child(_label("The trailer is coming soon.",24,Style.INK))
+		return
+	var column := _open_popup("Wanderville trailer"); background_player.paused = true
+	trailer_player = VideoStreamPlayer.new(); trailer_player.stream = trailer_video
+	trailer_player.expand = true; trailer_player.custom_minimum_size = Vector2(720, 405)
+	column.add_child(trailer_player); trailer_player.play(); trailer_player.finished.connect(_close_popup)

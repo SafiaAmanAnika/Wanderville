@@ -17,6 +17,8 @@ const BG_TEXTURE := preload("res://Assets/background/bg.png")
 var _tween: Tween
 var _saving := false
 var _logout_dialog: Control
+var _music_mute: CheckBox
+var _leave_button: Button
 
 
 func _ready() -> void:
@@ -25,6 +27,14 @@ func _ready() -> void:
 	_apply_panel_style()
 	_music_slider.value = AudioManager.music_volume
 	_sfx_slider.value = AudioManager.sfx_volume
+	_music_mute = CheckBox.new()
+	_music_mute.text = "Mute"
+	_music_mute.button_pressed = AudioManager.music_muted
+	_music_slider.get_parent().add_child(_music_mute)
+	_check_font(_music_mute, WoodPanel.SIZE_FIELD)
+	_music_mute.add_theme_color_override("font_color", preload("res://Scripts/ui/lobby_theme.gd").INK)
+	_music_mute.add_theme_color_override("font_hover_color", preload("res://Scripts/ui/lobby_theme.gd").INK)
+	_music_mute.toggled.connect(AudioManager.set_music_muted)
 	_remember_check.button_pressed = Global.remember_device
 
 	_music_slider.value_changed.connect(_on_music_changed)
@@ -38,10 +48,17 @@ func _ready() -> void:
 	_logout_dialog = preload("res://Scenes/menus/LogoutConfirmationDialog.tscn").instantiate()
 	add_child(_logout_dialog)
 	%LogoutButton.pressed.connect(func() -> void: _logout_dialog.show_dialog())
+	_leave_button = preload("res://Scripts/ui/lobby_theme.gd").button("Leave World")
+	_leave_button.name = "LeaveWorldButton"
+	%CloseButton.get_parent().add_child(_leave_button)
+	%CloseButton.get_parent().move_child(_leave_button, %LogoutButton.get_index())
+	_leave_button.hide()
+	_leave_button.pressed.connect(_on_leave_world)
 
 
 func _apply_panel_style() -> void:
-	_panel.add_theme_stylebox_override("panel", WoodPanel.make_dialog_panel_style())
+	preload("res://Scripts/ui/lobby_theme.gd").apply_tree(_panel)
+	_panel.add_theme_stylebox_override("panel", preload("res://Scripts/ui/lobby_theme.gd").box())
 
 
 func _apply_styles() -> void:
@@ -56,7 +73,7 @@ func _apply_styles() -> void:
 
 
 func _label_font(label: Label, size: int) -> void:
-	label.add_theme_font_override("font", PIXEL_FONT)
+	label.add_theme_font_override("font", preload("res://Scripts/ui/lobby_theme.gd").body_font())
 	label.add_theme_font_size_override("font_size", size)
 	label.add_theme_color_override("font_color", WoodPanel.TEXT_COLOR)
 
@@ -101,12 +118,16 @@ func _make_grabber_icon() -> Texture2D:
 
 
 func _check_font(check: CheckBox, size: int) -> void:
-	check.add_theme_font_override("font", PIXEL_FONT)
+	check.add_theme_font_override("font", preload("res://Scripts/ui/lobby_theme.gd").body_font())
 	check.add_theme_font_size_override("font_size", size)
 	check.add_theme_color_override("font_color", WoodPanel.TEXT_COLOR)
 
 
 func show_overlay() -> void:
+	var scene := get_tree().current_scene
+	_leave_button.visible = scene != null and scene.scene_file_path in [SceneManager.WORLD_SCENE, SceneManager.SOCIAL_LOBBY_SCENE, SceneManager.CHARACTER_CUSTOMIZATION_SCENE, SceneManager.MARKETPLACE_SCENE]
+	_music_slider.set_value_no_signal(AudioManager.music_volume)
+	_music_mute.set_pressed_no_signal(AudioManager.music_muted)
 	%LogoutButton.visible = Global.is_logged_in()
 	%ProfileButton.visible = Global.is_logged_in()
 	%SaveStatus.text = ""
@@ -140,6 +161,17 @@ func _on_close() -> void:
 func _on_profile() -> void:
 	if await request_close():
 		SceneManager.goto_profile()
+
+
+func _on_leave_world() -> void:
+	if _saving or _logout_dialog.visible: return
+	_leave_button.disabled = true
+	if await request_close():
+		var response: Dictionary = await SceneManager.leave_world()
+		if not response.get("ok",false):
+			show_overlay()
+			%SaveStatus.text = APIClient.error_text(response)
+	_leave_button.disabled = false
 
 
 func request_close() -> bool:

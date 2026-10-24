@@ -1,14 +1,16 @@
 extends Control
 
+const AuthShell := preload("res://Scripts/menus/auth_shell.gd")
+
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
 const BG_TEXTURE := preload("res://Assets/background/bg.png")
 
-const TEXT_SUCCESS := Color(0.50, 0.78, 0.45)
-const TEXT_FAIL := Color(0.90, 0.38, 0.30)
+const TEXT_SUCCESS := Color("4d6c43")
+const TEXT_FAIL := Color("994239")
 const TEXT_SECONDARY := Color(0.82, 0.74, 0.58)
-const TEXT_WEAK := Color(0.85, 0.45, 0.30)
-const TEXT_MEDIUM := Color(0.85, 0.75, 0.35)
-const TEXT_STRONG := Color(0.45, 0.75, 0.40)
+const TEXT_WEAK := Color("994239")
+const TEXT_MEDIUM := Color("876120")
+const TEXT_STRONG := Color("4d6c43")
 
 @onready var _bg: TextureRect = %Background
 
@@ -20,20 +22,20 @@ const TEXT_STRONG := Color(0.45, 0.75, 0.40)
 @onready var _confirm: LineEdit = %ConfirmInput
 @onready var _error_label: Label = %ErrorLabel
 @onready var _loading_label: Label = %LoadingLabel
-@onready var _reset_btn: WoodButton = %ResetBtn
-@onready var _back_btn: WoodButton = %BackBtn
+@onready var _reset_btn: Button = %ResetBtn
+@onready var _back_btn: Button = %BackBtn
 
 # Success panel
 @onready var _success_panel: PanelContainer = %SuccessPanel
 @onready var _success_title: Label = %SuccessTitle
 @onready var _success_message: Label = %SuccessMessage
-@onready var _back_to_login_btn: WoodButton = %BackToLoginBtn
+@onready var _back_to_login_btn: Button = %BackToLoginBtn
 
 # Error panel (for invalid token)
 @onready var _error_panel: PanelContainer = %ErrorPanel
 @onready var _error_title: Label = %ErrorTitle
 @onready var _error_message_label: Label = %ErrorMessageLabel
-@onready var _error_login_btn: WoodButton = %ErrorLoginBtn
+@onready var _error_login_btn: Button = %ErrorLoginBtn
 
 var _token: String = ""
 var _re_upper: RegEx
@@ -74,6 +76,7 @@ func _ready() -> void:
 	_success_panel.hide()
 	_error_panel.hide()
 	_form_panel.show()
+	AuthShell.install(self)
 
 	_token = Global.pending_reset_token
 	Global.pending_reset_token = ""
@@ -83,7 +86,8 @@ func _ready() -> void:
 		return
 
 	_password.grab_focus()
-	WoodPanel.play_entrance(_form_panel)
+	AuthShell.reveal(_form_panel)
+
 
 
 func _apply_strength_style() -> void:
@@ -157,6 +161,7 @@ func _set_busy(busy: bool) -> void:
 
 
 func _on_reset() -> void:
+	if _reset_btn.disabled: return
 	var p := _password.text
 	var c := _confirm.text
 
@@ -164,26 +169,26 @@ func _on_reset() -> void:
 
 	if p == "":
 		_error_label.text = "Please enter a new password."
-		WoodPanel.apply_error_field_style(_password)
+		AuthShell.field_error(_password)
 		_password.grab_focus()
 		return
 
 	if p.length() < 8:
 		_error_label.text = "Password must be at least 8 characters."
-		WoodPanel.apply_error_field_style(_password)
+		AuthShell.field_error(_password)
 		_password.text = ""
 		_password.grab_focus()
 		return
 
 	if p != c:
 		_error_label.text = "Passwords do not match."
-		WoodPanel.apply_error_field_style(_confirm)
+		AuthShell.field_error(_confirm)
 		_confirm.text = ""
 		_confirm.grab_focus()
 		return
 
-	WoodPanel.clear_error_field_style(_password)
-	WoodPanel.clear_error_field_style(_confirm)
+	AuthShell.clear_field(_password)
+	AuthShell.clear_field(_confirm)
 	_set_busy(true)
 	_loading_label.text = "Resetting password..."
 
@@ -208,7 +213,7 @@ func _on_reset() -> void:
 	_success_panel.show()
 	_success_title.text = "Password Reset"
 	_success_message.text = "Your password has been reset successfully.\nPlease log in with your new password."
-	WoodPanel.play_entrance(_success_panel)
+	AuthShell.reveal(_success_panel)
 
 
 func _show_error_panel(title: String, message: String) -> void:
@@ -217,7 +222,7 @@ func _show_error_panel(title: String, message: String) -> void:
 	_error_panel.show()
 	_error_title.text = title
 	_error_message_label.text = message
-	WoodPanel.play_entrance(_error_panel)
+	AuthShell.reveal(_error_panel)
 
 
 func _on_back() -> void:

@@ -24,6 +24,7 @@ var _button_group := ButtonGroup.new()
 func _ready() -> void:
 	_bg.texture = BG_TEXTURE
 	WoodPanel.apply_panel_title_style(_title)
+	preload("res://Scripts/ui/loading_progress.gd").attach(_status_label)
 	_save_name_button.pressed.connect(_on_save_name)
 	_back_button.pressed.connect(_on_back)
 	_button_group.pressed.connect(_on_character_pressed)

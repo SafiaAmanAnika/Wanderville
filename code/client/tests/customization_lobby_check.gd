@@ -1,6 +1,6 @@
 extends SceneTree
 ## Headless validation for the customization room: scene structure, traced
-## collisions, interaction zones, and the Create New / exit routes.
+## collisions, interaction zones, and the shared editor / exit routes.
 
 const ROOM := "res://Scenes/CustomizationLobby.tscn"
 const SELECT := "res://Scenes/menus/CharacterSelectScreen.tscn"
@@ -26,7 +26,7 @@ func _run() -> void:
 	await _check_legacy_player()
 	await _check_walkability()
 	await _check_in_room_panels()
-	await _check_create_new_and_exit()
+	await _check_shared_editor_and_exit()
 	print("CUSTOMIZATION_LOBBY_CHECK failures=", failures)
 	quit(failures)
 
@@ -177,14 +177,14 @@ func _check_in_room_panels() -> void:
 	interactions._activate(&"character")
 	_expect(interactions.modal == "character", "character customization opens selection")
 	_expect(root.get_node("GameState").menu_open, "character selection gates movement")
-	_expect(interactions._axis_title.text == "Characters", "station opens the original six character choices")
+	_expect(interactions._axis_title.text == "Choose one of six characters", "station opens the original six character choices")
 	interactions.close()
 	_expect(interactions.modal == "", "character panel closes")
 	_expect(not root.get_node("GameState").menu_open, "close restores movement")
 
 	interactions._activate(&"mirror")
 	_expect(interactions.modal == "mirror", "mirror opens current character")
-	_expect(not interactions._creator.options.visible and not interactions._creator._save.visible, "mirror is read-only")
+	_expect(not interactions._creator.options.visible and not interactions._creator._save.visible, "mirror is a read-only preview")
 	interactions.close()
 
 	# Live appearance changes apply to Global and emit signals.
@@ -232,30 +232,27 @@ func _check_in_room_panels() -> void:
 	await process_frame
 
 
-func _check_create_new_and_exit() -> void:
+func _check_shared_editor_and_exit() -> void:
 	root.get_node("Global").selected_character = "girl_b"
 	var select_screen: Control = (load(SELECT) as PackedScene).instantiate()
 	root.add_child(select_screen)
 	await process_frame
 	await process_frame
 
-	var grid: GridContainer = select_screen.get_node("%CharacterGrid")
-	var create_card: Button = grid.get_child(grid.get_child_count() - 1)
-	_expect(create_card.has_method("get_character_id") and create_card.get_character_id() == "",
-			"last card on character select is Create New")
-	create_card.button_pressed = true
-	select_screen._on_confirm()
+	var editor: Node = select_screen.editor
+	_expect(editor.mode == "first_time" and editor.options.get_child_count() == 6, "first-time selection uses the shared six-preset editor")
+	editor._choose("boy_a")
+	_expect(root.get_node("Global").selected_character == "girl_b", "first-time preview does not save a draft")
+	select_screen.queue_free()
+	await process_frame
+	root.get_node("SceneManager").goto_character_customization(false)
 	await create_timer(1.0).timeout
-
 	var room := current_scene
-	_expect(room != null and room.scene_file_path == ROOM, "Create New opens the customization room")
+	_expect(room != null and room.scene_file_path == ROOM, "existing customization destination remains accessible")
 	if room != null:
 		var player := room.get_node_or_null("LobbyPlayer") as CharacterBody2D
-		_expect(player != null and player.scene_file_path.ends_with("charagirlB.tscn"),
-				"the selected character was spawned")
-
+		_expect(player != null and player.scene_file_path.ends_with("charagirlB.tscn"), "the saved character was spawned")
 		if player != null:
 			room.get_node("CustomizationInteractions")._activate(&"leave")
 			await create_timer(1.0).timeout
-			_expect(current_scene != null and current_scene.scene_file_path == SELECT,
-					"exit returns to character select")
+			_expect(current_scene != null and current_scene.scene_file_path == SELECT, "standalone customization returns to selection")

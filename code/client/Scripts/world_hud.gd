@@ -6,24 +6,48 @@ var _notice_unread := 0
 var _request_count := 0
 var _toast_version := 0
 var _error_version := 0
+const Style := preload("res://Scripts/ui/lobby_theme.gd")
+var proximity_social: Node
 
 
 func _ready() -> void:
-	var proximity_social := preload("res://Scripts/social/proximity_social.gd").new()
+	proximity_social = preload("res://Scripts/social/proximity_social.gd").new()
 	add_child(proximity_social)
+	var counters := %Balance.get_parent()
+	var backing := PanelContainer.new()
+	backing.add_theme_stylebox_override("panel", Style.hud_box())
+	var row := counters.get_parent()
+	var index := counters.get_index()
+	row.add_child(backing)
+	counters.reparent(backing)
+	row.move_child(backing, index)
+	%SocialButton.theme = Style.theme()
+	%SettingsButton.theme = Style.theme()
+	_build_quick_actions()
 	for label in [%Balance, %ProgressText, %WorldLabel, %LevelToastText]:
 		WoodPanel.apply_status_label(label)
+		label.add_theme_font_override("font", Style.body_font())
 	%Balance.add_theme_font_size_override("font_size", 18)
 	%ProgressText.add_theme_font_size_override("font_size", 16)
+	for label in [%Balance, %ProgressText, %WorldLabel]: label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	var track := Style.box(Color("4b3930"), 0); track.set_border_width_all(0)
+	var fill := Style.box(Style.SAGE, 0); fill.set_border_width_all(0)
+	%XP.add_theme_stylebox_override("background", track)
+	%XP.add_theme_stylebox_override("fill", fill)
 	%WorldLabel.add_theme_font_size_override("font_size", 16)
 	%ToastClose.pressed.connect(func() -> void: %LevelToast.hide())
-	%SocialButton.pressed.connect(func() -> void: SceneManager.goto_social_lobby())
+	%SocialButton.pressed.connect(func():
+		if GameState.menu_open: return
+		if active == "settings" and not await %Settings.request_close(): return
+		SceneManager.goto_social_lobby()
+	)
 	%SocialButton.draw.connect(_draw_badge)
 	%SettingsButton.pressed.connect(func() -> void: switch_panel("settings"))
 	%SettingsButton.draw.connect(func() -> void: _draw_settings_icon(%SettingsButton))
 	%Settings.closed.connect(func() -> void:
 		active = ""
 		GameState.social_open = false
+		proximity_social._panel.show()
 	)
 	GameState.economy_updated.connect(func(_data: Dictionary) -> void: _counters())
 	GameState.experience_updated.connect(func(_data: Dictionary) -> void: _counters())
@@ -53,13 +77,15 @@ func _ready() -> void:
 
 
 func _world_label() -> void:
-	var state := "%s · %s" % [
-		str(GameState.world_state.get("current_season", "")).capitalize(),
-		str(GameState.world_state.get("weather", "")).capitalize(),
-	]
+	var parts := PackedStringArray()
+	for key in ["current_season", "weather"]:
+		var value := str(GameState.world_state.get(key, ""))
+		if not value.is_empty(): parts.append(value.capitalize())
+	var state := " · ".join(parts)
 	# While visiting, the world state on screen belongs to the host, so the label
 	# has to say so or the player reads another player's farm as their own.
 	%WorldLabel.text = ("Visiting · read-only · " + state) if GameState.read_only else state
+	%WorldLabel.visible = not %WorldLabel.text.is_empty()
 
 
 func _visit_ended(message: String) -> void:
@@ -81,6 +107,8 @@ func switch_panel(kind: String) -> void:
 	active = next
 	GameState.social_open = active != ""
 	if active == "settings":
+		proximity_social._dismiss()
+		proximity_social._panel.hide()
 		%Settings.show_overlay()
 	_switching = false
 
@@ -95,7 +123,7 @@ func _counters() -> void:
 	var xp: Dictionary = GameState.experience
 	var level := int(xp.get("level", 1))
 	var maximum := bool(xp.get("max_level", false))
-	%Balance.text = "Aura %d\nLevel %d — %s" % [int(GameState.economy.get("aura_balance", 0)), level, xp.get("title", "Villager")]
+	%Balance.text = "Level %d · %s\nAura %d" % [level, xp.get("title", "Villager"), int(GameState.economy.get("aura_balance", 0))]
 	%ProgressText.text = "Max level" if maximum else "%d / %d XP toward Level %d" % [int(xp.get("current_xp", 0)), int(xp.get("xp_span", 0)), level + 1]
 	%XP.max_value = 1.0 if maximum else maxf(1.0, float(xp.get("xp_span", 1)))
 	%XP.value = 1.0 if maximum else float(xp.get("current_xp", 0))
@@ -169,6 +197,7 @@ func _clear_account() -> void:
 	%SocialButton.queue_redraw()
 	active = ""
 	%Settings.hide()
+	proximity_social._panel.show()
 	GameState.social_open = false
 	_world_label()
 
@@ -190,3 +219,19 @@ func _draw_settings_icon(button: Button) -> void:
 	for i in 8:
 		var direction := Vector2.RIGHT.rotated(i * TAU / 8)
 		button.draw_line(c + direction * 9, c + direction * 14, ink, 3)
+
+func _build_quick_actions() -> void:
+	var actions := HBoxContainer.new()
+	actions.name = "QuickActions"
+	%Settings.get_parent().add_child(actions)
+	actions.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+	actions.offset_left = -128
+	actions.offset_top = -70
+	actions.offset_right = -24
+	actions.offset_bottom = -24
+	var voice_button := Style.button("Voice")
+	voice_button.name = "VoiceButton"
+	actions.add_child(voice_button)
+	voice_button.pressed.connect(func():
+		if active.is_empty() and not GameState.menu_open: proximity_social.open_voice()
+	)

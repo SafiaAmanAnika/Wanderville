@@ -20,6 +20,7 @@ var close_button: Button
 var _saved_menu := false
 var _leaving := false
 var _session := 0
+var _card: PanelContainer
 
 
 func _ready() -> void:
@@ -27,6 +28,11 @@ func _ready() -> void:
 	get_parent().player_spawned.connect(_on_player_spawned)
 	for zone in zones.get_children():
 		zone.activated.connect(_activate)
+	for entry in [["FriendsBoard", "Friends"], ["RequestsBoard", "Requests"], ["Reception", "Reception"]]:
+		var caption := Style.label(entry[1], 20)
+		caption.position = Vector2(-75,-115); caption.size = Vector2(150,34); caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		caption.add_theme_stylebox_override("normal", Style.hud_box()); caption.add_theme_color_override("font_color",Style.PAPER)
+		caption.mouse_filter = Control.MOUSE_FILTER_IGNORE; zones.get_node(entry[0]).add_child(caption)
 	_build_ui()
 
 
@@ -63,9 +69,10 @@ func _build_ui() -> void:
 	overlay.add_child(center)
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var card := PanelContainer.new()
+	_card = card
 	card.theme = Style.theme()
 	card.add_theme_stylebox_override("panel", Style.box(Style.PAPER, 18))
-	card.custom_minimum_size.x = 940
+	card.custom_minimum_size = Vector2(1100, 720)
 	center.add_child(card)
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 14)
@@ -75,10 +82,13 @@ func _build_ui() -> void:
 	var title_bar := PanelContainer.new()
 	title_bar.add_theme_stylebox_override("panel", Style.box(Style.MAROON, 10))
 	column.add_child(title_bar)
-	title_bar.add_child(heading)
+	var title_row := HBoxContainer.new(); title_bar.add_child(title_row)
+	heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL; title_row.add_child(heading)
+	var dismiss := Style.button("X"); title_row.add_child(dismiss); dismiss.pressed.connect(close)
 	heading.add_theme_font_size_override("font_size", 28)
 	heading.add_theme_color_override("font_color", Color("fff0d9"))
 	dialogue = Label.new()
+	dialogue.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	dialogue.custom_minimum_size.x = 680
 	WoodPanel.apply_status_label(dialogue)
 	dialogue.add_theme_color_override("font_color", Style.INK)
@@ -86,6 +96,7 @@ func _build_ui() -> void:
 	social = SOCIAL_SCENE.instantiate()
 	social.set_script(SOCIAL_ADAPTER)
 	column.add_child(social)
+	social.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var buttons := HBoxContainer.new()
 	buttons.alignment = BoxContainer.ALIGNMENT_CENTER
 	buttons.add_theme_constant_override("separation", 16)
@@ -97,6 +108,17 @@ func _build_ui() -> void:
 	buttons.add_child(close_button)
 	close_button.pressed.connect(close)
 	overlay.hide()
+	get_viewport().size_changed.connect(_fit_window)
+	_fit_window.call_deferred()
+
+func _fit_window() -> void:
+	if _card == null: return
+	var viewport := get_viewport_rect().size
+	var factor := minf(1.0, minf((viewport.x - 40) / 1100.0, (viewport.y - 40) / 720.0))
+	# Scale the full modal together so column widths and focus targets agree.
+	var center := _card.get_parent() as CenterContainer
+	center.scale = Vector2.ONE * factor
+	center.size = viewport / factor
 
 
 func _process(_delta: float) -> void:
@@ -212,6 +234,19 @@ func _open_section(section: String) -> void:
 	dialogue.visible = section == "search"
 	primary.hide()
 	social.show_section(section)
+	_fit_window.call_deferred()
+
+func _unhandled_input(event: InputEvent) -> void:
+	if modal != "" or GameState.menu_open or GameState.social_open or _leaving: return
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		var chosen: Area2D
+		var closest := 160.0
+		for zone in zones.get_children():
+			var distance: float = zone.global_position.distance_to(get_global_mouse_position())
+			if zone.available_to(player) and distance < closest: closest = distance; chosen = zone
+		if chosen != null:
+			chosen.activate(player)
+			get_viewport().set_input_as_handled()
 
 
 func close() -> void:

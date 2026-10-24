@@ -48,6 +48,32 @@ def test_duplicate_username_email_and_weak_password(client, account):
     assert result.status_code == 422
 
 
+def test_login_accepts_email_without_changing_account_checks(client, account, db):
+    user = account(verify=False)
+    request = {"username": "  PLAYER_ONE@EXAMPLE.COM  ", "password": user.payload["password"]}
+    assert client.post("/auth/login", json=request).json()["error"] == "EMAIL_NOT_VERIFIED"
+    client.get("/auth/verify-email", params={"token": user.verify_token})
+    response = client.post("/auth/login", json=request)
+    assert response.status_code == 200
+    assert response.json()["data"]["player"]["id"] == user.id
+    for index in range(settings.max_login_attempts):
+        identifier = user.payload["email"] if index % 2 else user.payload["username"]
+        assert client.post("/auth/login", json={"username": identifier, "password": "wrong"}).status_code == 401
+    assert client.post("/auth/login", json=request).json()["error"] == "ACCOUNT_internal"
+    missing = client.post("/auth/login", json={**request, "username": "missing@example.com"})
+    assert missing.status_code == 401 and missing.json()["error"] == "INVALID_CREDENTIALS"
+
+
+def test_email_login_allows_long_addresses_and_retains_username_limit(client, account, db):
+    user = account()
+    player = db.get(Player, user.id)
+    player.email = "long-address-" + "a" * 50 + "@example.com"
+    db.commit()
+    response = client.post("/auth/login", json={"username": player.email, "password": user.payload["password"]})
+    assert response.status_code == 200
+    assert client.post("/auth/login", json={"username": "a" * 33, "password": "x"}).status_code == 422
+
+
 def test_unverified_inactive_lockout_and_recovery(client, account, db):
     unverified = account(verify=False)
     request = {"username": "player_one", "password": unverified.payload["password"]}

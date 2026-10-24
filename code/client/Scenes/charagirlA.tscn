@@ -1472,7 +1472,7 @@ animations = [{
 }]
 
 [node name="charagirlA" type="CharacterBody2D" unique_id=320058811]
-scale = Vector2(0.3, 0.31)
+scale = Vector2(1.18, 1.18)
 script = ExtResource("chara_player_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1752885070]

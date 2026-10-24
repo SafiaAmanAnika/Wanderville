@@ -27,8 +27,18 @@ var _arranging := false
 var _grab_position := Vector2.ZERO
 var _grab_dir := "front"
 var _grab_size := 1.0
+var _session := -1
+var _scope := ""
+var _visiting := false
+var _panels: Array[Node] = []
 
 func _ready() -> void:
+	_session = Global.session_version
+	_scope = GameState.house_context_key()
+	_visiting = GameState.read_only
+	Global.session_changed.connect(_sync_context)
+	GameState.session_updated.connect(func(_data: Dictionary): _sync_context())
+	GameState.read_only_changed.connect(func(_value: bool): _sync_context())
 	GameState.load_house()
 	if GameState.house["stage"] != "none":
 		_spawn_exterior.call_deferred()
@@ -41,6 +51,46 @@ func _ready() -> void:
 	_fade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(_fade)
+
+
+func _can_edit() -> bool:
+	return not GameState.read_only and _session == Global.session_version and _scope == GameState.house_context_key()
+
+
+func _sync_context() -> void:
+	if _session==Global.session_version and _scope==GameState.house_context_key() and _visiting==GameState.read_only: return
+	HousePrompt.hide_text()
+	# Discard scene-local references before loading another account/world's state.
+	for panel in _panels:
+		if is_instance_valid(panel):
+			for event in ["picked","chosen","previewed","confirmed","custom_action","closed","visibility_changed"]:
+				if not panel.has_signal(event): continue
+				for connection in panel.get_signal_connection_list(event): panel.disconnect(event,connection.callable)
+			panel.queue_free()
+	if not _panels.is_empty(): GameState.menu_open=false
+	_panels.clear()
+	if _ghost: _ghost.queue_free()
+	if _item_ghost: _item_ghost.queue_free()
+	_ghost=null; _ghost_area=null; _item_ghost=null; _arranging=false
+	if inside and is_instance_valid(exterior):
+		var player := get_tree().get_first_node_in_group("player") as Node2D
+		if player!=null: player.global_position=exterior.door_position()
+	inside=false; APIClient.realtime.pause_movement=false
+	if is_instance_valid(exterior): exterior.queue_free()
+	if is_instance_valid(interior): interior.queue_free()
+	exterior=null; interior=null
+	_session=Global.session_version; _scope=GameState.house_context_key()
+	_visiting=GameState.read_only
+	GameState.load_house()
+	if _can_edit() and GameState.house.stage!="none": _spawn_exterior.call_deferred()
+
+
+func _exit_tree() -> void:
+	if _can_edit():
+		_cancel_furniture()
+		GameState.save_house()
+	APIClient.realtime.pause_movement=false
+	HousePrompt.hide_text()
 
 
 
@@ -62,6 +112,7 @@ func _transition(action: Callable) -> void:
 # ─── Input: J (house menu) and F (furniture) ─────────────────────────
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not _can_edit(): return
 	if _ghost:                      # placing the house
 		_placement_input(event)
 		return
@@ -85,6 +136,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 # J was pressed. Always puts a message on screen, so it can never fail in silence.
 func _on_house_key() -> void:
+	if not _can_edit(): return
 	if GameState.menu_open:
 		HousePrompt.flash("J blocked: a menu is already open.", 3.0)
 		return
@@ -100,6 +152,7 @@ func _on_house_key() -> void:
 		HousePrompt.flash("Go to the building site to buy a house.", 3.0)
 		return
 	var menu = MENU_SCRIPT.new()
+	_panels.append(menu)
 	menu.picked.connect(_start_placement)
 	get_tree().current_scene.add_child(menu)
 	HousePrompt.flash("House catalog opened.", 2.0)
@@ -116,6 +169,7 @@ func _process(_delta: float) -> void:
 # ─── Placing the outer layer ─────────────────────────────────────────
 
 func _start_placement(id: int) -> void:
+	if not _can_edit(): return
 	_placing_id = id
 	_ghost = Sprite2D.new()
 	_ghost.texture = HouseCatalog.exterior_texture(id)
@@ -145,6 +199,7 @@ func _can_place() -> bool:
 
 
 func _placement_input(event: InputEvent) -> void:
+	if not _can_edit(): return
 	if not (event is InputEventMouseButton and event.pressed):
 		return
 	get_viewport().set_input_as_handled()
@@ -176,6 +231,7 @@ func _end_placement() -> void:
 
 
 func _spawn_exterior() -> void:
+	if not _can_edit() or GameState.house["stage"]=="none" or is_instance_valid(exterior): return
 	exterior = EXTERIOR_SCENE.instantiate()
 	get_parent().add_child(exterior)
 	exterior.global_position = GameState.house["position"]
@@ -186,6 +242,7 @@ func _spawn_exterior() -> void:
 # ─── H at the door: walls + going inside ─────────────────────────────
 
 func _on_exterior_clicked() -> void:
+	if not _can_edit(): return
 	match GameState.house["stage"]:
 		"outer":
 			if not GameState.spend_wood(HouseCatalog.WALLS_COST):
@@ -199,6 +256,7 @@ func _on_exterior_clicked() -> void:
 
 
 func _enter_house() -> void:
+	if not _can_edit(): return
 	if interior == null:
 		interior = HouseCatalog.interior_scene(GameState.house["id"]).instantiate()
 		get_parent().add_child(interior)
@@ -220,19 +278,23 @@ func _enter_house() -> void:
 # ─── Floor ───────────────────────────────────────────────────────────
 
 func _offer_floor() -> void:
+	if not _can_edit(): return
 	if GameState.wood() < HouseCatalog.FLOOR_COST:
 		HousePrompt.flash("Get %d wood to build the floor." % HouseCatalog.FLOOR_COST, 3.5)
 		return
 	var picker = FLOOR_SCRIPT.new()
-	picker.previewed.connect(func(f: String) -> void: interior.show_floor(f))   # live preview
+	_panels.append(picker)
+	picker.previewed.connect(func(f: String) -> void:
+		if _can_edit() and is_instance_valid(interior): interior.show_floor(f))   # live preview
 	picker.chosen.connect(_on_floor_chosen)
 	picker.closed.connect(func() -> void:
-		if GameState.house["stage"] != "done":
+		if _can_edit() and is_instance_valid(interior) and GameState.house["stage"] != "done":
 			interior.show_floor(""))          # "Later" → remove the preview again
 	get_tree().current_scene.add_child(picker)
 
 
 func _on_floor_chosen(floor_name: String) -> void:
+	if not _can_edit(): return
 	if not GameState.spend_wood(HouseCatalog.FLOOR_COST):
 		interior.show_floor("")
 		HousePrompt.flash("Get %d wood to build the floor." % HouseCatalog.FLOOR_COST)
@@ -247,16 +309,19 @@ func _on_floor_chosen(floor_name: String) -> void:
 # ─── Furniture ───────────────────────────────────────────────────────
 
 func _open_furniture_menu() -> void:
+	if not _can_edit(): return
 	if GameState.house["stage"] != "done":
 		HousePrompt.flash("Build the floor first.")
 		return
 	_arranging = false
 	_highlight_furniture(false)
 	var menu = FURNITURE_MENU.new()
+	_panels.append(menu)
 	menu.picked.connect(_start_furniture)
 	get_tree().current_scene.add_child(menu)
 
 func _start_furniture(item_name: String) -> void:
+	if not _can_edit(): return
 	_item_name = item_name
 	_item_ghost = FurnitureCatalog.make(item_name)
 	if _item_ghost == null:
@@ -268,6 +333,7 @@ func _start_furniture(item_name: String) -> void:
 
 
 func _furniture_input(event: InputEvent) -> void:
+	if not _can_edit(): return
 	if event is InputEventKey and event.pressed and event.keycode == KEY_R:   # rotate
 		get_viewport().set_input_as_handled()
 		_item_ghost.rotate_next()
@@ -327,6 +393,7 @@ func _cancel_furniture() -> void:
 	
 # S inside the house: put the whole room into rearrange mode, and back out again
 func _toggle_arrange() -> void:
+	if not _can_edit(): return
 	if GameState.house["stage"] != "done":
 		HousePrompt.flash("Build the floor first.")
 		return
@@ -349,6 +416,7 @@ func _highlight_furniture(on: bool) -> void:
 
 # picks up whatever the mouse is pointing at
 func _grab_under_mouse() -> void:
+	if not _can_edit(): return
 	var piece := _furniture_under_mouse()
 	if piece == null:
 		HousePrompt.flash("Nothing there - click directly on a piece.", 2.0)
@@ -384,6 +452,7 @@ func _forget_furniture(id: String, pos: Vector2) -> void:
 
 # I / O while carrying: bigger or smaller, but never into a wall
 func _resize_item(step: float) -> void:
+	if not _can_edit(): return
 	var before: float = _item_ghost.size_factor
 	_item_ghost.set_size_factor(before + step)
 	if _hits_wall(_item_ghost):
@@ -457,8 +526,10 @@ func _sell_price() -> int:
 
 # J with a house: Sell / Destroy / Cancel
 func _house_options() -> void:
+	if not _can_edit(): return
 	GameState.menu_open = true   # player stops moving while the box is open
 	var box := ConfirmationDialog.new()
+	_panels.append(box)
 	box.title = "Your house"
 	box.dialog_text = "What do you want to do with your house?\n\n" \
 		+ "Sell: removes the house and everything inside, you get %d Aura.\n" % _sell_price() \
@@ -479,6 +550,7 @@ func _house_options() -> void:
 
 
 func _sell_house() -> void:
+	if not _can_edit(): return
 	var price := _sell_price()
 	_clear_house()
 	GameState.change_aura_offline(price)   # TEMP: offline Aura (no server sell for houses yet)
@@ -486,12 +558,14 @@ func _sell_house() -> void:
 
 
 func _destroy_house() -> void:
+	if not _can_edit(): return
 	_clear_house()
 	HousePrompt.flash("House destroyed. Press J to build a new one.", 3.0)
 
 
 # removes the house on the map, the inside and everything in it, and clears the save
 func _clear_house() -> void:
+	if not _can_edit(): return
 	_arranging = false              # the carried piece goes with the house
 	_cancel_furniture()
 	if exterior:

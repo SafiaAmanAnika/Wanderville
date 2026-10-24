@@ -38,8 +38,19 @@ class SignupRequest(BaseModel):
 
 
 class LoginRequest(BaseModel):
-    username: str = Field(min_length=3, max_length=32)
+    # Retain the wire field for existing clients while accepting email too.
+    username: str = Field(min_length=3, max_length=255)
     password: str = Field(min_length=1, max_length=128)
+
+    @field_validator("username")
+    @classmethod
+    def login_identifier(cls, value):
+        value = value.strip()
+        if "@" in value:
+            return value.lower()
+        if not 3 <= len(value) <= 32:
+            raise ValueError("Username must be 3-32 characters")
+        return value
 
 
 class RefreshRequest(BaseModel):

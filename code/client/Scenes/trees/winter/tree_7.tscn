@@ -5,4 +5,5 @@
 [node name="Tree7" type="Node2D" unique_id=1133927138]
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=2116770535]
+scale = Vector2(0.25, 0.25)
 texture = ExtResource("1_urs5i")

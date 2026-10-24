@@ -5,4 +5,7 @@
 [node name="Tree0" type="Node2D" unique_id=1798523018]
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1521287300]
+z_index = 1
+y_sort_enabled = true
+scale = Vector2(0.25, 0.25)
 texture = ExtResource("1_isdyi")

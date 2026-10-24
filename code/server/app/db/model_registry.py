@@ -20,6 +20,7 @@ from app.modules.economy.models import (
     PlayerLevelReward,
 )
 from app.modules.events.models import EventClaim, WorldEvent
+from app.modules.market.models import PlayerShop, ShopListing, ShopSale
 from app.modules.farming.models import FarmTile
 from app.modules.fishing.models import FishingSession, FishingSpot, GroundDrop
 from app.modules.housing.models import Decoration, HouseTier, PlayerHouse
@@ -108,6 +109,10 @@ __all__ = [
     "GoalProgress",
     "LoginStreak",
     "PlayerStatistic",
+    #market 
+    "PlayerShop",
+    "ShopListing",
+    "ShopSale",
     # realtime
     "MessageRecipient",
     "NearbyMessage",

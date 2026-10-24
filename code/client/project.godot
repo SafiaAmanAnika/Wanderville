@@ -84,7 +84,6 @@ rearrange={
 
 wanderville_api_url="https://wanderville-api.onrender.com"
 
-
 [rendering]
 
 2d/snap/snap_2d_transforms_to_pixel=true

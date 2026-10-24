@@ -31,6 +31,7 @@ from app.modules.farming.router import router as farming_router
 from app.modules.fishing.router import router as fishing_router
 from app.modules.housing.router import router as housing_router
 from app.modules.inventory.router import router as inventory_router
+from app.modules.market.router import router as market_router
 from app.modules.notifications.router import router as notifications_router
 from app.modules.pets.router import router as pets_router
 from app.modules.progression.router import router as progression_router
@@ -80,6 +81,9 @@ ROUTERS = (
     events_router,
     # composite
     state_router,
+    #market
+    shop_router,
+    market_router, 
 )
 
 # Bounds how much of a database error may reach the logs.

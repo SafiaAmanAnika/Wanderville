@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://bnurtgwdje5ys"]
+
+[ext_resource type="Script" uid="uid://x24i1yocdmth" path="res://Scripts/marketplace/marketplace.gd" id="1_q1wnj"]
+[ext_resource type="Texture2D" uid="uid://kuf2ivcw52ka" path="res://Assets/marketplace/background.png" id="2_6x6ek"]
+
+[node name="Marketplace" type="Node2D" unique_id=1396148604]
+script = ExtResource("1_q1wnj")
+
+[node name="Background" type="Node2D" parent="." unique_id=1136400249]
+
+[node name="Sprite2D" type="Sprite2D" parent="Background" unique_id=479704640]
+position = Vector2(-18, 358)
+texture = ExtResource("2_6x6ek")
+
+[node name="Shops" type="Node2D" parent="." unique_id=875845806]
+
+[node name="shop#1" type="Sprite2D" parent="Shops" unique_id=291127022]
+
+[node name="shop#2" type="Sprite2D" parent="Shops" unique_id=300860255]
+
+[node name="shop#3" type="Sprite2D" parent="Shops" unique_id=1824763431]
+
+[node name="shop#4" type="Sprite2D" parent="Shops" unique_id=1012737287]
+
+[node name="shop#5" type="Sprite2D" parent="Shops" unique_id=499450215]
+
+[node name="shop#6" type="Sprite2D" parent="Shops" unique_id=623973203]
+
+[node name="shop#7" type="Sprite2D" parent="Shops" unique_id=525877978]
+
+[node name="shop#8" type="Sprite2D" parent="Shops" unique_id=2005079134]
+
+[node name="shop#9" type="Sprite2D" parent="Shops" unique_id=1727800975]
+
+[node name="shop#10" type="Sprite2D" parent="Shops" unique_id=271553785]
+
+[node name="shop#11" type="Sprite2D" parent="Shops" unique_id=1691813287]
+
+[node name="shop#12" type="Sprite2D" parent="Shops" unique_id=150315236]
+
+[node name="supershop" type="Sprite2D" parent="Shops" unique_id=1371393273]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=951462885]
+limit_top = 220
+limit_bottom = 540
+
+[node name="PlayerSpawn" type="Marker2D" parent="." unique_id=1398342076]
+position = Vector2(0, 485)

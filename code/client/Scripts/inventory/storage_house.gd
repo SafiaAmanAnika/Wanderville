@@ -5,18 +5,15 @@ extends Node2D
 const BUILDING := "cds"
 const MENU_SCRIPT := preload("res://Scripts/inventory/storage_menu.gd")
 
-var _sprite: Sprite2D
+var _poly: CollisionPolygon2D
 var _menu: Node
 var _hovering := false
 
 
 func _ready() -> void:
-	var building := get_parent().find_child(BUILDING, true, false)
-	if building:
-		_sprite = building.get_node_or_null("Sprite2D") as Sprite2D
-	if _sprite == null:
-		push_warning("storage_house: couldn't find the '%s' building sprite" % BUILDING)
-
+	_poly = get_parent().get_node_or_null("Map/CollisionLayer/Collision_cds") as CollisionPolygon2D
+	if _poly == null:
+		push_warning("storage_house: couldn't find Collision_cds")
 
 # hand cursor while the mouse is over the building
 func _process(_delta: float) -> void:
@@ -34,10 +31,9 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _mouse_over_building() -> bool:
-	if _sprite == null or _menu != null or GameState.menu_open or GameState.social_open:
+	if _poly == null or _menu != null or GameState.menu_open or GameState.social_open:
 		return false
-	return _sprite.get_rect().has_point(_sprite.to_local(get_global_mouse_position()))
-
+	return Geometry2D.is_point_in_polygon(_poly.to_local(get_global_mouse_position()), _poly.polygon)
 
 func _open_menu() -> void:
 	Input.set_default_cursor_shape(Input.CURSOR_ARROW)

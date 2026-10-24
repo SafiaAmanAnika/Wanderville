@@ -425,6 +425,12 @@ func spend_wood(amount: int) -> bool:
 		#remove
 	return remove_item_offline("wood", amount)   # TODO online: ask the server instead
 
+# put wood back after a purchase the server refused
+func refund_wood(amount: int) -> void:
+	if Global.is_logged_in():
+		_test_wood += amount
+	else:
+		add_item_offline("wood", "Wood", amount, "rare_materials", "material")
 
 func save_house() -> void:
 	var data := house.duplicate()

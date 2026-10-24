@@ -42,8 +42,7 @@ func _ready() -> void:
 	_fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(_fade)
 
-	if GameState.house["stage"] == "none":
-		HousePrompt.flash("Press J to buy a house", 4.0)
+
 
 
 # fade to black → do something (teleport) → fade back in; player can't move meanwhile
@@ -96,6 +95,10 @@ func _on_house_key() -> void:
 		HousePrompt.flash("You already own a house (stage: %s)." % GameState.house["stage"], 3.0)
 		_house_options()
 		return
+	var zone := get_tree().get_first_node_in_group("house_area")
+	if zone and not zone.player_inside:
+		HousePrompt.flash("Go to the building site to buy a house.", 3.0)
+		return
 	var menu = MENU_SCRIPT.new()
 	menu.picked.connect(_start_placement)
 	get_tree().current_scene.add_child(menu)
@@ -132,6 +135,9 @@ func _start_placement(id: int) -> void:
 
 
 func _can_place() -> bool:
+	var zone := get_tree().get_first_node_in_group("house_area")
+	if zone and not zone.contains(_ghost.global_position):
+		return false
 	for body in _ghost_area.get_overlapping_bodies():
 		if not body.is_in_group("player"):
 			return false   # touching a building, lake edge, border…

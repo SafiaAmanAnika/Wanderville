@@ -20,7 +20,6 @@ const FARM_Z = 1          # every farm tile (soil and crop) is drawn on this z_i
 const CURSOR_Z = 50
 
 @export var tile_visual_size: Vector2 = Vector2(50, 50)
-@export var tile_scale: float = 1.0   # 1.0 = biggest squares that fit the zone; >1 spills past it
 @export var reach_tiles: float = 2.5   # how many tiles away from the player you can click
 @export var tile_gap: float = 2.0      # empty pixels between neighbouring farm tiles
 
@@ -50,20 +49,16 @@ func _get_tile_visual_size() -> Vector2:
 	return tile_visual_size
 
 func _resolve_farm_area() -> void:
-	# The farm is centred inside the FarmZone rectangle. Resize that shape in the
-	# editor and the grid follows - nothing here needs touching.
+	# Every part of the FarmZone rectangle is farmable. Keep the server's grid
+	# coordinates while dividing the full field into cells on each axis.
 	var shape := get_node_or_null("../Map/FarmField/FarmZone/CollisionShape2D") as CollisionShape2D
 	if shape == null or not (shape.shape is RectangleShape2D):
 		push_warning("FarmZone rectangle missing - farm area not placed")
 		return
 	var zone_px: Vector2 = (shape.shape as RectangleShape2D).size * shape.global_scale
-	# Square tiles: take whichever axis is tighter, so the grid fits inside the
-	# zone instead of stretching to it. Keeps the soil texture undistorted.
-	var t: float = minf(zone_px.x / FARM_GRID.x, zone_px.y / FARM_GRID.y) * tile_scale
-	tile_visual_size = Vector2(t, t)
-	var grid_px := Vector2(FARM_GRID) * t
-	FARM_AREA_MIN = shape.global_position - grid_px * 0.5
-	FARM_AREA_MAX = FARM_AREA_MIN + grid_px
+	tile_visual_size = zone_px / Vector2(FARM_GRID)
+	FARM_AREA_MIN = shape.global_position - zone_px * 0.5
+	FARM_AREA_MAX = FARM_AREA_MIN + zone_px
 	_diag("farm area %s .. %s  tile=%s" % [FARM_AREA_MIN, FARM_AREA_MAX, tile_visual_size])
 
 
@@ -501,9 +496,7 @@ func _get_tile_pos(global_pos: Vector2) -> Vector2i:
 
 
 func _is_in_farm_area(tile_pos: Vector2i) -> bool:
-	var center = _tile_to_world(tile_pos)
-	return center.x >= FARM_AREA_MIN.x and center.x <= FARM_AREA_MAX.x \
-		and center.y >= FARM_AREA_MIN.y and center.y <= FARM_AREA_MAX.y
+	return Rect2i(Vector2i.ZERO, FARM_GRID).has_point(tile_pos)
 
 
 func _tile_to_world(tile_pos: Vector2i) -> Vector2:

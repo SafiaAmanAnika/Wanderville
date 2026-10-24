@@ -42,6 +42,10 @@ func run() -> void:
 		shape.shape.size * shape.global_scale)
 	check(farm.farm_layer != null, "farm layer resolves in the active map")
 	check(area.encloses(Rect2(farm.FARM_AREA_MIN, farm.FARM_AREA_MAX-farm.FARM_AREA_MIN)), "all farm cells fit the interaction zone")
+	check(Rect2(farm.FARM_AREA_MIN, farm.FARM_AREA_MAX-farm.FARM_AREA_MIN).is_equal_approx(area), "the whole grass rectangle is farmable with no side strips")
+	for edge in [area.position+Vector2.ONE, area.end-Vector2.ONE,
+		Vector2(area.position.x+1,area.end.y-1), Vector2(area.end.x-1,area.position.y+1)]:
+		check(farm._is_in_farm_area(farm._get_tile_pos(edge)), "field edge %s maps to a valid farm cell" % edge)
 	player.global_position = farm._tile_to_world(Vector2i(8,10))
 	var camera: Camera2D = player.get_node("Camera2D")
 	camera.position_smoothing_enabled = false

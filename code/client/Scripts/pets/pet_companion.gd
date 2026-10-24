@@ -13,7 +13,7 @@ const HOME_ROAM_RADIUS := 480.0
 const WALK_SPEED := 125.0
 const FOLLOW_SPEED := 340.0
 const REST_AFTER := 32.0
-const VISUAL_SCALE := 0.95
+const VISUAL_SCALE := 1.15
 var species := "cat"
 var owner_body: CharacterBody2D
 var navigation: Node

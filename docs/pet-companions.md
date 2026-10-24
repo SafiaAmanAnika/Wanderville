@@ -20,11 +20,11 @@ states: relaxing, following, exploring and sleeping.
 1. **Following:** it notices its owner within 750 pixels. Once noticed, it keeps
    tracking until the owner passes 900 pixels. These different enter/leave
    distances prevent flickering between behaviors at the boundary. It begins
-   following beyond 180 pixels and settles within 110 pixels. Following moves
-   at up to 340 pixels/second, slightly faster than the owner's normal walk,
+   following beyond 220 pixels and settles within 155 pixels. Following moves
+   at up to 230 pixels/second, slower than the owner's normal walk,
    and recalculates the route at most once every 0.55 seconds.
 2. **Exploring nearby:** after a random 1.5–3.5 second pause, a relaxed pet
-   chooses somewhere within 280 pixels of its owner. It walks there at 125
+   chooses somewhere within 280 pixels of its owner. It walks there at 80
    pixels/second. This gives it room to sniff around instead of standing on
    the owner's feet.
 3. **Exploring independently:** when the owner leaves detection range, the
@@ -39,6 +39,9 @@ states: relaxing, following, exploring and sleeping.
    the collision body enabled and position fixed.
 
 ## Roaming heuristic
+
+The implementation is `_choose_roam()` in
+`code/client/Scripts/pets/pet_companion.gd`.
 
 Each decision samples up to 18 candidate destinations around the current
 anchor (owner or familiar spot). Candidates must fit the leash radius, lie
@@ -62,6 +65,20 @@ The score is:
 
 This is purposeful wandering, not a random direction every frame. The selected
 destination remains fixed while the pet walks its route.
+
+Destinations also exclude the owner's personal space. During movement, a
+route crossing the owner's body steers around a 115-pixel circle centered on
+the character's ground body (the character origin is above it). If the owner
+steps into that circle, even an idle/sleeping pet yields. This steering is
+needed because the owner moves and is not baked into the navigation grid.
+
+## Species sizes and pace
+
+Sizes are relative to the enlarged cat: dog 112%, fox 104%, red panda 108%,
+rabbit 82%, and duck 65%. Walking and sleeping use the same species multiplier;
+ground collision circles scale with it. Duck movement is 80% of the base pace,
+red panda 90%, rabbit 105%, and the others 100%. World depth sorting replaces
+the old forced foreground layer so pets can pass behind characters.
 
 ## Paths and collisions
 

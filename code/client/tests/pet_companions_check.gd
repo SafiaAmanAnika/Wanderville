@@ -43,8 +43,28 @@ func run() -> void:
 		for direction in pet.DIRECTIONS:
 			check(pet.sprite.sprite_frames.get_frame_count("walk_"+str(direction))==8,code+" walk "+str(direction)+" has eight frames")
 		check(pet.sleep_texture!=null,"generated sleep pose is loaded for "+code)
+		check(is_equal_approx(pet.visual_scale,pet.VISUAL_SCALE*float(pet.SPECIES_SIZE[code])),code+" uses its species size")
+		check(is_equal_approx((pet.get_node("FootCollision").shape as CircleShape2D).radius,18.0*float(pet.SPECIES_SIZE[code])),code+" collider fits its size")
 	await shot("pet-selector")
 	pets.close_menu(); await pets.choose("cat")
+	check(float(pet.SPECIES_SIZE.duck)<float(pet.SPECIES_SIZE.cat),"duck is smaller than cat")
+	check(pet.WALK_SPEED==80 and pet.FOLLOW_SPEED==230,"roaming and following use slower speeds")
+	check(pet.collision_mask & 2 != 0 and pet.z_index==0 and pets.y_sort_enabled,"pets detect multiplayer bodies and use world depth sorting")
+	player.global_position=Vector2(3300,-550)
+	pet.global_position=pet._owner_center()+Vector2(-190,0)
+	pet._set_state(pet.State.ROAM)
+	pet.path=PackedVector2Array([pet._owner_center()+Vector2(190,0)])
+	var steering: Vector2=pet._avoid_owner(Vector2.RIGHT)
+	check(absf(steering.y)>0.5,"a route across the owner steers around their body")
+	var minimum_space := INF
+	for frame in range(120):
+		await physics_frame
+		minimum_space=minf(minimum_space,pet.global_position.distance_to(pet._owner_center()))
+	check(minimum_space>=pet.OWNER_SPACE-3,"crossing route respects owner personal space over real physics frames")
+	pet.global_position=pet._owner_center()+Vector2(-70,0)
+	pet._set_state(pet.State.IDLE)
+	await create_timer(0.8).timeout
+	check(pet.global_position.distance_to(pet._owner_center())>=pet.OWNER_SPACE-3,"idle pet yields when the owner enters its space")
 	check(not root.get_node("GameState").menu_open,"closing pet menu restores gameplay")
 	player.global_position=Vector2(3300,-550); pet.global_position=Vector2(2850,-550)
 	pet.home=pet.global_position; pet._set_state(pet.State.IDLE); pet.repath_time=0

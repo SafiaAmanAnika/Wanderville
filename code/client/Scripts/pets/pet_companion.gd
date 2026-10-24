@@ -6,14 +6,18 @@ const CODES := ["cat","dog","rabbit","fox","duck","red_panda"]
 const MANIFEST := preload("res://Assets/Pets/pets_manifest.json")
 const DETECT_RANGE := 750.0
 const LOSE_RANGE := 900.0
-const FOLLOW_START := 180.0
-const FOLLOW_STOP := 110.0
+const FOLLOW_START := 220.0
+const FOLLOW_STOP := 155.0
+const OWNER_SPACE := 115.0
 const NEAR_ROAM_RADIUS := 280.0
 const HOME_ROAM_RADIUS := 480.0
-const WALK_SPEED := 125.0
-const FOLLOW_SPEED := 340.0
+const WALK_SPEED := 80.0
+const FOLLOW_SPEED := 230.0
 const REST_AFTER := 32.0
 const VISUAL_SCALE := 1.15
+const SPECIES_SIZE := {"cat":1.0,"dog":1.12,"rabbit":0.82,"fox":1.04,"duck":0.65,"red_panda":1.08}
+const SPECIES_PACE := {"cat":1.0,"dog":1.0,"rabbit":1.05,"fox":1.0,"duck":0.8,"red_panda":0.9}
+var visual_scale := VISUAL_SCALE
 var species := "cat"
 var owner_body: CharacterBody2D
 var navigation: Node
@@ -45,8 +49,7 @@ func _ready() -> void:
 	rng.randomize()
 	motion_mode=CharacterBody2D.MOTION_MODE_FLOATING
 	collision_layer=4
-	collision_mask=1|4
-	z_index=2
+	collision_mask=1|2|4
 	add_to_group("pet_companions")
 	var collider := CollisionShape2D.new()
 	collider.name="FootCollision"
@@ -76,7 +79,9 @@ static func frames_for(code: String) -> SpriteFrames:
 
 func set_species(code: String) -> void:
 	species=code if code in CODES else "cat"
+	visual_scale=VISUAL_SCALE*float(SPECIES_SIZE[species])
 	if sprite==null: return
+	(get_node("FootCollision").shape as CircleShape2D).radius=18.0*float(SPECIES_SIZE[species])
 	sprite.sprite_frames=frames_for(species)
 	sleep_texture=null
 	var sleep_path := "res://Assets/Pets/generated/sleep_atlas.png"
@@ -92,7 +97,7 @@ func set_species(code: String) -> void:
 		if FileAccess.file_exists(metadata_path):
 			var metadata: Dictionary=JSON.parse_string(FileAccess.get_file_as_string(metadata_path))
 			var bounds: Array=metadata[species]
-			sleep_scale=VISUAL_SCALE*100.0/float(bounds[2]-bounds[0])
+			sleep_scale=visual_scale*100.0/float(bounds[2]-bounds[0])
 			sleep_offset=Vector2(cell.x*0.5-(float(bounds[0])+float(bounds[2]))*0.5,cell.y*0.5-float(bounds[3]))*sleep_scale
 		if not sprite.sprite_frames.has_animation("sleep"):
 			sprite.sprite_frames.add_animation("sleep")
@@ -108,6 +113,14 @@ func _physics_process(delta: float) -> void:
 	var previously_visible := owner_visible
 	owner_visible=distance <= (LOSE_RANGE if owner_visible else DETECT_RANGE)
 	if previously_visible and not owner_visible: home=global_position
+	if global_position.distance_to(_owner_center())<OWNER_SPACE-2:
+		if state==State.SLEEP: active_time=0
+		_set_state(State.IDLE)
+		var before_yield := global_position
+		velocity=(_owner_center().direction_to(global_position) if global_position!=_owner_center() else Vector2.RIGHT)*WALK_SPEED*float(SPECIES_PACE[species])
+		move_and_slide()
+		_animate(global_position-before_yield)
+		return
 	if state==State.SLEEP:
 		velocity=Vector2.ZERO
 		_animate(Vector2.ZERO); queue_redraw()
@@ -162,6 +175,7 @@ func _choose_roam() -> void:
 		var angle := rng.randf_range(0,TAU)
 		var candidate: Vector2 = navigation.nearest(anchor+Vector2.RIGHT.rotated(angle)*rng.randf_range(90,leash))
 		if not candidate.is_finite() or candidate.distance_to(anchor)>leash: continue
+		if candidate.distance_to(_owner_center())<OWNER_SPACE+35: continue
 		var step := candidate-global_position
 		if step.length()<65: continue
 		var novelty := 1.0/(1.0+float(visited.get(navigation.cell_of(candidate),0)))
@@ -186,9 +200,9 @@ func _choose_roam() -> void:
 func _move_path(delta: float) -> void:
 	while not path.is_empty() and global_position.distance_to(path[0])<18: path.remove_at(0)
 	if path.is_empty(): velocity=Vector2.ZERO; return
-	var direction := global_position.direction_to(path[0])
+	var direction := _avoid_owner(global_position.direction_to(path[0]))
 	previous_direction=direction
-	var speed := FOLLOW_SPEED if state==State.FOLLOW else WALK_SPEED
+	var speed := (FOLLOW_SPEED if state==State.FOLLOW else WALK_SPEED)*float(SPECIES_PACE[species])
 	velocity=direction*minf(speed,global_position.distance_to(path[0])/delta)
 	move_and_slide()
 	collision_events+=get_slide_collision_count()
@@ -215,12 +229,30 @@ func _animate(movement: Vector2) -> void:
 		sprite.scale=Vector2.ONE*sleep_scale*breath
 		sprite.position=sleep_offset*breath
 	else:
-		sprite.scale=Vector2.ONE*VISUAL_SCALE; sprite.position=Vector2(0,-46*VISUAL_SCALE)
+		sprite.scale=Vector2.ONE*visual_scale; sprite.position=Vector2(0,-46*visual_scale)
 		var animation := "walk_"+facing
 		if sprite.animation!=animation: sprite.play(animation)
 		if movement.length()>0.05:
 			if not sprite.is_playing(): sprite.play()
 		else: sprite.stop(); sprite.frame=0
+
+func _owner_center() -> Vector2:
+	# The character origin is above its ground collision polygon, not at its feet.
+	return owner_body.global_position+Vector2(0,55)*owner_body.scale.y
+
+func _avoid_owner(direction: Vector2) -> Vector2:
+	var away := global_position-_owner_center()
+	var distance := away.length()
+	var outward := away.normalized() if distance>0.1 else Vector2.RIGHT
+	if distance<OWNER_SPACE:
+		return outward # Also yields when the player walks into the companion.
+	var closest := Geometry2D.get_closest_point_to_segment(_owner_center(),global_position,path[0])
+	if closest.distance_to(_owner_center())>=OWNER_SPACE or direction.dot(outward)>=0:
+		return direction
+	# Follow the near side of a personal-space circle until the route clears it.
+	var tangent := outward.orthogonal()
+	if tangent.dot(direction)<0: tangent=-tangent
+	return (tangent+outward*0.25).normalized()
 
 func _draw() -> void:
 	# Tiny animated sleep bubbles remain code-drawn so they stay sharp in-game.

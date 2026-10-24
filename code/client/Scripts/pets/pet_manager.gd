@@ -16,6 +16,7 @@ var _loaded := false
 var _notice_until := 0
 
 func _ready() -> void:
+	y_sort_enabled=true
 	_version=Global.session_version
 	navigation=Navigation.new(); navigation.name="PetNavigation"; add_child(navigation)
 	_build_menu()

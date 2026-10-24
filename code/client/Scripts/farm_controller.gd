@@ -8,7 +8,7 @@ extends Node2D
 #   E on a tile      -> pick the whole tile up (soil + crop)
 #   E again          -> put it down on the hovered free spot (or back where it was)
 
-@onready var farm_layer: TileMapLayer = get_node_or_null("../Map/FarmLayer")
+@onready var farm_layer: TileMapLayer = get_node_or_null("../Map/FarmField/FarmLayer")
 @onready var seed_picker = $SeedPickerMenu
 
 # Server pins the grid at 17 x 21 (farming/service.py: 0 <= x <= 16, 0 <= y <= 20)
@@ -107,10 +107,9 @@ func _ready():
 		print("FarmLayer tile_set exists: ", farm_layer.tile_set != null)
 	seed_picker.seed_selected.connect(_on_seed_selected)
 	_diag("seed_picker connected")
-	_make_cursor()
 	GameState.farm_updated.connect(_apply_server_plots)
-	_make_cursor()   # the hover outline; _process() uses it every frame
 	_resolve_farm_area()
+	_make_cursor()   # Size the outline after resolving the active map's grid.
 	_connect_farm_zone()
 	_apply_server_plots(GameState.farm_plots)
 	_diag("apply_server_plots returned")
@@ -158,9 +157,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if _dragging:
 			return  # carrying: only E puts the tile down
-		if _is_in_farm_area(_hover_tile()):
+		var tile := _get_tile_pos(get_canvas_transform().affine_inverse() * event.position)
+		if _is_in_farm_area(tile):
 			get_viewport().set_input_as_handled()
-			_on_click(_hover_tile())
+			_on_click(tile)
 	elif event.is_action_pressed("interact"):
 		if _dragging:
 			get_viewport().set_input_as_handled()
@@ -326,7 +326,9 @@ func _on_seed_selected(seed_name: String) -> void:
 	if Global.is_logged_in():
 		await _server_action("plant", _pending_tile_pos, _pending_key, seed_name)
 		return
-	GameState.seed_inventory[seed_name] = int(GameState.seed_inventory.get(seed_name, 0)) - 1
+	if not GameState.remove_item_offline(seed_name + "_seed", 1):
+		_toast("No seeds available", _pending_tile_pos)
+		return
 	GameState.seed_changed.emit(seed_name)
 	active_crops[_pending_key] = {"type": seed_name, "stage": 0, "watered": false}
 	_spawn_crop_visual(_pending_tile_pos, seed_name)

@@ -51,7 +51,7 @@ position = Vector2(8585, -3777)
 show_behind_parent = true
 script = ExtResource("6_o06y3")
 tile_visual_size = Vector2(130, 130)
-tile_scale = 1.5
+tile_scale = 1.0
 
 [node name="SeedPickerMenu" parent="FarmController" unique_id=391319660 instance=ExtResource("7_5v1tr")]
 

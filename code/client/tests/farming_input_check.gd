@@ -65,6 +65,8 @@ func run() -> void:
 	await click_tile(farm, Vector2i(9,10))
 	var soil: Sprite2D = farm.get_node("Soil_9,10")
 	check(soil.texture.get_image().get_used_rect().intersects(Rect2i(soil.region_rect)), "soil crop contains visible artwork")
+	var soil_size: Vector2=soil.region_rect.size*soil.scale
+	check(is_equal_approx(soil_size.x,soil_size.y),"soil stays square across rectangular full-field grid cells")
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png("res://../../test-output/farming-input/rendered-till.png")
@@ -105,7 +107,8 @@ func run() -> void:
 		check(farm._player_in_zone, "outer farm cell %s is reachable inside the zone" % tile)
 		await click_tile(farm, tile)
 		check(farm.tilled_tiles.has(farm._key(tile)), "viewport click tills outer farm cell %s" % tile)
-	check(farm.get_node("HoverCursor").points[1].x*2 == farm.tile_visual_size.x, "hover outline matches the resolved tile size")
+	var outline: PackedVector2Array=farm.get_node("HoverCursor").points
+	check(is_equal_approx(outline[1].x*2,farm._drawn_size().x+farm.tile_gap) and is_equal_approx(outline[1].x,-outline[1].y), "hover outline stays square and matches the soil footprint")
 	# Offline fallback must never invent planting eligibility for an account.
 	session.token = "farming-input-fixture"
 	session.player_id = 99999

@@ -92,9 +92,10 @@ func _on_zone_exited(body: Node2D) -> void:
 		_player_in_zone = false
 		_cursor.visible = false
 
-# size a tile is DRAWN at (slightly smaller than the grid cell, so a gap shows)
+# Keep artwork square even when the full-field interaction cells are rectangular.
 func _drawn_size() -> Vector2:
-	return tile_visual_size - Vector2(tile_gap, tile_gap)
+	var side := maxf(1.0,minf(tile_visual_size.x,tile_visual_size.y)-tile_gap)
+	return Vector2(side,side)
 
 
 func _ready():
@@ -218,7 +219,7 @@ func _make_cursor() -> void:
 	_cursor.width = 3.0
 	_cursor.closed = true
 	_cursor.z_index = CURSOR_Z
-	var h := tile_visual_size / 2.0
+	var h := (_drawn_size()+Vector2.ONE*tile_gap) / 2.0
 	_cursor.points = PackedVector2Array([Vector2(-h.x, -h.y), Vector2(h.x, -h.y), Vector2(h.x, h.y), Vector2(-h.x, h.y)])
 	_cursor.visible = false
 	add_child(_cursor)

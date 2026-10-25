@@ -43,6 +43,8 @@ var sleep_scale := 0.2375
 var sleep_offset := Vector2(0,-44)
 var _last_owner_position := Vector2.ZERO
 var _time := 0.0
+var _yielding := false
+var _yield_direction := Vector2.ZERO
 static var _frames: Dictionary = {}
 
 func _ready() -> void:
@@ -113,14 +115,28 @@ func _physics_process(delta: float) -> void:
 	var previously_visible := owner_visible
 	owner_visible=distance <= (LOSE_RANGE if owner_visible else DETECT_RANGE)
 	if previously_visible and not owner_visible: home=global_position
-	if global_position.distance_to(_owner_center())<OWNER_SPACE-2:
+	var owner_clearance := global_position.distance_to(_owner_center())
+	if owner_clearance<OWNER_SPACE-2 or (_yielding and owner_clearance<OWNER_SPACE+20):
 		if state==State.SLEEP: active_time=0
-		_set_state(State.IDLE)
+		if not _yielding:
+			_set_state(State.IDLE)
+			_yield_direction=Vector2.ZERO
+		_yielding=true
 		var before_yield := global_position
-		velocity=(_owner_center().direction_to(global_position) if global_position!=_owner_center() else Vector2.RIGHT)*WALK_SPEED*float(SPECIES_PACE[species])
+		var outward := _owner_center().direction_to(global_position)
+		if outward==Vector2.ZERO: outward=Vector2.RIGHT
+		# Keep a chosen escape direction until clear; do not flip every frame at a wall.
+		if _yield_direction==Vector2.ZERO or test_move(global_transform,_yield_direction*8):
+			_yield_direction=Vector2.ZERO
+			for turn in [0.0,PI/4,-PI/4,PI/2,-PI/2]:
+				var candidate := outward.rotated(turn)
+				if not test_move(global_transform,candidate*12):
+					_yield_direction=candidate; break
+		velocity=_yield_direction*WALK_SPEED*float(SPECIES_PACE[species])
 		move_and_slide()
 		_animate(global_position-before_yield)
 		return
+	_yielding=false
 	if state==State.SLEEP:
 		velocity=Vector2.ZERO
 		_animate(Vector2.ZERO); queue_redraw()

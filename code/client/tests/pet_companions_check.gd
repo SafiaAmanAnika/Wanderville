@@ -2,6 +2,10 @@ extends SceneTree
 ## Real world, physics, A* navigation, species selector and generated sleep art.
 var failures := 0
 var output := "res://../../test-output/pets"
+class CollisionBridge:
+	extends Node
+	var current_phase := "admitted"
+	func phase() -> String: return current_phase
 
 func _initialize() -> void: call_deferred("run")
 func check(value: bool,message: String) -> void:
@@ -57,6 +61,12 @@ func run() -> void:
 	var player_hit: KinematicCollision2D=player.move_and_collide(Vector2(400,0))
 	check(player_hit!=null and player_hit.get_collider()==pet,"player movement physically collides with the pet instead of passing through")
 	pet.set_physics_process(true)
+	var collision_bridge := CollisionBridge.new(); collision_bridge.name="EnetGameplayBridge"; world.add_child(collision_bridge)
+	pets._update_owner_collision()
+	check(not player.get_collision_mask_value(3),"server-controlled movement avoids local pet collision correction jitter")
+	collision_bridge.current_phase="legacy"; pets._update_owner_collision()
+	check(player.get_collision_mask_value(3),"local movement retains solid pet collision after network fallback")
+	world.remove_child(collision_bridge); collision_bridge.free()
 	player.global_position=Vector2(3300,-550)
 	pet.global_position=pet._owner_center()+Vector2(-190,0)
 	pet._set_state(pet.State.ROAM)
@@ -72,6 +82,8 @@ func run() -> void:
 	pet._set_state(pet.State.IDLE)
 	await create_timer(0.8).timeout
 	check(pet.global_position.distance_to(pet._owner_center())>=pet.OWNER_SPACE-3,"idle pet yields when the owner enters its space")
+	await create_timer(0.4).timeout
+	check(not pet._yielding and pet.velocity==Vector2.ZERO,"yielding clears a wider buffer and settles without repeated idle resets")
 	check(not root.get_node("GameState").menu_open,"closing pet menu restores gameplay")
 	player.global_position=Vector2(3300,-550); pet.global_position=Vector2(2850,-550)
 	pet.home=pet.global_position; pet._set_state(pet.State.IDLE); pet.repath_time=0

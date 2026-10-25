@@ -32,7 +32,7 @@ func _start() -> void:
 	if player==null: return
 	_collision_owner=player
 	_owner_had_pet_mask=player.get_collision_mask_value(3)
-	player.set_collision_mask_value(3,true)
+	_update_owner_collision()
 	var position := Vector2.INF
 	for i in range(16):
 		var candidate: Vector2=navigation.nearest(player.global_position+Vector2(145,0).rotated(i*TAU/16))
@@ -112,12 +112,20 @@ func _input(event: InputEvent) -> void:
 func _process(_delta: float) -> void:
 	if _version!=Global.session_version:
 		close_menu(); queue_free(); return
+	_update_owner_collision()
 	if not panel.visible or _saving or not is_instance_valid(companion): return
 	if Time.get_ticks_msec()<_notice_until: return
 	status.text="%s · %s" % [NAMES[companion.species], ["Relaxing","Following you","Exploring","Sleeping"][companion.state]]
 
 func _notice(message: String) -> void:
 	status.text=message; _notice_until=Time.get_ticks_msec()+5000
+
+func _update_owner_collision() -> void:
+	if not is_instance_valid(_collision_owner): return
+	var bridge := get_parent().get_node_or_null("EnetGameplayBridge")
+	# Local-only obstacles cannot block an authoritative server's player body.
+	var network_owned: bool = bridge!=null and bridge.phase()!="legacy" and bridge.phase()!="off"
+	_collision_owner.set_collision_mask_value(3,not network_owned)
 
 func _exit_tree() -> void:
 	if is_instance_valid(_collision_owner):

@@ -74,7 +74,11 @@ destination remains fixed while the pet walks its route.
 Destinations also exclude the owner's personal space. During movement, a
 route crossing the owner's body steers around a 115-pixel circle centered on
 the character's ground body (the character origin is above it). If the owner
-steps into that circle, even an idle/sleeping pet yields. This steering is
+steps into that circle, even an idle/sleeping pet yields. Yielding continues
+until a wider 135-pixel buffer is clear, keeping its escape heading instead
+of resetting its state each frame. It checks short physical sweeps and can
+choose a clear sideways escape when a wall blocks the outward direction.
+This steering is
 needed because the owner moves and is not baked into the navigation grid.
 
 ## Species sizes and pace
@@ -101,9 +105,11 @@ Pathfinding requests do not set position. A `CharacterBody2D` with an
 movement. It collides with the world and pet collision layer, including while
 asleep. The manager enables pet layer 3 in the owner's collision mask while
 the companion is present, restoring its previous value on exit. Both bodies
-therefore detect one another, rather than only the pet detecting the player.
-This is local physics; server-authoritative multiplayer correction still has
-no replicated pet body and can override a local player collision.
+therefore detect one another during local movement. While the ENet bridge
+owns movement, the player does not collide with local-only pets: the server
+has no matching pet body, so local blocking would cause correction jitter.
+Pets still collide with the world/player and yield to the owner in that mode.
+Solid two-way collision resumes when movement falls back to the local controller.
 
 New furniture may not exist in the exported map. On a collision with a small
 static obstacle, the exact colliding shape's bounds, expanded for body clearance,

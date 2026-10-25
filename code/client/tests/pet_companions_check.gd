@@ -93,6 +93,11 @@ func run() -> void:
 	await create_timer(0.25).timeout
 	check(pet.global_position.distance_to(resting_position)<0.1,"sleeping pet stays grounded and stationary")
 	check(pet.collision_layer!=0 and not pet.get_node("FootCollision").disabled,"sleep keeps its physics body active")
+	pet.sleep_time=pet.state_time+0.05
+	await create_timer(0.2).timeout
+	check(not pet.owner_visible and pet.state==pet.State.ROAM and not pet.path.is_empty(),"pet wakes and resumes exploring while its owner is still away")
+	check(pet.active_time<1,"waking gives the pet a fresh active period before another nap")
+	pet._set_state(pet.State.SLEEP); pet.sleep_time=20
 	player.global_position=pet.global_position+Vector2(300,0); camera.reset_smoothing()
 	await create_timer(0.2).timeout
 	check(pet.state==pet.State.FOLLOW,"sleeping pet wakes when its nearby owner leaves")

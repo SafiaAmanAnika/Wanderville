@@ -32,11 +32,13 @@ states: relaxing, following, exploring and sleeping.
    within 480 pixels of that spot rather than chasing an unseen owner forever.
    Returning within detection range makes the owner available for following
    again. There is no catch-up teleport through walls.
-4. **Sleeping:** after 32 seconds of active time, it takes a nap at the next
+4. **Sleeping:** after 60 seconds of active time, it takes a nap at the next
    idle pause. It will not stop in the middle of following to sleep. Naps last
-   a random 16–26 seconds; an owner leaving its nearby following distance can
+   a random 8–14 seconds; an owner leaving its nearby following distance can
    wake it earlier. On waking, its active-time counter resets. Sleeping keeps
-   the collision body enabled and position fixed.
+   the collision body enabled and position fixed. When its owner is away,
+   waking immediately starts a new roaming route around its familiar spot.
+   Owner absence does not select sleep: it keeps exploring between short naps.
 
 ## Roaming heuristic
 

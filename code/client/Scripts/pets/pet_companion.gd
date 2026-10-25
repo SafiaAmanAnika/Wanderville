@@ -13,7 +13,7 @@ const NEAR_ROAM_RADIUS := 280.0
 const HOME_ROAM_RADIUS := 480.0
 const WALK_SPEED := 80.0
 const FOLLOW_SPEED := 230.0
-const REST_AFTER := 32.0
+const REST_AFTER := 60.0
 const VISUAL_SCALE := 1.15
 const SPECIES_SIZE := {"cat":1.0,"dog":1.12,"rabbit":0.82,"fox":1.04,"duck":0.65,"red_panda":1.08}
 const SPECIES_PACE := {"cat":1.0,"dog":1.0,"rabbit":1.05,"fox":1.0,"duck":0.8,"red_panda":0.9}
@@ -126,6 +126,7 @@ func _physics_process(delta: float) -> void:
 		_animate(Vector2.ZERO); queue_redraw()
 		if state_time>=sleep_time or (owner_visible and (distance>FOLLOW_START or owner_moved)):
 			active_time=0; _set_state(State.IDLE)
+			if not owner_visible: _choose_roam()
 		return
 	active_time+=delta
 	if owner_visible and (distance>FOLLOW_START or (state==State.FOLLOW and distance>FOLLOW_STOP)):
@@ -140,7 +141,7 @@ func _physics_process(delta: float) -> void:
 		velocity=Vector2.ZERO
 		if state_time>=pause_time:
 			if active_time>=REST_AFTER:
-				sleep_time=rng.randf_range(16,26); _set_state(State.SLEEP)
+				sleep_time=rng.randf_range(8,14); _set_state(State.SLEEP)
 			else:
 				_choose_roam()
 	if state==State.ROAM and path.is_empty(): _set_state(State.IDLE)

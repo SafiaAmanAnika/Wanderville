@@ -8,7 +8,7 @@ extends Node2D
 #   E on a tile      -> pick the whole tile up (soil + crop)
 #   E again          -> put it down on the hovered free spot (or back where it was)
 
-@onready var farm_layer: TileMapLayer = get_node_or_null("../Map/FarmField/FarmLayer")
+@onready var farm_layer: TileMapLayer = $"../Map/FarmLayer"
 @onready var seed_picker = $SeedPickerMenu
 
 # Server pins the grid at 17 x 21 (farming/service.py: 0 <= x <= 16, 0 <= y <= 20)
@@ -20,6 +20,7 @@ const FARM_Z = 1          # every farm tile (soil and crop) is drawn on this z_i
 const CURSOR_Z = 50
 
 @export var tile_visual_size: Vector2 = Vector2(50, 50)
+@export var tile_scale: float = 1.0   # 1.0 = biggest squares that fit the zone; >1 spills past it
 @export var reach_tiles: float = 2.5   # how many tiles away from the player you can click
 @export var tile_gap: float = 2.0      # empty pixels between neighbouring farm tiles
 
@@ -42,23 +43,25 @@ var _drag_crop: Dictionary = {}     # empty = carrying bare soil
 var _cursor: Line2D
 
 var _player_in_zone := false
-var _mouse_position := Vector2.ZERO
-var _mouse_seen := false
 
 func _get_tile_visual_size() -> Vector2:
 	return tile_visual_size
 
 func _resolve_farm_area() -> void:
-	# Every part of the FarmZone rectangle is farmable. Keep the server's grid
-	# coordinates while dividing the full field into cells on each axis.
+	# The farm is centred inside the FarmZone rectangle. Resize that shape in the
+	# editor and the grid follows - nothing here needs touching.
 	var shape := get_node_or_null("../Map/FarmField/FarmZone/CollisionShape2D") as CollisionShape2D
 	if shape == null or not (shape.shape is RectangleShape2D):
 		push_warning("FarmZone rectangle missing - farm area not placed")
 		return
 	var zone_px: Vector2 = (shape.shape as RectangleShape2D).size * shape.global_scale
-	tile_visual_size = zone_px / Vector2(FARM_GRID)
-	FARM_AREA_MIN = shape.global_position - zone_px * 0.5
-	FARM_AREA_MAX = FARM_AREA_MIN + zone_px
+	# Square tiles: take whichever axis is tighter, so the grid fits inside the
+	# zone instead of stretching to it. Keeps the soil texture undistorted.
+	var t: float = minf(zone_px.x / FARM_GRID.x, zone_px.y / FARM_GRID.y) * tile_scale
+	tile_visual_size = Vector2(t, t)
+	var grid_px := Vector2(FARM_GRID) * t
+	FARM_AREA_MIN = shape.global_position - grid_px * 0.5
+	FARM_AREA_MAX = FARM_AREA_MIN + grid_px
 	_diag("farm area %s .. %s  tile=%s" % [FARM_AREA_MIN, FARM_AREA_MAX, tile_visual_size])
 
 
@@ -92,10 +95,9 @@ func _on_zone_exited(body: Node2D) -> void:
 		_player_in_zone = false
 		_cursor.visible = false
 
-# Keep artwork square even when the full-field interaction cells are rectangular.
+# size a tile is DRAWN at (slightly smaller than the grid cell, so a gap shows)
 func _drawn_size() -> Vector2:
-	var side := maxf(1.0,minf(tile_visual_size.x,tile_visual_size.y)-tile_gap)
-	return Vector2(side,side)
+	return tile_visual_size - Vector2(tile_gap, tile_gap)
 
 
 func _ready():
@@ -105,9 +107,10 @@ func _ready():
 		print("FarmLayer tile_set exists: ", farm_layer.tile_set != null)
 	seed_picker.seed_selected.connect(_on_seed_selected)
 	_diag("seed_picker connected")
+	_make_cursor()
 	GameState.farm_updated.connect(_apply_server_plots)
+	_make_cursor()   # the hover outline; _process() uses it every frame
 	_resolve_farm_area()
-	_make_cursor()   # Size the outline after resolving the active map's grid.
 	_connect_farm_zone()
 	_apply_server_plots(GameState.farm_plots)
 	_diag("apply_server_plots returned")
@@ -149,40 +152,16 @@ func _blocked() -> bool:
 	return not _player_in_zone or GameState.menu_open or GameState.social_open or _backend_busy \
 		or (Global.is_logged_in() and not GameState.backend_ready)
 
-func _input(event: InputEvent) -> void:
-	if event is InputEventMouse:
-		_mouse_position = event.position
-		_mouse_seen = true
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		var point: Vector2 = get_canvas_transform().affine_inverse() * event.position
-		var tile := _get_tile_pos(point)
-		var control := get_viewport().gui_get_hovered_control()
-		_diag("click world=%s tile=%s in_grid=%s in_zone=%s menu=%s social=%s busy=%s ready=%s ui=%s" % [
-			point, tile, _is_in_farm_area(tile), _player_in_zone, GameState.menu_open,
-			GameState.social_open, _backend_busy, GameState.backend_ready,
-			str(control.get_path()) if control != null else "none"])
-
 func _unhandled_input(event: InputEvent) -> void:
+	if _blocked():
+		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		var tile := _get_tile_pos(get_canvas_transform().affine_inverse() * event.position)
-		if not _is_in_farm_area(tile):
-			return
-		if _blocked():
-			var reason := "Step into the farm field to start farming"
-			if GameState.menu_open or GameState.social_open:
-				reason = "Close the open menu to farm"
-			elif _backend_busy:
-				reason = "Finishing your previous farm action..."
-			elif Global.is_logged_in() and not GameState.backend_ready:
-				reason = "Your farm has not loaded. Leave the world and try Continue again."
-			HousePrompt.flash(reason, 4.0)
-			return
 		if _dragging:
 			return  # carrying: only E puts the tile down
-		if _is_in_farm_area(tile):
+		if _is_in_farm_area(_hover_tile()):
 			get_viewport().set_input_as_handled()
-			_on_click(tile)
-	elif event.is_action_pressed("interact") and not _blocked():
+			_on_click(_hover_tile())
+	elif event.is_action_pressed("interact"):
 		if _dragging:
 			get_viewport().set_input_as_handled()
 			_drop(_hover_tile())
@@ -219,7 +198,7 @@ func _make_cursor() -> void:
 	_cursor.width = 3.0
 	_cursor.closed = true
 	_cursor.z_index = CURSOR_Z
-	var h := (_drawn_size()+Vector2.ONE*tile_gap) / 2.0
+	var h := tile_visual_size / 2.0
 	_cursor.points = PackedVector2Array([Vector2(-h.x, -h.y), Vector2(h.x, -h.y), Vector2(h.x, h.y), Vector2(-h.x, h.y)])
 	_cursor.visible = false
 	add_child(_cursor)
@@ -229,7 +208,7 @@ func _process(_delta):
 	if _cursor == null:
 		return
 	var tile := _hover_tile()
-	var on_farm := _is_in_farm_area(tile) and not GameState.menu_open and not GameState.social_open
+	var on_farm := _player_in_zone and _is_in_farm_area(tile) and not GameState.menu_open and not GameState.social_open
 	_cursor.visible = on_farm or _dragging
 	_cursor.global_position = _tile_to_world(tile)
 	if _dragging:
@@ -239,7 +218,7 @@ func _process(_delta):
 		for node in _carried_nodes(_drag_key):
 			_place(node, spot)
 	elif on_farm:
-		_cursor.default_color = Color(1, 1, 1, 0.9) if _player_in_zone and _in_reach(tile) else Color(1, 0.3, 0.3, 0.7)
+		_cursor.default_color = Color(1, 1, 1, 0.9) if _in_reach(tile) else Color(1, 0.3, 0.3, 0.7)
 
 
 # ─── Carrying a whole tile (E) ───────────────────────────────────────
@@ -347,9 +326,7 @@ func _on_seed_selected(seed_name: String) -> void:
 	if Global.is_logged_in():
 		await _server_action("plant", _pending_tile_pos, _pending_key, seed_name)
 		return
-	if not GameState.remove_item_offline(seed_name + "_seed", 1):
-		_toast("No seeds available", _pending_tile_pos)
-		return
+	GameState.seed_inventory[seed_name] = int(GameState.seed_inventory.get(seed_name, 0)) - 1
 	GameState.seed_changed.emit(seed_name)
 	active_crops[_pending_key] = {"type": seed_name, "stage": 0, "watered": false}
 	_spawn_crop_visual(_pending_tile_pos, seed_name)
@@ -477,9 +454,6 @@ func _toast(text: String, tile: Vector2i) -> void:
 # ─── Tile math ───────────────────────────────────────────────────────
 
 func _hover_tile() -> Vector2i:
-	# Keep hover, E interaction and clicks on the same viewport input coordinates.
-	if _mouse_seen:
-		return _get_tile_pos(get_canvas_transform().affine_inverse() * _mouse_position)
 	return _get_tile_pos(get_global_mouse_position())
 
 
@@ -497,7 +471,9 @@ func _get_tile_pos(global_pos: Vector2) -> Vector2i:
 
 
 func _is_in_farm_area(tile_pos: Vector2i) -> bool:
-	return Rect2i(Vector2i.ZERO, FARM_GRID).has_point(tile_pos)
+	var center = _tile_to_world(tile_pos)
+	return center.x >= FARM_AREA_MIN.x and center.x <= FARM_AREA_MAX.x \
+		and center.y >= FARM_AREA_MIN.y and center.y <= FARM_AREA_MAX.y
 
 
 func _tile_to_world(tile_pos: Vector2i) -> Vector2:
@@ -558,6 +534,7 @@ func _apply_server_plots(plots: Array) -> void:
 	if _backend_busy or _dragging:
 		return
 	for plot in plots:
+		_diag("applying plot %s" % str(plot))
 		_apply_plot(plot)
 
 

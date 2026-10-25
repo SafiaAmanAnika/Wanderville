@@ -86,7 +86,12 @@ func run() -> void:
 	check(valid,"roaming path avoids map obstacles with clearance")
 	for i in range(5): pet._choose_roam()
 	check(pet.visited.size()>2,"novelty scoring explores multiple destinations")
-	pet._set_state(pet.State.IDLE); pet.active_time=pet.REST_AFTER; pet.pause_time=0.01
+	pet._set_state(pet.State.IDLE); pet.active_time=60; pet.pause_time=0.01
+	await create_timer(0.12).timeout
+	check(pet.state==pet.State.ROAM and not pet.path.is_empty(),"after one minute away pet keeps choosing heuristic roaming routes instead of napping")
+	pet._set_state(pet.State.IDLE)
+	check(pet.pause_time<=1.0,"independent exploring has only short pauses between routes")
+	pet.active_time=pet.REST_AFTER; pet.pause_time=0.01
 	await create_timer(0.12).timeout
 	check(pet.state==pet.State.SLEEP and pet.sprite.animation=="sleep","a tired pet settles into its generated sleep pose")
 	var resting_position := pet.global_position

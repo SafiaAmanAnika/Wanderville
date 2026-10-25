@@ -13,7 +13,7 @@ const NEAR_ROAM_RADIUS := 280.0
 const HOME_ROAM_RADIUS := 480.0
 const WALK_SPEED := 80.0
 const FOLLOW_SPEED := 230.0
-const REST_AFTER := 60.0
+const REST_AFTER := 180.0
 const VISUAL_SCALE := 1.15
 const SPECIES_SIZE := {"cat":1.0,"dog":1.12,"rabbit":0.82,"fox":1.04,"duck":0.65,"red_panda":1.08}
 const SPECIES_PACE := {"cat":1.0,"dog":1.0,"rabbit":1.05,"fox":1.0,"duck":0.8,"red_panda":0.9}
@@ -159,7 +159,8 @@ func _physics_process(delta: float) -> void:
 
 func _set_state(next: int) -> void:
 	state=next; state_time=0; path.clear(); velocity=Vector2.ZERO
-	if next==State.IDLE: pause_time=rng.randf_range(1.5,3.5)
+	if next==State.IDLE:
+		pause_time=rng.randf_range(1.5,3.5) if owner_visible else rng.randf_range(0.4,1.0)
 	queue_redraw()
 
 func _set_target(point: Vector2) -> void:

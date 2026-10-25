@@ -50,6 +50,13 @@ func run() -> void:
 	check(float(pet.SPECIES_SIZE.duck)<float(pet.SPECIES_SIZE.cat),"duck is smaller than cat")
 	check(pet.WALK_SPEED==80 and pet.FOLLOW_SPEED==230,"roaming and following use slower speeds")
 	check(pet.collision_mask & 2 != 0 and pet.z_index==0 and pets.y_sort_enabled,"pets detect multiplayer bodies and use world depth sorting")
+	player.global_position=Vector2(3000,-550)
+	pet.global_position=player.global_position+Vector2(250,65)
+	pet.set_physics_process(false)
+	await create_timer(0.05).timeout
+	var player_hit: KinematicCollision2D=player.move_and_collide(Vector2(400,0))
+	check(player_hit!=null and player_hit.get_collider()==pet,"player movement physically collides with the pet instead of passing through")
+	pet.set_physics_process(true)
 	player.global_position=Vector2(3300,-550)
 	pet.global_position=pet._owner_center()+Vector2(-190,0)
 	pet._set_state(pet.State.ROAM)

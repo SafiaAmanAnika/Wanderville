@@ -14,6 +14,8 @@ var _saving := false
 var _version := -1
 var _loaded := false
 var _notice_until := 0
+var _collision_owner: CharacterBody2D
+var _owner_had_pet_mask := false
 
 func _ready() -> void:
 	y_sort_enabled=true
@@ -28,6 +30,9 @@ func _start() -> void:
 		if not is_inside_tree(): return
 	var player := get_parent().get_node_or_null("girl") as CharacterBody2D
 	if player==null: return
+	_collision_owner=player
+	_owner_had_pet_mask=player.get_collision_mask_value(3)
+	player.set_collision_mask_value(3,true)
 	var position := Vector2.INF
 	for i in range(16):
 		var candidate: Vector2=navigation.nearest(player.global_position+Vector2(145,0).rotated(i*TAU/16))
@@ -115,4 +120,6 @@ func _notice(message: String) -> void:
 	status.text=message; _notice_until=Time.get_ticks_msec()+5000
 
 func _exit_tree() -> void:
+	if is_instance_valid(_collision_owner):
+		_collision_owner.set_collision_mask_value(3,_owner_had_pet_mask)
 	if panel!=null and panel.visible: GameState.menu_open=false

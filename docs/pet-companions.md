@@ -99,8 +99,11 @@ blocked corners. See [Godot's AStarGrid2D documentation](https://docs.godotengin
 Pathfinding requests do not set position. A `CharacterBody2D` with an
 18-pixel circular ground collider uses `move_and_slide()` to perform actual
 movement. It collides with the world and pet collision layer, including while
-asleep. The owner's movement collision mask is unchanged, so the companion
-does not introduce an obstacle that conflicts with server-owned player movement.
+asleep. The manager enables pet layer 3 in the owner's collision mask while
+the companion is present, restoring its previous value on exit. Both bodies
+therefore detect one another, rather than only the pet detecting the player.
+This is local physics; server-authoritative multiplayer correction still has
+no replicated pet body and can override a local player collision.
 
 New furniture may not exist in the exported map. On a collision with a small
 static obstacle, the exact colliding shape's bounds, expanded for body clearance,

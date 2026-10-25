@@ -45,6 +45,7 @@ var _last_owner_position := Vector2.ZERO
 var _time := 0.0
 var _yielding := false
 var _yield_direction := Vector2.ZERO
+var _avoid_side := 0.0
 static var _frames: Dictionary = {}
 
 func _ready() -> void:
@@ -240,7 +241,10 @@ func _animate(movement: Vector2) -> void:
 	if sprite==null: return
 	if movement.length()>0.05:
 		var index := posmod(roundi((movement.angle()+PI*0.5)/(PI*0.25)),8)
-		facing=DIRECTIONS[index]
+		var facing_angle := float(DIRECTIONS.find(facing))*PI*0.25-PI*0.5
+		# A small angular buffer prevents adjacent animation rows flickering.
+		if absf(angle_difference(facing_angle,movement.angle()))>deg_to_rad(29):
+			facing=DIRECTIONS[index]
 	if state==State.SLEEP and sleep_texture!=null:
 		if sprite.animation!="sleep": sprite.play("sleep")
 		var breath := 1.0+sin(_time*2.2)*0.015
@@ -266,10 +270,12 @@ func _avoid_owner(direction: Vector2) -> Vector2:
 		return outward # Also yields when the player walks into the companion.
 	var closest := Geometry2D.get_closest_point_to_segment(_owner_center(),global_position,path[0])
 	if closest.distance_to(_owner_center())>=OWNER_SPACE or direction.dot(outward)>=0:
+		if distance>OWNER_SPACE+45: _avoid_side=0
 		return direction
 	# Follow the near side of a personal-space circle until the route clears it.
 	var tangent := outward.orthogonal()
-	if tangent.dot(direction)<0: tangent=-tangent
+	if _avoid_side==0: _avoid_side=-1.0 if tangent.dot(direction)<0 else 1.0
+	tangent*=_avoid_side
 	return (tangent+outward*0.25).normalized()
 
 func _draw() -> void:

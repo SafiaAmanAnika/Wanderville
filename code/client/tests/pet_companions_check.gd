@@ -73,6 +73,16 @@ func run() -> void:
 	pet.path=PackedVector2Array([pet._owner_center()+Vector2(190,0)])
 	var steering: Vector2=pet._avoid_owner(Vector2.RIGHT)
 	check(absf(steering.y)>0.5,"a route across the owner steers around their body")
+	var chosen_side: float=pet._avoid_side
+	pet._avoid_owner(Vector2(1,0.01).normalized())
+	pet._avoid_owner(Vector2(1,-0.01).normalized())
+	check(chosen_side!=0 and pet._avoid_side==chosen_side,"small owner avoidance changes retain the chosen passing side")
+	pet.facing="e"
+	pet._animate(Vector2.RIGHT.rotated(deg_to_rad(23)))
+	pet._animate(Vector2.RIGHT.rotated(deg_to_rad(22)))
+	check(pet.facing=="e","tiny heading changes at a direction boundary do not flicker animations")
+	pet._animate(Vector2.RIGHT.rotated(deg_to_rad(35)))
+	check(pet.facing=="se","a deliberate turn still changes animation direction")
 	var minimum_space := INF
 	for frame in range(120):
 		await physics_frame

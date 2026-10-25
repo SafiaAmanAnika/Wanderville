@@ -16,6 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://6mtya8uo7t1v" path="res://Assests_2/Whole_Buildings/right_four_arch_hall.png" id="14_46vnl"]
 [ext_resource type="Texture2D" uid="uid://dy1g3cw85tl3k" path="res://Assests_2/Others/post_left_original_trimmed.png" id="15_0mgn7"]
 [ext_resource type="Texture2D" uid="uid://bmonitvibcfdq" path="res://Assests_2/Others/post_right_original_trimmed.png" id="16_arrue"]
+[ext_resource type="Script" uid="uid://cjc8dd4ootm7b" path="res://Scripts/TreeSeasonManager.gd" id="23_0mgn7"]
 [ext_resource type="PackedScene" uid="uid://br8he6pr3agsc" path="res://Scenes/trees/tree_0.tscn" id="23_88x3e"]
 [ext_resource type="Texture2D" uid="uid://dcmiu3vnt8rcs" path="res://Assests_2/Whole_Buildings/pointed_arch_gateway.png" id="23_m60fr"]
 [ext_resource type="Texture2D" uid="uid://dvmjl45ctuvuk" path="res://Assets/tiles/tiles-grass-decoration-transparent-32x32.png" id="24_1vkfa"]
@@ -1944,7 +1945,6 @@ skew = 0.058823586
 texture = ExtResource("24_xx0sa")
 
 [node name="FarmField" type="Node2D" parent="." unique_id=1664821398]
-visible = false
 script = ExtResource("35_kqb6c")
 
 [node name="FarmLayer" type="TileMapLayer" parent="FarmField" unique_id=1636329691]
@@ -1959,7 +1959,6 @@ position = Vector2(192.5, -25)
 shape = SubResource("RectangleShape2D_dl0ew")
 
 [node name="WaterSource" type="StaticBody2D" parent="." unique_id=754308331]
-visible = false
 
 [node name="WaterInteraction" type="Area2D" parent="WaterSource" unique_id=1969370701]
 collision_layer = 0
@@ -1983,7 +1982,6 @@ position = Vector2(-5191, 2527)
 polygon = PackedVector2Array(5213, -2615, 5213, -2604, 5213.1, -2577.6, 5214, -2537, 5252, -2502, 5267, -2502, 5267.1, -2614.6)
 
 [node name="CollisionLayer" type="StaticBody2D" parent="." unique_id=461630993]
-visible = false
 position = Vector2(-13, 28)
 
 [node name="Collision_border" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=1756403297]
@@ -2007,6 +2005,8 @@ position = Vector2(-5178, 2499)
 polygon = PackedVector2Array(5101, -2542, 5099, -2544, 5098, -2562, 5103, -2566, 5103, -2573, 5147, -2573, 5147, -2566, 5152, -2562, 5152, -2544, 5150, -2542, 5130, -2542, 5125, -2548, 5121, -2542)
 
 [node name="Trees" type="Node2D" parent="." unique_id=1372040239]
+visible = false
+script = ExtResource("23_0mgn7")
 
 [node name="Palm_trees" type="Node2D" parent="Trees" unique_id=37784548]
 
@@ -2104,7 +2104,6 @@ y_sort_enabled = true
 position = Vector2(100, -155)
 
 [node name="Summer" type="Node2D" parent="Trees" unique_id=1071684553]
-visible = false
 
 [node name="Tree1" parent="Trees/Summer" unique_id=523412045 instance=ExtResource("24_d07ij")]
 position = Vector2(-217, -9)
@@ -2209,7 +2208,6 @@ position = Vector2(203, 55)
 position = Vector2(252, 55)
 
 [node name="Autumn" type="Node2D" parent="Trees" unique_id=822958827]
-visible = false
 
 [node name="Tree4" parent="Trees/Autumn" unique_id=834188294 instance=ExtResource("27_fn8c1")]
 position = Vector2(-218, 18)
@@ -2314,7 +2312,6 @@ position = Vector2(157, 55)
 position = Vector2(254, 54)
 
 [node name="Winter" type="Node2D" parent="Trees" unique_id=162166676]
-visible = false
 
 [node name="Tree7" parent="Trees/Winter" unique_id=1133927138 instance=ExtResource("30_dygx2")]
 position = Vector2(-219, -180)
@@ -2431,7 +2428,6 @@ position = Vector2(-217, -66)
 position = Vector2(-217, -123)
 
 [node name="Spring" type="Node2D" parent="Trees" unique_id=250239231]
-visible = false
 
 [node name="Tree10" parent="Trees/Spring" unique_id=471908108 instance=ExtResource("33_coghf")]
 position = Vector2(-218, 18)

@@ -73,6 +73,11 @@ func update_season_effects() -> void:
 
 	# Rain is controlled separately by its schedule.
 	update_rain()
+	
+	var tree_manager = get_node_or_null("../Map/Trees")
+
+	if tree_manager != null:
+		tree_manager.set_tree_season(current_season)
 
 
 func update_rain() -> void:

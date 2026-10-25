@@ -134,7 +134,6 @@ y_sort_enabled = true
 script = ExtResource("12_spawner")
 
 [node name="WorldHUD" parent="." unique_id=1841561272 instance=ExtResource("9_social")]
-visible = false
 
 [node name="RemotePlayers" type="Node2D" parent="." unique_id=1352013942]
 script = ExtResource("10_remote")
@@ -144,7 +143,8 @@ position = Vector2(246, -252)
 scale = Vector2(15, 15)
 
 [node name="girl" parent="." unique_id=332949648 instance=ExtResource("6_5ukr8")]
-visible = false
+z_index = 0
+y_sort_enabled = false
 position = Vector2(1658, 677)
 
 [node name="Camera2D" type="Camera2D" parent="girl" unique_id=784418730]
@@ -152,24 +152,18 @@ position = Vector2(-10.149994, -0.6000023)
 zoom = Vector2(0.3, 0.3)
 
 [node name="catto_og" parent="." unique_id=1448107131 instance=ExtResource("3_5a7ea")]
-visible = false
-z_index = 1
-y_sort_enabled = true
 position = Vector2(7475, -771)
 scale = Vector2(3, 3)
 collision_layer = 0
 collision_mask = 0
 
 [node name="FarmMenu" parent="." unique_id=886063808 instance=ExtResource("4_fo5ed")]
-visible = false
 
 [node name="SignBoard" parent="." unique_id=569688739 instance=ExtResource("5_5ukr8")]
-visible = false
 y_sort_enabled = true
 position = Vector2(8585, -3777)
 
 [node name="FarmController" type="Node2D" parent="." unique_id=920773311]
-visible = false
 show_behind_parent = true
 script = ExtResource("6_o06y3")
 tile_visual_size = Vector2(130, 130)
@@ -178,7 +172,6 @@ tile_scale = 1.5
 [node name="SeedPickerMenu" parent="FarmController" unique_id=391319660 instance=ExtResource("7_5v1tr")]
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1011606990]
-visible = false
 
 [node name="WaterPanel" type="Panel" parent="HUD" unique_id=110732403]
 offset_left = 242.0
@@ -196,23 +189,23 @@ script = ExtResource("7_o06y3")
 metadata/_edit_use_anchors_ = true
 
 [node name="HouseManager" type="Node2D" parent="." unique_id=754589155]
-visible = false
 script = ExtResource("14_e0ngr")
 
 [node name="HouseArea" type="Area2D" parent="HouseManager" unique_id=193297254]
 script = ExtResource("15_hgpy0")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HouseManager/HouseArea" unique_id=1877007868]
+position = Vector2(262, -252)
 polygon = PackedVector2Array(-3417, 1176, 1821, 1176, 1809, 730, 3942, 736, 3954, 2430, -3435, 2448)
 
 [node name="DayNightCycle" type="CanvasModulate" parent="." unique_id=1218618197]
 script = ExtResource("15_t2t4p")
 
 [node name="SeasonalEffects" type="Node2D" parent="." unique_id=641050426]
+visible = false
 script = ExtResource("16_0pcbe")
 
 [node name="Rain" type="GPUParticles2D" parent="SeasonalEffects" unique_id=241445472]
-visible = false
 material = SubResource("CanvasItemMaterial_kn0ld")
 amount = 8000
 lifetime = 0.5
@@ -221,7 +214,6 @@ visibility_rect = Rect2(-4000, -3000, 9000, 6000)
 process_material = SubResource("ParticleProcessMaterial_kn0ld")
 
 [node name="Snow" type="GPUParticles2D" parent="SeasonalEffects" unique_id=27597033]
-visible = false
 amount = 4500
 lifetime = 10.0
 preprocess = 30.0
@@ -229,7 +221,6 @@ visibility_rect = Rect2(-4000, -3000, 9000, 6000)
 process_material = SubResource("ParticleProcessMaterial_pyn1s")
 
 [node name="Autumn_leaves" type="GPUParticles2D" parent="SeasonalEffects" unique_id=1303004993]
-visible = false
 material = SubResource("CanvasItemMaterial_t2t4p")
 amount = 700
 texture = ExtResource("16_hgpy0")
@@ -239,7 +230,6 @@ visibility_rect = Rect2(-30000, -3000, 70000, 6000)
 process_material = SubResource("ParticleProcessMaterial_hgpy0")
 
 [node name="Spring_leaves" type="GPUParticles2D" parent="SeasonalEffects" unique_id=631612829]
-visible = false
 material = SubResource("CanvasItemMaterial_0pcbe")
 amount = 700
 texture = ExtResource("17_t2t4p")

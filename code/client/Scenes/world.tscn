@@ -10,14 +10,127 @@
 [ext_resource type="Script" uid="uid://dxcfeslajrfk0" path="res://Scripts/HUD_waterPanel.gd" id="8_k7acu"]
 [ext_resource type="PackedScene" uid="uid://dr3jow7krse27" path="res://Scenes/world_hud.tscn" id="9_social"]
 [ext_resource type="Script" uid="uid://dn30wkti03ron" path="res://Scripts/remote_players.gd" id="10_remote"]
-[ext_resource type="Script" uid="uid://bbsefjtcb4mad" path="res://Scripts/day_and_night_cycle.gd" id="11_cycle"]
 [ext_resource type="Script" uid="uid://cspawnesa832b" path="res://Scripts/character_spawner.gd" id="12_spawner"]
 [ext_resource type="Script" uid="uid://2sq7krkfclql" path="res://Scripts/housing/house_manager.gd" id="14_e0ngr"]
 [ext_resource type="Script" uid="uid://chiqj7r3xupbb" path="res://Scripts/housing/house_area.gd" id="15_hgpy0"]
 [ext_resource type="PackedScene" uid="uid://bwpwbv2wlvfot" path="res://Scenes/map2.tscn" id="15_kn0ld"]
+[ext_resource type="Script" uid="uid://d02yhd6tn2y8c" path="res://Scripts/day_night_cycle.gd" id="15_t2t4p"]
+[ext_resource type="Script" uid="uid://cicq805ha0jtf" path="res://Scripts/seasonal_effects.gd" id="16_0pcbe"]
+[ext_resource type="Texture2D" uid="uid://bm0bjv6nbhttp" path="res://Assets/Orange_leaves.png" id="16_hgpy0"]
+[ext_resource type="Texture2D" uid="uid://bp2jfb6fmix8b" path="res://Assets/Pink_leaves.png" id="17_t2t4p"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_kn0ld"]
+particles_animation = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = true
+
+[sub_resource type="Gradient" id="Gradient_kn0ld"]
+colors = PackedColorArray(1, 1, 1, 0.19607843, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_hgpy0"]
+gradient = SubResource("Gradient_kn0ld")
+
+[sub_resource type="Curve" id="Curve_kn0ld"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_hgpy0"]
+_limits = [0.0, 40.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 137.41388, 0, 0, Vector2(0.26262626, 40), 0.0, 0.0, 0, 0, Vector2(1, 40), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_t2t4p"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_0pcbe"]
+curve_x = SubResource("Curve_kn0ld")
+curve_y = SubResource("Curve_hgpy0")
+curve_z = SubResource("Curve_t2t4p")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kn0ld"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(4500, 3000, 1)
+gravity = Vector3(0, 8000, 0)
+scale_min = 0.19999999
+scale_over_velocity_curve = SubResource("CurveXYZTexture_0pcbe")
+color_initial_ramp = SubResource("GradientTexture1D_hgpy0")
+anim_speed_min = 1.0
+anim_speed_max = 1.0
+
+[sub_resource type="Curve" id="Curve_0pcbe"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.8762626, 0.1974402), -1.7533267, -1.7533267, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_axeuq"]
+curve = SubResource("Curve_0pcbe")
+
+[sub_resource type="Gradient" id="Gradient_1cojt"]
+offsets = PackedFloat32Array(0.4752066, 0.6735537)
+colors = PackedColorArray(1, 1, 1, 0.5882353, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_yq1aw"]
+gradient = SubResource("Gradient_1cojt")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_pyn1s"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(4500, 3000, 1)
+gravity = Vector3(50, 95, 0)
+scale_min = 5.0
+scale_max = 7.0
+color_initial_ramp = SubResource("GradientTexture1D_yq1aw")
+alpha_curve = SubResource("CurveTexture_axeuq")
+turbulence_enabled = true
+turbulence_noise_strength = 0.0
+turbulence_noise_scale = 5.0
+turbulence_noise_speed_random = 0.0
+turbulence_influence_min = 0.020000001
+turbulence_influence_max = 0.080000006
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_t2t4p"]
+particles_animation = true
+particles_anim_h_frames = 7
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_hgpy0"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(4300, 3000, 1)
+spread = 20.0
+flatness = 1.0
+initial_velocity_min = 20.0
+initial_velocity_max = 80.0
+gravity = Vector3(0, 10, 0)
+scale_min = 0.099999994
+scale_max = 0.29999998
+anim_offset_max = 1.0
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_0pcbe"]
+particles_animation = true
+particles_anim_h_frames = 7
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_axeuq"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(4300, 3000, 1)
+spread = 20.0
+flatness = 1.0
+initial_velocity_min = 20.0
+initial_velocity_max = 80.0
+gravity = Vector3(0, 98, 0)
+scale_min = 0.39999998
+scale_max = 0.5
+anim_offset_max = 1.0
 
 [node name="World" type="Node2D" unique_id=1971179881]
-position = Vector2(242, -177)
+z_index = 1
+y_sort_enabled = true
 script = ExtResource("12_spawner")
 
 [node name="WorldHUD" parent="." unique_id=1841561272 instance=ExtResource("9_social")]
@@ -26,9 +139,12 @@ script = ExtResource("12_spawner")
 script = ExtResource("10_remote")
 
 [node name="Map" parent="." unique_id=1886189494 instance=ExtResource("15_kn0ld")]
+position = Vector2(246, -252)
 scale = Vector2(15, 15)
 
 [node name="girl" parent="." unique_id=332949648 instance=ExtResource("6_5ukr8")]
+z_index = 0
+y_sort_enabled = false
 position = Vector2(1658, 677)
 
 [node name="Camera2D" type="Camera2D" parent="girl" unique_id=784418730]
@@ -72,9 +188,6 @@ offset_bottom = 23.0
 script = ExtResource("7_o06y3")
 metadata/_edit_use_anchors_ = true
 
-[node name="DayNight" type="CanvasModulate" parent="." unique_id=1293019844]
-script = ExtResource("11_cycle")
-
 [node name="HouseManager" type="Node2D" parent="." unique_id=754589155]
 script = ExtResource("14_e0ngr")
 
@@ -82,4 +195,45 @@ script = ExtResource("14_e0ngr")
 script = ExtResource("15_hgpy0")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HouseManager/HouseArea" unique_id=1877007868]
+position = Vector2(262, -252)
 polygon = PackedVector2Array(-3417, 1176, 1821, 1176, 1809, 730, 3942, 736, 3954, 2430, -3435, 2448)
+
+[node name="DayNightCycle" type="CanvasModulate" parent="." unique_id=1218618197]
+script = ExtResource("15_t2t4p")
+
+[node name="SeasonalEffects" type="Node2D" parent="." unique_id=641050426]
+visible = false
+script = ExtResource("16_0pcbe")
+
+[node name="Rain" type="GPUParticles2D" parent="SeasonalEffects" unique_id=241445472]
+material = SubResource("CanvasItemMaterial_kn0ld")
+amount = 8000
+lifetime = 0.5
+preprocess = 0.5
+visibility_rect = Rect2(-4000, -3000, 9000, 6000)
+process_material = SubResource("ParticleProcessMaterial_kn0ld")
+
+[node name="Snow" type="GPUParticles2D" parent="SeasonalEffects" unique_id=27597033]
+amount = 4500
+lifetime = 10.0
+preprocess = 30.0
+visibility_rect = Rect2(-4000, -3000, 9000, 6000)
+process_material = SubResource("ParticleProcessMaterial_pyn1s")
+
+[node name="Autumn_leaves" type="GPUParticles2D" parent="SeasonalEffects" unique_id=1303004993]
+material = SubResource("CanvasItemMaterial_t2t4p")
+amount = 700
+texture = ExtResource("16_hgpy0")
+lifetime = 1.5
+preprocess = 0.5
+visibility_rect = Rect2(-30000, -3000, 70000, 6000)
+process_material = SubResource("ParticleProcessMaterial_hgpy0")
+
+[node name="Spring_leaves" type="GPUParticles2D" parent="SeasonalEffects" unique_id=631612829]
+material = SubResource("CanvasItemMaterial_0pcbe")
+amount = 700
+texture = ExtResource("17_t2t4p")
+lifetime = 1.5
+preprocess = 0.5
+visibility_rect = Rect2(-30000, -3000, 70000, 6000)
+process_material = SubResource("ParticleProcessMaterial_axeuq")

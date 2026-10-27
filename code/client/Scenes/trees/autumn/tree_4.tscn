@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://dxdwk17u5dy8g"]
+
+[ext_resource type="Texture2D" uid="uid://b710kn1rsqdlb" path="res://Assests_2/Trees/Autumn/tree_4.png" id="1_7dy6q"]
+
+[node name="Tree4" type="Node2D" unique_id=834188294]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=101936738]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1_7dy6q")

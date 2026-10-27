@@ -1,5 +1,6 @@
 [gd_scene format=4 uid="uid://bwpwbv2wlvfot"]
 
+<<<<<<<<< Temporary merge branch 1
 [ext_resource type="Texture2D" uid="uid://b4tt00exh8qid" path="res://Assests_2/Others/Pond_Borders_32.png" id="2_5vpmu"]
 [ext_resource type="Texture2D" uid="uid://7s8babba334y" path="res://Assests_2/Others/Brick_and_Plaza_32.png" id="4_dl0ew"]
 [ext_resource type="Texture2D" uid="uid://upuhtq7yqmat" path="res://Assests_2/Others/Fences_32.png" id="5_d07ij"]
@@ -23,6 +24,28 @@
 [ext_resource type="PackedScene" uid="uid://dah7cbcrhmcy8" path="res://Scenes/trees/summer/tree_1.tscn" id="24_d07ij"]
 [ext_resource type="Texture2D" uid="uid://hudn74r8gflt" path="res://Assests_2/Whole_Buildings/five_pillars_only.png" id="24_xx0sa"]
 [ext_resource type="PackedScene" uid="uid://bquhv3n8tm421" path="res://Scenes/trees/summer/tree_2.tscn" id="25_fn8c1"]
+=========
+[ext_resource type="Texture2D" uid="uid://b4tt00exh8qid" path="res://Others/Pond_Borders_32.png" id="2_5vpmu"]
+[ext_resource type="Texture2D" uid="uid://7s8babba334y" path="res://Others/Brick_and_Plaza_32.png" id="4_dl0ew"]
+[ext_resource type="Texture2D" uid="uid://upuhtq7yqmat" path="res://Others/Fences_32.png" id="5_d07ij"]
+[ext_resource type="Texture2D" uid="uid://ci7a8mqf04q3e" path="res://Assets/Borders_Only/white_border_corner_bottom_left.png" id="6_fn8c1"]
+[ext_resource type="Texture2D" uid="uid://dv15f2aymglaf" path="res://Assets/Borders_Only/white_border_edge_bottom.png" id="7_g51xc"]
+[ext_resource type="Texture2D" uid="uid://mcyvx4gbluor" path="res://Others/vertical_repeat_left.png" id="8_k8khs"]
+[ext_resource type="Texture2D" uid="uid://du8quir1eoh3p" path="res://Others/vertical_repeat_right.png" id="9_2k08g"]
+[ext_resource type="Texture2D" uid="uid://dv02kem41o805" path="res://Assets/Whole_Buildings/central_domed_pavilion.png" id="10_76kj5"]
+[ext_resource type="Texture2D" uid="uid://cvdyqwt0yu7gn" path="res://Assets/k_assets/k_grass/grass_reference_region.png" id="10_80g8e"]
+[ext_resource type="Texture2D" uid="uid://dv1ngg0324b87" path="res://Assets/Whole_Buildings/left_three_arch_hall.png" id="11_dygx2"]
+[ext_resource type="Texture2D" uid="uid://cgdys0hlhxg0e" path="res://Assets/k_assets/k_water/water_repeat_region.png" id="12_46vnl"]
+[ext_resource type="Texture2D" uid="uid://bbv5yv3n8olgi" path="res://Assets/Whole_Buildings/long_five_arch_hall.png" id="12_coghf"]
+[ext_resource type="Texture2D" uid="uid://cxvrkkcy7u1jg" path="res://Assets/Whole_Buildings/main_hall_with_tower.png" id="13_80g8e"]
+[ext_resource type="Texture2D" uid="uid://6mtya8uo7t1v" path="res://Assets/Whole_Buildings/right_four_arch_hall.png" id="14_46vnl"]
+[ext_resource type="Texture2D" uid="uid://dy1g3cw85tl3k" path="res://Others/post_left_original_trimmed.png" id="15_0mgn7"]
+[ext_resource type="Texture2D" uid="uid://bmonitvibcfdq" path="res://Others/post_right_original_trimmed.png" id="16_arrue"]
+[ext_resource type="Texture2D" uid="uid://dv8duwwv3gdmw" path="res://Assests_2/tree_01_oak.png" id="17_dl0ew"]
+[ext_resource type="Texture2D" uid="uid://dcmiu3vnt8rcs" path="res://Assets/Whole_Buildings/pointed_arch_gateway.png" id="23_m60fr"]
+[ext_resource type="Texture2D" uid="uid://c0hfjvhmxmeql" path="res://Assets/tiles/tiles-grass-decoration-transparent-32x32.png" id="24_1vkfa"]
+[ext_resource type="Texture2D" uid="uid://hudn74r8gflt" path="res://Assets/Whole_Buildings/five_pillars_only.png" id="24_xx0sa"]
+>>>>>>>>> Temporary merge branch 2
 [ext_resource type="Script" uid="uid://dibir1qteifpl" path="res://Scripts/water_source.gd" id="26_d07ij"]
 [ext_resource type="PackedScene" uid="uid://dninn0qoo3xjf" path="res://Scenes/trees/summer/tree_3.tscn" id="26_g51xc"]
 [ext_resource type="PackedScene" uid="uid://dxdwk17u5dy8g" path="res://Scenes/trees/autumn/tree_4.tscn" id="27_fn8c1"]
@@ -2004,11 +2027,7 @@ polygon = PackedVector2Array(5317.1, -2673.6, 5317.1, -2653.6, 5320.1, -2651.6, 
 position = Vector2(-5178, 2499)
 polygon = PackedVector2Array(5101, -2542, 5099, -2544, 5098, -2562, 5103, -2566, 5103, -2573, 5147, -2573, 5147, -2566, 5152, -2562, 5152, -2544, 5150, -2542, 5130, -2542, 5125, -2548, 5121, -2542)
 
-<<<<<<< HEAD
-[node name="Collision_admin" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=1962033336]
-position = Vector2(-5177, 2503)
-polygon = PackedVector2Array(5086, -2678, 5171, -2666, 5172, -2655, 5174.1, -2645.6, 5174.1, -2629.6, 5096, -2631, 5095.1, -2622.6, 5079.1, -2622.6, 5078, -2645, 5076, -2671)
-=======
+<<<<<<<<< Temporary merge branch 1
 [node name="Trees" type="Node2D" parent="." unique_id=1372040239]
 visible = false
 script = ExtResource("23_0mgn7")
@@ -2535,4 +2554,8 @@ position = Vector2(242, -186)
 
 [node name="Tree40" parent="Trees/Spring" unique_id=1804697608 instance=ExtResource("35_46vnl")]
 position = Vector2(179, 56)
->>>>>>> origin/anika
+=========
+[node name="Collision_admin" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=1962033336]
+position = Vector2(-5177, 2503)
+polygon = PackedVector2Array(5086, -2678, 5171, -2666, 5172, -2655, 5174.1, -2645.6, 5174.1, -2629.6, 5096, -2631, 5095.1, -2622.6, 5079.1, -2622.6, 5078, -2645, 5076, -2671)
+>>>>>>>>> Temporary merge branch 2

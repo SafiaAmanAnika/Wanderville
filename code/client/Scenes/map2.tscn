@@ -2172,7 +2172,6 @@ position = Vector2(-5191.1, 2526.6)
 polygon = PackedVector2Array(5082.1, -2528.6, 5083, -2494, 5225, -2493, 5189, -2528)
 
 [node name="CollisionLayer" type="StaticBody2D" parent="." unique_id=461630993]
-visible = false
 position = Vector2(-13, 28)
 
 [node name="Collision_border" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=1756403297]
@@ -2196,6 +2195,53 @@ polygon = PackedVector2Array(5101, -2542, 5099, -2544, 5098, -2562, 5103, -2566,
 [node name="Collision_admin" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=1962033336]
 position = Vector2(-5177, 2503)
 polygon = PackedVector2Array(5086, -2678, 5171, -2666, 5172, -2655, 5174.1, -2645.6, 5174.1, -2629.6, 5096, -2631, 5095.1, -2622.6, 5079.1, -2622.6, 5078, -2645, 5076, -2671)
+
+[node name="Collision_post1" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=424417128]
+polygon = PackedVector2Array(-135, -140, -134, -142, -133, -146, -133, -146, -132, -142, -131, -140, -133, -141)
+
+[node name="Collision_post2" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=525124581]
+position = Vector2(64, 35)
+polygon = PackedVector2Array(-135, -140, -134, -142, -133, -146, -133, -146, -132, -142, -131, -140, -133, -141)
+
+[node name="Collision_post3" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=1067663691]
+position = Vector2(85, 49)
+polygon = PackedVector2Array(-135, -140, -134, -142, -133, -146, -133, -146, -132, -142, -131, -140, -133, -141)
+
+[node name="Collision_post4" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=1496955529]
+position = Vector2(104, 35)
+polygon = PackedVector2Array(-135, -140, -134, -142, -133, -146, -133, -146, -132, -142, -131, -140, -133, -141)
+
+[node name="Collision_post8" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=1805225262]
+position = Vector2(163, 31)
+polygon = PackedVector2Array(-135, -140, -134, -142, -133, -146, -133, -146, -132, -142, -131, -140, -133, -141)
+
+[node name="Collision_post9" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=133150510]
+position = Vector2(271, 7)
+polygon = PackedVector2Array(-135, -140, -134, -142, -133, -146, -133, -146, -132, -142, -131, -140, -133, -141)
+
+[node name="Collision_post10" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=381735527]
+position = Vector2(406, 7)
+polygon = PackedVector2Array(-135, -140, -134, -142, -133, -146, -133, -146, -132, -142, -131, -140, -133, -141)
+
+[node name="Collision_post11" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=1450832260]
+position = Vector2(406, 152)
+polygon = PackedVector2Array(-135, -140, -134, -142, -133, -146, -133, -146, -132, -142, -131, -140, -133, -141)
+
+[node name="Collision_post12" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=217830009]
+position = Vector2(271, 152)
+polygon = PackedVector2Array(-135, -140, -134, -142, -133, -146, -133, -146, -132, -142, -131, -140, -133, -141)
+
+[node name="Collision_post5" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=1616302772]
+position = Vector2(111, 61)
+polygon = PackedVector2Array(-135, -140, -134, -142, -133, -146, -133, -146, -132, -142, -131, -140, -133, -141)
+
+[node name="Collision_post6" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=1071371506]
+position = Vector2(55, 62)
+polygon = PackedVector2Array(-135, -140, -134, -142, -133, -146, -133, -146, -132, -142, -131, -140, -133, -141)
+
+[node name="Collision_post7" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=491329474]
+position = Vector2(-1, 104)
+polygon = PackedVector2Array(-135, -140, -134, -142, -133, -146, -133, -146, -132, -142, -131, -140, -133, -141)
 
 [node name="Trees" type="Node2D" parent="." unique_id=1372040239]
 script = ExtResource("23_0mgn7")

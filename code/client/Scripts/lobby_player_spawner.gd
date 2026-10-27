@@ -2,7 +2,8 @@ extends Node2D
 ## Shared lobby player spawner. Movement and animation stay in the character script;
 ## this only spawns the currently selected character and keeps the camera inside.
 
-const PLAYER_SCALE := Vector2(0.75, 0.75)
+# Rooms use their own art proportions; match the existing 0.72 receptionist.
+const PLAYER_SCALE := Vector2(0.72, 0.72)
 signal player_spawned(body: CharacterBody2D)
 
 @onready var camera: Camera2D = $Camera2D

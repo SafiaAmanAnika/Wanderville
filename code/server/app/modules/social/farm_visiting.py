@@ -1,7 +1,7 @@
 """Farm visit sessions: who is standing in whose farm, and how that ends.
 
-An invitation (see :mod:`app.modules.social.farm_invitations`) is an *offer*; a
-visit session is the *occupancy* it produces. This module owns the occupancy:
+An invitation (see :mod:`app.modules.social.farm_invitations`) is an offer; a
+visit session is the occupancy it produces. This module owns the occupancy:
 admission results, the visitors list, every exit path (leave, kick, evict,
 heartbeat, disconnect) and the sweeps that reclaim slots nobody released.
 
@@ -37,8 +37,6 @@ from app.modules.social.farm_invitations import (
 )
 from app.modules.social.models import FarmInvitation, FarmVisitSession
 from app.modules.social.visit_locking import (
-    OPEN_STATUSES,
-    RESOLVED,
     VISIT_HEARTBEAT_TIMEOUT,
     lock_rows,
 )
@@ -66,7 +64,8 @@ class FarmVisitService:
         the inbox is not a permanent list of declined history."""
         conditions = [FarmInvitation.invited_player_id == guest_id]
         if not include_resolved:
-            conditions.append(FarmInvitation.status.in_(OPEN_STATUSES))
+            conditions.append(FarmInvitation.status == "PENDING")
+            conditions.append(FarmInvitation.expires_at > utcnow())
         rows = self.db.scalars(
             select(FarmInvitation)
             .where(*conditions)
@@ -78,7 +77,8 @@ class FarmVisitService:
     def outgoing(self, host_id, include_resolved=False):
         conditions = [FarmInvitation.host_player_id == host_id]
         if not include_resolved:
-            conditions.append(FarmInvitation.status.in_(OPEN_STATUSES))
+            conditions.append(FarmInvitation.status == "PENDING")
+            conditions.append(FarmInvitation.expires_at > utcnow())
         rows = self.db.scalars(
             select(FarmInvitation)
             .where(*conditions)
@@ -316,8 +316,8 @@ class FarmVisitService:
         """``close_all_for_disconnect`` for callers that already own the boundary.
 
         A disconnect cuts both directions at once, so both are handled together:
-        this player as a *visitor* (their own slot) and this player's farm as
-        the *host* (everyone standing in it). Doing it in one pass is also what
+        this player as a visitor (their own slot) and this player's farm as
+        the host (everyone standing in it). Doing it in one pass is also what
         makes the locking safe: the union of affected players is locked ascending
         by id and then the affected worlds ascending, so this cannot deadlock
         against a concurrent accept, kick or the other player's own disconnect.
@@ -375,7 +375,7 @@ class FarmVisitService:
     def sweep_orphaned(self, now=None, limit=500):
         """Reclaim sessions whose host is no longer standing in their farm.
 
-        ``sweep_stale`` only knows about a *visitor* going quiet. A visitor whose
+        ``sweep_stale`` only knows about a visitor going quiet. A visitor whose
         socket is still healthy keeps heartbeating even after the host's process
         died, so without this pass their slot would be held forever. The host
         presence row is the independent signal: no row, a stale row, or a row in
@@ -421,7 +421,7 @@ class FarmVisitService:
     def _reclaim(self, candidates):
         """End every candidate session in one transaction.
 
-        Both sweeps differ only in *which* rows they select, so they share this
+        Both sweeps differ only in which rows they select, so they share this
         loop. It re-reads each row under ``FOR UPDATE`` rather than trusting the
         selection query, because a session can be accepted, kicked or left
         between the moment it was picked and the moment it is ended.

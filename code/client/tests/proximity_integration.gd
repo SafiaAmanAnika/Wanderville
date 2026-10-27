@@ -4,6 +4,7 @@ var api: Node
 var session: Node
 var stage: Node2D
 var ui: Node
+var community: Window
 var role := ""
 var output := ""
 var heard := false
@@ -34,6 +35,13 @@ func shot(label: String) -> void:
 func _initialize() -> void:
 	call_deferred("_run")
 
+func wait_for(predicate: Callable) -> bool:
+	var deadline := Time.get_ticks_msec() + 8000
+	while Time.get_ticks_msec() < deadline:
+		if predicate.call(): return true
+		await create_timer(0.05).timeout
+	return false
+
 func _run() -> void:
 	api = root.get_node("APIClient")
 	session = root.get_node("Global")
@@ -52,6 +60,10 @@ func _run() -> void:
 	check(load("res://Scenes/social_standalone.tscn") != null, "standalone_scene_loads")
 	ui = load("res://Scripts/social/proximity_social.gd").new()
 	stage.add_child(ui)
+	var social: Node = load("res://Scenes/social_panel.tscn").instantiate()
+	social.set_script(load("res://Scripts/social/lobby_social_panel.gd"))
+	stage.add_child(social)
+	community = social._community
 	api.realtime.standalone_enabled = true
 	api.realtime.nearby_message_received.connect(func(message: Dictionary) -> void:
 		if message["body"] == "native hello":
@@ -66,13 +78,39 @@ func _run() -> void:
 	var found: Dictionary = await api.authenticated(HTTPClient.METHOD_GET, "/social/search?q=integration_" + ("bob" if role == "alice" else "alice"))
 	var target := int(api.data_of(found)[0]["id"])
 	if role == "alice":
-		var response: Dictionary = await api.authenticated(HTTPClient.METHOD_POST, "/social/requests", {"target_id": target})
-		check(response.get("ok", false), "friend_request")
+		social.get_node("%Search").text = "integration_bob"
+		social.show_section("search")
+		check(await wait_for(func(): return not social._loading), "ui_search_completes")
+		check(social._rows.size() == 1, "ui_search_finds_target")
+		if social._rows.size() == 1:
+			social._cards.get_node("PlayerCard_0/Content/Buttons/PrimaryAction").pressed.emit()
+			check(await wait_for(func(): return social.status.text == "Updated." and not social._acting and not social._loading), "ui_friend_request")
 	await barrier("requested")
 	if role == "bob":
-		var response: Dictionary = await api.authenticated(HTTPClient.METHOD_POST, "/social/friends/%d" % target, {"action": "accept"})
-		check(response.get("ok", false), "friend_accept")
+		social.show_section("requests")
+		check(await wait_for(func(): return not social._loading), "ui_requests_completes")
+		check(social._rows.size() == 1 and social._cards.get_child_count() == 1, "ui_incoming_request")
+		if social._rows.size() == 1:
+			social._cards.get_node("PlayerCard_0/Content/Buttons/PrimaryAction").pressed.emit()
+			check(await wait_for(func(): return social.status.text == "Updated." and not social._acting and not social._loading), "ui_accept_request")
+			check(social._rows.is_empty(), "ui_resolved_request_disappears")
 	await barrier("friends")
+	social.show_section("messages")
+	check(await wait_for(func(): return social._conversation_picker.item_count == 1), "ui_private_conversation_picker")
+	social._conversation_picker.item_selected.emit(0)
+	await barrier("private_ready")
+	if role == "alice":
+		social.message.text = "wardrobe lobby hello"
+		social.get_node("%Send").pressed.emit()
+		check(await wait_for(func(): return social.message.text.is_empty() and not social._sending), "ui_private_message_sent")
+	else:
+		check(await wait_for(func():
+			for record in social._private.get(target, []):
+				if record.get("body", "") == "wardrobe lobby hello": return true
+			return false
+		), "ui_private_message_received")
+	await barrier("private_done")
+	social.set_open(false)
 	await create_timer(0.5).timeout
 	check(ui._peers.size() == 1 and ui._peers[0].get("show_prompt", false), "friend_prompt")
 	if role == "alice":
@@ -136,44 +174,44 @@ func _run() -> void:
 		check(ui.voice._ready_audio, "idle_room_keeps_voice_alive")
 	await barrier("idle")
 	ui.voice.leave()
-	await ui.community.open_for()
-	ui.community._view.select(0)
-	ui.community.select_code("wheat_seed")
-	ui.community._quantity.value = 2
-	await ui.community._save()
+	await community.open_for()
+	community._view.select(0)
+	community.select_code("wheat_seed")
+	community._quantity.value = 2
+	await community._save()
 	await create_timer(0.3).timeout
-	check(ui.community._rows.size() == 1, "native_wishlist_save")
+	check(community._rows.size() == 1, "native_wishlist_save")
 	await barrier("wishlists")
 	if role == "alice":
-		await ui.community.open_for(target)
+		await community.open_for(target)
 		await create_timer(0.3).timeout
-		ui.community._items.select(0)
-		ui.community._select(0)
-		ui.community._quantity.value = 1
-		ui.community._prepare_gift()
-		check(ui.community._confirm.visible, "gift_confirmation")
+		community._items.select(0)
+		community._select(0)
+		community._quantity.value = 1
+		community._prepare_gift()
+		check(community._confirm.visible, "gift_confirmation")
 		await shot("gift")
-		ui.community._confirm.hide()
-		var gift_id: String = ui.community._proposal["request_id"]
+		community._confirm.hide()
+		var gift_id: String = community._proposal["request_id"]
 		await api.authenticated(HTTPClient.METHOD_POST, "/integration/lose-next-gift-response")
-		ui.community._send_gift()
+		community._send_gift()
 		await create_timer(0.5).timeout
-		check(not ui.community._pending().is_empty(), "lost_gift_response_keeps_id")
-		await ui.community._recover()
+		check(not community._pending().is_empty(), "lost_gift_response_keeps_id")
+		await community._recover()
 		var receipt: Dictionary = await api.authenticated(HTTPClient.METHOD_GET, "/social/gifts/requests/" + gift_id)
-		check(ui.community._pending().is_empty() and api.data_of(receipt).get("found", false), "gift_receipt_reconciled")
+		check(community._pending().is_empty() and api.data_of(receipt).get("found", false), "gift_receipt_reconciled")
 	await barrier("gift")
 	if role == "bob":
-		ui.community._view.select(2)
-		await ui.community.refresh()
-		check(ui.community._rows.size() == 1, "gift_inbox")
-		if not ui.community._rows.is_empty():
-			ui.community._items.select(0)
-			await ui.community._claim()
+		community._view.select(2)
+		await community.refresh()
+		check(community._rows.size() == 1, "gift_inbox")
+		if not community._rows.is_empty():
+			community._items.select(0)
+			await community._claim()
 			await create_timer(0.2).timeout
-			check(ui.community._rows.is_empty(), "native_gift_claim")
+			check(community._rows.is_empty(), "native_gift_claim")
 	await barrier("done")
-	ui.community._close()
+	community._close()
 	api.realtime.stop()
 	check(ui.voice.session_id.is_empty() and ui._bubbles.is_empty(), "disconnect_cleanup")
 	print("PROXIMITY_RESULT ", role, " failures=", failures)

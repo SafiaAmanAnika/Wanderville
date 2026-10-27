@@ -31,6 +31,7 @@ func _ready() -> void:
 	WoodPanel.apply_panel_title_style(%Title)
 	WoodPanel.apply_subtitle_style(_subtitle)
 	WoodPanel.apply_status_label(_status_label)
+	preload("res://Scripts/ui/loading_progress.gd").attach(_status_label)
 	_apply_info_panel_style()
 	_apply_info_label_style()
 

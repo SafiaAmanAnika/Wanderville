@@ -38,7 +38,7 @@ func run() -> void:
 			var host: Node = room.get_node("LobbyInteractions" if social else "CustomizationInteractions")
 			check(player.scene_file_path == session.CHARACTER_SCENES[code], "Selected character controller spawns in " + room_path)
 			check(player.position == room.get_node("PlayerSpawn").position, "PlayerSpawn marker is respected")
-			check(player.scale == Vector2(0.75, 0.75), "Existing lobby player scale is retained")
+			check(player.scale == Vector2(0.72,0.72), "Room character scale matches the existing receptionist")
 			check(not player.require_world_connection, "Authenticated lobby movement does not wait for campus transport")
 			check(not player.has_node("Appearance") and player.anim.visible, "Original sprite stays visible; retired appearance metadata is ignored")
 			check(host.player == player, "Interactions resolve the spawned player before use")

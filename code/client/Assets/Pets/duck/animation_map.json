@@ -1,0 +1,160 @@
+{
+  "id": "duck",
+  "name": "Duck",
+  "sheet": "duck/duck_walk_8x8.png",
+  "frame_size": [
+    128,
+    128
+  ],
+  "sheet_size": [
+    1024,
+    1024
+  ],
+  "hframes": 8,
+  "vframes": 8,
+  "fps": 8,
+  "directions": [
+    "n",
+    "ne",
+    "e",
+    "se",
+    "s",
+    "sw",
+    "w",
+    "nw"
+  ],
+  "left_views_mirror_whole_right_views": true,
+  "whole_body_frames": true,
+  "body_part_compositing": false,
+  "uniform_scale": 0.6537249158362507,
+  "animations": [
+    {
+      "name": "walk_n",
+      "row": 0,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "loop": true,
+      "fps": 8
+    },
+    {
+      "name": "walk_ne",
+      "row": 1,
+      "frames": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "loop": true,
+      "fps": 8
+    },
+    {
+      "name": "walk_e",
+      "row": 2,
+      "frames": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "loop": true,
+      "fps": 8
+    },
+    {
+      "name": "walk_se",
+      "row": 3,
+      "frames": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31
+      ],
+      "loop": true,
+      "fps": 8
+    },
+    {
+      "name": "walk_s",
+      "row": 4,
+      "frames": [
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39
+      ],
+      "loop": true,
+      "fps": 8
+    },
+    {
+      "name": "walk_sw",
+      "row": 5,
+      "frames": [
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "loop": true,
+      "fps": 8
+    },
+    {
+      "name": "walk_w",
+      "row": 6,
+      "frames": [
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55
+      ],
+      "loop": true,
+      "fps": 8
+    },
+    {
+      "name": "walk_nw",
+      "row": 7,
+      "frames": [
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63
+      ],
+      "loop": true,
+      "fps": 8
+    }
+  ]
+}

@@ -1,6 +1,8 @@
 extends SceneTree
 const Frames := preload("res://Scripts/chara_frames.gd")
 var failures := 0
+const Presentation := preload("res://Scripts/network/CharacterPresentation.gd")
+const Protocol := preload("res://Scripts/network/MovementProtocol.gd")
 var checked := 0
 var output := ""
 
@@ -23,6 +25,14 @@ func run() -> void:
 		var body: CharacterBody2D = session.get_character_scene(code).instantiate()
 		body.require_world_connection = false; root.add_child(body); body.set_physics_process(false)
 		check(body.anim.visible and not body.has_node("Appearance"), code + ": original sprite, no generated overlay")
+		check(body.scale == Frames.GAMEPLAY_SCALE, "Original scene uses the shared uniform gameplay scale")
+		for slot in 8:
+			var direction: Vector2 = Presentation.direction_for_facing(slot)
+			check(Protocol.facing_from_direction(direction) == slot, "Facing vector round trip")
+			Presentation.play(body, true, direction, slot)
+			check(body.anim.animation == "run_" + Presentation.DIRECTION_NAMES[slot], "Movement facing matches animation")
+			Presentation.play(body, false, Vector2.ZERO, slot)
+			check(body.anim.animation == "idle_" + Presentation.DIRECTION_NAMES[slot], "Stopping preserves facing")
 		check(body.SPEED == 300.0, "Existing movement speed stays 300")
 		for action in Frames.ACTIONS:
 			var frames := Frames.preview_frames(folder, action)
@@ -33,13 +43,7 @@ func run() -> void:
 					var texture := frames.get_frame_texture(name, frame) as AtlasTexture
 					check(texture != null and texture.atlas.resource_path == folder + "/" + Frames.FILES[action], "Frame uses original source artwork")
 					var expected := Rect2(frame * 448, row * 448, 448, 448)
-					if action in ["walk", "run"]:
-						expected.position += Frames.stride_offsets(folder, texture.atlas)[row * 6 + frame]
-						var pose := texture.get_image()
-						var standing := load(folder + "/idle.png") as Texture2D
-						var target := Frames._head_anchor(standing.get_image(), Rect2i(0, row * 448, 448, 448))
-						check(Frames._head_anchor(pose, Rect2i(0, 0, 448, 448)).distance_to(target) <= 1.0, "Hat/head stays registered to idle through each stride")
-					check(texture.region == expected, "Original columns play forward with correct facing and measured registration")
+					check(texture.region == expected, "Fixed cells preserve exported ground anchors without sampling adjacent frames")
 					checked += 1
 		for action in ["walk", "run"]:
 			for direction in Frames.DIRECTIONS:
@@ -67,14 +71,29 @@ func run() -> void:
 	var host: Node = room.get_node("CustomizationInteractions")
 	var original: CharacterBody2D = room.player
 	var spot := original.global_position
-	host._activate(&"mirror")
+	host._activate(&"character")
 	var panel: PanelContainer = host._creator
 	check(panel.options.get_child_count() == 6, "Only the original six are offered")
+	panel.avatar.pause()
+	panel.avatar.set_frame_and_progress(3, 0.42)
+	for turn in 8:
+		panel._turn_preview(1)
+		check(panel.avatar.direction == Frames.DIRECTIONS[(turn + 1) % 8], "Preview rotates through each exported direction")
+		check(not panel.avatar.is_playing() and panel.avatar.frame == 3 and is_equal_approx(panel.avatar.frame_progress, 0.42), "Turning preserves paused pose and stride phase")
+	for action in Frames.ACTIONS:
+		panel._set_preview_pose(action, "front")
+		check(panel.avatar.animation == action + "_front" and not panel.avatar.is_playing(), "Every action can be inspected while paused")
+	panel.find_child("PreviewFrameStep", true, false).pressed.emit()
+	check(panel.avatar.frame == 4 and not panel.avatar.is_playing(), "Frame step advances exactly one pose")
+	panel.find_child("PreviewPlayback", true, false).pressed.emit()
+	check(panel.avatar.is_playing(), "Playback control resumes animation")
+	panel.avatar.pause()
 	panel.options.get_child(1).pressed.emit()
+	check(not panel.avatar.is_playing() and panel.avatar.frame == 4, "Changing character preserves a paused inspection pose")
 	check(panel.draft == "girl_b" and session.selected_character == "boy_c" and room.player == original, "Preview does not swap the player")
 	host.close()
 	check(session.selected_character == "boy_c" and session.modular_look == retained, "Closing discards unsaved selection")
-	host._activate(&"mirror"); panel.options.get_child(1).pressed.emit()
+	host._activate(&"character"); panel.options.get_child(1).pressed.emit()
 	await panel.save(); await process_frame
 	check(session.selected_character == "girl_b" and session.modular_look.is_empty(), "Explicit Save selects original artwork")
 	check(room.player != original and room.player.global_position == spot and get_nodes_in_group("player").size() == 1, "Explicit swap preserves position and one player")

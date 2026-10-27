@@ -5,16 +5,14 @@ extends CharacterBody2D
 #   play_action("hoe" / "water" / "fish") -> plays that animation once, then back to idle
 #   F next to a lake  -> opens the fishing mini game
 #
-# The scenes already have idle / hoe / water / fish / death animations.
-# They have no run animation, so this script cuts it from run.png (same folder as the idle sheet).
+# The shared loader rebuilds Idle, Walk, Run and tools from their fixed-grid
+# source sheets. Legacy scene-only animations (for example Death) remain.
 
 const SPEED = 300.0
-const CELL := 448   # every sprite sheet frame is 448x448
-const COLUMNS := 6
 const CharaFrames := preload("res://Scripts/chara_frames.gd")
 
 # sheet row -> direction name used in the scenes (idle_front, water_back_left, ...)
-const ROW_DIRS := ["front", "front_right", "right", "back_right", "back", "back_left", "left", "front_left"]
+const ROW_DIRS := CharaFrames.DIRECTIONS
 
 @export var sheet_folder := ""   # empty = found automatically from the idle animation
 @export var require_world_connection := true # Local-only rooms do not join campus presence.
@@ -42,13 +40,12 @@ func _ready() -> void:
 	anim.sprite_frames = anim.sprite_frames.duplicate()   # own copy, so adding animations doesn't touch other scenes
 	if sheet_folder == "":
 		sheet_folder = _find_sheet_folder()
-	_add_sheet_animations("run", "run.png", 10.0, true)
-	_add_sheet_animations("walk", "run.png", 6.0, true)
-	_add_sheet_animations("idle", "idle.png", 6.0, true)   # fills in the diagonal idles the scene doesn't have
-	_add_sheet_animations("scythe", "scythe.png", 8.0, false)
-	if not CharaFrames.longer_leg_folder(sheet_folder).is_empty():
-		for action in ["hoe", "water", "fish"]:
-			CharaFrames.add_sheet_animations(anim.sprite_frames, sheet_folder, action, CharaFrames.FILES[action], 8.0, false, true)
+	# Use one grid and the same source artwork in gameplay and previews, including
+	# all eight tool directions. Embedded scene atlases can be older than the PNGs.
+	for action in CharaFrames.ACTIONS:
+		var locomotion: bool = action in ["idle", "walk", "run"]
+		var fps := 10.0 if action == "run" else 6.0 if locomotion else 8.0
+		CharaFrames.add_sheet_animations(anim.sprite_frames, sheet_folder, action, CharaFrames.FILES[action], fps, locomotion, true)
 	for action in ["hoe", "water", "fish", "scythe", "axe", "death"]:
 		for dir in ROW_DIRS:
 			var a: String = "%s_%s" % [action, dir]
@@ -203,13 +200,6 @@ func _find_sheet_folder() -> String:
 		if tex != null and tex.atlas != null:
 			return tex.atlas.resource_path.get_base_dir()
 	return ""
-
-
-# Cut one sprite sheet (6 columns x 8 rows) into 8 animations: <prefix>_front, <prefix>_right, ...
-# Animations the scene already has are kept as they are.
-func _add_sheet_animations(prefix: String, file: String, fps: float, loop: bool) -> void:
-	var replace := prefix in ["idle", "walk", "run"] or not CharaFrames.longer_leg_folder(sheet_folder).is_empty()
-	CharaFrames.add_sheet_animations(anim.sprite_frames, sheet_folder, prefix, file, fps, loop, replace)
 
 
 # The ENet adapter keeps the existing fishing and action input rules.

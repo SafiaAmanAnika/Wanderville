@@ -102,6 +102,7 @@ const SFX_MAX_DURATION := {
 
 var music_volume: float = 80.0
 var sfx_volume: float = 80.0
+var music_muted := false
 
 var _music: AudioStreamPlayer
 var _music_key := ""
@@ -162,7 +163,7 @@ func _ensure_bus(bus_name: String) -> int:
 func set_music_volume(percent: float) -> void:
 	music_volume = clampf(percent, 0.0, 100.0)
 	AudioServer.set_bus_volume_db(_music_bus, _percent_to_db(music_volume))
-	AudioServer.set_bus_mute(_music_bus, music_volume <= 0.0)
+	AudioServer.set_bus_mute(_music_bus, music_muted or music_volume <= 0.0)
 	_save_settings()
 
 
@@ -388,6 +389,12 @@ func _hover() -> void:
 
 # ── settings file ───────────────────────────────────────────────────────────
 
+func set_music_muted(value: bool) -> void:
+	music_muted = value
+	AudioServer.set_bus_mute(_music_bus, music_muted or music_volume <= 0.0)
+	_save_settings()
+
+
 func _percent_to_db(percent: float) -> float:
 	if percent <= 0.0:
 		return -80.0
@@ -398,6 +405,7 @@ func _save_settings() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("audio", "music_volume", music_volume)
 	cfg.set_value("audio", "sfx_volume", sfx_volume)
+	cfg.set_value("audio", "music_muted", music_muted)
 	cfg.save(SETTINGS_FILE)
 
 
@@ -410,5 +418,6 @@ func _load_settings() -> void:
 		return
 	music_volume = float(cfg.get_value("audio", "music_volume", 80.0))
 	sfx_volume = float(cfg.get_value("audio", "sfx_volume", 80.0))
+	music_muted = bool(cfg.get_value("audio", "music_muted", false))
 	set_music_volume(music_volume)
 	set_sfx_volume(sfx_volume)

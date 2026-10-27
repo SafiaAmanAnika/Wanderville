@@ -1,0 +1,492 @@
+{
+  "cell": [
+    448,
+    448
+  ],
+  "ground_y_exclusive": 321,
+  "reference": "CharacterA",
+  "corrected_frames": 70,
+  "translations": {
+    "CharacterA": {
+      "fishing": [],
+      "hoe": [
+        {
+          "frame": 5,
+          "row": 2,
+          "source_sole": 318,
+          "translation_y": 3
+        },
+        {
+          "frame": 3,
+          "row": 4,
+          "source_sole": 318,
+          "translation_y": 3
+        },
+        {
+          "frame": 4,
+          "row": 4,
+          "source_sole": 318,
+          "translation_y": 3
+        },
+        {
+          "frame": 5,
+          "row": 6,
+          "source_sole": 318,
+          "translation_y": 3
+        }
+      ],
+      "idle": [],
+      "run": [
+        {
+          "frame": 2,
+          "row": 2,
+          "source_sole": 330,
+          "translation_y": -9
+        },
+        {
+          "frame": 3,
+          "row": 2,
+          "source_sole": 329,
+          "translation_y": -8
+        },
+        {
+          "frame": 2,
+          "row": 6,
+          "source_sole": 330,
+          "translation_y": -9
+        },
+        {
+          "frame": 3,
+          "row": 6,
+          "source_sole": 329,
+          "translation_y": -8
+        }
+      ],
+      "scythe": [
+        {
+          "frame": 2,
+          "row": 0,
+          "source_sole": 315,
+          "translation_y": 6
+        },
+        {
+          "frame": 4,
+          "row": 0,
+          "source_sole": 324,
+          "translation_y": -3
+        },
+        {
+          "frame": 2,
+          "row": 1,
+          "source_sole": 318,
+          "translation_y": 3
+        },
+        {
+          "frame": 4,
+          "row": 1,
+          "source_sole": 317,
+          "translation_y": 4
+        },
+        {
+          "frame": 3,
+          "row": 2,
+          "source_sole": 318,
+          "translation_y": 3
+        },
+        {
+          "frame": 4,
+          "row": 2,
+          "source_sole": 328,
+          "translation_y": -7
+        },
+        {
+          "frame": 4,
+          "row": 3,
+          "source_sole": 324,
+          "translation_y": -3
+        },
+        {
+          "frame": 2,
+          "row": 4,
+          "source_sole": 317,
+          "translation_y": 4
+        },
+        {
+          "frame": 3,
+          "row": 4,
+          "source_sole": 318,
+          "translation_y": 3
+        },
+        {
+          "frame": 4,
+          "row": 4,
+          "source_sole": 326,
+          "translation_y": -5
+        },
+        {
+          "frame": 4,
+          "row": 5,
+          "source_sole": 324,
+          "translation_y": -3
+        },
+        {
+          "frame": 3,
+          "row": 6,
+          "source_sole": 318,
+          "translation_y": 3
+        },
+        {
+          "frame": 4,
+          "row": 6,
+          "source_sole": 328,
+          "translation_y": -7
+        },
+        {
+          "frame": 2,
+          "row": 7,
+          "source_sole": 318,
+          "translation_y": 3
+        },
+        {
+          "frame": 4,
+          "row": 7,
+          "source_sole": 317,
+          "translation_y": 4
+        }
+      ],
+      "watering_can": []
+    },
+    "CharacterA_Male": {
+      "fishing": [],
+      "hoe": [
+        {
+          "frame": 3,
+          "row": 1,
+          "source_sole": 328,
+          "translation_y": -7
+        },
+        {
+          "frame": 3,
+          "row": 2,
+          "source_sole": 318,
+          "translation_y": 3
+        },
+        {
+          "frame": 3,
+          "row": 6,
+          "source_sole": 318,
+          "translation_y": 3
+        },
+        {
+          "frame": 3,
+          "row": 7,
+          "source_sole": 328,
+          "translation_y": -7
+        }
+      ],
+      "idle": [],
+      "run": [],
+      "scythe": [
+        {
+          "frame": 2,
+          "row": 3,
+          "source_sole": 318,
+          "translation_y": 3
+        },
+        {
+          "frame": 2,
+          "row": 5,
+          "source_sole": 318,
+          "translation_y": 3
+        }
+      ],
+      "watering_can": []
+    },
+    "CharacterB": {
+      "fishing": [],
+      "hoe": [
+        {
+          "frame": 2,
+          "row": 0,
+          "source_sole": 324,
+          "translation_y": -3
+        },
+        {
+          "frame": 3,
+          "row": 0,
+          "source_sole": 324,
+          "translation_y": -3
+        }
+      ],
+      "idle": [],
+      "run": [
+        {
+          "frame": 0,
+          "row": 2,
+          "source_sole": 335,
+          "translation_y": -14
+        },
+        {
+          "frame": 2,
+          "row": 2,
+          "source_sole": 322,
+          "translation_y": -1
+        },
+        {
+          "frame": 3,
+          "row": 2,
+          "source_sole": 324,
+          "translation_y": -3
+        },
+        {
+          "frame": 4,
+          "row": 2,
+          "source_sole": 322,
+          "translation_y": -1
+        },
+        {
+          "frame": 0,
+          "row": 6,
+          "source_sole": 335,
+          "translation_y": -14
+        },
+        {
+          "frame": 2,
+          "row": 6,
+          "source_sole": 322,
+          "translation_y": -1
+        },
+        {
+          "frame": 3,
+          "row": 6,
+          "source_sole": 324,
+          "translation_y": -3
+        },
+        {
+          "frame": 4,
+          "row": 6,
+          "source_sole": 322,
+          "translation_y": -1
+        }
+      ],
+      "scythe": [
+        {
+          "frame": 3,
+          "row": 0,
+          "source_sole": 317,
+          "translation_y": 4
+        }
+      ],
+      "watering_can": []
+    },
+    "CharacterB_Male": {
+      "fishing": [],
+      "hoe": [],
+      "idle": [],
+      "run": [
+        {
+          "frame": 2,
+          "row": 2,
+          "source_sole": 345,
+          "translation_y": -24
+        },
+        {
+          "frame": 3,
+          "row": 2,
+          "source_sole": 323,
+          "translation_y": -2
+        },
+        {
+          "frame": 5,
+          "row": 2,
+          "source_sole": 324,
+          "translation_y": -3
+        },
+        {
+          "frame": 2,
+          "row": 6,
+          "source_sole": 345,
+          "translation_y": -24
+        },
+        {
+          "frame": 3,
+          "row": 6,
+          "source_sole": 323,
+          "translation_y": -2
+        },
+        {
+          "frame": 5,
+          "row": 6,
+          "source_sole": 324,
+          "translation_y": -3
+        }
+      ],
+      "scythe": [
+        {
+          "frame": 2,
+          "row": 1,
+          "source_sole": 330,
+          "translation_y": -9
+        },
+        {
+          "frame": 3,
+          "row": 1,
+          "source_sole": 324,
+          "translation_y": -3
+        },
+        {
+          "frame": 2,
+          "row": 7,
+          "source_sole": 330,
+          "translation_y": -9
+        },
+        {
+          "frame": 3,
+          "row": 7,
+          "source_sole": 324,
+          "translation_y": -3
+        }
+      ],
+      "watering_can": []
+    },
+    "CharacterC": {
+      "fishing": [],
+      "hoe": [],
+      "idle": [],
+      "run": [],
+      "scythe": [
+        {
+          "frame": 1,
+          "row": 0,
+          "source_sole": 350,
+          "translation_y": -29
+        },
+        {
+          "frame": 2,
+          "row": 0,
+          "source_sole": 327,
+          "translation_y": -6
+        },
+        {
+          "frame": 1,
+          "row": 1,
+          "source_sole": 345,
+          "translation_y": -24
+        },
+        {
+          "frame": 1,
+          "row": 7,
+          "source_sole": 345,
+          "translation_y": -24
+        }
+      ],
+      "watering_can": []
+    },
+    "CharacterC_Male": {
+      "fishing": [],
+      "hoe": [
+        {
+          "frame": 3,
+          "row": 1,
+          "source_sole": 325,
+          "translation_y": -4
+        },
+        {
+          "frame": 3,
+          "row": 2,
+          "source_sole": 327,
+          "translation_y": -6
+        },
+        {
+          "frame": 3,
+          "row": 3,
+          "source_sole": 325,
+          "translation_y": -4
+        },
+        {
+          "frame": 3,
+          "row": 5,
+          "source_sole": 325,
+          "translation_y": -4
+        },
+        {
+          "frame": 3,
+          "row": 6,
+          "source_sole": 327,
+          "translation_y": -6
+        },
+        {
+          "frame": 3,
+          "row": 7,
+          "source_sole": 325,
+          "translation_y": -4
+        }
+      ],
+      "idle": [],
+      "run": [
+        {
+          "frame": 0,
+          "row": 2,
+          "source_sole": 326,
+          "translation_y": -5
+        },
+        {
+          "frame": 1,
+          "row": 2,
+          "source_sole": 322,
+          "translation_y": -1
+        },
+        {
+          "frame": 2,
+          "row": 2,
+          "source_sole": 335,
+          "translation_y": -14
+        },
+        {
+          "frame": 3,
+          "row": 2,
+          "source_sole": 327,
+          "translation_y": -6
+        },
+        {
+          "frame": 4,
+          "row": 2,
+          "source_sole": 325,
+          "translation_y": -4
+        },
+        {
+          "frame": 0,
+          "row": 6,
+          "source_sole": 326,
+          "translation_y": -5
+        },
+        {
+          "frame": 1,
+          "row": 6,
+          "source_sole": 322,
+          "translation_y": -1
+        },
+        {
+          "frame": 2,
+          "row": 6,
+          "source_sole": 335,
+          "translation_y": -14
+        },
+        {
+          "frame": 3,
+          "row": 6,
+          "source_sole": 327,
+          "translation_y": -6
+        },
+        {
+          "frame": 4,
+          "row": 6,
+          "source_sole": 325,
+          "translation_y": -4
+        }
+      ],
+      "scythe": [],
+      "watering_can": []
+    }
+  }
+}

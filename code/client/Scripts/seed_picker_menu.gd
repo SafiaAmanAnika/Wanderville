@@ -77,6 +77,10 @@ func _render() -> void:
 		var row: Dictionary = owned[code]
 		var item: Dictionary = row.get("item", {})
 		var crop := str(row.get("harvest_code", "")) if row.get("harvest_code") != null else ""
+		# Local starter inventory has no server-computed harvest metadata.
+		# Signed-in inventory must keep using the server's eligibility response.
+		if crop.is_empty() and not Global.is_logged_in() and code.ends_with("_seed"):
+			crop = str(code).trim_suffix("_seed")
 		var reasons: Array[String] = []
 		if crop == "":
 			reasons.append("Planting unavailable")

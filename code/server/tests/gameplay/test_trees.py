@@ -152,3 +152,27 @@ def test_visitors_cannot_cut_their_hosts_trees(client, account, db, monkeypatch)
     refused = client.post("/trees/chop", headers=me.headers, json={"tree_id": tree["id"]})
     assert refused.status_code == 403
     assert TreeService(db).forest(me.id)["cut"] == []
+
+
+def test_owner_can_cut_in_their_private_farm(client, account, db):
+    from app.modules.realtime.service import RealtimeService
+    season(db, "summer")
+    me = account("private_cutter")
+    entered = RealtimeService(db).enter(me.id)
+    assert entered["room"].startswith("world:")
+    tree = summer_tree()
+    stand(db, me.id, tree["x"], tree["y"] - 80)
+    data(client.post("/trees/chop", headers=me.headers, json={"tree_id": tree["id"]}))
+    assert wood(client, me) == WOOD_PER_TREE
+
+
+def test_social_lobby_does_not_allow_private_tree_chopping(client, account, db):
+    from app.modules.realtime.service import RealtimeService
+    season(db, "summer")
+    me = account("lobby_cutter")
+    RealtimeService(db).enter(me.id, location="social_lobby")
+    tree = summer_tree()
+    stand(db, me.id, tree["x"], tree["y"])
+    response = client.post("/trees/chop", headers=me.headers, json={"tree_id": tree["id"]})
+    assert response.status_code == 403
+    assert wood(client, me) == 0

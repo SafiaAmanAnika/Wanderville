@@ -92,7 +92,7 @@ def test_two_normal_world_clients(backend, harness_dir, server_port):
     assert server.poll() is None
 
 
-def test_incompatible_campus_is_rejected(backend, harness_dir, server_port):
+def test_private_farm_skips_incompatible_campus_admission(backend, harness_dir, server_port):
     start_server(backend.secret, server_port, harness_dir,
                  {**movement_env(harness_dir, arena=False), "GODOT_ENET_GAMEPLAY": "1"})
     result(launch("alpha", server_port, harness_dir, mismatch=True))

@@ -532,7 +532,7 @@ def test_notifications_private_and_dismissed(client, account, db):
 def test_realtime_radius_blocking_and_sequence(client, account, db):
     a, b, c = account(), account("second_user"), account("third_user")
     for u in (a, b, c):
-        data(client.post("/realtime/enter", headers=u.headers, json={}))
+        data(client.post("/realtime/enter", headers=u.headers, json={"location": "social_lobby"}))
     row = db.get(Presence, c.id)
     row.x += 5000
     db.commit()

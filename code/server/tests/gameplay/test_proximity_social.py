@@ -23,6 +23,8 @@ def friends(client, a, b):
 
 
 def enter(client, user, **data):
+    if "owner_id" not in data:
+        data.setdefault("location", "social_lobby")
     return ok(client.post("/realtime/enter", headers=user.headers, json=data))
 
 
@@ -76,7 +78,7 @@ def test_chat_retries_expiry_and_room_reentry_do_not_leak(client, account, db):
     )
     messages = ok(client.get("/realtime/snapshot", headers=b.headers))["messages"]
     assert len(messages) == 1 and messages[0]["body"] == "hello"
-    assert messages[0]["room"] == "campus" and messages[0]["created_at"]
+    assert messages[0]["room"] == "social_lobby" and messages[0]["created_at"]
     enter(client, late)
     assert ok(client.get("/realtime/snapshot", headers=late.headers))["messages"] == []
     enter(client, b, owner_id=b.id)

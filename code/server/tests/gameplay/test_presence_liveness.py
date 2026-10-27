@@ -39,7 +39,7 @@ def two_players(backend, client, account):
     made = []
     for name in ("idle_one", "idle_two"):
         user = account(name)
-        assert client.post("/realtime/enter", headers=user.headers, json={}).status_code == 200
+        assert client.post("/realtime/enter", headers=user.headers, json={"location": "social_lobby"}).status_code == 200
         made.append(user)
     return made
 

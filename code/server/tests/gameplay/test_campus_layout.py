@@ -53,7 +53,8 @@ def test_collision_polygons_have_no_stray_vertices():
 def test_reenter_recovers_only_obsolete_positions(account, db, monkeypatch, backend, saved):
     monkeypatch.setattr(settings, "presence_backend", backend)
     user = account()
-    row = Presence(player_id=user.id, room="campus", x=saved[0], y=saved[1],
+    from app.modules.world.access import owned_world
+    row = Presence(player_id=user.id, room=f"world:{owned_world(db, user.id).id}", x=saved[0], y=saved[1],
                    sequence=9, room_epoch=2, updated_at=utcnow()-timedelta(seconds=2))
     db.add(row)
     db.commit()

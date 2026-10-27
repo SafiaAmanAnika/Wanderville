@@ -5,6 +5,7 @@ const PREFS := "user://onboarding.cfg"
 var welcome: PanelContainer
 var tip: PanelContainer
 var tip_text: Label
+var _tip_message := ""
 var _prefs := ConfigFile.new()
 var _account := ""
 var _session := -1
@@ -25,7 +26,7 @@ func _ready() -> void:
 	if footprint!=null and not footprint.polygon.is_empty():
 		_store=Rect2(footprint.to_global(footprint.polygon[0]),Vector2.ZERO)
 		for point in footprint.polygon: _store=_store.expand(footprint.to_global(point))
-	tip=_card(); tip_text=_label("",20); tip_text.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	tip=_card(); tip_text=_label("",20); tip_text.autowrap_mode=TextServer.AUTOWRAP_OFF
 	tip.add_child(tip_text); tip.hide()
 	get_viewport().size_changed.connect(_fit)
 	if not GameState.read_only and int(GameState.profile.get("tutorial_step",0))==0 and not _seen("welcome"):
@@ -98,7 +99,7 @@ func _process(delta: float) -> void:
 	tip.hide(); _active=""
 	var context := context_at(_player.global_position)
 	if not context.is_empty() and not _seen(context.key):
-		_active=context.key; tip_text.text=context.text; _remaining=5.0
+		_active=context.key; _tip_message=context.text; _remaining=5.0
 		_remember(_active); tip.show(); _fit()
 
 func _remember_once(key: String) -> void:
@@ -112,5 +113,25 @@ func _fit() -> void:
 		welcome.scale=Vector2.ONE*factor
 		welcome.position=Vector2((viewport.x-welcome.size.x*factor)/2,viewport.y*0.18)
 	if tip!=null:
-		tip.custom_minimum_size=Vector2(minf(760,viewport.x-48),0)
+		var width := minf(760,viewport.x-48)
+		var style := tip.get_theme_stylebox("panel")
+		var room := width-style.content_margin_left-style.content_margin_right
+		tip_text.text=_wrap_tip(_tip_message,room)
+		tip.custom_minimum_size=Vector2(width,0)
 		tip.reset_size(); tip.position=Vector2((viewport.x-tip.size.x)/2,viewport.y-tip.size.y-92)
+
+
+func _wrap_tip(message: String, width: float) -> String:
+	var font := tip_text.get_theme_font("font")
+	var font_size := tip_text.get_theme_font_size("font_size")
+	var lines := PackedStringArray()
+	var line := ""
+	for word in message.split(" ",false):
+		var candidate := word if line.is_empty() else line+" "+word
+		if not line.is_empty() and font.get_string_size(candidate,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x>width:
+			lines.append(line)
+			line=word
+		else:
+			line=candidate
+	lines.append(line)
+	return "\n".join(lines)

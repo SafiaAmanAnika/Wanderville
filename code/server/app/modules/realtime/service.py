@@ -126,7 +126,7 @@ class RealtimeService:
                 # Re-entering the same room restores the saved position and
                 # sequence, which is what makes a reconnect seamless.
                 current = self._current_position(pid, row, memory=True)
-                if room == CAMPUS_ROOM and not walkable(current.x, current.y):
+                if room != "social_lobby" and not walkable(current.x, current.y):
                     row.x, row.y = CAMPUS_SPAWN
                     row.sequence = 0
                     row.room_epoch += 1
@@ -220,7 +220,9 @@ class RealtimeService:
         socket was still up, their room no longer matches, and this is the frame
         that tells the client to come back out.
         """
-        if row.room != "social_lobby" and row.room != world_room(session.current_world_id):
+        # The opt-in trusted ENet bridge still uses the legacy campus room.
+        # HTTP and websocket farm entry always resolve an authorized private world.
+        if row.room not in ("social_lobby", CAMPUS_ROOM) and row.room != world_room(session.current_world_id):
             raise AppError(
                 "VISIT_ENDED",
                 "Your farm room changed. Enter your current farm again.",

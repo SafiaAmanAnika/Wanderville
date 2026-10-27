@@ -70,6 +70,10 @@ func _run() -> void:
 		check(body.global_position.distance_to(start) > 25, "legacy_moves")
 		finish()
 		return
+	if state.current_world_id() > 0:
+		await verify_private_farm()
+		finish()
+		return
 	if OS.get_environment("TEST_BAD_VERSION") == "1":
 		bridge.set("_version", "incompatible-test-map")
 		check(await wait_for(func(): return bridge.phase() == "rejected"), "mismatch_rejected")
@@ -149,3 +153,35 @@ func _run() -> void:
 func finish() -> void:
 	print("GAMEPLAY_RESULT ", JSON.stringify({"role": role, "failures": failures, "scene": current_scene.scene_file_path, "player_id": session.player_id, "display": DisplayServer.get_name()}))
 	quit(1 if failures else 0)
+
+func verify_private_farm() -> void:
+	var state := root.get_node("GameState")
+	var api := root.get_node("APIClient")
+	var session := root.get_node("Global")
+	var expected_room := "world:%d" % state.current_world_id()
+	check(await wait_for(func(): return api.realtime.connected and api.realtime._room == expected_room), "private_farm_connected")
+	check(bridge.phase() == "legacy" and not api.realtime.external_movement, "private_farm_uses_isolated_transport")
+	check(bridge.movement == null, "private_farm_skips_campus_admission")
+	var snapshot: Dictionary = await api.authenticated(HTTPClient.METHOD_GET, "/realtime/snapshot")
+	var players: Array = api.data_of(snapshot).get("players", [])
+	check(players.size() == 1 and int(players[0].player_id) == session.player_id, "owners_do_not_share_private_farms")
+	check(get_nodes_in_group("player").size() == 1, "one_private_farm_player")
+	var body: Node2D = world.get_node("girl")
+	var start := body.global_position
+	Input.action_press("ui_right")
+	await create_timer(1.5).timeout
+	var sprite := body.get_node("girl") if role == "alpha" else body.get_node("AnimatedSprite2D")
+	var locomotion := "run" if role == "alpha" else "walk"
+	check(sprite.is_playing() and str(sprite.animation).begins_with(locomotion), "private_farm_character_animates")
+	Input.action_release("ui_right")
+	check(body.global_position.distance_to(start) > 25, "private_farm_character_moves")
+	var stopped := body.global_position
+	state.menu_open = true
+	Input.action_press("ui_right")
+	await create_timer(0.4).timeout
+	Input.action_release("ui_right")
+	state.menu_open = false
+	check(body.global_position.distance_to(stopped) < 5, "private_farm_menu_blocks_movement")
+	if DisplayServer.get_name() != "headless":
+		await RenderingServer.frame_post_draw
+		check(root.get_texture().get_image().save_png(sync_dir.path_join(role + ".png")) == OK, "rendered_private_farm")

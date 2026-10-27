@@ -35,11 +35,13 @@ def host_bridge(monkeypatch):
     position_projection.reset()
 
 
-def campus_pair(client, account):
+def campus_pair(client, account, db):
     a, b = account("enet_presence_a"), account("enet_presence_b")
     for user in (a, b):
         entered = client.post("/realtime/enter", headers=user.headers, json={})
         assert entered.status_code == 200, entered.text
+        db.get(Presence, user.id).room = "campus"
+        db.commit()
     return a, b
 
 
@@ -94,7 +96,7 @@ def test_presence_push_requires_the_host_secret(client):
 
 
 def test_live_position_replaces_the_durable_row_for_a_viewer(client, account, db):
-    a, b = campus_pair(client, account)
+    a, b = campus_pair(client, account, db)
     x, y = CAMPUS_SPAWN[0] + 120.0, CAMPUS_SPAWN[1] - 40.0
     assert push(client, updates=[update(a.id, x, y, sequence=3)])["updated"] == 1
 
@@ -109,7 +111,7 @@ def test_live_position_replaces_the_durable_row_for_a_viewer(client, account, db
 
 
 def test_a_viewer_sees_their_own_live_position_too(client, account, db):
-    a, b = campus_pair(client, account)
+    a, b = campus_pair(client, account, db)
     x, y = CAMPUS_SPAWN[0] + 50.0, CAMPUS_SPAWN[1] + 25.0
     push(client, updates=[update(b.id, x, y, sequence=3)])
 
@@ -123,7 +125,7 @@ def test_a_viewer_sees_their_own_live_position_too(client, account, db):
 
 
 def test_a_non_campus_row_is_ignored(client, account, db):
-    a, b = campus_pair(client, account)
+    a, b = campus_pair(client, account, db)
     row = db.get(Presence, a.id)
     row.room = "world:1"
     db.commit()
@@ -133,8 +135,8 @@ def test_a_non_campus_row_is_ignored(client, account, db):
     assert position_projection.get(a.id) is None
 
 
-def test_an_unknown_player_is_skipped_not_rejected(client, account):
-    a, b = campus_pair(client, account)
+def test_an_unknown_player_is_skipped_not_rejected(client, account, db):
+    a, b = campus_pair(client, account, db)
     result = push(
         client,
         updates=[update(999999, 1.0, 1.0), update(a.id, 2.0, 2.0)],
@@ -142,8 +144,8 @@ def test_an_unknown_player_is_skipped_not_rejected(client, account):
     assert result["updated"] == 1 and result["skipped"] == 1
 
 
-def test_a_leave_drops_the_live_position(client, account):
-    a, b = campus_pair(client, account)
+def test_a_leave_drops_the_live_position(client, account, db):
+    a, b = campus_pair(client, account, db)
     push(client, updates=[update(a.id, 5.0, 5.0)])
     assert position_projection.get(a.id) is not None
 
@@ -155,7 +157,7 @@ def test_a_leave_drops_the_live_position(client, account):
 
 
 def test_without_a_live_position_the_roster_is_unchanged(client, account, db):
-    a, b = campus_pair(client, account)
+    a, b = campus_pair(client, account, db)
     entry = player_entry(snapshot_for(db, b), a.id)
     assert entry is not None
     assert entry["x"] == pytest.approx(CAMPUS_SPAWN[0])

@@ -74,6 +74,7 @@ var _drag_key := ""
 var _drag_crop: Dictionary = {}     # empty = carrying bare soil
 
 var _cursor: Line2D
+var _pointer_viewport := Vector2(INF, INF)
 
 var _player_in_zone := false
 
@@ -104,6 +105,11 @@ func _process(_delta: float) -> void:
 			_place(node, spot)
 	elif on_farm:
 		_cursor.default_color = Color(1, 1, 1, 0.9) if _in_reach(tile) else Color(1, 0.3, 0.3, 0.7)
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouse:
+		_pointer_viewport = event.position
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -471,7 +477,10 @@ func _toast(text: String, _tile: Vector2i) -> void:
 # ─── Tile math ───────────────────────────────────────────────────────
 
 func _hover_tile() -> Vector2i:
-	return _get_tile_pos(get_global_mouse_position())
+	var point := get_global_mouse_position()
+	if _pointer_viewport.is_finite():
+		point = get_canvas_transform().affine_inverse() * _pointer_viewport
+	return _get_tile_pos(point)
 
 
 func _get_tile_pos(global_pos: Vector2) -> Vector2i:

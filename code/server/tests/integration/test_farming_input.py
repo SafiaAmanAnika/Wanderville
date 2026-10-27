@@ -20,6 +20,19 @@ def backend(test_engine):
     service = IsolatedBackend().start()
     try:
         service.ensure_accounts(["farm_input_player"])
+        # Start on the field through durable server state. A client-side teleport
+        # alone is correctly rejected by the authoritative movement validator.
+        from sqlalchemy.orm import Session
+        from app.modules.realtime.service import RealtimeService
+        from app.modules.realtime.models import Presence
+        from app.modules.world.geometry import GEOMETRY
+        with Session(test_engine) as db:
+            player_id = account("farm_input_player")["player_id"]
+            RealtimeService(db).enter(player_id)
+            row = db.get(Presence, player_id)
+            low, high = GEOMETRY["farm"]
+            row.x, row.y = (low[0] + high[0]) / 2, (low[1] + high[1]) / 2
+            db.commit()
         yield service
     finally:
         service.stop()

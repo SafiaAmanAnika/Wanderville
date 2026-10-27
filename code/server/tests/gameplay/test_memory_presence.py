@@ -77,7 +77,7 @@ def campus_players(client, account):
     made = []
     for index, name in enumerate(("mem_one", "mem_two")):
         user = account(name)
-        assert client.post("/realtime/enter", headers=user.headers, json={}).status_code == 200
+        assert client.post("/realtime/enter", headers=user.headers, json={"location": "social_lobby"}).status_code == 200
         made.append(user)
     return made
 
@@ -111,7 +111,7 @@ def test_caller_appears_in_their_own_roster(client, account, db, monkeypatch, mo
     position_projection.reset()
     try:
         user = account(f"self_{mode}")
-        assert client.post("/realtime/enter", headers=user.headers, json={}).status_code == 200
+        assert client.post("/realtime/enter", headers=user.headers, json={"location": "social_lobby"}).status_code == 200
         snapshot = client.get("/realtime/snapshot", headers=user.headers)
         assert snapshot.status_code == 200, snapshot.text
         ids = {p["player_id"] for p in snapshot.json()["data"]["players"]}
@@ -127,8 +127,8 @@ def test_blocked_player_leaves_the_roster(client, account, db, monkeypatch, mode
     try:
         a = account(f"blocker_{mode}")
         b = account(f"blocked_{mode}")
-        assert client.post("/realtime/enter", headers=a.headers, json={}).status_code == 200
-        assert client.post("/realtime/enter", headers=b.headers, json={}).status_code == 200
+        assert client.post("/realtime/enter", headers=a.headers, json={"location": "social_lobby"}).status_code == 200
+        assert client.post("/realtime/enter", headers=b.headers, json={"location": "social_lobby"}).status_code == 200
         assert b.id in {
             p["player_id"]
             for p in client.get("/realtime/snapshot", headers=a.headers).json()["data"]["players"]
@@ -152,7 +152,7 @@ def test_movement_is_still_validated(client, account, db, monkeypatch, mode):
     position_projection.reset()
     try:
         user = account(f"hack_{mode}")
-        assert client.post("/realtime/enter", headers=user.headers, json={}).status_code == 200
+        assert client.post("/realtime/enter", headers=user.headers, json={"location": "social_lobby"}).status_code == 200
         service = RealtimeService(db)
         row = db.get(Presence, user.id)
         before_row = (row.x, row.y, row.sequence)
@@ -299,11 +299,11 @@ def test_room_change_does_not_leave_the_old_room_visible(
     client, account, db, memory_mode
 ):
     a = account("room_switch")
-    assert client.post("/realtime/enter", headers=a.headers, json={}).status_code == 200
+    assert client.post("/realtime/enter", headers=a.headers, json={"location": "social_lobby"}).status_code == 200
     assert client.post("/realtime/enter", headers=a.headers, json={"owner_id": a.id}).status_code == 200
 
     campus_record = None
-    for position in position_projection.room_members("campus"):
+    for position in position_projection.room_members("social_lobby"):
         if position.player_id == a.id:
             campus_record = position
     assert campus_record is None, "the player must not remain in the campus room"
@@ -361,8 +361,8 @@ def test_memory_mode_costs_fewer_statements(client, account, db, monkeypatch):
         limiter.clear()
         other = account(f"cost_peer_{mode}")
         limiter.clear()
-        assert client.post("/realtime/enter", headers=user.headers, json={}).status_code == 200
-        assert client.post("/realtime/enter", headers=other.headers, json={}).status_code == 200
+        assert client.post("/realtime/enter", headers=user.headers, json={"location": "social_lobby"}).status_code == 200
+        assert client.post("/realtime/enter", headers=other.headers, json={"location": "social_lobby"}).status_code == 200
         service = RealtimeService(db)
         row = db.get(Presence, user.id)
 

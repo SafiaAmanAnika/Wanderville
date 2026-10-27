@@ -27,6 +27,7 @@ def connect(stack, client, user, capabilities=None):
     ws = stack.enter_context(client.websocket_connect("/realtime/ws"))
     ws.send_json({"type": "auth", "protocol_version": 2, "token": user.tokens["access_token"]})
     initial = ws.receive_json()
+    command(ws, "enter", {"location": "social_lobby"})
     joined = command(ws, "voice.join", {"transport": "pcm-websocket"})
     sid = joined["data"]["voice"]["session_id"]
     audio = stack.enter_context(client.websocket_connect("/realtime/voice/ws"))

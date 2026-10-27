@@ -94,7 +94,7 @@ def two_on_campus(client, account, db):
     for name in ("base_one", "base_two"):
         limiter.clear()
         user = account(name)
-        assert client.post("/realtime/enter", headers=user.headers, json={}).status_code == 200
+        assert client.post("/realtime/enter", headers=user.headers, json={"location": "social_lobby"}).status_code == 200
         made.append(user)
     limiter.clear()
     return made

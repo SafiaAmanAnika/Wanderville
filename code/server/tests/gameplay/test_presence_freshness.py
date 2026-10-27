@@ -39,7 +39,7 @@ def memory_mode(monkeypatch):
 def pair(client, account):
     a, b = account("cache_a"), account("cache_b")
     for user in (a, b):
-        assert client.post("/realtime/enter", headers=user.headers, json={}).status_code == 200
+        assert client.post("/realtime/enter", headers=user.headers, json={"location": "social_lobby"}).status_code == 200
     return a, b
 
 
@@ -180,7 +180,7 @@ def test_room_change_invalidates_the_cached_room(pair, client, db, memory_mode):
 
     a, b = pair
     reply = viewer_snapshot(db, b)
-    assert reply["data"]["room"] == "campus"
+    assert reply["data"]["room"] == "social_lobby"
 
     assert client.post(
         "/realtime/enter", headers=b.headers, json={"owner_id": b.id}
@@ -189,7 +189,7 @@ def test_room_change_invalidates_the_cached_room(pair, client, db, memory_mode):
 
     moved = viewer_snapshot(db, b)
     assert moved["data"]["room"] == f"world:{owned_world(db, b.id).id}"
-    assert moved["data"]["room"] != "campus"
+    assert moved["data"]["room"] != "social_lobby"
 
 
 def test_block_takes_effect_despite_an_active_cache(pair, client, db, memory_mode):

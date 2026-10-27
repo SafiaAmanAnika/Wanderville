@@ -16,6 +16,7 @@ func wait_for(predicate: Callable) -> bool:
 	return false
 
 func run() -> void:
+	root.size = Vector2i(1578, 997)
 	var account: Dictionary = JSON.parse_string(OS.get_environment("TEST_FARM_ACCOUNT"))
 	var session := root.get_node("Global")
 	var state := root.get_node("GameState")
@@ -50,8 +51,12 @@ func run() -> void:
 	var release := click.duplicate()
 	release.pressed = false
 	root.push_input(release, true)
-	check(await wait_for(func(): return farm.tilled_tiles.has("9,10")), "rendered viewport click sends a real till request")
+	check(await wait_for(func(): return is_instance_valid(farm) and farm.tilled_tiles.has("9,10")), "rendered viewport click sends a real till request")
 	await process_frame
+	if not is_instance_valid(farm):
+		check(false,"farm remains active during input")
+		quit(1)
+		return
 	check(farm._cursor.visible and farm._hover_tile() == Vector2i(9,10), "signed-in tile outline follows the same mouse coordinates")
 	response = await api.authenticated(HTTPClient.METHOD_GET,"/farm/plots")
 	var plots: Array = api.data_of(response).get("plots",[])

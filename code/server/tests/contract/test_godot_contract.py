@@ -108,7 +108,7 @@ def test_inventory_exact_godot_payload(client, account):
         == 200
     )
     assert (
-        len(client.get("/inventory/catalog", headers=user.headers).json()["data"]) == 75
+        len(client.get("/inventory/catalog", headers=user.headers).json()["data"]) == 76
     )
 
 

@@ -64,7 +64,7 @@ def test_engine(tmp_path_factory):
 
 
 @pytest.fixture(autouse=True)
-def clean_database(request, test_engine):
+def clean_database(request, test_engine, monkeypatch):
     # Some tests do not use this database through the in-process client at all:
     # the real-process Godot suites start their own FastAPI subprocess and create
     # their own accounts over HTTP. Wiping between their tests deleted accounts
@@ -81,6 +81,13 @@ def clean_database(request, test_engine):
         for table in reversed(Base.metadata.sorted_tables):
             connection.execute(table.delete())
     limiter.clear()
+    from app.modules.realtime.service import RealtimeService
+    from app.modules.world.models import CAMPUS_SPAWN
+    # Keep proximity distances deterministic while exercising real lobby admission.
+    spawn_for = RealtimeService.spawn_for
+    monkeypatch.setattr(RealtimeService, "spawn_for",
+                        lambda service, room: CAMPUS_SPAWN if room == "social_lobby"
+                        else spawn_for(service, room))
     # The in-memory presence projection is process-global, so it outlives the
     # database rows this fixture deletes. Without this a position from a previous
     # test would still be live against a freshly emptied table.

@@ -44,7 +44,7 @@ def socket_player(client, account, db, monkeypatch):
     def step(kind="snapshot", **extra):
         return protocol.step(token, {"type": kind, **extra}, 2, generation)
 
-    assert step("enter")["type"] == "snapshot"
+    assert step("enter", data={"location": "social_lobby"})["type"] == "snapshot"
     assert step()["type"] == "snapshot"
     yield user, protocol, step, now
     runtime.detach(user.id, generation)
@@ -117,7 +117,7 @@ def test_rollback_keeps_valid_projection(socket_player, db):
 def test_committed_movement_and_block_refresh_other_socket(socket_player, client, account, db):
     user, _, step, _ = socket_player
     other = account("traffic_peer")
-    assert client.post("/realtime/enter", headers=other.headers, json={}).status_code == 200
+    assert client.post("/realtime/enter", headers=other.headers, json={"location": "social_lobby"}).status_code == 200
     assert other.id in {p["player_id"] for p in step()["data"]["players"]}
     row = db.get(Presence, other.id)
     row.x += 10
@@ -134,7 +134,7 @@ def test_committed_movement_and_block_refresh_other_socket(socket_player, client
 def test_chat_commit_and_expiry_are_visible_without_waiting_full_ttl(socket_player, client, account, db):
     _, protocol, step, now = socket_player
     other = account("traffic_chat")
-    client.post("/realtime/enter", headers=other.headers, json={})
+    client.post("/realtime/enter", headers=other.headers, json={"location": "social_lobby"})
     step()
     assert client.post("/realtime/chat", headers=other.headers,
                        json={"body": "hello"}).status_code == 200

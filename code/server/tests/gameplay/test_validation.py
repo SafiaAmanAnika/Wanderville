@@ -89,7 +89,7 @@ def test_socket_url_token_and_expired_revoked_tokens(client, account):
 def test_snapshots_release_connection_and_batch_names(client, account, db):
     a, b = account(), account("nearby_user")
     for user in (a, b):
-        ok(client.post("/realtime/enter", headers=user.headers, json={}))
+        ok(client.post("/realtime/enter", headers=user.headers, json={"location": "social_lobby"}))
     statements = []
     def capture(conn, cursor, statement, parameters, context, executemany):
         statements.append(statement)
@@ -99,7 +99,8 @@ def test_snapshots_release_connection_and_batch_names(client, account, db):
         assert reply["type"] == "snapshot"
         assert len(reply["data"]["players"]) == 2
         assert not db.in_transaction()
-        assert len(statements) <= 8
+        # Includes the owned-world lookup needed for private-room metadata.
+        assert len(statements) <= 9
     finally:
         event.remove(db.bind, "before_cursor_execute", capture)
 

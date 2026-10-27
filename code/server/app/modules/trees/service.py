@@ -72,10 +72,11 @@ class TreeService:
     def chop(self, player_id, tree_id, avoid=()):
         with transaction(self.db):
             PlayerRepository(self.db).lock(player_id)
-            if resolve(self.db, player_id).is_visitor:
+            session = resolve(self.db, player_id)
+            if session.is_visitor:
                 raise Forbidden("You can only cut trees on your own map")
             presence = RealtimeService(self.db).active(player_id)
-            if presence.room != CAMPUS_ROOM:
+            if presence.room not in (CAMPUS_ROOM, f"world:{session.owned_world_id}"):
                 raise Forbidden("You can only cut trees on your own map")
             season = self._season()
             spawned_row = None

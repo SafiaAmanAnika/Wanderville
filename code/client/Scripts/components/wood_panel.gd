@@ -52,10 +52,12 @@ static var _item_icons: Dictionary = {}
 static func item_icon(code: String) -> Texture2D:
 	if _item_icons.has(code):
 		return _item_icons[code]
-	# A seed shows the first growth stage, a harvested crop the last. CROPS
-	# only ever resolves a code that exists in the shipped manifest, so a server
+	# Crops and seeds come from the spritesheet manifest, fish from Assets/fishes.
+	# Both resolve a code against a list that ships with the game, so a server
 	# string can never be read as an arbitrary resource path.
 	var texture: Texture2D = CROP_ART.icon(code)
+	if texture == null:
+		texture = _fish_icon(code)
 	if texture == null:
 		var placeholder := AtlasTexture.new()
 		placeholder.atlas = preload("res://Assets/inventory/inventorySlot.png")
@@ -63,6 +65,20 @@ static func item_icon(code: String) -> Texture2D:
 		texture = placeholder
 	_item_icons[code] = texture
 	return texture
+
+
+## One fish's picture, or null when the code is not a fish this build knows.
+static func _fish_icon(code: String) -> Texture2D:
+	if not ItemCatalog.FISH.has(code):
+		return null
+	var path := "res://Assets/fishes/%s.png" % code
+	if not ResourceLoader.exists(path):
+		# river_carp and golden_carp are server fish with no art of their own,
+		# so they borrow the plain carp until someone draws them.
+		path = "res://Assets/fishes/carp.png"
+	if not ResourceLoader.exists(path):
+		return null
+	return load(path) as Texture2D
 
 
 func _ready() -> void:

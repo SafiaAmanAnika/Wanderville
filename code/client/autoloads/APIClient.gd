@@ -290,6 +290,12 @@ func authenticated(method: int, path: String, body: Variant = null) -> Dictionar
 	return await _request_json(method, path, body, {"Authorization": "Bearer " + Global.token})
 
 
+## Store a fish the lake mini game caught. The server checks the code against
+## the fish it knows, so only a real fish is ever added.
+func record_catch(item_code: String) -> Dictionary:
+	return await authenticated(HTTPClient.METHOD_POST, "/fishing/minigame", {"item_code": item_code})
+
+
 func get_profile() -> Dictionary:
 	return await authenticated(HTTPClient.METHOD_GET, "/profile")
 

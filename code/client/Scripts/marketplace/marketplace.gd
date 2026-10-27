@@ -34,6 +34,10 @@ var _plots: Array[Node2D] = []       ## the "open your shop here" outlines, one 
 var _near: Dictionary = {}
 var _busy := false
 var _own_shop_id := 0        ## your shop's server id, 0 until you open one
+## True when the server could not be reached. NOT the same as owning no shop.
+var _shops_unknown := false
+## What the server actually said, shown on screen instead of a guess.
+var _shops_error := ""
 var _leaving := false
 var _leave_button: Button
 
@@ -211,6 +215,8 @@ func _place_empty_plot(side: String) -> void:
 
 func _refresh_shops() -> void:
 	_reset_slots()
+	_shops_unknown = false
+	_shops_error = ""
 	var own := await _fetch_own()
 	_own_shop_id = int(own.get("id", 0))
 	var own_side := str(own.get("side", "")) if not own.is_empty() else ""
@@ -220,7 +226,8 @@ func _refresh_shops() -> void:
 	var spots := _friend_spots(own_side, friends.size())
 	for i in friends.size():
 		_add_shop(friends[i], str(spots[i]["side"]), int(spots[i]["index"]), "friend")
-	if own.is_empty():
+	# Only offer an empty plot when the server actually said you have no shop.
+	if own.is_empty() and not _shops_unknown:
 		_place_empty_plots()
 
 
@@ -240,14 +247,31 @@ func _reset_slots() -> void:
 
 
 func _fetch_own() -> Dictionary:
+	# A failed request and "this player owns no shop" both arrive as an empty
+	# body, so the ok flag is the only way to tell them apart. Treating a
+	# timeout as "no shop" hides your shop and offers you an empty plot the
+	# server would then refuse.
 	var response: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_GET, "/market")
+	if not bool(response.get("ok", false)):
+		_shops_unknown = true
+		_shops_error = "HTTP %s - %s" % [str(response.get("status", "?")), APIClient.error_text(response)]
+		push_warning("Marketplace: GET /market failed: " + _shops_error)
+		return {}
 	var data: Variant = APIClient.data_of(response)
-	return data if data is Dictionary else {}
+	if not (data is Dictionary):
+		push_warning("Marketplace: GET /market says this player owns no shop (data=%s)" % str(data))
+		return {}
+	push_warning("Marketplace: your shop is id=%s name=%s" % [str(data.get("id")), str(data.get("name"))])
+	return data
 
 
 func _fetch_friends() -> Array:
 	var response: Dictionary = await APIClient.authenticated(
 			HTTPClient.METHOD_GET, "/market/friends")
+	if not bool(response.get("ok", false)):
+		_shops_unknown = true
+		push_warning("Marketplace: could not read friends' shops - " + APIClient.error_text(response))
+		return []
 	var data: Variant = APIClient.data_of(response)
 	return data if data is Array else []
 
@@ -294,6 +318,8 @@ func _open(shop: Dictionary) -> void:
 		"supershop":
 			var store = GENERAL_STORE.new()
 			store.shop_id = _own_shop_id
+			store.shop_unknown = _shops_unknown
+			store.shop_error = _shops_error
 			get_tree().current_scene.add_child(store)
 		"empty":
 			_start_open_shop(str(shop.get("side", "right")))

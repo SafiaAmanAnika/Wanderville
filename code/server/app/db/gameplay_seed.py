@@ -73,6 +73,16 @@ def seed_gameplay(db):
         )
     definitions = [
         ("river_carp", "River Carp", "fish", None, 12, "common", "fish", {}),
+        ("bluegill", "Bluegill", "fish", None, 8, "common", "fish", {}),
+        ("sunfish", "Sunfish", "fish", None, 9, "common", "fish", {}),
+        ("carp", "Carp", "fish", None, 10, "common", "fish", {}),
+        ("catfish", "Catfish", "fish", None, 14, "common", "fish", {}),
+        ("rainbow_trout", "Rainbow Trout", "fish", None, 15, "common", "fish", {}),
+        ("largemouth_bass", "Largemouth Bass", "fish", None, 16, "common", "fish", {}),
+        ("salmon", "Salmon", "fish", None, 18, "common", "fish", {}),
+        ("pufferfish", "Pufferfish", "fish", None, 20, "rare", "fish", {}),
+        ("koi", "Koi", "fish", None, 25, "rare", "fish", {}),
+        ("seahorse", "Seahorse", "fish", None, 30, "rare", "fish", {}),
         ("golden_carp", "Golden Carp", "fish", None, 60, "rare", "fish", {}),
         (
             "lake_pearl",

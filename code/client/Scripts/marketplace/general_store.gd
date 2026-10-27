@@ -17,12 +17,28 @@ const CARD := Vector2(150, 158)
 const GOLD := Color(1.0, 0.84, 0.0)
 const MUTED := Color(0.78, 0.71, 0.60)
 
+# The same rooms the storage house uses, in the same order, so the two screens
+# describe your bag the same way. ItemCatalog.section_of() decides which an item
+# belongs to.
+const SECTIONS := [
+	["crops", "Crops"],
+	["seeds", "Seeds"],
+	["fish", "Fish"],
+	["misc", "Materials"],
+]
+
 var shop_id := 0            ## your own shop's id; 0 = you have not opened one yet
+## True when the marketplace could not reach the server, so shop_id 0 proves nothing.
+var shop_unknown := false
+## What the server said when it failed, so the screen names the cause.
+var shop_error := ""
 
 var _tab := BUY
 var _catalog: Array = []    ## rows from GET /shop
 var _shelf: Array = []      ## rows from GET /market/<shop_id>/listings
 var _selected := ""
+## Which bag section the Stock tab is showing; "" = the list of sections.
+var _stock_section := ""
 var _qty := 1
 var _price := 10
 var _busy := false
@@ -60,6 +76,10 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
+		# Esc steps back out of a section first, like the storage house.
+		if _tab == STOCK and _stock_section != "":
+			_open_section("")
+			return
 		close()
 
 
@@ -297,6 +317,7 @@ func _switch(tab: String) -> void:
 		return
 	_tab = tab
 	_selected = ""
+	_stock_section = ""
 	_qty = 1
 	_status.text = ""
 	await _reload()
@@ -320,17 +341,24 @@ func _render() -> void:
 			_grid.add_child(_label("Nothing in the catalog right now.", WoodPanel.SIZE_STATUS))
 	else:
 		_title.text = "Stock your shop"
-		if shop_id <= 0:
-			_grid.add_child(_label("You don't have a shop yet.\nClick an empty plot outside to open one.",
+		if shop_id <= 0 and shop_unknown:
+			_grid.add_child(_label("Couldn't load your shop.\n%s\nLeave the marketplace and come back to try again." % shop_error,
 					WoodPanel.SIZE_STATUS))
+		elif shop_id <= 0:
+			_grid.add_child(_label("The server says this account owns no shop.\nIf you opened one, you may be signed in as a different account.",
+					WoodPanel.SIZE_STATUS))
+		elif _stock_section == "":
+			for entry in SECTIONS:
+				_grid.add_child(_section_card(str(entry[0]), str(entry[1])))
 		else:
+			_title.text = "Stock your shop  ·  %s" % _section_title(_stock_section)
+			_grid.add_child(_back_card())
 			var any := false
-			for row in GameState.inventory:
-				if int(row["quantity"]) > 0:
-					_grid.add_child(_bag_card(row))
-					any = true
+			for row in _rows_in(_stock_section):
+				_grid.add_child(_bag_card(row))
+				any = true
 			if not any:
-				_grid.add_child(_label("Your bag is empty.", WoodPanel.SIZE_STATUS))
+				_grid.add_child(_label("Nothing here yet.", WoodPanel.SIZE_STATUS))
 	_render_details()
 
 
@@ -360,6 +388,94 @@ func _catalog_card(row: Dictionary) -> Button:
 	if not stocked:
 		return _slot(code, title, "Not stocked today", MUTED, true)
 	return _slot(code, title, "%d Aura" % int(row.get("buy_value", 0)), WoodPanel.TEXT_COLOR, false)
+
+
+## Every bag row that belongs to one section, in the order the server sent them.
+func _rows_in(section: String) -> Array:
+	var out := []
+	for row in GameState.inventory:
+		if int(row.get("quantity", 0)) <= 0:
+			continue
+		var code := str(row.get("item_code", ""))
+		var category := str(row.get("item", {}).get("category", ""))
+		if ItemCatalog.section_of(code, category) == section:
+			out.append(row)
+	return out
+
+
+func _section_title(section: String) -> String:
+	for entry in SECTIONS:
+		if str(entry[0]) == section:
+			return str(entry[1])
+	return section.capitalize()
+
+
+## One room of the bag. The icon is whatever you own most of in it, so an empty
+## section reads as empty at a glance.
+func _section_card(section: String, title: String) -> Button:
+	var rows := _rows_in(section)
+	var total := 0
+	var best := ""
+	var best_count := -1
+	for row in rows:
+		var quantity := int(row["quantity"])
+		total += quantity
+		if quantity > best_count:
+			best_count = quantity
+			best = str(row["item_code"])
+	var subtitle := "%d item kinds  ·  %d total" % [rows.size(), total] if total > 0 else "empty"
+	var card := _plain_card(title, subtitle, WoodPanel.TEXT_SECONDARY if total > 0 else MUTED,
+			WoodPanel.item_icon(best) if best != "" else null, total == 0)
+	card.pressed.connect(func() -> void: _open_section(section))
+	return card
+
+
+func _back_card() -> Button:
+	var card := _plain_card("Back", "all sections", WoodPanel.TEXT_SECONDARY, null, false)
+	card.pressed.connect(func() -> void: _open_section(""))
+	return card
+
+
+func _open_section(section: String) -> void:
+	_stock_section = section
+	_selected = ""
+	_status.text = ""
+	_render()
+
+
+## A card that is not an item: no selection, no price, just a label and an icon.
+func _plain_card(title: String, subtitle: String, subtitle_color: Color,
+		icon_texture: Texture2D, dim: bool) -> Button:
+	var slot := Button.new()
+	slot.custom_minimum_size = CARD
+	slot.tooltip_text = title
+	var normal := WoodPanel.make_wood_card_style()
+	normal.set_content_margin_all(8)
+	slot.add_theme_stylebox_override("normal", normal)
+	slot.add_theme_stylebox_override("hover", WoodPanel.make_wood_card_hover_style())
+	slot.add_theme_stylebox_override("pressed", WoodPanel.make_wood_card_selected_style())
+	slot.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+
+	var box := VBoxContainer.new()
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_theme_constant_override("separation", 4)
+	slot.add_child(box)
+	box.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 10)
+
+	var icon := TextureRect.new()
+	icon.texture = icon_texture
+	icon.custom_minimum_size = Vector2(0, 58)
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	icon.modulate = Color(1, 1, 1, 0.4) if dim else Color.WHITE
+	box.add_child(icon)
+
+	var name_label := _card_label(title, WoodPanel.SIZE_CARD_NAME, WoodPanel.TEXT_COLOR if not dim else MUTED)
+	name_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	box.add_child(name_label)
+	box.add_child(_card_label(subtitle, WoodPanel.SIZE_SMALL, subtitle_color))
+	return slot
 
 
 func _bag_card(row: Dictionary) -> Button:
@@ -413,10 +529,16 @@ func _render_details() -> void:
 	if _selected == "":
 		_icon.texture = null
 		_name.text = ""
-		_info.text = "Pick something on the left."
+		if _tab == STOCK and _stock_section == "":
+			_info.text = "Pick a section on the left."
+		else:
+			_info.text = "Pick something on the left."
 		_desc.text = ""
 		_qty_label.text = ""
 		_price_label.text = ""
+		# Name the action even while it is greyed out, or the Stock tab keeps
+		# showing "Buy" left over from the other tab.
+		_action.text = "Buy" if _tab == BUY else "Put on shelf"
 		_action.disabled = true
 		_take.visible = false
 		_qty_less.disabled = true

@@ -18,6 +18,14 @@ from app.modules.world.models import CAMPUS_ROOM
 from app.modules.world.service import WorldService
 
 
+# The fish the lake mini game can land. Anything outside this set is refused,
+# so the client cannot name an arbitrary item and have it granted.
+MINIGAME_FISH = frozenset({
+    "bluegill", "sunfish", "carp", "catfish", "rainbow_trout",
+    "largemouth_bass", "salmon", "pufferfish", "koi", "seahorse",
+})
+
+
 class FishingService:
     def __init__(self, db):
         self.db, self.repo = db, Repository(db)
@@ -112,6 +120,27 @@ class FishingService:
             "xp": xp,
             "ground_drop": public(drop) if drop else None,
         }
+
+    def record_minigame_catch(self, player_id, item_code, now=None):
+        """Store a fish the lake mini game caught.
+
+        The mini game decides the fish and whether it was landed, so this is not
+        the rolled cast/catch flow above: there is no cast to resolve and no
+        rod requirement. The code is still checked against the fish the server
+        knows, so an unknown or non-fish item can never be granted this way.
+        """
+        now = now or utcnow()
+        if item_code not in MINIGAME_FISH:
+            raise AppError("UNKNOWN_FISH", "That is not a fish you can catch", 400)
+        with transaction(self.db):
+            PlayerRepository(self.db).lock(player_id)
+            InventoryService(self.db).add_internal(player_id, item_code)
+            xp = FISH_XP_BY_ITEM.get(item_code, 0)
+            if xp:
+                EconomyService(self.db).gain_internal(player_id, xp)
+            ProgressionService(self.db).record(player_id, "catch", now=now)
+        return {"caught": True, "item_code": item_code, "xp": xp}
+
 
     def claim(self, player_id, drop_id):
         with transaction(self.db):

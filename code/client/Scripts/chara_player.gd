@@ -189,9 +189,22 @@ func _begin_fishing_minigame() -> void:
 func _on_minigame_finished(caught: bool, fish_code: String) -> void:
 	fishing = false
 	anim.play("idle_" + facing)
-	if caught:
-		var fish_name := fish_code.replace("_", " ").capitalize()
+	if not caught:
+		return
+	var fish_name := fish_code.replace("_", " ").capitalize()
+	if not Global.is_logged_in():
 		GameState.add_item_offline(fish_code, fish_name, 1, "fish", "fish")
+		return
+	# Signed in, the bag lives on the server: an offline row would be wiped by
+	# the next refresh, so the catch has to be recorded before anything reloads.
+	var response: Dictionary = await APIClient.record_catch(fish_code)
+	if response.get("ok", false):
+		await GameState.refresh_gameplay()
+		return
+	# Say so on screen: a silent failure here looks exactly like the fish simply
+	# never being added, which is impossible to tell from a bug in the bag.
+	HousePrompt.flash("Could not keep the %s: %s" % [fish_name, APIClient.error_text(response)], 4.0)
+	GameState.report_error(response)
 
 
 # F key, added in code so project.godot doesn't need editing

@@ -121,7 +121,20 @@ SELL_XP_PER_UNIT = 5
 HOUSE_UPGRADE_XP = 20
 FISH_XP = {"normal": 8, "rare": 20, "rare_material": 25}
 # Same values as FISH_XP, keyed by item so the catalog can carry them per item.
-FISH_XP_BY_ITEM = {"river_carp": 8, "golden_carp": 20, "lake_pearl": 25}
+FISH_XP_BY_ITEM = {
+    "river_carp": 8, "golden_carp": 20, "lake_pearl": 25,
+    # The lake mini game's own catch, paid roughly half their sell value.
+    "bluegill": 4,
+    "sunfish": 5,
+    "carp": 5,
+    "catfish": 7,
+    "rainbow_trout": 8,
+    "largemouth_bass": 8,
+    "salmon": 9,
+    "pufferfish": 10,
+    "koi": 13,
+    "seahorse": 15,
+}
 
 
 def sells_for_xp(category: str) -> bool:

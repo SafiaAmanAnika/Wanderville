@@ -4,7 +4,7 @@ from app.db.session import get_db
 from app.modules.auth.dependencies import get_current_player_id
 from app.core.responses import success
 from app.modules.fishing.service import FishingService
-from app.modules.fishing.schemas import CastRequest, CatchRequest
+from app.modules.fishing.schemas import CastRequest, CatchRequest, MinigameCatchRequest
 
 router = APIRouter(prefix="/fishing", tags=["fishing"])
 
@@ -34,6 +34,15 @@ def post_drops_drop_id_claim(
     db: Session = Depends(get_db),
 ):
     return success(FishingService(db).claim(player_id, drop_id))
+
+
+@router.post("/minigame")
+def post_minigame_catch(
+    payload: MinigameCatchRequest,
+    player_id: int = Depends(get_current_player_id),
+    db: Session = Depends(get_db),
+):
+    return success(FishingService(db).record_minigame_catch(player_id, payload.item_code))
 
 
 @router.get("/spots")

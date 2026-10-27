@@ -37,6 +37,9 @@
 [ext_resource type="Script" uid="uid://cqcm1065smcqr" path="res://Scripts/farm_field.gd" id="35_kqb6c"]
 [ext_resource type="Texture2D" uid="uid://d3sphoe7urb8y" path="res://Assets/farming/soil.png" id="36_6iy20"]
 
+[ext_resource type="PackedScene" path="res://Scenes/trees/summer/tree_13.tscn" id="restored_tree_0"]
+[ext_resource type="PackedScene" path="res://Scenes/trees/summer/tree_14.tscn" id="restored_tree_1"]
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_arrue"]
 texture = ExtResource("10_80g8e")
 texture_region_size = Vector2i(32, 32)
@@ -2096,11 +2099,16 @@ polygon = PackedVector2Array(48.485733, 0.567147, 51.12882, 3.021585, 54.210037,
 polygon = PackedVector2Array(60.98812, 1.892441, 63.631203, 4.346879, 66.4046, 3.833988, 63.761517, 1.37955)
 
 [node name="Trees" type="Node2D" parent="." unique_id=1372040239]
+z_index = 3
 script = ExtResource("23_0mgn7")
 
 [node name="Palm_trees" type="Node2D" parent="Trees" unique_id=37784548]
+z_index = 1
+y_sort_enabled = true
 
 [node name="Tree0" parent="Trees/Palm_trees" unique_id=1798523018 instance=ExtResource("23_88x3e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, 48)
 
 [node name="Tree1" parent="Trees/Palm_trees" unique_id=1303571987 instance=ExtResource("23_88x3e")]
@@ -2194,429 +2202,1309 @@ y_sort_enabled = true
 position = Vector2(100, -155)
 
 [node name="Summer" type="Node2D" parent="Trees" unique_id=1071684553]
+visible = false
+z_index = 1
+y_sort_enabled = true
 
 [node name="Tree1" parent="Trees/Summer" unique_id=523412045 instance=ExtResource("24_d07ij")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-217, -9)
 
 [node name="Tree2" parent="Trees/Summer" unique_id=358460607 instance=ExtResource("25_fn8c1")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, 19)
 
+[node name="Tree37" parent="Trees/Summer" unique_id=1762601365 instance=ExtResource("25_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-215, 85)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree54" parent="Trees/Summer" unique_id=599856414 instance=ExtResource("25_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-70.999985, 91)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree57" parent="Trees/Summer" unique_id=820394050 instance=ExtResource("25_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(6, 126.99999)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree61" parent="Trees/Summer" unique_id=1343753326 instance=ExtResource("25_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(150, 85)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree38" parent="Trees/Summer" unique_id=57390398 instance=ExtResource("25_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-152, 126)
+
+[node name="Tree41" parent="Trees/Summer" unique_id=1180092378 instance=ExtResource("25_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-100, 104)
+
+[node name="Tree49" parent="Trees/Summer" unique_id=488309223 instance=ExtResource("25_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(39, 140)
+
+[node name="Tree52" parent="Trees/Summer" unique_id=341740685 instance=ExtResource("25_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(252, 144)
+
+[node name="Tree44" parent="Trees/Summer" unique_id=114056258 instance=ExtResource("25_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(51, 104)
+
+[node name="Tree60" parent="Trees/Summer" unique_id=1316000601 instance=ExtResource("25_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(113, 95)
+
 [node name="Tree3" parent="Trees/Summer" unique_id=68041575 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-195, -186)
 
 [node name="Tree4" parent="Trees/Summer" unique_id=916715104 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -186)
 
 [node name="Tree5" parent="Trees/Summer" unique_id=712713666 instance=ExtResource("25_fn8c1")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -39)
 
 [node name="Tree6" parent="Trees/Summer" unique_id=503547222 instance=ExtResource("24_d07ij")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -68)
 
 [node name="Tree7" parent="Trees/Summer" unique_id=1134352706 instance=ExtResource("25_fn8c1")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -98)
 
 [node name="Tree8" parent="Trees/Summer" unique_id=1560549035 instance=ExtResource("24_d07ij")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -127)
 
 [node name="Tree9" parent="Trees/Summer" unique_id=1703943977 instance=ExtResource("25_fn8c1")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -157)
 
 [node name="Tree10" parent="Trees/Summer" unique_id=420328546 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-171, -186)
 
 [node name="Tree11" parent="Trees/Summer" unique_id=134264932 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-147, -186)
 
 [node name="Tree12" parent="Trees/Summer" unique_id=2036334323 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-123, -186)
 
 [node name="Tree13" parent="Trees/Summer" unique_id=2146545447 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-99, -186)
 
 [node name="Tree14" parent="Trees/Summer" unique_id=1728500056 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-74, -186)
 
 [node name="Tree15" parent="Trees/Summer" unique_id=1984770323 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-48, -186)
 
 [node name="Tree16" parent="Trees/Summer" unique_id=2103098435 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-24, -186)
 
 [node name="Tree17" parent="Trees/Summer" unique_id=902733689 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(0, -186)
 
 [node name="Tree18" parent="Trees/Summer" unique_id=1872689876 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(26, -186)
 
 [node name="Tree19" parent="Trees/Summer" unique_id=1914671906 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(51, -186)
 
 [node name="Tree20" parent="Trees/Summer" unique_id=2130295284 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(76, -186)
 
 [node name="Tree21" parent="Trees/Summer" unique_id=1316873879 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(101, -186)
 
 [node name="Tree22" parent="Trees/Summer" unique_id=890728506 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(126, -186)
 
 [node name="Tree23" parent="Trees/Summer" unique_id=1133360637 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(150, -186)
 
 [node name="Tree24" parent="Trees/Summer" unique_id=425986615 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(172, -186)
 
 [node name="Tree25" parent="Trees/Summer" unique_id=59232453 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(196, -186)
 
 [node name="Tree26" parent="Trees/Summer" unique_id=706657475 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(221, -186)
 
 [node name="Tree27" parent="Trees/Summer" unique_id=521539127 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(244, -186)
 
 [node name="Tree28" parent="Trees/Summer" unique_id=280712311 instance=ExtResource("26_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(265, -186)
 
 [node name="Tree29" parent="Trees/Summer" unique_id=649652066 instance=ExtResource("24_d07ij")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(131, 55)
 
 [node name="Tree31" parent="Trees/Summer" unique_id=474818823 instance=ExtResource("24_d07ij")]
-position = Vector2(178, 55)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(180, 112)
 
 [node name="Tree33" parent="Trees/Summer" unique_id=1381337577 instance=ExtResource("24_d07ij")]
-position = Vector2(227, 55)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(216, 56)
 
 [node name="Tree30" parent="Trees/Summer" unique_id=23212151 instance=ExtResource("25_fn8c1")]
-position = Vector2(155, 55)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(172, 56)
 
 [node name="Tree32" parent="Trees/Summer" unique_id=801308153 instance=ExtResource("25_fn8c1")]
-position = Vector2(203, 55)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(252, 64)
 
 [node name="Tree34" parent="Trees/Summer" unique_id=904687778 instance=ExtResource("25_fn8c1")]
-position = Vector2(252, 55)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(240, 108)
+
+[node name="Tree35" parent="Trees/Summer" unique_id=1399860827 instance=ExtResource("restored_tree_0")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-159, 83)
+
+[node name="Tree40" parent="Trees/Summer" unique_id=1081094529 instance=ExtResource("restored_tree_0")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-188, 141)
+
+[node name="Tree45" parent="Trees/Summer" unique_id=1523248742 instance=ExtResource("restored_tree_0")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-63, 128)
+
+[node name="Tree43" parent="Trees/Summer" unique_id=1570774911 instance=ExtResource("restored_tree_0")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-119, 129)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree55" parent="Trees/Summer" unique_id=943483352 instance=ExtResource("restored_tree_0")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-32, 136)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree59" parent="Trees/Summer" unique_id=398857195 instance=ExtResource("restored_tree_0")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(103, 134)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree63" parent="Trees/Summer" unique_id=1721275845 instance=ExtResource("restored_tree_0")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(212, 132)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree48" parent="Trees/Summer" unique_id=2043337178 instance=ExtResource("restored_tree_0")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(25, 88)
+
+[node name="Tree47" parent="Trees/Summer" unique_id=1074707399 instance=ExtResource("restored_tree_0")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(157, 142)
+
+[node name="Tree36" parent="Trees/Summer" unique_id=480967199 instance=ExtResource("restored_tree_1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-217, 127)
+
+[node name="Tree39" parent="Trees/Summer" unique_id=1325191892 instance=ExtResource("restored_tree_1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-131, 89)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree58" parent="Trees/Summer" unique_id=1187550185 instance=ExtResource("restored_tree_1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(79, 90)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree62" parent="Trees/Summer" unique_id=145462419 instance=ExtResource("restored_tree_1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(206, 89)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree53" parent="Trees/Summer" unique_id=1143019330 instance=ExtResource("restored_tree_1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-181.99998, 108)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree56" parent="Trees/Summer" unique_id=1427380542 instance=ExtResource("restored_tree_1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-10, 90)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree46" parent="Trees/Summer" unique_id=162382729 instance=ExtResource("restored_tree_1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-40, 103)
+
+[node name="Tree50" parent="Trees/Summer" unique_id=1296854799 instance=ExtResource("restored_tree_1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(70, 131)
+
+[node name="Tree51" parent="Trees/Summer" unique_id=933868 instance=ExtResource("restored_tree_1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(136, 123)
+
+[node name="Tree42" parent="Trees/Summer" unique_id=637268302 instance=ExtResource("restored_tree_1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-87, 143)
 
 [node name="Autumn" type="Node2D" parent="Trees" unique_id=822958827]
+visible = false
+z_index = 1
+y_sort_enabled = true
 
 [node name="Tree4" parent="Trees/Autumn" unique_id=834188294 instance=ExtResource("27_fn8c1")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, 18)
 
+[node name="Tree38" parent="Trees/Autumn" unique_id=380134311 instance=ExtResource("27_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-173, 129)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree45" parent="Trees/Autumn" unique_id=304385329 instance=ExtResource("27_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-12, 90)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree62" parent="Trees/Autumn" unique_id=1208702375 instance=ExtResource("27_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(246, 66)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree57" parent="Trees/Autumn" unique_id=1102755484 instance=ExtResource("27_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(174, 107)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree50" parent="Trees/Autumn" unique_id=1108848122 instance=ExtResource("27_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(82, 136)
+scale = Vector2(1.35, 1.35)
+
 [node name="Tree8" parent="Trees/Autumn" unique_id=82692818 instance=ExtResource("27_fn8c1")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-219, -98)
 
 [node name="Tree12" parent="Trees/Autumn" unique_id=433366350 instance=ExtResource("27_fn8c1")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-195, -186)
 
 [node name="Tree16" parent="Trees/Autumn" unique_id=1780026701 instance=ExtResource("27_fn8c1")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-98, -187)
 
 [node name="Tree20" parent="Trees/Autumn" unique_id=996758750 instance=ExtResource("27_fn8c1")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-1, -187)
 
 [node name="Tree24" parent="Trees/Autumn" unique_id=2037121690 instance=ExtResource("27_fn8c1")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(98, -187)
 
 [node name="Tree28" parent="Trees/Autumn" unique_id=710954403 instance=ExtResource("27_fn8c1")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(194, -186)
 
 [node name="Tree34" parent="Trees/Autumn" unique_id=1310903592 instance=ExtResource("27_fn8c1")]
-position = Vector2(205, 54)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-143, 144)
+
+[node name="Tree40" parent="Trees/Autumn" unique_id=2101973433 instance=ExtResource("27_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-98, 106)
+
+[node name="Tree58" parent="Trees/Autumn" unique_id=1439845354 instance=ExtResource("27_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(157, 138)
+
+[node name="Tree63" parent="Trees/Autumn" unique_id=709404761 instance=ExtResource("27_fn8c1")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(162, 76)
 
 [node name="Tree5" parent="Trees/Autumn" unique_id=918968013 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-217, -10)
 
 [node name="Tree32" parent="Trees/Autumn" unique_id=1636509574 instance=ExtResource("28_g51xc")]
-position = Vector2(133, 55)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-196, 87.99999)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree53" parent="Trees/Autumn" unique_id=2024826519 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(122, 134)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree39" parent="Trees/Autumn" unique_id=389617665 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-83, 135)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree49" parent="Trees/Autumn" unique_id=1873228315 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(47, 116)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree56" parent="Trees/Autumn" unique_id=2016636164 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(215, 86)
+scale = Vector2(1.35, 1.35)
 
 [node name="Tree35" parent="Trees/Autumn" unique_id=226723670 instance=ExtResource("28_g51xc")]
-position = Vector2(181, 54)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-117, 127)
+
+[node name="Tree48" parent="Trees/Autumn" unique_id=1116624427 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(45, 86)
+
+[node name="Tree60" parent="Trees/Autumn" unique_id=1734921615 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(243, 118)
+
+[node name="Tree55" parent="Trees/Autumn" unique_id=1381051129 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(143, 97)
+
+[node name="Tree43" parent="Trees/Autumn" unique_id=625081668 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-41, 84)
 
 [node name="Tree36" parent="Trees/Autumn" unique_id=745114924 instance=ExtResource("28_g51xc")]
-position = Vector2(230, 54)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-159, 100)
+
+[node name="Tree44" parent="Trees/Autumn" unique_id=1984110691 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-20, 143)
 
 [node name="Tree7" parent="Trees/Autumn" unique_id=1741363974 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-219, -69)
 
 [node name="Tree9" parent="Trees/Autumn" unique_id=717187589 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -127)
 
 [node name="Tree13" parent="Trees/Autumn" unique_id=2056029437 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-172, -186)
 
 [node name="Tree15" parent="Trees/Autumn" unique_id=1782861280 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-122, -187)
 
 [node name="Tree17" parent="Trees/Autumn" unique_id=708581243 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-74, -187)
 
 [node name="Tree19" parent="Trees/Autumn" unique_id=1817137378 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-24, -187)
 
 [node name="Tree21" parent="Trees/Autumn" unique_id=1264412659 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(24, -187)
 
 [node name="Tree23" parent="Trees/Autumn" unique_id=117694619 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(74, -187)
 
 [node name="Tree25" parent="Trees/Autumn" unique_id=2106812302 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(123, -186)
 
 [node name="Tree27" parent="Trees/Autumn" unique_id=1553390737 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(171, -186)
 
 [node name="Tree29" parent="Trees/Autumn" unique_id=1279742891 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(217, -186)
 
 [node name="Tree31" parent="Trees/Autumn" unique_id=1383760482 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(265, -186)
 
 [node name="Tree11" parent="Trees/Autumn" unique_id=640801283 instance=ExtResource("28_g51xc")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -186)
 
 [node name="Tree6" parent="Trees/Autumn" unique_id=1923793818 instance=ExtResource("29_k8khs")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -37)
 
 [node name="Tree10" parent="Trees/Autumn" unique_id=1162498655 instance=ExtResource("29_k8khs")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -155)
 
 [node name="Tree14" parent="Trees/Autumn" unique_id=1909497019 instance=ExtResource("29_k8khs")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-147, -186)
 
 [node name="Tree18" parent="Trees/Autumn" unique_id=1553800002 instance=ExtResource("29_k8khs")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-49, -186)
 
 [node name="Tree22" parent="Trees/Autumn" unique_id=967990034 instance=ExtResource("29_k8khs")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(50, -186)
 
 [node name="Tree26" parent="Trees/Autumn" unique_id=1417990012 instance=ExtResource("29_k8khs")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(148, -186)
 
 [node name="Tree30" parent="Trees/Autumn" unique_id=1013889981 instance=ExtResource("29_k8khs")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(241, -186)
 
 [node name="Tree33" parent="Trees/Autumn" unique_id=1133653567 instance=ExtResource("29_k8khs")]
-position = Vector2(157, 55)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-213, 130)
+
+[node name="Tree41" parent="Trees/Autumn" unique_id=1542634827 instance=ExtResource("29_k8khs")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-73, 91)
+
+[node name="Tree51" parent="Trees/Autumn" unique_id=1579967224 instance=ExtResource("29_k8khs")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(77, 104)
+
+[node name="Tree47" parent="Trees/Autumn" unique_id=1356366064 instance=ExtResource("29_k8khs")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(19, 103)
+
+[node name="Tree54" parent="Trees/Autumn" unique_id=516786145 instance=ExtResource("29_k8khs")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(136, 61)
+
+[node name="Tree61" parent="Trees/Autumn" unique_id=1086354377 instance=ExtResource("29_k8khs")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(186, 59)
 
 [node name="Tree37" parent="Trees/Autumn" unique_id=199044548 instance=ExtResource("29_k8khs")]
-position = Vector2(254, 54)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-128, 90)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree46" parent="Trees/Autumn" unique_id=1168875388 instance=ExtResource("29_k8khs")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(12, 135)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree59" parent="Trees/Autumn" unique_id=241243872 instance=ExtResource("29_k8khs")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(208, 134)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree52" parent="Trees/Autumn" unique_id=293945109 instance=ExtResource("29_k8khs")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(107, 91)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree42" parent="Trees/Autumn" unique_id=914771737 instance=ExtResource("29_k8khs")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-49, 118)
+scale = Vector2(1.35, 1.35)
 
 [node name="Winter" type="Node2D" parent="Trees" unique_id=162166676]
+visible = false
 
 [node name="Tree7" parent="Trees/Winter" unique_id=1133927138 instance=ExtResource("30_dygx2")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-219, -180)
 
 [node name="Tree16" parent="Trees/Winter" unique_id=1295633929 instance=ExtResource("30_dygx2")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-180, -186)
 
 [node name="Tree18" parent="Trees/Winter" unique_id=690653419 instance=ExtResource("30_dygx2")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-140, -186)
 
 [node name="Tree20" parent="Trees/Winter" unique_id=478076888 instance=ExtResource("30_dygx2")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-100, -186)
 
 [node name="Tree22" parent="Trees/Winter" unique_id=1973913865 instance=ExtResource("30_dygx2")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-59, -186)
 
 [node name="Tree24" parent="Trees/Winter" unique_id=125532525 instance=ExtResource("30_dygx2")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-19, -186)
 
 [node name="Tree26" parent="Trees/Winter" unique_id=1676073125 instance=ExtResource("30_dygx2")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(22, -186)
 
 [node name="Tree28" parent="Trees/Winter" unique_id=380821276 instance=ExtResource("30_dygx2")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(64, -186)
 
 [node name="Tree30" parent="Trees/Winter" unique_id=1803447011 instance=ExtResource("30_dygx2")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(105, -186)
 
 [node name="Tree32" parent="Trees/Winter" unique_id=398506295 instance=ExtResource("30_dygx2")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(146, -186)
 
 [node name="Tree34" parent="Trees/Winter" unique_id=1709205410 instance=ExtResource("30_dygx2")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(188, -186)
 
 [node name="Tree36" parent="Trees/Winter" unique_id=218315606 instance=ExtResource("30_dygx2")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(228, -186)
 
 [node name="Tree38" parent="Trees/Winter" unique_id=265525317 instance=ExtResource("30_dygx2")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(268, -186)
 
 [node name="Tree8" parent="Trees/Winter" unique_id=1426892442 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, 18)
 
 [node name="Tree10" parent="Trees/Winter" unique_id=1899657838 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -39)
 
 [node name="Tree12" parent="Trees/Winter" unique_id=811349643 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -95)
 
 [node name="Tree14" parent="Trees/Winter" unique_id=1789035739 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -153)
 
 [node name="Tree15" parent="Trees/Winter" unique_id=960360854 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-201, -186)
 
 [node name="Tree17" parent="Trees/Winter" unique_id=686759942 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-160, -186)
 
 [node name="Tree19" parent="Trees/Winter" unique_id=985754298 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-120, -186)
 
 [node name="Tree21" parent="Trees/Winter" unique_id=645122765 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-79, -186)
 
 [node name="Tree23" parent="Trees/Winter" unique_id=1752805180 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-39, -186)
 
 [node name="Tree25" parent="Trees/Winter" unique_id=1332015692 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(1, -186)
 
 [node name="Tree27" parent="Trees/Winter" unique_id=1153606584 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(42, -186)
 
 [node name="Tree29" parent="Trees/Winter" unique_id=670366819 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(85, -186)
 
 [node name="Tree31" parent="Trees/Winter" unique_id=426409959 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(125, -186)
 
 [node name="Tree33" parent="Trees/Winter" unique_id=1093242155 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(167, -186)
 
 [node name="Tree35" parent="Trees/Winter" unique_id=150721948 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(208, -186)
 
 [node name="Tree37" parent="Trees/Winter" unique_id=1595501754 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(248, -186)
 
 [node name="Tree40" parent="Trees/Winter" unique_id=858827275 instance=ExtResource("31_coghf")]
-position = Vector2(156, 57)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-175, 118.99999)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree45" parent="Trees/Winter" unique_id=1798682091 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-127, 93)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree54" parent="Trees/Winter" unique_id=704344116 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(44, 87.99999)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree61" parent="Trees/Winter" unique_id=1121199468 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(180.99998, 86)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree49" parent="Trees/Winter" unique_id=1631500508 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-59, 136)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree58" parent="Trees/Winter" unique_id=969673213 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(115, 133)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree66" parent="Trees/Winter" unique_id=2069865932 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(244, 100)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree53" parent="Trees/Winter" unique_id=221847454 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(17, 107)
+scale = Vector2(1.35, 1.35)
 
 [node name="Tree42" parent="Trees/Winter" unique_id=870479401 instance=ExtResource("31_coghf")]
-position = Vector2(204, 57)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-206, 140)
 
 [node name="Tree44" parent="Trees/Winter" unique_id=1928880657 instance=ExtResource("31_coghf")]
-position = Vector2(252, 57)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-116, 144)
+
+[node name="Tree48" parent="Trees/Winter" unique_id=733593596 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-49, 105)
+
+[node name="Tree59" parent="Trees/Winter" unique_id=994726003 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(110, 100)
+
+[node name="Tree65" parent="Trees/Winter" unique_id=288288771 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(231, 139)
+
+[node name="Tree64" parent="Trees/Winter" unique_id=593239799 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(197, 57)
+
+[node name="Tree69" parent="Trees/Winter" unique_id=228091558 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(234, 59)
+
+[node name="Tree52" parent="Trees/Winter" unique_id=1537315830 instance=ExtResource("31_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(11, 145)
 
 [node name="Tree9" parent="Trees/Winter" unique_id=1685275281 instance=ExtResource("32_80g8e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-217, -10)
 
 [node name="Tree39" parent="Trees/Winter" unique_id=1631834073 instance=ExtResource("32_80g8e")]
-position = Vector2(133, 58)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-212, 92.99999)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree46" parent="Trees/Winter" unique_id=966636789 instance=ExtResource("32_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-92, 120)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree56" parent="Trees/Winter" unique_id=2024435997 instance=ExtResource("32_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(79, 136)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree63" parent="Trees/Winter" unique_id=2130815040 instance=ExtResource("32_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(162.99998, 132)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree60" parent="Trees/Winter" unique_id=351352490 instance=ExtResource("32_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(143, 64)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree50" parent="Trees/Winter" unique_id=1710249102 instance=ExtResource("32_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-19, 91)
+scale = Vector2(1.35, 1.35)
 
 [node name="Tree41" parent="Trees/Winter" unique_id=2056356386 instance=ExtResource("32_80g8e")]
-position = Vector2(181, 57)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-147, 136)
+
+[node name="Tree51" parent="Trees/Winter" unique_id=998768710 instance=ExtResource("32_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-19, 129)
+
+[node name="Tree57" parent="Trees/Winter" unique_id=1715579241 instance=ExtResource("32_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(79, 92)
+
+[node name="Tree67" parent="Trees/Winter" unique_id=1261796626 instance=ExtResource("32_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(216, 93)
+
+[node name="Tree68" parent="Trees/Winter" unique_id=1328028342 instance=ExtResource("32_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(199, 128)
+
+[node name="Tree62" parent="Trees/Winter" unique_id=1243113914 instance=ExtResource("32_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(140, 106)
 
 [node name="Tree43" parent="Trees/Winter" unique_id=1536494206 instance=ExtResource("32_80g8e")]
-position = Vector2(229, 57)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-164, 88)
+
+[node name="Tree47" parent="Trees/Winter" unique_id=789752832 instance=ExtResource("32_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-78, 89)
+
+[node name="Tree55" parent="Trees/Winter" unique_id=1455668777 instance=ExtResource("32_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(43, 134)
 
 [node name="Tree11" parent="Trees/Winter" unique_id=484346513 instance=ExtResource("32_80g8e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-217, -66)
 
 [node name="Tree13" parent="Trees/Winter" unique_id=214497221 instance=ExtResource("32_80g8e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-217, -123)
 
 [node name="Spring" type="Node2D" parent="Trees" unique_id=250239231]
 
 [node name="Tree10" parent="Trees/Spring" unique_id=471908108 instance=ExtResource("33_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, 18)
 
 [node name="Tree15" parent="Trees/Spring" unique_id=1287490070 instance=ExtResource("33_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-217, -92)
 
 [node name="Tree18" parent="Trees/Spring" unique_id=1753279835 instance=ExtResource("33_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-198, -186)
 
 [node name="Tree22" parent="Trees/Spring" unique_id=602610878 instance=ExtResource("33_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-100, -186)
 
 [node name="Tree26" parent="Trees/Spring" unique_id=977385063 instance=ExtResource("33_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-3, -186)
 
 [node name="Tree30" parent="Trees/Spring" unique_id=2017446969 instance=ExtResource("33_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(92, -186)
 
 [node name="Tree34" parent="Trees/Spring" unique_id=1878405016 instance=ExtResource("33_coghf")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(192, -186)
 
 [node name="Tree38" parent="Trees/Spring" unique_id=983200973 instance=ExtResource("33_coghf")]
-position = Vector2(131, 56)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-213, 86.99999)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree45" parent="Trees/Spring" unique_id=835691245 instance=ExtResource("33_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-108, 135)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree50" parent="Trees/Spring" unique_id=33443833 instance=ExtResource("33_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-13, 95)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree58" parent="Trees/Spring" unique_id=2142311636 instance=ExtResource("33_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(110, 94)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree65" parent="Trees/Spring" unique_id=1629170875 instance=ExtResource("33_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(185, 121)
+scale = Vector2(1.35, 1.35)
 
 [node name="Tree41" parent="Trees/Spring" unique_id=882985651 instance=ExtResource("33_coghf")]
-position = Vector2(226, 56)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-161, 88)
+
+[node name="Tree55" parent="Trees/Spring" unique_id=1182317103 instance=ExtResource("33_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(48, 107)
+
+[node name="Tree63" parent="Trees/Spring" unique_id=1637420351 instance=ExtResource("33_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(170, 84)
+
+[node name="Tree69" parent="Trees/Spring" unique_id=551107958 instance=ExtResource("33_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(249, 128)
+
+[node name="Tree60" parent="Trees/Spring" unique_id=1276256290 instance=ExtResource("33_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(141, 141)
+
+[node name="Tree49" parent="Trees/Spring" unique_id=1989737466 instance=ExtResource("33_coghf")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-39, 132)
 
 [node name="Tree11" parent="Trees/Spring" unique_id=585988377 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -12)
 
 [node name="Tree13" parent="Trees/Spring" unique_id=1911724610 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -66)
 
 [node name="Tree16" parent="Trees/Spring" unique_id=192973122 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-217, -122)
 
 [node name="Tree17" parent="Trees/Spring" unique_id=1149701518 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -176)
 
 [node name="Tree19" parent="Trees/Spring" unique_id=853572961 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-174, -186)
 
 [node name="Tree21" parent="Trees/Spring" unique_id=638225820 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-125, -186)
 
 [node name="Tree23" parent="Trees/Spring" unique_id=889228260 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-76, -186)
 
 [node name="Tree25" parent="Trees/Spring" unique_id=16338632 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-28, -186)
 
 [node name="Tree27" parent="Trees/Spring" unique_id=480813417 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(21, -187)
 
 [node name="Tree29" parent="Trees/Spring" unique_id=1263049809 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(68, -186)
 
 [node name="Tree32" parent="Trees/Spring" unique_id=800932802 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(117, -186)
 
 [node name="Tree35" parent="Trees/Spring" unique_id=197594890 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(217, -186)
 
 [node name="Tree37" parent="Trees/Spring" unique_id=944853254 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(265, -186)
 
 [node name="Tree39" parent="Trees/Spring" unique_id=2021695424 instance=ExtResource("34_80g8e")]
-position = Vector2(155, 56)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-166, 137)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree47" parent="Trees/Spring" unique_id=1533273943 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-70, 125)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree52" parent="Trees/Spring" unique_id=286786655 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(10, 123)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree57" parent="Trees/Spring" unique_id=209674488 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(79, 121)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree61" parent="Trees/Spring" unique_id=1583180686 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(141, 59.999992)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree68" parent="Trees/Spring" unique_id=83745988 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(222, 137)
+scale = Vector2(1.35, 1.35)
 
 [node name="Tree42" parent="Trees/Spring" unique_id=1225911022 instance=ExtResource("34_80g8e")]
-position = Vector2(202, 56)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-184, 108)
 
 [node name="Tree43" parent="Trees/Spring" unique_id=927366605 instance=ExtResource("34_80g8e")]
-position = Vector2(251, 55)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-118, 85)
+
+[node name="Tree51" parent="Trees/Spring" unique_id=1034464353 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-12, 145)
+
+[node name="Tree56" parent="Trees/Spring" unique_id=1023353400 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(75, 86)
+
+[node name="Tree70" parent="Trees/Spring" unique_id=1207680242 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(237, 98)
+
+[node name="Tree64" parent="Trees/Spring" unique_id=989264230 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(191, 58)
 
 [node name="Tree33" parent="Trees/Spring" unique_id=347789652 instance=ExtResource("34_80g8e")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(166, -186)
 
 [node name="Tree12" parent="Trees/Spring" unique_id=2075970026 instance=ExtResource("35_46vnl")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -38)
 
+[node name="Tree44" parent="Trees/Spring" unique_id=116874524 instance=ExtResource("35_46vnl")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-213, 126)
+
+[node name="Tree46" parent="Trees/Spring" unique_id=308275885 instance=ExtResource("35_46vnl")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-92, 101)
+
+[node name="Tree53" parent="Trees/Spring" unique_id=201452615 instance=ExtResource("35_46vnl")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(21, 88)
+
+[node name="Tree59" parent="Trees/Spring" unique_id=1664416239 instance=ExtResource("35_46vnl")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(111, 131)
+
+[node name="Tree66" parent="Trees/Spring" unique_id=1703992274 instance=ExtResource("35_46vnl")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(206, 95)
+
 [node name="Tree14" parent="Trees/Spring" unique_id=1325224546 instance=ExtResource("35_46vnl")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-218, -148)
 
 [node name="Tree20" parent="Trees/Spring" unique_id=1418566181 instance=ExtResource("35_46vnl")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-149, -186)
 
 [node name="Tree24" parent="Trees/Spring" unique_id=1295719419 instance=ExtResource("35_46vnl")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(-52, -186)
 
 [node name="Tree28" parent="Trees/Spring" unique_id=575624837 instance=ExtResource("35_46vnl")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(45, -187)
 
 [node name="Tree31" parent="Trees/Spring" unique_id=1995357959 instance=ExtResource("35_46vnl")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(142, -186)
 
 [node name="Tree36" parent="Trees/Spring" unique_id=598690549 instance=ExtResource("35_46vnl")]
+z_index = 1
+y_sort_enabled = true
 position = Vector2(242, -186)
 
 [node name="Tree40" parent="Trees/Spring" unique_id=1804697608 instance=ExtResource("35_46vnl")]
-position = Vector2(179, 56)
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-137, 111)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree54" parent="Trees/Spring" unique_id=1397863952 instance=ExtResource("35_46vnl")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(47, 137)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree62" parent="Trees/Spring" unique_id=971841755 instance=ExtResource("35_46vnl")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(150, 106)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree67" parent="Trees/Spring" unique_id=351919894 instance=ExtResource("35_46vnl")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(226, 63)
+scale = Vector2(1.35, 1.35)
+
+[node name="Tree48" parent="Trees/Spring" unique_id=519323782 instance=ExtResource("35_46vnl")]
+z_index = 1
+y_sort_enabled = true
+position = Vector2(-52, 91)
+scale = Vector2(1.35, 1.35)

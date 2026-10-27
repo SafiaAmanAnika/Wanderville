@@ -62,6 +62,7 @@ const SOUNDS := {
 ## DEFAULT_MUSIC, so leaving the marketplace or the map stops their track on its
 ## own and no scene has to remember to clean up after itself.
 const SCENE_MUSIC := {
+	"res://Scenes/menus/TitleScreen.tscn": "music_menu",
 	"res://Scenes/world.tscn": "music_world",
 	"res://Scenes/map.tscn": "music_world",
 	"res://Scenes/map2.tscn": "music_world",

@@ -12,6 +12,9 @@ enum Season {
 	SUMMER, AUTUMN, WINTER, SPRING
 }
 
+const SERVER_SEASONS := {"summer": Season.SUMMER, "autumn": Season.AUTUMN, "winter": Season.WINTER, "spring": Season.SPRING}
+var _server_weather := ""
+
 var current_season: int = Season.SUMMER
 var season_elapsed_time: float = 0.0
 var rain_elapsed_time: float = 0.0
@@ -24,6 +27,11 @@ var save_timer: float = 0.0
 
 
 func _ready() -> void:
+	GameState.world_updated.connect(_apply_server_environment)
+	if Global.is_logged_in():
+		_apply_server_environment(GameState.world_state)
+		update_season_effects()
+		return
 	load_state()
 
 	# Account for real time spent outside the game.
@@ -42,6 +50,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	if Global.is_logged_in(): return
 	advance_time(delta)
 
 	save_timer += delta
@@ -67,7 +76,7 @@ func advance_time(seconds: float) -> void:
 
 func update_season_effects() -> void:
 	# Only the current season's effect is enabled
-	snow.emitting = current_season == Season.WINTER
+	snow.emitting = _server_weather == "snow" if Global.is_logged_in() else current_season == Season.WINTER
 	autumn_leaves.emitting = current_season == Season.AUTUMN
 	spring_leaves.emitting = current_season == Season.SPRING
 
@@ -81,6 +90,9 @@ func update_season_effects() -> void:
 
 
 func update_rain() -> void:
+	if Global.is_logged_in():
+		rain.emitting = _server_weather == "rain"
+		return
 	var rain_cycle := fmod(rain_elapsed_time, RAIN_INTERVAL)
 	var rain_scheduled := (rain_elapsed_time >= RAIN_INTERVAL and rain_cycle < RAIN_DURATION)
 	rain.emitting = (current_season == Season.SUMMER and rain_scheduled)
@@ -104,6 +116,7 @@ func get_current_season() -> Season:
 	return current_season
 
 func save_state() -> void:
+	if Global.is_logged_in(): return
 	var config := ConfigFile.new()
 
 	config.set_value("state", "season", current_season)
@@ -139,3 +152,11 @@ func _exit_tree() -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		save_state()
+
+func _apply_server_environment(state: Dictionary) -> void:
+	if not Global.is_logged_in(): return
+	var season := str(state.get("current_season", ""))
+	if not SERVER_SEASONS.has(season): return
+	current_season = int(SERVER_SEASONS[season])
+	_server_weather = str(state.get("weather", "clear"))
+	update_season_effects()

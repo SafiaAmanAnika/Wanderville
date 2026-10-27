@@ -1172,7 +1172,7 @@ animations = [{
 
 [node name="charaboyA" type="CharacterBody2D" unique_id=320058811]
 script = ExtResource("chara_player_script")
-scale = Vector2(1.18, 1.18)
+scale = Vector2(0.9, 0.9)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1752885070]
 sprite_frames = SubResource("SpriteFrames_45alr")

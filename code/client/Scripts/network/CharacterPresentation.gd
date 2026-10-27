@@ -39,6 +39,9 @@ static func direction_for_facing(facing: int) -> Vector2:
 static func play(body: Node, moving: bool, direction: Vector2, facing: int) -> void:
 	if body == null or not is_instance_valid(body):
 		return
+	if body.has_method("present_movement"):
+		body.present_movement(moving, direction, facing)
+		return
 	var sprite := sprite_of(body)
 	if sprite == null or sprite.sprite_frames == null:
 		return

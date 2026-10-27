@@ -139,8 +139,8 @@ func _preview_controls(stage: Control) -> void:
 	var next := Style.button(">"); rotation.add_child(next); next.tooltip_text="Turn clockwise"; next.pressed.connect(func(): _turn_preview(1))
 	var playback := HBoxContainer.new(); controls.add_child(playback)
 	_action=OptionButton.new(); _action.name="PreviewAction"; _action.size_flags_horizontal=Control.SIZE_EXPAND_FILL; playback.add_child(_action)
-	for action in ["Idle","Walk","Run"]: _action.add_item(action)
-	_action.item_selected.connect(func(index: int): _set_preview_pose(["idle","walk","run"][index],avatar.direction))
+	for action in Frames.ACTIONS: _action.add_item(action.capitalize())
+	_action.item_selected.connect(func(index: int): _set_preview_pose(Frames.ACTIONS[index],avatar.direction))
 	_pause=Style.button("Pause"); _pause.name="PreviewPlayback"; playback.add_child(_pause)
 	_pause.pressed.connect(func():
 		if avatar.is_playing(): avatar.pause(); _pause.text="Play"

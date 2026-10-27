@@ -5,12 +5,15 @@ class_name CharaFrames
 # animation frames visibly jump or clip. Correct artwork alignment at source.
 
 const DIRECTIONS := ["front", "front_right", "right", "back_right", "back", "back_left", "left", "front_left"]
-const ACTIONS := ["idle", "walk", "run", "hoe", "water", "fish", "scythe"]
-const FILES := {"idle":"idle.png", "walk":"walk.png", "run":"run.png", "hoe":"hoe.png", "water":"watering_can.png", "fish":"fishing.png", "scythe":"scythe.png"}
+const ACTIONS := ["idle", "walk", "hoe", "water", "fish", "scythe"]
+const FILES := {"idle":"idle.png", "walk":"walk.png", "hoe":"hoe.png", "water":"watering_can.png", "fish":"fishing.png", "scythe":"scythe.png"}
 const CELL := Vector2i(448, 448)
 # Shared world-space scale for the six 448px character sets.
-const GAMEPLAY_SCALE := Vector2(1.18, 1.18)
+const GAMEPLAY_SCALE := Vector2(0.9, 0.9)
 const LONG_ROOT := "res://Assets/charas/long_leg_animations_v1/"
+const MODEL_ROOT := "res://Assets/charas/complete_animations/"
+const FPS := {"idle":6.0, "walk":8.0, "hoe":8.0, "water":8.0, "scythe":8.0, "fish":8.0}
+const MODELS := {"CharacterA":"blue_female", "CharacterB":"green_female", "CharacterC":"red_female", "CharacterA_Male":"blue_male", "CharacterB_Male":"green_male", "CharacterC_Male":"red_male"}
 
 static var _previews: Dictionary = {}
 static var _review_sheets: Dictionary = {}
@@ -51,11 +54,17 @@ static func _sheet(path: String) -> Texture2D:
 static func add_sheet_animations(frames: SpriteFrames, folder: String, action: String, file: String, fps: float, loop: bool, replace: bool = false) -> void:
 	var replacement := longer_leg_folder(folder)
 	var path := folder.path_join(file) if replacement.is_empty() else replacement.path_join(action + ".png")
+	var supplied := action in ACTIONS and MODELS.has(folder.get_file())
+	var columns := 6
+	if supplied:
+		path = MODEL_ROOT + MODELS[folder.get_file()] + "/" + action + ".png"
+		columns = 8
+		fps = FPS[action]
 	if not FileAccess.file_exists(path):
 		return
 	var sheet := _sheet(path)
-	if sheet == null or sheet.get_size() != Vector2(CELL.x * 6, CELL.y * 8):
-		push_warning("Character sprite sheet must be 2688x3584: " + path)
+	if sheet == null or sheet.get_size() != Vector2(CELL.x * columns, CELL.y * 8):
+		push_warning("Invalid character sprite sheet dimensions: " + path)
 		return
 	for row in DIRECTIONS.size():
 		var name: String = action + "_" + DIRECTIONS[row]
@@ -66,7 +75,7 @@ static func add_sheet_animations(frames: SpriteFrames, folder: String, action: S
 		frames.add_animation(name)
 		frames.set_animation_speed(name, fps)
 		frames.set_animation_loop(name, loop)
-		for column in 6:
+		for column in columns:
 			var texture := AtlasTexture.new()
 			texture.atlas = sheet
 			# Fixed grid sampling. Every animation action uses exactly the same cells.
@@ -95,6 +104,10 @@ static func preview_frames(folder: String, action: String = "idle") -> SpriteFra
 
 static func portrait(folder: String) -> Texture2D:
 	var tex := AtlasTexture.new()
+	if MODELS.has(folder.get_file()):
+		tex.atlas = _sheet(MODEL_ROOT + MODELS[folder.get_file()] + "/idle.png")
+		tex.region = Rect2(112, 96, 224, 232)
+		return tex
 	tex.atlas = load(folder + "/idle.png")
 	tex.region = Rect2(140, 130, 170, 200)
 	return tex

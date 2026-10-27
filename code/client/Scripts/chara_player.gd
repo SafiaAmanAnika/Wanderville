@@ -9,6 +9,8 @@ extends CharacterBody2D
 # source sheets. Legacy scene-only animations (for example Death) remain.
 
 const SPEED = 300.0
+const FAST_WALK_AFTER_SECONDS := 2.0
+const FAST_WALK_SPEED_SCALE := 1.75 # 8 FPS normally, 14 FPS while held.
 const CharaFrames := preload("res://Scripts/chara_frames.gd")
 
 # sheet row -> direction name used in the scenes (idle_front, water_back_left, ...)
@@ -22,6 +24,7 @@ const ROW_DIRS := CharaFrames.DIRECTIONS
 
 var facing := "front"
 var _busy := false   # true while an action (hoe/water/fish) is playing
+var _movement_started_msec := -1
 
 # ─── Fishing ─────────────────────────────────────────────────────────
 const FISHING_SCENE := "res://Scenes/fishing.tscn"
@@ -40,6 +43,8 @@ func _ready() -> void:
 	anim.sprite_frames = anim.sprite_frames.duplicate()   # own copy, so adding animations doesn't touch other scenes
 	if sheet_folder == "":
 		sheet_folder = _find_sheet_folder()
+	for clip in anim.sprite_frames.get_animation_names():
+		if String(clip).begins_with("run_"): anim.sprite_frames.remove_animation(clip)
 	# Use one grid and the same source artwork in gameplay and previews, including
 	# all eight tool directions. Embedded scene atlases can be older than the PNGs.
 	for action in CharaFrames.ACTIONS:
@@ -54,10 +59,41 @@ func _ready() -> void:
 	anim.speed_scale = 1.0
 	anim.play("idle_front")
 	_add_fish_key()
+	_attach_farming_actions.call_deferred()
+
+
+func _attach_farming_actions() -> void:
+	if not use_saved_appearance or not is_in_group("player"): return
+	var bridge := preload("res://Scripts/farmer_action_bridge.gd").new()
+	bridge.name = "FarmingAnimationBridge"
+	add_child(bridge)
+
+
+func present_movement(moving: bool, direction: Vector2, idle_facing: int) -> void:
+	if _busy or fishing:
+		_movement_started_msec = -1
+		return
+	facing = _dir_from_vector(direction if moving and not direction.is_zero_approx() else CharacterPresentation.direction_for_facing(idle_facing))
+	_play_if_new(_movement_action(moving) + "_" + facing)
+
+
+func _movement_action(moving: bool) -> String:
+	anim.speed_scale = 1.0
+	if not moving:
+		_movement_started_msec = -1
+		return "idle"
+	var now := Time.get_ticks_msec()
+	if _movement_started_msec < 0:
+		_movement_started_msec = now
+	if now - _movement_started_msec >= FAST_WALK_AFTER_SECONDS * 1000.0:
+		anim.speed_scale = FAST_WALK_SPEED_SCALE
+	return "walk"
 
 
 func _physics_process(_delta: float) -> void:
 	if fishing:
+		_movement_started_msec = -1
+		anim.speed_scale = 1.0
 		velocity = Vector2.ZERO
 		_set_walking(false)
 		return
@@ -67,6 +103,8 @@ func _physics_process(_delta: float) -> void:
 		_set_walking(false)
 		if not _busy:
 			_play_if_new("idle_" + facing)
+		_movement_started_msec = -1
+		anim.speed_scale = 1.0
 		return
 
 	if near_water and Input.is_action_just_pressed("fish"):
@@ -77,9 +115,9 @@ func _physics_process(_delta: float) -> void:
 	if input != Vector2.ZERO:
 		input = input.normalized()
 		facing = _dir_from_vector(input)
-		_play_if_new("run_" + facing)
+		_play_if_new(_movement_action(true) + "_" + facing)
 	else:
-		_play_if_new("idle_" + facing)
+		_play_if_new(_movement_action(false) + "_" + facing)
 	_set_walking(input != Vector2.ZERO)
 	velocity = input * SPEED
 	move_and_slide()
@@ -103,10 +141,13 @@ func _exit_tree() -> void:
 
 # Call this from farming/fishing code, e.g. player.play_action("water")
 func play_action(action: String) -> void:
+	if _busy or fishing: return
 	var a := _closest_animation(action)
 	if a == "":
 		return
 	_busy = true
+	_movement_started_msec = -1
+	anim.speed_scale = 1.0
 	anim.play(a)
 	await anim.animation_finished
 	_busy = false
@@ -121,8 +162,18 @@ func set_near_water(value: bool) -> void:
 
 
 func _open_minigame() -> void:
+	if _busy or fishing: return
+	await play_action("fish")
+	if is_inside_tree(): _begin_fishing_minigame()
+
+
+func _begin_fishing_minigame() -> void:
 	fishing = true
-	anim.play("idle_" + facing)
+	var pose := _closest_animation("fish")
+	if not pose.is_empty():
+		anim.play(pose)
+		anim.set_frame_and_progress(anim.sprite_frames.get_frame_count(pose) - 1, 0.0)
+		anim.pause()
 	var layer: Node = load(FISHING_SCENE).instantiate()
 	get_tree().current_scene.add_child(layer)
 	get_tree().paused = true              # the world stops while you play
@@ -134,6 +185,7 @@ func _open_minigame() -> void:
 # the mini game already showed "Caught a Koi!"; here we only store the fish
 func _on_minigame_finished(caught: bool, fish_code: String) -> void:
 	fishing = false
+	anim.play("idle_" + facing)
 	if caught:
 		var fish_name := fish_code.replace("_", " ").capitalize()
 		GameState.add_item_offline(fish_code, fish_name, 1, "fish", "fish")

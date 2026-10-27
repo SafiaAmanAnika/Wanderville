@@ -30,7 +30,7 @@ func run() -> void:
 			var direction: Vector2 = Presentation.direction_for_facing(slot)
 			check(Protocol.facing_from_direction(direction) == slot, "Facing vector round trip")
 			Presentation.play(body, true, direction, slot)
-			check(body.anim.animation == "run_" + Presentation.DIRECTION_NAMES[slot], "Movement facing matches animation")
+			check(body.anim.animation == "walk_" + Presentation.DIRECTION_NAMES[slot], "Movement facing matches animation")
 			Presentation.play(body, false, Vector2.ZERO, slot)
 			check(body.anim.animation == "idle_" + Presentation.DIRECTION_NAMES[slot], "Stopping preserves facing")
 		check(body.SPEED == 300.0, "Existing movement speed stays 300")
@@ -38,25 +38,27 @@ func run() -> void:
 			var frames := Frames.preview_frames(folder, action)
 			for row in 8:
 				var name: String = action + "_" + Frames.DIRECTIONS[row]
-				check(frames.has_animation(name) and frames.get_frame_count(name) == 6, code + "/" + name + ": original six frames")
-				for frame in 6:
+				var count := 8
+				check(frames.has_animation(name) and frames.get_frame_count(name) == count, code + "/" + name + ": expected frame count")
+				for frame in count:
 					var texture := frames.get_frame_texture(name, frame) as AtlasTexture
-					check(texture != null and texture.atlas.resource_path == folder + "/" + Frames.FILES[action], "Frame uses original source artwork")
+					var expected_path: String = Frames.MODEL_ROOT + Frames.MODELS[folder.get_file()] + "/" + action + ".png" if action in Frames.ACTIONS else folder + "/" + Frames.FILES[action]
+					check(texture != null and texture.atlas.resource_path == expected_path, "Frame uses selected source artwork")
 					var expected := Rect2(frame * 448, row * 448, 448, 448)
 					check(texture.region == expected, "Fixed cells preserve exported ground anchors without sampling adjacent frames")
 					checked += 1
-		for action in ["walk", "run"]:
+		for action in ["walk"]:
 			for direction in Frames.DIRECTIONS:
 				body._play_if_new(action + "_front")
 				body.anim.set_frame_and_progress(3, 0.42)
 				body._play_if_new(action + "_" + direction)
 				check(body.anim.frame == 3 and is_equal_approx(body.anim.frame_progress, 0.42), "Turning keeps the stride phase")
 				check(body.anim.sprite_frames.get_animation_loop(action + "_" + direction), "Locomotion loops")
-				check(body.anim.sprite_frames.get_animation_speed(action + "_" + direction) == (6.0 if action == "walk" else 10.0), "Walk/Run rate")
-		body.anim.stop(); body._play_if_new("run_" + body.facing)
+				check(body.anim.sprite_frames.get_animation_speed(action + "_" + direction) == (8.0 if action == "walk" else 14.0), "Walk/Run rate")
+		body.anim.stop(); body._play_if_new("walk_" + body.facing)
 		check(body.anim.is_playing(), "A stopped movement clip resumes")
 		body.play_action("scythe")
-		await create_timer(0.85).timeout
+		await create_timer(1.1).timeout
 		check(not body._busy and String(body.anim.animation).begins_with("idle_"), "Existing action completes and restores idle")
 		body.queue_free(); await process_frame
 	check(session.modular_look == retained, "Old appearance preferences never rewrite the saved character")
@@ -74,6 +76,7 @@ func run() -> void:
 	host._activate(&"character")
 	var panel: PanelContainer = host._creator
 	check(panel.options.get_child_count() == 6, "Only the original six are offered")
+	panel._set_preview_pose("walk", "front")
 	panel.avatar.pause()
 	panel.avatar.set_frame_and_progress(3, 0.42)
 	for turn in 8:
@@ -83,6 +86,8 @@ func run() -> void:
 	for action in Frames.ACTIONS:
 		panel._set_preview_pose(action, "front")
 		check(panel.avatar.animation == action + "_front" and not panel.avatar.is_playing(), "Every action can be inspected while paused")
+	panel._set_preview_pose("walk", "front")
+	panel.avatar.set_frame_and_progress(3, 0.42)
 	panel.find_child("PreviewFrameStep", true, false).pressed.emit()
 	check(panel.avatar.frame == 4 and not panel.avatar.is_playing(), "Frame step advances exactly one pose")
 	panel.find_child("PreviewPlayback", true, false).pressed.emit()
@@ -126,7 +131,7 @@ func render_cast(script: Script, session: Node) -> void:
 		for row in 4:
 			var preview: AnimatedSprite2D = script.new(); preview.character = code; view.add_child(preview)
 			preview.position = Vector2(100 + column * 200, 120 + row * 260); preview.scale = Vector2.ONE * 0.85
-			preview.set_pose("walk" if row < 2 else "run", "right" if row % 2 == 0 else "left", column % 6)
+			preview.set_pose("walk", "right" if row % 2 == 0 else "left", column % 6)
 		column += 1
 	await create_timer(0.2).timeout; await RenderingServer.frame_post_draw
 	view.get_texture().get_image().save_png(output.path_join("six-original-walk-run.png"))

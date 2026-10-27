@@ -1,0 +1,4 @@
+18/18 images: lossless decoded RGBA bytes identical to PNG originals.
+Dimensions and alpha preserved.
+ZIP CRC checked.
+ZIP below 20,000,000 bytes.

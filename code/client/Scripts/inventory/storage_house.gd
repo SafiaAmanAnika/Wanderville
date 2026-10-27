@@ -39,5 +39,6 @@ func _open_menu() -> void:
 	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 	_hovering = false
 	_menu = MENU_SCRIPT.new()
+	_menu.mode = "storage"   
 	_menu.closed.connect(func() -> void: _menu = null)
 	get_tree().current_scene.add_child(_menu)

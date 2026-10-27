@@ -2209,7 +2209,7 @@ polygon = PackedVector2Array(4995, -2683, 4995, -2492, 5048, -2494, 5048, -2526,
 
 [node name="Collision_top" type="CollisionPolygon2D" parent="WaterSource" unique_id=532714462]
 position = Vector2(-5191.1, 2526.6)
-polygon = PackedVector2Array(5071.1, -2683.6, 5180.1, -2683.6, 5180.1, -2645.6, 5174.1, -2645.6, 5174.1, -2629.6, 5095.1, -2629.6, 5095.1, -2622.6, 5079.1, -2622.6, 5078, -2645, 5071, -2645)
+polygon = PackedVector2Array(5071.1, -2683.6, 5180.1, -2683.6, 5180.1, -2645.6, 5174.1, -2645.6, 5174.1, -2662.6, 5099.1, -2663.6, 5098.1, -2667.6, 5088.1, -2676.6, 5078.1, -2670.6, 5077.1, -2644.6, 5071.1, -2644.6, 5078.1, 0)
 
 [node name="Collision_topRight" type="CollisionPolygon2D" parent="WaterSource" unique_id=1042882917]
 position = Vector2(-5191.0874, 2760.8843)
@@ -2242,3 +2242,7 @@ polygon = PackedVector2Array(5317.1, -2673.6, 5317.1, -2653.6, 5320.1, -2651.6, 
 [node name="Collision_mosque" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=1148598137]
 position = Vector2(-5178, 2499)
 polygon = PackedVector2Array(5101, -2542, 5099, -2544, 5098, -2562, 5103, -2566, 5103, -2573, 5147, -2573, 5147, -2566, 5152, -2562, 5152, -2544, 5150, -2542, 5130, -2542, 5125, -2548, 5121, -2542)
+
+[node name="Collision_admin" type="CollisionPolygon2D" parent="CollisionLayer" unique_id=1962033336]
+position = Vector2(-5177, 2503)
+polygon = PackedVector2Array(5086, -2678, 5171, -2666, 5172, -2655, 5174.1, -2645.6, 5174.1, -2629.6, 5096, -2631, 5095.1, -2622.6, 5079.1, -2622.6, 5078, -2645, 5076, -2671)

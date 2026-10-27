@@ -1,582 +1,582 @@
 {
   "schema": "wanderville.marketplace.integrated.v1",
   "background": {
-    "file": "background.png",
-    "size": [
-      3072,
-      512
-    ],
-    "repeat_x": true,
-    "period_x": 3072,
-    "construction": "Single panorama with mirrored return baked in; scenery repeats."
+	"file": "background.png",
+	"size": [
+	  3072,
+	  512
+	],
+	"repeat_x": true,
+	"period_x": 3072,
+	"construction": "Single panorama with mirrored return baked in; scenery repeats."
   },
   "shops": [
-    {
-      "id": "supershop",
-      "file": "shops/supershop.png",
-      "size": [
-        512,
-        320
-      ],
-      "anchor": [
-        256,
-        288
-      ],
-      "visible_rect": [
-        31,
-        66,
-        450,
-        222
-      ],
-      "name_field_rect": [
-        202,
-        158,
-        107,
-        20
-      ],
-      "name_text_rect": [
-        205,
-        160,
-        101,
-        16
-      ],
-      "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
-      "name_field_center_y": 168,
-      "architecture": "central general market with raised teal gable, double doors and four sales bays",
-      "filter": "nearest",
-      "alpha": "binary 0 or 255"
-    },
-    {
-      "id": "shop_option_01",
-      "file": "shops/shop_option_01.png",
-      "size": [
-        256,
-        320
-      ],
-      "anchor": [
-        128,
-        288
-      ],
-      "visible_rect": [
-        12,
-        106,
-        232,
-        182
-      ],
-      "name_field_rect": [
-        79,
-        161,
-        97,
-        15
-      ],
-      "name_text_rect": [
-        82,
-        163,
-        91,
-        11
-      ],
-      "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
-      "name_field_center_y": 168,
-      "architecture": "Craftsman shop with projecting three-pane bay, recessed entry and stone piers",
-      "filter": "nearest",
-      "alpha": "binary 0 or 255"
-    },
-    {
-      "id": "shop_option_02",
-      "file": "shops/shop_option_02.png",
-      "size": [
-        256,
-        320
-      ],
-      "anchor": [
-        128,
-        288
-      ],
-      "visible_rect": [
-        12,
-        122,
-        232,
-        166
-      ],
-      "name_field_rect": [
-        81,
-        161,
-        95,
-        13
-      ],
-      "name_text_rect": [
-        84,
-        163,
-        89,
-        9
-      ],
-      "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
-      "name_field_center_y": 168,
-      "architecture": "brick mercantile with arched retail bay and recessed right entrance",
-      "filter": "nearest",
-      "alpha": "binary 0 or 255"
-    },
-    {
-      "id": "shop_option_03",
-      "file": "shops/shop_option_03.png",
-      "size": [
-        256,
-        320
-      ],
-      "anchor": [
-        128,
-        288
-      ],
-      "visible_rect": [
-        12,
-        102,
-        232,
-        186
-      ],
-      "name_field_rect": [
-        82,
-        160,
-        98,
-        15
-      ],
-      "name_text_rect": [
-        85,
-        162,
-        92,
-        11
-      ],
-      "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
-      "name_field_center_y": 168,
-      "architecture": "ochre plaster shop with round-top display and fitted striped awning",
-      "filter": "nearest",
-      "alpha": "binary 0 or 255"
-    },
-    {
-      "id": "shop_option_04",
-      "file": "shops/shop_option_04.png",
-      "size": [
-        256,
-        320
-      ],
-      "anchor": [
-        128,
-        288
-      ],
-      "visible_rect": [
-        12,
-        111,
-        232,
-        177
-      ],
-      "name_field_rect": [
-        81,
-        160,
-        98,
-        16
-      ],
-      "name_text_rect": [
-        84,
-        162,
-        92,
-        12
-      ],
-      "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
-      "name_field_center_y": 168,
-      "architecture": "sage timber store with folding counter shutters and burgundy tile roof",
-      "filter": "nearest",
-      "alpha": "binary 0 or 255"
-    },
-    {
-      "id": "shop_option_05",
-      "file": "shops/shop_option_05.png",
-      "size": [
-        256,
-        320
-      ],
-      "anchor": [
-        128,
-        288
-      ],
-      "visible_rect": [
-        12,
-        113,
-        232,
-        175
-      ],
-      "name_field_rect": [
-        83,
-        161,
-        95,
-        14
-      ],
-      "name_text_rect": [
-        86,
-        163,
-        89,
-        10
-      ],
-      "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
-      "name_field_center_y": 168,
-      "architecture": "whitewashed limestone shop with curved parapet and faceted bay window",
-      "filter": "nearest",
-      "alpha": "binary 0 or 255"
-    },
-    {
-      "id": "shop_option_06",
-      "file": "shops/shop_option_06.png",
-      "size": [
-        256,
-        320
-      ],
-      "anchor": [
-        128,
-        288
-      ],
-      "visible_rect": [
-        12,
-        91,
-        232,
-        197
-      ],
-      "name_field_rect": [
-        113,
-        160,
-        91,
-        16
-      ],
-      "name_text_rect": [
-        116,
-        162,
-        85,
-        12
-      ],
-      "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
-      "name_field_center_y": 168,
-      "architecture": "dark cedar shop with slate lean-to roof and timber entry porch",
-      "filter": "nearest",
-      "alpha": "binary 0 or 255"
-    },
-    {
-      "id": "shop_option_07",
-      "file": "shops/shop_option_07.png",
-      "size": [
-        256,
-        320
-      ],
-      "anchor": [
-        128,
-        288
-      ],
-      "visible_rect": [
-        12,
-        108,
-        232,
-        180
-      ],
-      "name_field_rect": [
-        83,
-        161,
-        91,
-        15
-      ],
-      "name_text_rect": [
-        86,
-        163,
-        85,
-        11
-      ],
-      "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
-      "name_field_center_y": 168,
-      "architecture": "dusty-blue board-and-batten shop with low gambrel roof and copper visor",
-      "filter": "nearest",
-      "alpha": "binary 0 or 255"
-    },
-    {
-      "id": "shop_option_08",
-      "file": "shops/shop_option_08.png",
-      "size": [
-        256,
-        320
-      ],
-      "anchor": [
-        128,
-        288
-      ],
-      "visible_rect": [
-        12,
-        99,
-        232,
-        189
-      ],
-      "name_field_rect": [
-        79,
-        161,
-        96,
-        14
-      ],
-      "name_text_rect": [
-        82,
-        163,
-        90,
-        10
-      ],
-      "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
-      "name_field_center_y": 168,
-      "architecture": "pink stucco shop with double arched display and terracotta gable",
-      "filter": "nearest",
-      "alpha": "binary 0 or 255"
-    },
-    {
-      "id": "shop_option_09",
-      "file": "shops/shop_option_09.png",
-      "size": [
-        256,
-        320
-      ],
-      "anchor": [
-        128,
-        288
-      ],
-      "visible_rect": [
-        12,
-        109,
-        232,
-        179
-      ],
-      "name_field_rect": [
-        77,
-        161,
-        102,
-        15
-      ],
-      "name_text_rect": [
-        80,
-        163,
-        96,
-        11
-      ],
-      "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
-      "name_field_center_y": 168,
-      "architecture": "ochre brick shop with twin projecting windows and clipped hip roof",
-      "filter": "nearest",
-      "alpha": "binary 0 or 255"
-    },
-    {
-      "id": "shop_option_10",
-      "file": "shops/shop_option_10.png",
-      "size": [
-        256,
-        320
-      ],
-      "anchor": [
-        128,
-        288
-      ],
-      "visible_rect": [
-        12,
-        116,
-        232,
-        172
-      ],
-      "name_field_rect": [
-        81,
-        161,
-        96,
-        14
-      ],
-      "name_text_rect": [
-        84,
-        163,
-        90,
-        10
-      ],
-      "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
-      "name_field_center_y": 168,
-      "architecture": "turquoise shop with low geometric parapet and brass masonry details",
-      "filter": "nearest",
-      "alpha": "binary 0 or 255"
-    },
-    {
-      "id": "shop_option_11",
-      "file": "shops/shop_option_11.png",
-      "size": [
-        256,
-        320
-      ],
-      "anchor": [
-        128,
-        288
-      ],
-      "visible_rect": [
-        12,
-        96,
-        232,
-        192
-      ],
-      "name_field_rect": [
-        79,
-        160,
-        102,
-        15
-      ],
-      "name_text_rect": [
-        82,
-        162,
-        96,
-        11
-      ],
-      "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
-      "name_field_center_y": 168,
-      "architecture": "plum half-timber shop with cross-gable roof and covered entrance",
-      "filter": "nearest",
-      "alpha": "binary 0 or 255"
-    },
-    {
-      "id": "shop_option_12",
-      "file": "shops/shop_option_12.png",
-      "size": [
-        256,
-        320
-      ],
-      "anchor": [
-        128,
-        288
-      ],
-      "visible_rect": [
-        12,
-        110,
-        232,
-        178
-      ],
-      "name_field_rect": [
-        84,
-        160,
-        96,
-        15
-      ],
-      "name_text_rect": [
-        87,
-        162,
-        90,
-        11
-      ],
-      "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
-      "name_field_center_y": 168,
-      "architecture": "gray fieldstone shop with terracotta lean-to roof and lattice accent",
-      "filter": "nearest",
-      "alpha": "binary 0 or 255"
-    }
+	{
+	  "id": "supershop",
+	  "file": "shops/supershop.png",
+	  "size": [
+		512,
+		320
+	  ],
+	  "anchor": [
+		256,
+		288
+	  ],
+	  "visible_rect": [
+		31,
+		66,
+		450,
+		222
+	  ],
+	  "name_field_rect": [
+		202,
+		158,
+		107,
+		20
+	  ],
+	  "name_text_rect": [
+		205,
+		160,
+		101,
+		16
+	  ],
+	  "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
+	  "name_field_center_y": 168,
+	  "architecture": "central general market with raised teal gable, double doors and four sales bays",
+	  "filter": "nearest",
+	  "alpha": "binary 0 or 255"
+	},
+	{
+	  "id": "shop_option_01",
+	  "file": "shops/shop_option_01.png",
+	  "size": [
+		256,
+		320
+	  ],
+	  "anchor": [
+		128,
+		288
+	  ],
+	  "visible_rect": [
+		12,
+		106,
+		232,
+		182
+	  ],
+	  "name_field_rect": [
+		79,
+		161,
+		97,
+		15
+	  ],
+	  "name_text_rect": [
+		82,
+		163,
+		91,
+		11
+	  ],
+	  "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
+	  "name_field_center_y": 168,
+	  "architecture": "Craftsman shop with projecting three-pane bay, recessed entry and stone piers",
+	  "filter": "nearest",
+	  "alpha": "binary 0 or 255"
+	},
+	{
+	  "id": "shop_option_02",
+	  "file": "shops/shop_option_02.png",
+	  "size": [
+		256,
+		320
+	  ],
+	  "anchor": [
+		128,
+		288
+	  ],
+	  "visible_rect": [
+		12,
+		122,
+		232,
+		166
+	  ],
+	  "name_field_rect": [
+		81,
+		161,
+		95,
+		13
+	  ],
+	  "name_text_rect": [
+		84,
+		163,
+		89,
+		9
+	  ],
+	  "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
+	  "name_field_center_y": 168,
+	  "architecture": "brick mercantile with arched retail bay and recessed right entrance",
+	  "filter": "nearest",
+	  "alpha": "binary 0 or 255"
+	},
+	{
+	  "id": "shop_option_03",
+	  "file": "shops/shop_option_03.png",
+	  "size": [
+		256,
+		320
+	  ],
+	  "anchor": [
+		128,
+		288
+	  ],
+	  "visible_rect": [
+		12,
+		102,
+		232,
+		186
+	  ],
+	  "name_field_rect": [
+		82,
+		160,
+		98,
+		15
+	  ],
+	  "name_text_rect": [
+		85,
+		162,
+		92,
+		11
+	  ],
+	  "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
+	  "name_field_center_y": 168,
+	  "architecture": "ochre plaster shop with round-top display and fitted striped awning",
+	  "filter": "nearest",
+	  "alpha": "binary 0 or 255"
+	},
+	{
+	  "id": "shop_option_04",
+	  "file": "shops/shop_option_04.png",
+	  "size": [
+		256,
+		320
+	  ],
+	  "anchor": [
+		128,
+		288
+	  ],
+	  "visible_rect": [
+		12,
+		111,
+		232,
+		177
+	  ],
+	  "name_field_rect": [
+		81,
+		160,
+		98,
+		16
+	  ],
+	  "name_text_rect": [
+		84,
+		162,
+		92,
+		12
+	  ],
+	  "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
+	  "name_field_center_y": 168,
+	  "architecture": "sage timber store with folding counter shutters and burgundy tile roof",
+	  "filter": "nearest",
+	  "alpha": "binary 0 or 255"
+	},
+	{
+	  "id": "shop_option_05",
+	  "file": "shops/shop_option_05.png",
+	  "size": [
+		256,
+		320
+	  ],
+	  "anchor": [
+		128,
+		288
+	  ],
+	  "visible_rect": [
+		12,
+		113,
+		232,
+		175
+	  ],
+	  "name_field_rect": [
+		83,
+		161,
+		95,
+		14
+	  ],
+	  "name_text_rect": [
+		86,
+		163,
+		89,
+		10
+	  ],
+	  "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
+	  "name_field_center_y": 168,
+	  "architecture": "whitewashed limestone shop with curved parapet and faceted bay window",
+	  "filter": "nearest",
+	  "alpha": "binary 0 or 255"
+	},
+	{
+	  "id": "shop_option_06",
+	  "file": "shops/shop_option_06.png",
+	  "size": [
+		256,
+		320
+	  ],
+	  "anchor": [
+		128,
+		288
+	  ],
+	  "visible_rect": [
+		12,
+		91,
+		232,
+		197
+	  ],
+	  "name_field_rect": [
+		113,
+		160,
+		91,
+		16
+	  ],
+	  "name_text_rect": [
+		116,
+		162,
+		85,
+		12
+	  ],
+	  "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
+	  "name_field_center_y": 168,
+	  "architecture": "dark cedar shop with slate lean-to roof and timber entry porch",
+	  "filter": "nearest",
+	  "alpha": "binary 0 or 255"
+	},
+	{
+	  "id": "shop_option_07",
+	  "file": "shops/shop_option_07.png",
+	  "size": [
+		256,
+		320
+	  ],
+	  "anchor": [
+		128,
+		288
+	  ],
+	  "visible_rect": [
+		12,
+		108,
+		232,
+		180
+	  ],
+	  "name_field_rect": [
+		83,
+		161,
+		91,
+		15
+	  ],
+	  "name_text_rect": [
+		86,
+		163,
+		85,
+		11
+	  ],
+	  "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
+	  "name_field_center_y": 168,
+	  "architecture": "dusty-blue board-and-batten shop with low gambrel roof and copper visor",
+	  "filter": "nearest",
+	  "alpha": "binary 0 or 255"
+	},
+	{
+	  "id": "shop_option_08",
+	  "file": "shops/shop_option_08.png",
+	  "size": [
+		256,
+		320
+	  ],
+	  "anchor": [
+		128,
+		288
+	  ],
+	  "visible_rect": [
+		12,
+		99,
+		232,
+		189
+	  ],
+	  "name_field_rect": [
+		79,
+		161,
+		96,
+		14
+	  ],
+	  "name_text_rect": [
+		82,
+		163,
+		90,
+		10
+	  ],
+	  "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
+	  "name_field_center_y": 168,
+	  "architecture": "pink stucco shop with double arched display and terracotta gable",
+	  "filter": "nearest",
+	  "alpha": "binary 0 or 255"
+	},
+	{
+	  "id": "shop_option_09",
+	  "file": "shops/shop_option_09.png",
+	  "size": [
+		256,
+		320
+	  ],
+	  "anchor": [
+		128,
+		288
+	  ],
+	  "visible_rect": [
+		12,
+		109,
+		232,
+		179
+	  ],
+	  "name_field_rect": [
+		77,
+		161,
+		102,
+		15
+	  ],
+	  "name_text_rect": [
+		80,
+		163,
+		96,
+		11
+	  ],
+	  "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
+	  "name_field_center_y": 168,
+	  "architecture": "ochre brick shop with twin projecting windows and clipped hip roof",
+	  "filter": "nearest",
+	  "alpha": "binary 0 or 255"
+	},
+	{
+	  "id": "shop_option_10",
+	  "file": "shops/shop_option_10.png",
+	  "size": [
+		256,
+		320
+	  ],
+	  "anchor": [
+		128,
+		288
+	  ],
+	  "visible_rect": [
+		12,
+		116,
+		232,
+		172
+	  ],
+	  "name_field_rect": [
+		81,
+		161,
+		96,
+		14
+	  ],
+	  "name_text_rect": [
+		84,
+		163,
+		90,
+		10
+	  ],
+	  "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
+	  "name_field_center_y": 168,
+	  "architecture": "turquoise shop with low geometric parapet and brass masonry details",
+	  "filter": "nearest",
+	  "alpha": "binary 0 or 255"
+	},
+	{
+	  "id": "shop_option_11",
+	  "file": "shops/shop_option_11.png",
+	  "size": [
+		256,
+		320
+	  ],
+	  "anchor": [
+		128,
+		288
+	  ],
+	  "visible_rect": [
+		12,
+		96,
+		232,
+		192
+	  ],
+	  "name_field_rect": [
+		79,
+		160,
+		102,
+		15
+	  ],
+	  "name_text_rect": [
+		82,
+		162,
+		96,
+		11
+	  ],
+	  "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
+	  "name_field_center_y": 168,
+	  "architecture": "plum half-timber shop with cross-gable roof and covered entrance",
+	  "filter": "nearest",
+	  "alpha": "binary 0 or 255"
+	},
+	{
+	  "id": "shop_option_12",
+	  "file": "shops/shop_option_12.png",
+	  "size": [
+		256,
+		320
+	  ],
+	  "anchor": [
+		128,
+		288
+	  ],
+	  "visible_rect": [
+		12,
+		110,
+		232,
+		178
+	  ],
+	  "name_field_rect": [
+		84,
+		160,
+		96,
+		15
+	  ],
+	  "name_text_rect": [
+		87,
+		162,
+		90,
+		11
+	  ],
+	  "name_field_material": "original recessed caramel-oak field within structural walnut fascia",
+	  "name_field_center_y": 168,
+	  "architecture": "gray fieldstone shop with terracotta lean-to roof and lattice accent",
+	  "filter": "nearest",
+	  "alpha": "binary 0 or 255"
+	}
   ],
   "scene": {
-    "shop_baseline_y": 352,
-    "walking_y": 380,
-    "walkable_y_range": [
-      352,
-      408
-    ],
-    "common_wood_fascia_center_y_in_frames": 168,
-    "supershop_world_x": 0,
-    "first_neighbor_center_distance": 416,
-    "subsequent_shop_center_spacing": 288
+	"shop_baseline_y": 454,
+	"walking_y": 380,
+	"walkable_y_range": [
+	  370,
+	  408
+	],
+	"common_wood_fascia_center_y_in_frames": 168,
+	"supershop_world_x": 0,
+	"first_neighbor_center_distance": 416,
+	"subsequent_shop_center_spacing": 288
   },
   "preview": {
-    "size": [
-      4032,
-      512
-    ],
-    "supershop_center_x": 2016,
-    "shops": [
-      {
-        "id": "shop_option_01",
-        "position": [
-          32,
-          64
-        ]
-      },
-      {
-        "id": "shop_option_02",
-        "position": [
-          320,
-          64
-        ]
-      },
-      {
-        "id": "shop_option_03",
-        "position": [
-          608,
-          64
-        ]
-      },
-      {
-        "id": "shop_option_04",
-        "position": [
-          896,
-          64
-        ]
-      },
-      {
-        "id": "shop_option_05",
-        "position": [
-          1184,
-          64
-        ]
-      },
-      {
-        "id": "shop_option_06",
-        "position": [
-          1472,
-          64
-        ]
-      },
-      {
-        "id": "supershop",
-        "position": [
-          1760,
-          64
-        ]
-      },
-      {
-        "id": "shop_option_07",
-        "position": [
-          2304,
-          64
-        ]
-      },
-      {
-        "id": "shop_option_08",
-        "position": [
-          2592,
-          64
-        ]
-      },
-      {
-        "id": "shop_option_09",
-        "position": [
-          2880,
-          64
-        ]
-      },
-      {
-        "id": "shop_option_10",
-        "position": [
-          3168,
-          64
-        ]
-      },
-      {
-        "id": "shop_option_11",
-        "position": [
-          3456,
-          64
-        ]
-      },
-      {
-        "id": "shop_option_12",
-        "position": [
-          3744,
-          64
-        ]
-      }
-    ]
+	"size": [
+	  4032,
+	  512
+	],
+	"supershop_center_x": 2016,
+	"shops": [
+	  {
+		"id": "shop_option_01",
+		"position": [
+		  32,
+		  64
+		]
+	  },
+	  {
+		"id": "shop_option_02",
+		"position": [
+		  320,
+		  64
+		]
+	  },
+	  {
+		"id": "shop_option_03",
+		"position": [
+		  608,
+		  64
+		]
+	  },
+	  {
+		"id": "shop_option_04",
+		"position": [
+		  896,
+		  64
+		]
+	  },
+	  {
+		"id": "shop_option_05",
+		"position": [
+		  1184,
+		  64
+		]
+	  },
+	  {
+		"id": "shop_option_06",
+		"position": [
+		  1472,
+		  64
+		]
+	  },
+	  {
+		"id": "supershop",
+		"position": [
+		  1760,
+		  64
+		]
+	  },
+	  {
+		"id": "shop_option_07",
+		"position": [
+		  2304,
+		  64
+		]
+	  },
+	  {
+		"id": "shop_option_08",
+		"position": [
+		  2592,
+		  64
+		]
+	  },
+	  {
+		"id": "shop_option_09",
+		"position": [
+		  2880,
+		  64
+		]
+	  },
+	  {
+		"id": "shop_option_10",
+		"position": [
+		  3168,
+		  64
+		]
+	  },
+	  {
+		"id": "shop_option_11",
+		"position": [
+		  3456,
+		  64
+		]
+	  },
+	  {
+		"id": "shop_option_12",
+		"position": [
+		  3744,
+		  64
+		]
+	  }
+	]
   }
 }

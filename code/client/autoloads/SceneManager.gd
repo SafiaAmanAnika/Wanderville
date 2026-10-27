@@ -34,6 +34,9 @@ var _social_return_position := Vector2.ZERO
 var _social_return_session := -1
 var _social_from_world := false
 
+var _market_return_position := Vector2.ZERO
+var _market_return_session := -1
+var _market_from_world := false
 
 func _ready() -> void:
 	_build_transition_ui()
@@ -154,7 +157,9 @@ func restore_customization_return(player: Node2D) -> void:
 	if _customization_from_world and _customization_return_session == Global.session_version:
 		player.global_position = _customization_return_position
 	_customization_from_world = false
-
+	if _market_from_world and _market_return_session == Global.session_version:
+		player.global_position = _market_return_position
+	_market_from_world = false
 
 func goto_forgot_password() -> void:
 	transition_to(FORGOT_PASSWORD_SCENE)
@@ -172,8 +177,18 @@ func goto_reset_password(token: String = "") -> void:
 
 func goto_marketplace() -> void:
 	if _is_transitioning: return
+	var scene := get_tree().current_scene
+	_market_from_world = scene != null and scene.scene_file_path == WORLD_SCENE
+	_market_return_session = Global.session_version
+	if _market_from_world:
+		var player := scene.get_node_or_null("girl") as Node2D
+		if player != null: _market_return_position = player.global_position
 	transition_to(MARKETPLACE_SCENE)
 
+
+func leave_marketplace() -> void:
+	goto_world()
+	
 func goto_post_login() -> void:
 	if Global.has_completed_setup():
 		goto_world()

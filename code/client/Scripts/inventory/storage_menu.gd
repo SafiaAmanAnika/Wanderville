@@ -53,7 +53,8 @@ var _buy: Button
 var _qty_less: Button
 var _qty_label: Label
 var _qty_more: Button
-
+  
+var mode := "storage" 
 
 func _ready() -> void:
 	layer = 20
@@ -310,6 +311,8 @@ func _build_section_view(root: Control) -> void:
 	_buy = _button("Buy")
 	_buy.pressed.connect(_trade.bind("buy"))
 	buttons.add_child(_buy)
+	qty_row.visible = mode != "storage"
+	buttons.visible = mode != "storage"
 
 
 func _open_section(key: String) -> void:
@@ -430,7 +433,10 @@ func _render_details() -> void:
 	_buy.disabled = _busy or not can_buy_now or buy_each * _qty > aura
 	_qty_less.disabled = _busy or _qty <= 1
 	_qty_more.disabled = _busy or _qty >= 99
-
+	if mode == "storage":
+		_price.text = ""
+		_qty_label.text = ""
+	
 
 # the - / + buttons move the trade amount, one step at a time
 func _step_qty(delta: int) -> void:
@@ -522,7 +528,7 @@ func _rows_in(section: String) -> Array:
 		var category := str(row.get("item", {}).get("category", ""))
 		if ItemCatalog.section_of(code, category) == section and int(row["quantity"]) > 0:
 			counts[code] = int(counts.get(code, 0)) + int(row["quantity"])
-	if section == "seeds":
+	if section == "seeds" and mode != "storage":
 		for code in ItemCatalog.seeds_for_season(_current_season()):
 			if not counts.has(code):
 				counts[code] = 0

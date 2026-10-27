@@ -3,7 +3,7 @@ extends Node2D
 var _poly: CollisionPolygon2D
 
 func _ready() -> void:
-	_poly = get_parent().get_node_or_null("Map/CollisionLayer/Collision_cafe") as CollisionPolygon2D
+	_poly = get_parent().get_node_or_null("Map/CollisionLayer/Collision_admin") as CollisionPolygon2D
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _poly == null or GameState.menu_open:

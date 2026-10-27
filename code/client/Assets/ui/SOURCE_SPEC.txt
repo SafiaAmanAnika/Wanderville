@@ -1,0 +1,262 @@
+Wanderville UI Panel Spec
+Oct 25, 2026 · @zenzen
+Every UI surface in the Godot client, with the pixel size it is drawn at. The game's base
+resolution is 1578 × 997 with canvas_items stretch, so every number below is in those
+units — draw art at 2× if you want it crisp on a retina display.
+Read this first
+Almost none of the UI is image art today. It is drawn in code:
+Scripts/components/wood_panel.gd builds StyleBoxFlat rectangles — a brown fill, a
+6px border, 12px rounded corners, a drop shadow — and every panel in the game wears it.
+That is why there is no folder of panel PNGs to replace. The only real UI art that exists is in
+Assets/inventory/ : inventory.png , inventorySlot.png , InventoryRect.png ,
+Inventory_Sprite.png , healthbarUnder.png , hotbar_selector.png , orangebox.png .
+So "change all the UI" means one of two things, and it is worth deciding before you draw
+anything:
+1. Reskin the shared style. Swap the flat colours in wood_panel.gd for
+StyleBoxTexture nine-patches. You draw roughly six tileable pieces and every panel
+below changes at once. Sizes stop mattering — a nine-patch stretches to whatever the
+layout gives it.
+2. Draw each panel at its own size. More control, far more art, and each one has to be
+wired in separately. This is the route the sizes below are for.
+Most panels are containers that grow to fit their text, so the sizes in this doc are
+minimums and design targets, not fixed canvases — except the inventory board, which is
+a real fixed-size image.
+The shared skin
+Six small scripts in Scripts/components/ dress everything. Change wood_panel.gd and
+you change most of the game at once.
+Wanderville UI Panel Spec
+Page 1 of 10
+Current box metrics — match these if you want drop-in art, change them deliberately if
+not:
+Border: 6 px on all four sides
+Corner radius: 12 px, all corners
+Drop shadow: size 8, offset (3, 5), near-black at 65% opacity
+Inner padding: 28 px left and right, 24 px top and bottom
+If you go the nine-patch route, draw the panel art with a 20 px margin on each edge —
+that comfortably covers the 6 px border plus the 12 px corner, and the middle tiles to any
+size.
+Font: Assets/fonts/BoldPixels.ttf at these sizes.
+File Dresses
+wood_panel.gd Every panel background, plus all label and input
+styles
+wood_button.gd Every button
+wooden_dialog.gd Confirm / alert dialogs
+title_banner.gd The big title banners on menu screens
+world_card.gd Map and world picker cards
+ui_sprite_selector.gd Character sprite picker
+Role px Used for
+Banner title 52 Menu screen banners
+Screen title 36 Top of a full screen
+Panel title 32 Section headers inside panels
+Button 24 All button labels
+Card name 24 Item and world card titles
+Field 22 Text inputs
+Banner subtitle 22 Under a banner title
+Wanderville UI Panel Spec
+Page 2 of 10
+Inventory board
+Section view — the panel that opens when you click an area. Slots on the left, item details
+on the right.
+The empty-slot art is Assets/inventory/inventorySlot.png — drawn at 110 × 110, so
+match that ratio.
+Buying and selling
+These controls live in the right-hand detail pane of the inventory section view, built by
+Scripts/inventory/storage_menu.gd . They are the same widgets whether you are
+buying or selling — only the button label changes.
+Role px Used for
+Status 20 Status and error lines
+Small 18 Hints, captions
+Card detail 18 Item descriptions, prices
+Piece Size
+Panel 1100 × 660 (shrinks to 90% × 85% of screen on
+small windows)
+Item slot 110 × 110
+Item icon (detail pane) 120 × 120
+Buy / Sell button 110 × 48
+Quantity row 230 wide
+Quantity − / + button 36 × 36
+Quantity number 36 wide
+Control Size
+Buy / Sell button 110 × 48
+Wanderville UI Panel Spec
+Page 3 of 10
+The quantity is capped at 1–99 per trade by the server, so the number field never needs
+more than two digits.
+House options
+Scripts/housing/house_menu.gd — a grid of house designs to pick from, opened when
+you build.
+The card is a 192 × 128 house picture drawn at 1.5×. If you redraw the house art at a
+different ratio, the 288 × 192 button has to change with it.
+Floor picker — Scripts/housing/floor_picker.gd , the swatches for the inside floor.
+Swatch button: 120 × 70
+Shop options
+Scripts/marketplace/shop_picker.gd — same idea as the house grid, smaller cards and
+one more column.
+Control Size
+Quantity row 230 wide
+− and + buttons 36 × 36 each
+Quantity number 36 wide
+Item icon 120 × 120
+Price line 20 px text
+Part Size
+House card button 288 × 192
+Grid 3 columns, 18 px gaps → 900 wide
+Whole panel about 956 wide with padding
+Title line 26 px text
+Wanderville UI Panel Spec
+Page 4 of 10
+House prompt
+Scripts/housing/house_prompt.gd — worth calling out, because this is the only box
+that genuinely sits at the bottom of the screen. It shows lines like "Press H to open the
+door" and "Get 10 wood to build the floor".
+Centred horizontally, 30 px above the bottom edge
+Width hugs its text — no fixed size
+14 px padding on all four sides
+Today: brown at 92% opacity, gold 3 px border, 12 px corners, 24 px white centred text
+This is the only panel in the game with a gold border instead of the brown one, so it does
+not inherit the shared skin. If you want it to match everything else, that is a small change
+in this file.
+Top bar
+All in Scenes/world_hud.tscn . The bar is anchored to the top edge, inset 120 px from the
+left, 12 px down, 16 px from the right. Items sit in a row with 8 px between them.
+Part Size
+Shop card button 200 × 170
+Grid 4 columns, 18 px gaps → 854 wide
+Whole panel about 910 wide with padding
+Card caption 20 px text
+Shop sign on the map 232 × 20
+Element Size Notes
+Counters block 330 wide Holds the four stacked lines below
+Aura / Level line auto Text: "Aura — • Level —"
+XP bar 150 × 10 No percentage text
+World name line auto
+Wanderville UI Panel Spec
+Page 5 of 10
+The 120 px left inset is empty space the bar deliberately leaves — worth knowing if you
+want to put something there.
+Only the settings button is a true icon. If you want the social button to be an icon too, it
+needs to shrink to about 56 × 52 to match, and world_hud.tscn has to drop its text .
+Popups
+There are four of these and they are easy to confuse, so here is each with where it
+actually sits. Tell me which one you meant by "the popup at the bottom" and I can be more
+specific.
+The level-up toast is the one most people mean — it is the only one with a real panel
+background and a button ("Continue") inside it.
+The world prompt is the "Press Q to collect water" / "Press F to catch a fish" box. It is a
+bare panel with one line of 20 px text, built in code rather than in a scene.
+Element Size Notes
+Progress line auto
+Social Lobby button 150 × 52 Has a text label
+Settings button 56 × 52 Icon only — this is the one that needs a glyph
+Water counter 40 × 40 Separate, in Scenes/world.tscn , bottom-left area
+Popup Size Where File
+Level-up
+toast
+420 × 184 Bottom-left: 16 px in, 56
+px up
+world_hud.tscn
+Error strip full width − 48, 40
+tall
+Bottom edge, 8 px up world_hud.tscn
+World
+prompt
+560 × 60 Screen centre water_source.gd
+Farm menu 420 × 290 Screen centre farm_menu.tscn
+Seed picker 530 wide, height
+grows
+Screen centre seed_picker_menu.tscn
+Wanderville UI Panel Spec
+Page 6 of 10
+The error strip is just a label with no panel behind it today. If you want it to sit on a
+background, that is a new panel, not a reskin.
+Social bars
+There are four separate social surfaces, which is probably more than you realised. Three
+of them are list-heavy, so the heights matter more than the widths.
+1. Social dock — Scenes/social_panel.tscn . Five nav buttons across the top (Friends,
+Requests, Messages, Invitations, Notifications), then one body that swaps. Width fills
+whatever holds it.
+2. Lobby social panel — Scripts/social/lobby_social_panel.gd , the richer version
+inside the Social Lobby.
+3. Community window — Scripts/social/community_window.gd . A real resizable OS
+window, not an overlay.
+Part Height
+Chat history 210
+Players list 170
+Notification inbox 210
+Notification detail 70
+Status line 44
+Part Size
+Friend row button 360 × 78
+Friend list scroll 380 × 300
+Chat history 250 tall
+Detail column 260 wide
+Profile picture 220 × 145
+Row avatar 44 × 62
+Wanderville UI Panel Spec
+Page 7 of 10
+Opens at 620 × 580, cannot go below 480 × 480
+Item list inside: 140 tall
+4. Nearby / proximity bar — Scripts/social/proximity_social.gd , the in-world one
+that shows who is near you.
+Panel width: 360 (shrinks to 180 on narrow windows)
+Message scroll height: 330 (shrinks to 100 on short windows)
+Chat bubble label: 240 wide
+Also worth knowing: the standalone social login box is 350 × 200.
+Everything else
+The menus, dialogs and one-off panels. Most are PanelContainer s with a minimum width
+— they grow downward to fit their contents, so only the width is fixed.
+Wanderville UI Panel Spec
+Page 8 of 10
+The signup, forgot-password and reset-password screens each have three 500-wide
+panels — the form, a success state and an error state. They can share one background.
+The fishing minigame has a 300 × 300 play area inside its 443 × 452 panel.
+One stale value to ignore: map.tscn has a water prompt panel saved at 1071 × 291, but
+water_source.gd resizes it to 560 × 60 at runtime. The code wins.
+How I'd do it
+Counting the tables above there are about 30 panels, but only 7 distinct widths — and
+500 px alone covers six screens. Drawing 30 panels would be wasted work.
+The short route: 9 pieces of art, every panel changes. Draw these as nine-patches with a
+20 px margin, and I rewire wood_panel.gd and wood_button.gd to use them.
+Panel Size File
+Character select 820 wide menus/CharacterSelectScreen.tscn
+Map showcase 780 wide menus/MapShowcaseScreen.tscn
+Profile 760 × 600 menus/ProfileScene.tscn
+Seed picker 530 wide seed_picker_menu.tscn
+Login 500 wide menus/LoginScene.tscn
+Signup 500 wide menus/SignupScene.tscn
+Email verification 500 wide menus/EmailVerificationScene.tscn
+Forgot password 500 wide menus/ForgotPasswordScene.tscn
+Reset password 500 wide menus/ResetPasswordScene.tscn
+Map selection 500 wide menus/MapSelectionScreen.tscn
+Title / welcome 460 wide menus/TitleScreen.tscn
+Settings overlay 420 × 320 menus/SettingsOverlay.tscn
+Logout confirm 420 wide menus/LogoutConfirmationDialog.tscn
+World card 280 × 180 components/WorldCard.tscn
+Wanderville UI Panel Spec
+Page 9 of 10
+1. Panel background
+2. Button — normal
+3. Button — hover
+4. Button — pressed
+5. Button — disabled
+6. Text input background
+7. Progress bar track
+8. Progress bar fill
+9. List / slot background
+Then the fixed-size pieces, which a nine-patch cannot cover because they are pictures,
+not frames:
+Inventory slot — 110 × 110
+House card — 288 × 192
+Shop card — 200 × 170
+Floor swatch — 120 × 70
+Settings icon — 56 × 52
+World card frame — 280 × 180
+Buy / Sell button — 110 × 48
+Quantity − / + button — 36 × 36
+Suggested order: panel and button first (one afternoon, and the whole game looks
+different), then the inventory room (the biggest single drawing), then the settings icon
+and slot, then the fixed pieces. The menus need nothing extra — they inherit from step
+one.
+When you have the first panel and button PNGs, hand them to me and I will convert the
+styles over. That change is confined to the two component scripts, so nothing else in the
+game has to move

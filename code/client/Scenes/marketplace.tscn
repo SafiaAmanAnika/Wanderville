@@ -12,6 +12,9 @@ script = ExtResource("1_q1wnj")
 position = Vector2(-18, 358)
 texture = ExtResource("2_6x6ek")
 
+[node name="Node2D" type="Node2D" parent="Background/Sprite2D" unique_id=237358589]
+position = Vector2(17, 74)
+
 [node name="Shops" type="Node2D" parent="." unique_id=875845806]
 
 [node name="shop#1" type="Sprite2D" parent="Shops" unique_id=291127022]

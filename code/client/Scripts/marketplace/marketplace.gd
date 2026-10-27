@@ -1,10 +1,12 @@
 extends "res://Scripts/lobby_player_spawner.gd"
 ## Side-scrolling marketplace.
 ##
-## The general store stands at x = 0. Your own shop takes the first slot on the
-## side you chose; friends' shops fill the remaining slots outward. Every layout
-## number comes from Assets/marketplace/placement.json, so moving a shop is a
-## data change rather than a code change.
+## The general store stands at supershop_world_x. Empty plots are outlined on
+## both sides of it; you click the plot you want, then pick a storefront from
+## the 12 options, and your shop is built on that side. Friends' shops fill the
+## remaining slots outward. Every layout number comes from
+## Assets/marketplace/placement.json, so moving a shop is a data change rather
+## than a code change.
 ##
 ## Expected scene (Marketplace.tscn):
 ##   Background/Sprite2D      one panel you positioned by hand; cloned sideways
@@ -16,6 +18,8 @@ const DATA := "res://Assets/marketplace/placement.json"
 const ART := "res://Assets/marketplace/"
 const SHOP_PICKER := preload("res://Scripts/marketplace/shop_picker.gd")
 const STORAGE_MENU := preload("res://Scripts/inventory/storage_menu.gd")
+const GENERAL_STORE := preload("res://Scripts/marketplace/general_store.gd")
+const SHOP_WINDOW := preload("res://Scripts/marketplace/shop_window.gd")
 
 const WOOD_COST := 70
 const REACH := 140.0      ## how close you stand before a shop is clickable
@@ -26,10 +30,12 @@ var _entries: Dictionary = {}        ## option_id -> placement.json entry
 var _shops: Array[Dictionary] = []   ## {node, kind, option_id, name, x, shop_id}
 var _slots: Array[Sprite2D] = []     ## the shop#N nodes, in scene order
 var _next_slot := 0
-var _plot: Node2D = null             ## the "open your shop here" outline
+var _plots: Array[Node2D] = []       ## the "open your shop here" outlines, one per free side
 var _near: Dictionary = {}
 var _busy := false
-
+var _own_shop_id := 0        ## your shop's server id, 0 until you open one
+var _leaving := false
+var _leave_button: Button
 
 # ── setup ────────────────────────────────────────────────────────────────
 
@@ -41,6 +47,7 @@ func _ready() -> void:
 	_place_supershop()
 	super._ready()
 	await _refresh_shops()
+	_build_leave_button()
 
 
 func _load_spec() -> void:
@@ -78,9 +85,10 @@ func _place_supershop() -> void:
 	if sprite == null:
 		push_warning("Marketplace: no 'supershop' node under Shops")
 		return
-	_dress(sprite, "supershop", 0.0, "General Store")
+	var x := float(_spec["scene"].get("supershop_world_x", 0))
+	_dress(sprite, "supershop", x, "General Store")
 	_shops.append({"node": sprite, "kind": "supershop", "option_id": "supershop",
-			"name": "General Store", "x": 0.0, "shop_id": 0})
+			"name": "General Store", "x": x, "shop_id": 0})
 
 
 # ── placing shops ────────────────────────────────────────────────────────
@@ -163,12 +171,17 @@ func _add_shop(data: Dictionary, side: String, index: int, kind: String) -> void
 			"name": shop_name, "x": x, "shop_id": int(data.get("id", 0))})
 
 
-func _place_empty_plot() -> void:
-	var baseline := float(_spec["scene"]["shop_baseline_y"])
-	_plot = Node2D.new()
-	_plot.name = "EmptyPlot"
-	_plot.position = Vector2(_slot_x("right", 0), baseline)
-	$Shops.add_child(_plot)
+func _place_empty_plots() -> void:
+	# One outline per side, so the position is the first thing you pick.
+	for side in ["left", "right"]:
+		_place_empty_plot(side)
+
+
+func _place_empty_plot(side: String) -> void:
+	var plot := Node2D.new()
+	plot.name = "EmptyPlot_" + side
+	plot.position = Vector2(_slot_x(side, 0), float(_spec["scene"]["shop_baseline_y"]))
+	$Shops.add_child(plot)
 
 	var outline := Line2D.new()
 	outline.width = 3.0
@@ -177,7 +190,7 @@ func _place_empty_plot() -> void:
 	outline.points = PackedVector2Array([
 		Vector2(-116, -182), Vector2(116, -182),
 		Vector2(116, 0), Vector2(-116, 0)])
-	_plot.add_child(outline)
+	plot.add_child(outline)
 
 	var label := Label.new()
 	label.text = "Open your shop"
@@ -187,10 +200,11 @@ func _place_empty_plot() -> void:
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.position = Vector2(-116, -110)
 	label.size = Vector2(232, 20)
-	_plot.add_child(label)
+	plot.add_child(label)
 
-	_shops.append({"node": _plot, "kind": "empty", "option_id": "",
-			"name": "", "x": _plot.position.x, "shop_id": 0})
+	_plots.append(plot)
+	_shops.append({"node": plot, "kind": "empty", "option_id": "",
+			"name": "", "x": plot.position.x, "shop_id": 0, "side": side})
 
 
 # ── server sync ──────────────────────────────────────────────────────────
@@ -198,6 +212,7 @@ func _place_empty_plot() -> void:
 func _refresh_shops() -> void:
 	_reset_slots()
 	var own := await _fetch_own()
+	_own_shop_id = int(own.get("id", 0))
 	var own_side := str(own.get("side", "")) if not own.is_empty() else ""
 	if not own.is_empty():
 		_add_shop(own, own_side, 0, "own")
@@ -206,7 +221,7 @@ func _refresh_shops() -> void:
 	for i in friends.size():
 		_add_shop(friends[i], str(spots[i]["side"]), int(spots[i]["index"]), "friend")
 	if own.is_empty():
-		_place_empty_plot()
+		_place_empty_plots()
 
 
 func _reset_slots() -> void:
@@ -218,9 +233,10 @@ func _reset_slots() -> void:
 		var old := sprite.get_node_or_null("ShopName")
 		if old:
 			old.free()
-	if _plot != null and is_instance_valid(_plot):
-		_plot.queue_free()
-	_plot = null
+	for plot in _plots:
+		if is_instance_valid(plot):
+			plot.queue_free()
+	_plots.clear()
 
 
 func _fetch_own() -> Dictionary:
@@ -276,39 +292,34 @@ func _hit(node: Node2D) -> bool:
 func _open(shop: Dictionary) -> void:
 	match str(shop["kind"]):
 		"supershop":
-			get_tree().current_scene.add_child(STORAGE_MENU.new())
+			var store = GENERAL_STORE.new()
+			store.shop_id = _own_shop_id
+			get_tree().current_scene.add_child(store)
 		"empty":
-			_start_open_shop()
+			_start_open_shop(str(shop.get("side", "right")))
 		"own":
-			_toast("Your shop. Stocking it comes next.")
+			var mine = SHOP_WINDOW.new()
+			mine.shop_id = int(shop["shop_id"])
+			mine.shop_name = str(shop["name"])
+			mine.is_mine = true
+			get_tree().current_scene.add_child(mine)
 		"friend":
-			_toast("%s. Buying comes next." % str(shop["name"]))
-
+			var theirs = SHOP_WINDOW.new()
+			theirs.shop_id = int(shop["shop_id"])
+			theirs.shop_name = str(shop["name"])
+			get_tree().current_scene.add_child(theirs)
 
 # ── opening your own shop ────────────────────────────────────────────────
 
-func _start_open_shop() -> void:
+func _start_open_shop(side: String) -> void:
+	# The side is already decided by the plot you clicked, so the picker is the
+	# last step: choose a storefront and it goes up on that spot.
 	if GameState.wood() < WOOD_COST:
 		_toast("You need %d wood to open a shop." % WOOD_COST)
 		return
 	var picker = SHOP_PICKER.new()
-	picker.picked.connect(_pick_side)
+	picker.picked.connect(func(option_id: String) -> void: _confirm(option_id, side))
 	get_tree().current_scene.add_child(picker)
-
-
-func _pick_side(option_id: String) -> void:
-	var box := ConfirmationDialog.new()
-	box.title = "Where do you want it?"
-	box.dialog_text = "Which side of the general store should your shop stand on?"
-	box.ok_button_text = "Right side"
-	box.add_button("Left side", true, "left")
-	box.confirmed.connect(func() -> void: _confirm(option_id, "right"))
-	box.custom_action.connect(func(action: StringName) -> void:
-		if action == "left":
-			box.hide()
-			_confirm(option_id, "left"))
-	get_tree().current_scene.add_child(box)
-	box.popup_centered()
 
 
 func _confirm(option_id: String, side: String) -> void:
@@ -344,3 +355,48 @@ func _fit_camera() -> void:
 	# or right edge and tight top/bottom limits, which would force a very large
 	# zoom, so the configured zoom is kept instead.
 	camera.zoom = Vector2.ONE * _preferred_zoom
+
+# ── button ───────────────────────────────────────────────────────────────
+
+func _build_leave_button() -> void:
+	var ui := CanvasLayer.new()
+	ui.name = "MarketUI"
+	ui.layer = 15
+	add_child(ui)
+	_leave_button = Button.new()
+	_leave_button.text = "Leave  [E]"
+	_leave_button.add_theme_font_override("font", WoodPanel.PIXEL_FONT)
+	_leave_button.add_theme_font_size_override("font_size", WoodPanel.SIZE_STATUS)
+	_leave_button.add_theme_color_override("font_color", WoodPanel.TEXT_COLOR)
+	var normal := WoodPanel.make_wood_card_style()
+	normal.set_content_margin_all(8)
+	var hover := WoodPanel.make_wood_card_hover_style()
+	hover.set_content_margin_all(8)
+	_leave_button.add_theme_stylebox_override("normal", normal)
+	_leave_button.add_theme_stylebox_override("hover", hover)
+	_leave_button.add_theme_stylebox_override("pressed", hover)
+	_leave_button.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+	_leave_button.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	_leave_button.offset_left = -196
+	_leave_button.offset_top = 16
+	_leave_button.offset_right = -16
+	_leave_button.offset_bottom = 64
+	_leave_button.pressed.connect(_leave)
+	ui.add_child(_leave_button)
+
+
+func _unhandled_key_input(event: InputEvent) -> void:
+	if _leaving or _busy or GameState.menu_open or event.is_echo():
+		return
+	if event.is_action_pressed("interact"):
+		get_viewport().set_input_as_handled()
+		_leave()
+
+
+func _leave() -> void:
+	if _leaving:
+		return
+	_leaving = true
+	if is_instance_valid(_leave_button):
+		_leave_button.disabled = true
+	SceneManager.leave_marketplace()

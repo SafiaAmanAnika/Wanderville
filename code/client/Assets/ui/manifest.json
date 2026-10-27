@@ -1,0 +1,367 @@
+{
+  "generation": "Built-in image_gen using actual in-game reference PNGs. 18 delivery assets; house_card reuses the generated shared panel frame. Generated pixels preserved unchanged.",
+  "assets": [
+    {
+      "name": "panel_background",
+      "path": "images/shared/panel_background.webp",
+      "source_pixels": [
+        1619,
+        971
+      ],
+      "suggested_draw_size": [
+        1100,
+        660
+      ],
+      "visible_bounds_alpha_16": [
+        5,
+        98,
+        1615,
+        853
+      ],
+      "sha256": "d1b67e596dc0c80ebd36fa0199e4d2b0b72dddf60fd66a68268df64367dd52f5",
+      "original_png_path": "images/shared/panel_background.png"
+    },
+    {
+      "name": "button_normal",
+      "path": "images/shared/button_normal.webp",
+      "source_pixels": [
+        2172,
+        724
+      ],
+      "suggested_draw_size": [
+        360,
+        120
+      ],
+      "visible_bounds_alpha_16": [
+        104,
+        82,
+        2118,
+        653
+      ],
+      "sha256": "f2d9ad81ab6944c867bd4582591a54a91104483448bcf0ed20b882f9c4f29272",
+      "original_png_path": "images/shared/button_normal.png"
+    },
+    {
+      "name": "button_hover",
+      "path": "images/shared/button_hover.webp",
+      "source_pixels": [
+        2172,
+        724
+      ],
+      "suggested_draw_size": [
+        360,
+        120
+      ],
+      "visible_bounds_alpha_16": [
+        103,
+        81,
+        2120,
+        652
+      ],
+      "sha256": "01ea7a6ac73acdcb820e369005aa7eb31e75b9bb61e2cb7aec88cb8dde0602cb",
+      "original_png_path": "images/shared/button_hover.png"
+    },
+    {
+      "name": "button_pressed",
+      "path": "images/shared/button_pressed.webp",
+      "source_pixels": [
+        2172,
+        724
+      ],
+      "suggested_draw_size": [
+        360,
+        120
+      ],
+      "visible_bounds_alpha_16": [
+        103,
+        81,
+        2120,
+        652
+      ],
+      "sha256": "2a814ee2cd6ace3cd898267adda3c644458a84a54e490ad3f387240b553c3c8f",
+      "original_png_path": "images/shared/button_pressed.png"
+    },
+    {
+      "name": "button_disabled",
+      "path": "images/shared/button_disabled.webp",
+      "source_pixels": [
+        2172,
+        724
+      ],
+      "suggested_draw_size": [
+        360,
+        120
+      ],
+      "visible_bounds_alpha_16": [
+        103,
+        81,
+        2119,
+        653
+      ],
+      "sha256": "1a3c68c932e3dc98e9f91c2751b68afa54eb806e24693b959fd82881109d184a",
+      "original_png_path": "images/shared/button_disabled.png"
+    },
+    {
+      "name": "text_input",
+      "path": "images/shared/text_input.webp",
+      "source_pixels": [
+        2172,
+        724
+      ],
+      "suggested_draw_size": [
+        500,
+        64
+      ],
+      "visible_bounds_alpha_16": [
+        40,
+        126,
+        2133,
+        564
+      ],
+      "sha256": "92d0029953688bbe5748f226b6160538212dc03d28e53616772f09d15bf64596",
+      "original_png_path": "images/shared/text_input.png"
+    },
+    {
+      "name": "progress_track",
+      "path": "images/shared/progress_track.webp",
+      "source_pixels": [
+        2125,
+        740
+      ],
+      "suggested_draw_size": [
+        560,
+        60
+      ],
+      "visible_bounds_alpha_16": [
+        52,
+        176,
+        2073,
+        527
+      ],
+      "sha256": "51e0d565316878b9018b282008af90b79f2db87b4a3bf4b360b35330135605d3",
+      "original_png_path": "images/shared/progress_track.png"
+    },
+    {
+      "name": "progress_fill",
+      "path": "images/shared/progress_fill.webp",
+      "source_pixels": [
+        2161,
+        728
+      ],
+      "suggested_draw_size": [
+        560,
+        60
+      ],
+      "visible_bounds_alpha_16": [
+        17,
+        217,
+        2144,
+        503
+      ],
+      "sha256": "5b5b14681c2304e47ab287565af9a469fe26e020dd9f22328e73f1425de41ed6",
+      "original_png_path": "images/shared/progress_fill.png"
+    },
+    {
+      "name": "list_slot_background",
+      "path": "images/shared/list_slot_background.webp",
+      "source_pixels": [
+        1619,
+        971
+      ],
+      "suggested_draw_size": [
+        380,
+        300
+      ],
+      "visible_bounds_alpha_16": [
+        16,
+        138,
+        1603,
+        823
+      ],
+      "sha256": "6d417315c86c01a33d4e97024927a2d33f2dc36ecd930f8427ff3c0acb1421ee",
+      "original_png_path": "images/shared/list_slot_background.png"
+    },
+    {
+      "name": "inventory_slot",
+      "path": "images/fixed/inventory_slot.webp",
+      "source_pixels": [
+        1254,
+        1254
+      ],
+      "suggested_draw_size": [
+        110,
+        110
+      ],
+      "visible_bounds_alpha_16": [
+        95,
+        114,
+        1158,
+        1140
+      ],
+      "sha256": "0c5b6ef7f492478fea6d552cc3b337672258a7bc1b979099dc57594183377b70",
+      "original_png_path": "images/fixed/inventory_slot.png"
+    },
+    {
+      "name": "house_card",
+      "path": "images/fixed/house_card.webp",
+      "source_pixels": [
+        1619,
+        971
+      ],
+      "suggested_draw_size": [
+        288,
+        192
+      ],
+      "visible_bounds_alpha_16": [
+        5,
+        98,
+        1615,
+        853
+      ],
+      "sha256": "d1b67e596dc0c80ebd36fa0199e4d2b0b72dddf60fd66a68268df64367dd52f5",
+      "reuses": "panel_background",
+      "original_png_path": "images/fixed/house_card.png"
+    },
+    {
+      "name": "shop_card",
+      "path": "images/fixed/shop_card.webp",
+      "source_pixels": [
+        1360,
+        1156
+      ],
+      "suggested_draw_size": [
+        200,
+        170
+      ],
+      "visible_bounds_alpha_16": [
+        20,
+        58,
+        1349,
+        1084
+      ],
+      "sha256": "7048cb776d5732518c565b8fc44fa3b6e03f0b573e3e637a79566d8e52fda2b1",
+      "original_png_path": "images/fixed/shop_card.png"
+    },
+    {
+      "name": "world_card_frame",
+      "path": "images/fixed/world_card_frame.webp",
+      "source_pixels": [
+        1564,
+        1006
+      ],
+      "suggested_draw_size": [
+        280,
+        180
+      ],
+      "visible_bounds_alpha_16": [
+        33,
+        72,
+        1531,
+        905
+      ],
+      "sha256": "95bd755e11e49ab0fd9c0fc051a708f0ccb18888d6c91b50905b64845243aabf",
+      "original_png_path": "images/fixed/world_card_frame.png"
+    },
+    {
+      "name": "floor_swatch",
+      "path": "images/fixed/floor_swatch.webp",
+      "source_pixels": [
+        1643,
+        957
+      ],
+      "suggested_draw_size": [
+        120,
+        70
+      ],
+      "visible_bounds_alpha_16": [
+        27,
+        79,
+        1613,
+        877
+      ],
+      "sha256": "026a5e5dc8b20e5c7c9a73ccce43cb58ad46eb11964cf8a4657dc7affacbe1d3",
+      "original_png_path": "images/fixed/floor_swatch.png"
+    },
+    {
+      "name": "settings_icon",
+      "path": "images/fixed/settings_icon.webp",
+      "source_pixels": [
+        1304,
+        1206
+      ],
+      "suggested_draw_size": [
+        56,
+        52
+      ],
+      "visible_bounds_alpha_16": [
+        66,
+        43,
+        1230,
+        1163
+      ],
+      "sha256": "10ffeb90be87b85d40781c358a15f852645aa0397622de7974aa64ad8d058b7f",
+      "original_png_path": "images/fixed/settings_icon.png"
+    },
+    {
+      "name": "buy_sell_button",
+      "path": "images/fixed/buy_sell_button.webp",
+      "source_pixels": [
+        1898,
+        829
+      ],
+      "suggested_draw_size": [
+        110,
+        48
+      ],
+      "visible_bounds_alpha_16": [
+        15,
+        135,
+        1883,
+        683
+      ],
+      "sha256": "2faa459540ed657984b5ed0f335b47aec6e716d9876363f01680dac4caeff816",
+      "original_png_path": "images/fixed/buy_sell_button.png"
+    },
+    {
+      "name": "quantity_minus",
+      "path": "images/fixed/quantity_minus.webp",
+      "source_pixels": [
+        1254,
+        1254
+      ],
+      "suggested_draw_size": [
+        36,
+        36
+      ],
+      "visible_bounds_alpha_16": [
+        124,
+        134,
+        1128,
+        1123
+      ],
+      "sha256": "8830234bf15cf3b9a31949e1f3ae4c44f7b711429842a95fff033caab91a2af6",
+      "original_png_path": "images/fixed/quantity_minus.png"
+    },
+    {
+      "name": "quantity_plus",
+      "path": "images/fixed/quantity_plus.webp",
+      "source_pixels": [
+        1254,
+        1254
+      ],
+      "suggested_draw_size": [
+        36,
+        36
+      ],
+      "visible_bounds_alpha_16": [
+        149,
+        155,
+        1105,
+        1086
+      ],
+      "sha256": "5123c3a00a0d70b30d1363ce064d7fbf915d916ab1f28cb74063da64c0be5555",
+      "original_png_path": "images/fixed/quantity_plus.png"
+    }
+  ],
+  "format": "Lossless WebP with original resolution and alpha; decoded RGBA bytes verified identical to original generated PNGs."
+}

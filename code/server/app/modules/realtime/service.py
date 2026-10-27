@@ -54,7 +54,7 @@ from app.modules.social.farm_visiting import FarmVisitService
 from app.modules.social.service import filter_message
 from app.modules.world.access import owned_world, resolve
 from app.modules.world.geometry import blocked_segment, walkable
-from app.modules.world.models import CAMPUS_ROOM, CAMPUS_SPAWN
+from app.modules.world.models import CAMPUS_ROOM, CAMPUS_SPAWN, farm_entrance
 from app.modules.world.repository import WorldRepository
 
 __all__ = [
@@ -193,9 +193,7 @@ class RealtimeService:
         world = WorldRepository(self.db).by_id(room_world_id(room))
         if world is None:
             return 0.0, 0.0
-        entrance = (world.farm_entrance_x, world.farm_entrance_y)
-        # Old default entrances belong to the retired map; leave custom gates alone.
-        return CAMPUS_SPAWN if entrance == (7377.0, -891.0) else entrance
+        return farm_entrance(world)
 
     def _presence_public(self, row, session=None):
         """Public presence row, annotated with the caller's own session when known.

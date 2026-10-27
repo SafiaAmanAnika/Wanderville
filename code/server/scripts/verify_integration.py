@@ -114,6 +114,18 @@ def fill_inventory(pid: int = Depends(get_current_player_id)):
             # Leave exactly three units of space in the last stack, no free slot.
             inventory.add_internal(pid, "wheat_seed", room + (summary.capacity - summary.used_slots) * 99 - 3)
         return success({})
+@app.post("/integration/market-fixture")
+def market_fixture(pid: int = Depends(get_current_player_id)):
+    from app.modules.market.schemas import ListingRequest, OpenShopRequest
+    from app.modules.market.service import MarketService
+    with SessionLocal() as db:
+        bob = PlayerRepository(db).by_username("integration_bob")
+        InventoryService(db).add_compatibility(bob.id, ItemRequest(item_code="wheat", quantity=3))
+        market = MarketService(db)
+        shop = market.open(bob.id, OpenShopRequest(option_id="shop_option_01", side="left", name="Bob's Shop"))
+        market.stock(bob.id, ListingRequest(item_code="wheat", quantity=3, price=7))
+        InventoryService(db).add_compatibility(pid, ItemRequest(item_code="corn", quantity=2))
+        return success({"shop_id": shop["id"]})
 app.state.lose_shop_response = False
 app.state.lose_gift_response = False
 @app.post("/integration/lose-next-gift-response")

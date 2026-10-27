@@ -26,6 +26,7 @@ import pytest
 
 from conftest import (
     API_URL,
+    CAMPUS_GEOMETRY,
     CAMPUS_SPAWN,
     CLIENT,
     GODOT,
@@ -594,8 +595,10 @@ def test_the_real_campus_collision_deflects_a_player(
 ):
     """The real campus collision world measurably changes where a player ends up.
 
-    Unobstructed, 6.0s at 300/s would carry the player 1800 units north. The real
-    lakes and borders cut that short, and this asserts the shortfall is real,
+    Unobstructed, 8.0s at 300/s would carry the player 2400 units south. The
+    campus's southern collision lies 1431-1951 units below every spawn-ring slot
+    (map2.tscn is open northwards), so it cuts that short, and this asserts the
+    shortfall is real,
     which is what catches a regression where the collision body is present in the
     scene graph but not actually participating in physics.
 
@@ -604,16 +607,16 @@ def test_the_real_campus_collision_deflects_a_player(
     map.tscn and its TileSet costs about 20 seconds in each of the three Godot
     processes. The arena tests run in a fraction of this.
     """
-    seconds = 6.0
+    seconds = 8.0
     one, two = pair(0)
     server, results_a, _results_b, _out_a, out_a = run_pair(
         backend, server_port, harness_dir,
-        script_a="up:%.1f" % seconds, script_b="idle:0.1", hold=1.5, index=0,
+        script_a="down:%.1f" % seconds, script_b="idle:0.1", hold=1.5, index=0,
         arena=False,
     )
     try:
         dump = read_movement_dump(harness_dir)
-        assert dump["collision_shapes"] >= 16, (
+        assert dump["collision_shapes"] >= len(CAMPUS_GEOMETRY["collision"]), (
             "the campus collision world was not built from the real map:\n%s" % dump
         )
         assert dump["arena_mode"] is False, dump
@@ -627,7 +630,7 @@ def test_the_real_campus_collision_deflects_a_player(
         # And the collision world cut the journey short. The bound is deliberately
         # loose (90% of unobstructed) so it holds for any spawn position on the
         # deterministic ring, while still failing outright if the collision world
-        # were absent -- with no collision the player would cover the full 1800.
+        # were absent -- with no collision the player would cover the full 2400.
         assert travelled < unobstructed * 0.9, (
             "the player travelled %.1f of an unobstructed %.1f, so the real "
             "campus collision had no measurable effect:\n%s"

@@ -1,3 +1,4 @@
+import math
 from datetime import timedelta
 
 import pytest
@@ -18,6 +19,34 @@ def test_spawn_has_clear_ground_and_border_contains_it():
     assert not walkable(7377, -891)
     assert blocked_segment(x, y, 7377, -891)
 
+
+
+def test_collision_polygons_have_no_stray_vertices():
+    """A mistyped vertex in map2.tscn must not turn a wall into a spike.
+
+    A stray WaterSource/Collision_top point once exported as a vertex at
+    y=37647, a 40,000-unit sliver through the campus. The border wall may wrap
+    the boundary slightly; nothing else may leave it, and no vertex may fold
+    back on itself between two long edges.
+    """
+    xs = [x for x, _ in GEOMETRY["boundary"]]
+    ys = [y for _, y in GEOMETRY["boundary"]]
+    margin = 500.0
+    for index, row in enumerate(GEOMETRY["collision"]):
+        points = row["points"]
+        for x, y in points:
+            assert min(xs) - margin <= x <= max(xs) + margin, (index, x, y)
+            assert min(ys) - margin <= y <= max(ys) + margin, (index, x, y)
+        for k, (bx, by) in enumerate(points):
+            (ax, ay), (cx, cy) = points[k - 1], points[(k + 1) % len(points)]
+            first, second = (ax - bx, ay - by), (cx - bx, cy - by)
+            if min(math.hypot(*first), math.hypot(*second)) < 500.0:
+                continue
+            turn = abs(math.degrees(
+                math.atan2(first[0] * second[1] - first[1] * second[0],
+                           first[0] * second[0] + first[1] * second[1])
+            ))
+            assert turn >= 10.0, ("hairpin vertex", index, k, (bx, by))
 
 @pytest.mark.parametrize("backend", ["database", "memory"])
 @pytest.mark.parametrize("saved", [(7377., -891.), (1900., 500.), (1950., 500.)])

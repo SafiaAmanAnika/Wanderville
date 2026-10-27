@@ -37,10 +37,11 @@ from conftest import (
     movement_env,
     reap,
     read_movement_dump,
+    requires_godot,
     start_server,
 )
 
-pytestmark = [pytest.mark.integration, pytest.mark.timeout(600)]
+pytestmark = [requires_godot, pytest.mark.integration, pytest.mark.timeout(600)]
 
 SCENE = "res://Scenes/network/RenderedMovement.tscn"
 ## Long enough to walk, watch, hit a wall and reconnect without rushing.
@@ -75,6 +76,7 @@ def _launch(user: dict, secret: str, port: int, workdir: Path, shots: Path,
     })
     if script:
         env["TEST_INPUT_SCRIPT"] = script
+    shots.mkdir(parents=True, exist_ok=True)
     log = workdir / f"rendered-mv-{role}-{user['username']}-{run_id}.log"
     handle = open(log, "wb")
     # No --headless: opening and rendering a window is the thing under test.

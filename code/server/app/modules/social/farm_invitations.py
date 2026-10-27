@@ -31,7 +31,7 @@ from app.modules.players.models import Player
 from app.modules.social.models import FarmInvitation, FarmVisitSession
 from app.modules.social.visit_locking import INVITE_TTL, active_key, lock_rows
 from app.modules.world.access import capacity, farm_full_error, owned_world
-from app.modules.world.models import PlayerWorld
+from app.modules.world.models import PlayerWorld, farm_entrance
 
 
 def _usernames(db, ids):
@@ -243,6 +243,7 @@ class FarmInvitationService:
                 f"{_usernames(self.db, [guest_id]).get(guest_id, 'A player')} is visiting your farm",
                 "/farm/visitors",
             )
+            spawn_x, spawn_y = farm_entrance(host_world)
             result = {
                 "visit_session_id": session.id,
                 "invitation_id": row.id,
@@ -250,8 +251,8 @@ class FarmInvitationService:
                 "host_player_id": host_id,
                 "world_id": world_id,
                 "visitor_player_id": guest_id,
-                "spawn_x": host_world.farm_entrance_x,
-                "spawn_y": host_world.farm_entrance_y,
+                "spawn_x": spawn_x,
+                "spawn_y": spawn_y,
                 "visitor_limit": limit,
                 "visitor_count": limit - free + 1,
                 "read_only": True,

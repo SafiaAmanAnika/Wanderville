@@ -22,6 +22,8 @@ from contextlib import ExitStack
 
 import pytest
 
+pytest.importorskip("av")
+
 from app.core.config import settings
 from app.modules.realtime.opus import OPUS_MARKER
 

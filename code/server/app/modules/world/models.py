@@ -28,6 +28,16 @@ CAMPUS_SPAWN = tuple(GEOMETRY["spawn"])
 # CAMPUS_SPAWN so no module has to hardcode the string.
 CAMPUS_ROOM = "campus"
 
+# The retired map's entrance: the database default, and the value migrated worlds
+# still hold. It is inside a wall on the current map.
+LEGACY_ENTRANCE = (7377.0, -891.0)
+
+
+def farm_entrance(world):
+    """Where a visitor appears in ``world``; old default entrances move to the live spawn."""
+    entrance = (world.farm_entrance_x, world.farm_entrance_y)
+    return CAMPUS_SPAWN if entrance == LEGACY_ENTRANCE else entrance
+
 
 class PlayerWorld(Timestamps, Base):
     """Exactly one persistent world per player.

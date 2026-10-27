@@ -48,6 +48,20 @@ func pick(menu: Node, code: String, qty := 1) -> void:
 	menu._status.text = ""
 	menu._render_section()
 
+func wait_until(ready: Callable, label: String) -> void:
+	for index in range(100):
+		if ready.call():
+			return
+		await create_timer(0.1).timeout
+	check(false, label)
+
+func owned(code: String) -> int:
+	var total := 0
+	for row in state.inventory:
+		if str(row["item_code"]) == code:
+			total += int(row["quantity"])
+	return total
+
 func _run() -> void:
 	api = root.get_node("APIClient")
 	session = root.get_node("Global")
@@ -150,38 +164,40 @@ func _run() -> void:
 	picker.hide_menu()
 	check(state.seed_inventory["wheat"] == quantity and not state.menu_open, "seed_cancel_no_inventory_mutation")
 	var cycle := CanvasModulate.new()
-	cycle.set_script(load("res://Scripts/day_and_night_cycle.gd"))
+	cycle.set_script(load("res://Scripts/day_night_cycle.gd"))
 	stage.add_child(cycle)
 	cycle.set_process(false)
-	cycle.time_elapsed = 0.25 * cycle.CYCLE_LENGTH
-	cycle._update_animation()
+	cycle.elapsed_time = 0.25 * cycle.daytime_duration
+	cycle.update_lighting()
 	var daylight: Color = cycle.color
-	cycle.time_elapsed = 0.85 * cycle.CYCLE_LENGTH
-	cycle._update_animation()
-	check(cycle.color != daylight and cycle.CYCLE_LENGTH == 2400.0, "day_night_visible_40minute_cycle")
+	cycle.elapsed_time = cycle.daytime_duration + 0.5 * cycle.nighttime_duration
+	cycle.update_lighting()
+	check(cycle.color != daylight and cycle.is_nighttime()
+		and cycle.daytime_duration + cycle.nighttime_duration == 1800.0, "day_night_visible_30minute_cycle")
 	await shot("night_hud")
 	cycle.color = Color.WHITE
-	# Exercise the same weather attachment hook on small particles, avoiding the
-	# supplied map's very large GPU particle systems in this UI-only rendering run.
-	var weather_map := Node2D.new()
-	var manager := Node2D.new()
-	manager.name = "WeatherManager"
-	manager.set_script(load("res://Scripts/weather_manager.gd"))
-	weather_map.add_child(manager)
+	# Drive the seasonal effects script on small particles, avoiding the supplied
+	# map's very large GPU particle systems in this UI-only rendering run. It is
+	# kept out of the tree so _ready does not touch the real user://seasonal_state.cfg.
 	var effects := Node2D.new()
-	effects.name = "WeatherFXManager"
+	effects.set_script(load("res://Scripts/seasonal_effects.gd"))
 	for name in ["Rain", "Snow", "Autumn_leaves", "Spring_leaves"]:
 		var particle := GPUParticles2D.new()
 		particle.name = name
 		particle.amount = 1
 		effects.add_child(particle)
-	weather_map.add_child(effects)
-	stage.add_child(weather_map)
+	effects.rain = effects.get_node("Rain")
+	effects.snow = effects.get_node("Snow")
+	effects.autumn_leaves = effects.get_node("Autumn_leaves")
+	effects.spring_leaves = effects.get_node("Spring_leaves")
 	check(effects.get_script() != null, "existing_weather_effects_hook_attached")
-	for season in ["summer", "autumn", "winter", "spring"]:
-		var weather := "snow" if season == "winter" else "rain"
-		state.world_updated.emit({"current_season": season, "weather": weather})
-		check(effects.get_node("Autumn_leaves").emitting == (season == "autumn") and effects.get_node("Spring_leaves").emitting == (season == "spring") and effects.get_node("Snow").emitting == (season == "winter") and effects.get_node("Rain").emitting == (season != "winter"), "season_weather_" + season)
+	# A rain_elapsed_time of one interval is the first moment a shower is scheduled.
+	effects.rain_elapsed_time = effects.RAIN_INTERVAL
+	for season in range(4):
+		effects.current_season = season
+		effects.update_season_effects()
+		check(effects.autumn_leaves.emitting == (season == 1) and effects.spring_leaves.emitting == (season == 3) and effects.snow.emitting == (season == 2) and effects.rain.emitting == (season == 0), "season_weather_" + effects.get_season_name().to_lower())
+	effects.free()
 	state.world_updated.emit(state.world_state)
 	root.content_scale_size = Vector2i(800, 600)
 	root.size = Vector2i(800, 600)
@@ -339,6 +355,56 @@ func _run() -> void:
 	check(hud.get_node("%Balance").text.contains("Level 10 — Landkeeper") and hud.get_node("%ProgressText").text == "Max level" and hud.get_node("%XP").value == hud.get_node("%XP").max_value, "max_level_hud_without_level_eleven")
 	check(int(state.inventory_summary["capacity"]) == 76 and hud.get_node("%LevelToastText").text.contains("+40 inventory slots") and hud.get_node("%LevelToastText").text.contains("+100 Aura"), "multi_level_jump_exact_rewards")
 	await shot("max_level_800x600")
+	# Marketplace screens against the real market routes. Bob's shop is stocked
+	# by the fixture; alice stocks her own through the General Store.
+	var bob_shop := int(api.data_of(await api.authenticated(HTTPClient.METHOD_POST, "/integration/market-fixture", {}))["shop_id"])
+	await api.authenticated(HTTPClient.METHOD_POST, "/economy/earn", {"amount": 100})
+	var my_shop: Dictionary = api.data_of(await api.authenticated(HTTPClient.METHOD_POST, "/market", {"option_id": "shop_option_02", "side": "right", "name": "Alice's Shop"}))
+	await state.refresh_gameplay()
+	var store: Node = load("res://Scripts/marketplace/general_store.gd").new()
+	store.shop_id = int(my_shop["id"])
+	stage.add_child(store)
+	await wait_until(func() -> bool: return not store._catalog.is_empty(), "general_store_catalog_loads")
+	check(store._grid.get_child_count() == store._catalog.size() and state.menu_open, "general_store_catalog_rendered")
+	await shot("general_store_buy")
+	var seeds_before := owned("wheat_seed")
+	await store._buy("wheat_seed", 2)
+	check(store._status.text == "Bought x2" and owned("wheat_seed") == seeds_before + 2, "general_store_buy_updates_inventory")
+	await store._switch(store.STOCK)
+	await store._put_on_shelf("corn", 2, 15)
+	check(store._status.text == "Shelved x2 at 15 Aura" and owned("corn") == 0 and store._shelf.size() == 1 and int(store._shelf[0]["quantity"]) == 2 and int(store._shelf[0]["price"]) == 15, "general_store_stocks_own_shelf")
+	await store._take_back("corn", 1)
+	check(store._status.text == "Took x1 back" and owned("corn") == 1 and int(store._shelf[0]["quantity"]) == 1, "general_store_takes_stock_back")
+	await shot("general_store_stock")
+	store.close()
+	await settle()
+	check(not state.menu_open, "general_store_close_releases_menu")
+	var own: Node = load("res://Scripts/marketplace/shop_window.gd").new()
+	own.shop_id = int(my_shop["id"])
+	own.shop_name = "Alice's Shop"
+	own.is_mine = true
+	stage.add_child(own)
+	await wait_until(func() -> bool: return not own._listings.is_empty(), "own_shop_window_loads")
+	check(own._title.text.contains("your shelf") and own._info.text == "Nothing sold yet." and not own._buy_button.visible, "own_shop_window_shows_shelf_and_sales")
+	own.close()
+	await settle()
+	var shop: Node = load("res://Scripts/marketplace/shop_window.gd").new()
+	shop.shop_id = bob_shop
+	shop.shop_name = "Bob's Shop"
+	stage.add_child(shop)
+	await wait_until(func() -> bool: return not shop._listings.is_empty(), "friend_shop_window_loads")
+	check(shop._listings.size() == 1 and int(shop._listings[0]["quantity"]) == 3 and int(shop._listings[0]["price"]) == 7, "friend_shop_window_lists_stock")
+	shop._selected = "wheat"
+	shop._qty = 4
+	shop._render()
+	check(shop._buy_button.disabled and shop._info.text.contains("Not that many left"), "friend_shop_blocks_overbuy")
+	var aura_before_market := int(state.economy["aura_balance"])
+	var wheat_before := owned("wheat")
+	await shop._buy("wheat", 2)
+	check(shop._status.text == "Bought x2" and owned("wheat") == wheat_before + 2 and int(state.economy["aura_balance"]) == aura_before_market - 14 and int(shop._listings[0]["quantity"]) == 1, "friend_shop_buy_moves_stock_and_aura")
+	await shot("friend_shop")
+	shop.close()
+	await settle()
 	# A full storage refuses one stack more than fits, but accepts what remains.
 	await api.authenticated(HTTPClient.METHOD_POST, "/integration/fill-inventory", {})
 	await state.refresh_gameplay()

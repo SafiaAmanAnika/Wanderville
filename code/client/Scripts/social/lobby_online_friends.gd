@@ -1,11 +1,13 @@
 extends Node2D
-## Online-friend presence portraits; room positions are local, not campus coordinates.
+## Players currently in the social lobby, replicated from its dedicated room.
 const Preview := preload("res://Scripts/customization/character_preview.gd")
 const Style := preload("res://Scripts/ui/lobby_theme.gd")
 const REFRESH_SECONDS := 5.0
 const FLOOR := Rect2(180, 430, 1560, 350)
 const SPACING := 110.0
 var avatars: Dictionary = {}
+var _positions: Dictionary = {}
+var _rows: Array = []
 var _elapsed := 0.0
 var _refreshing := false
 var _session := -1
@@ -20,15 +22,47 @@ func _ready() -> void:
 	_previous_pause = APIClient.realtime.pause_movement
 	# Keep the account online, but never send room coordinates as campus movement.
 	APIClient.realtime.standalone_enabled = true
-	APIClient.realtime.pause_movement = true
+	APIClient.realtime.pause_movement = false
+	APIClient.realtime.external_movement = false
+	APIClient.realtime.snapshot_received.connect(_snapshot)
+	APIClient.realtime.connection_changed.connect(_connection)
+	APIClient.realtime.enter_lobby()
 	Global.session_changed.connect(_session_changed)
-	_refresh.call_deferred()
+
 
 func _process(delta: float) -> void:
-	_elapsed += delta
-	if _elapsed >= REFRESH_SECONDS:
-		_elapsed = 0.0
-		_refresh()
+	for id in avatars:
+		if not _positions.has(id): continue
+		var avatar: Node2D = avatars[id]
+		var offset: Vector2 = _positions[id] - avatar.global_position
+		avatar.global_position = avatar.global_position.lerp(_positions[id], 1.0 - exp(-12.0 * delta))
+		var sprite: AnimatedSprite2D = avatar.get_node("Character")
+		var action := "walk" if offset.length() > 3 else "idle"
+		var direction := "front"
+		if offset.length() > 3:
+			var dirs := ["right","front_right","front","front_left","left","back_left","back","back_right"]
+			direction = dirs[posmod(roundi(offset.angle() / (PI / 4.0)), 8)]
+			sprite.set_meta("facing", direction)
+		else: direction = str(sprite.get_meta("facing", "front"))
+		var clip := action + "_" + direction
+		if sprite.sprite_frames.has_animation(clip): sprite.play(clip)
+
+func _connection(connected: bool) -> void:
+	if not connected: _sync_friends([])
+
+func _snapshot(data: Dictionary) -> void:
+	_positions.clear()
+	var rows: Array = []
+	if str(data.get("room", "")) == "social_lobby":
+		for entry in data.get("players", []):
+			var id := int(entry.get("player_id", 0))
+			if id == Global.player_id: continue
+			var row: Dictionary = entry.duplicate()
+			row["id"] = id
+			row["online"] = true
+			rows.append(row)
+			_positions[id] = Vector2(float(row["x"]), float(row["y"])) + Vector2(0, 97.0 * 0.72)
+	_sync_friends(rows)
 
 func _session_changed() -> void:
 	_session = Global.session_version
@@ -73,7 +107,7 @@ func _sync_friends(rows: Array) -> void:
 			if existing.get_meta("character_code") == code: continue
 			_update_character(existing, code)
 			continue
-		var spot := _random_spot()
+		var spot: Vector2 = to_local(_positions[id]) if _positions.has(id) else _random_spot()
 		if not spot.is_finite(): continue # Wait for space rather than overlap friends.
 		var avatar := Node2D.new()
 		avatar.name = "OnlineFriend_%d" % id
@@ -98,6 +132,10 @@ func _update_character(avatar: Node2D, code: String) -> void:
 	sprite.character = code
 	sprite.direction = "front"
 	avatar.add_child(sprite)
+	if not str(Global.CHARACTERS[code].folder).is_empty():
+		var frames := preload("res://Scripts/chara_frames.gd")
+		for action in ["idle", "walk"]:
+			frames.add_sheet_animations(sprite.sprite_frames, str(Global.CHARACTERS[code].folder), action, frames.FILES[action], 8.0, true, true)
 	var texture := sprite.sprite_frames.get_frame_texture(sprite.animation, 0)
 	var bounds := texture.get_image().get_used_rect()
 	var factor := 140.0 / maxf(1.0, bounds.size.y)
@@ -133,3 +171,4 @@ func _exit_tree() -> void:
 	if is_instance_valid(APIClient.realtime):
 		APIClient.realtime.standalone_enabled = _previous_standalone
 		APIClient.realtime.pause_movement = _previous_pause
+		APIClient.realtime.enter_world(GameState.desired_world_id())

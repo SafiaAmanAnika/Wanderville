@@ -214,9 +214,9 @@ func _activate(action: StringName) -> void:
 		&"notifications":
 			_open_section("notifications")
 		&"leave":
-			heading.text = "Return to Wanderville?"
-			dialogue.text = "Ready to head back to the main world?"
-			primary.text = "Return to world"
+			heading.text = "Enter your farm?"
+			dialogue.text = "Leave the lobby and enter your own farm?"
+			primary.text = "Enter My Farm"
 	primary.grab_focus() if primary.visible else close_button.grab_focus()
 
 

@@ -87,6 +87,7 @@ func _input(event: InputEvent) -> void:
 		return
 	if Global.is_logged_in() and not GameState.backend_ready: return
 	_refilling = true
+	AudioManager.play("collect_water")
 	var version := Global.session_version
 	var collector := _collector
 	if collector.has_method("play_action"):
@@ -105,7 +106,6 @@ func _input(event: InputEvent) -> void:
 		if version != Global.session_version:
 			return
 		if bool(response.get("ok", false)):
-			AudioManager.play("collect_water")
 			var data: Variant = APIClient.data_of(response)
 			GameState.water_drops = int(data.get("water_remaining", 0))
 			GameState.water_changed.emit(GameState.water_drops)
@@ -115,7 +115,6 @@ func _input(event: InputEvent) -> void:
 			GameState.report_error(response)
 			await GameState.refresh_gameplay()
 		return
-	AudioManager.play("collect_water")
 	GameState.add_water(refill_amount)
 	_refilling = false
 

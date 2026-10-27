@@ -33,7 +33,6 @@ def authorized_presence(since):
             FarmVisitSession.status == "ACTIVE",
             Presence.room
             == literal("world:") + cast(FarmVisitSession.world_id, String),
-            host.room == Presence.room,
             host.updated_at >= since,
         )
     )
@@ -47,6 +46,7 @@ def authorized_presence(since):
     return and_(
         active_player,
         or_(
+            Presence.room == "social_lobby",
             and_(Presence.room == CAMPUS_ROOM, ~visiting),
             and_(owns, ~visiting),
             admitted,

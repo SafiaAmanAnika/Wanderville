@@ -9,6 +9,7 @@ class MoveRequest(BaseModel):
 
 
 class EnterRequest(BaseModel):
+    location: Literal["farm", "social_lobby"] = "farm"
     owner_id: int | None = Field(None, gt=0, strict=True)
 
 

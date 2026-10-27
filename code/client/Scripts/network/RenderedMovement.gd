@@ -53,6 +53,7 @@ var _screenshot_dir := ""
 var _shot_index := 0
 var _elapsed := 0.0
 var _run_seconds := 0.0
+var _finishing := false
 var _phase := "starting"
 var _errors: Array = []
 var _last_remote_ids: Array = []
@@ -226,7 +227,10 @@ func _process(delta: float) -> void:
 	_drive_script(delta)
 	_refresh_hud()
 
-	if _run_seconds > 0.0 and _elapsed >= _run_seconds:
+	if _run_seconds > 0.0 and _elapsed >= _run_seconds and not _finishing:
+		# _finish awaits a frame for its screenshot; without the latch every
+		# later frame started another one and the window never quit.
+		_finishing = true
 		_finish()
 
 

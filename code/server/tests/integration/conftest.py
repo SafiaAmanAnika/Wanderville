@@ -839,9 +839,12 @@ def diagnose(server, clients) -> str:
 
 # ── movement helpers ───────────────────────────────────────────────────────
 
-#: The campus spawn the server and clients both use, mirrored from
-#: CampusCollision.CAMPUS_SPAWN, which reads it from world.tscn.
-CAMPUS_SPAWN = (1900.0, 500.0)
+#: The exported campus, the same file the backend and CampusCollision use.
+CAMPUS_GEOMETRY = json.loads((SERVER / "app/modules/world/geometry.json").read_text())
+
+#: The campus spawn the server and clients both use, read from the export of
+#: world.tscn so it cannot drift from CampusCollision.CAMPUS_SPAWN.
+CAMPUS_SPAWN = tuple(CAMPUS_GEOMETRY["spawn"])
 
 #: MovementAuthority.SPEED, which is the same 300 units/second the single-player
 #: controllers use.

@@ -1970,7 +1970,7 @@ polygon = PackedVector2Array(4995, -2683, 4995, -2492, 5048, -2494, 5048, -2526,
 
 [node name="Collision_top" type="CollisionPolygon2D" parent="WaterSource" unique_id=532714462]
 position = Vector2(-5191.1, 2526.6)
-polygon = PackedVector2Array(5071.1, -2683.6, 5180.1, -2683.6, 5180.1, -2645.6, 5174.1, -2645.6, 5174.1, -2662.6, 5099.1, -2663.6, 5098.1, -2667.6, 5088.1, -2676.6, 5078.1, -2670.6, 5077.1, -2644.6, 5071.1, -2644.6, 5078.1, 0)
+polygon = PackedVector2Array(5071.1, -2683.6, 5180.1, -2683.6, 5180.1, -2645.6, 5174.1, -2645.6, 5174.1, -2662.6, 5099.1, -2663.6, 5098.1, -2667.6, 5088.1, -2676.6, 5078.1, -2670.6, 5077.1, -2644.6, 5071.1, -2644.6)
 
 [node name="Collision_topRight" type="CollisionPolygon2D" parent="WaterSource" unique_id=1042882917]
 position = Vector2(-5191.0874, 2760.8843)

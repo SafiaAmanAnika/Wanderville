@@ -13,7 +13,7 @@ from app.modules.realtime.service import PRESENCE_TTL_SECONDS, RealtimeService
 from app.modules.social.farm_visiting import FarmVisitService
 from app.modules.social.models import FarmInvitation, FarmVisitSession
 from app.modules.world.access import resolve
-from app.modules.world.models import PlayerWorld
+from app.modules.world.models import CAMPUS_SPAWN, LEGACY_ENTRANCE, PlayerWorld
 from app.modules.world.worker import tick
 
 
@@ -371,6 +371,19 @@ def test_visitor_enters_at_the_host_gate_not_their_own(client, account, db):
     presence = ok(client.post("/realtime/enter", headers=guest.headers,
                               json={"owner_id": host.id}))
     assert (presence["x"], presence["y"]) == (1234.0, -567.0)
+
+
+def test_retired_map_entrance_is_never_handed_to_a_visitor(client, account, db):
+    host, guest = account(), account("traveller")
+    befriend(client, host, guest)
+    world = world_of(db, host.id)
+    world.farm_entrance_x, world.farm_entrance_y = LEGACY_ENTRANCE
+    db.commit()
+    session = invite(client, host, guest)
+    assert (session["spawn_x"], session["spawn_y"]) == CAMPUS_SPAWN
+    presence = ok(client.post("/realtime/enter", headers=guest.headers,
+                              json={"owner_id": host.id}))
+    assert (presence["x"], presence["y"]) == CAMPUS_SPAWN
 
 
 def test_resolve_is_owner_without_a_visit(client, account, db):

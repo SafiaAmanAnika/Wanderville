@@ -4,8 +4,9 @@ import struct
 import time
 from contextlib import ExitStack
 
-import av
 import pytest
+
+av = pytest.importorskip("av")
 
 from app.core.config import settings
 from app.modules.realtime.native_voice import OpusUnavailable

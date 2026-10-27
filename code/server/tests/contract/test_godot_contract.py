@@ -32,6 +32,38 @@ def test_all_apiclient_routes_exist():
     ]
 
 
+
+def test_every_client_screen_calls_a_real_route():
+    """Screens outside APIClient.gd build their own URLs, often across a line
+    break or with a format argument ("/market/%d/listings" % shop_id). A typo in
+    any of them must fail here rather than ship as a 404."""
+    client_dir = Path(__file__).resolve().parents[3] / "client"
+    call = re.compile(r'HTTPClient\.METHOD_(\w+),\s*"(/[^"]*)"(\s*\+)?')
+    routes = [
+        (method, route.path, re.sub(r"\{[^}]+\}", "[^/]+", route.path))
+        for route in app.routes
+        for method in getattr(route, "methods", [])
+    ]
+    calls, missing = [], []
+    for script in sorted(client_dir.glob("**/*.gd")):
+        if "tests" in script.relative_to(client_dir).parts:
+            continue
+        for method, path, concatenated in call.findall(script.read_text()):
+            path = re.sub(r"%[ds]", "1", path.split("?")[0])
+            calls.append(path)
+            # "/shop/" + action names only a prefix; some route must extend it.
+            found = any(
+                method == server_method and (
+                    server_path.startswith(path) if concatenated
+                    else re.fullmatch(pattern, path)
+                )
+                for server_method, server_path, pattern in routes
+            )
+            if not found:
+                missing.append((script.relative_to(client_dir).as_posix(), method, path))
+    assert "/market/1/listings" in calls and "/market/buy" in calls, calls
+    assert not missing, missing
+
 def test_login_player_and_token_shape(client, account):
     user = account()
     assert {

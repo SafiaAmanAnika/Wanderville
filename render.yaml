@@ -40,8 +40,9 @@ services:
         sync: false
       - key: GOOGLE_CLIENT_SECRET
         sync: false
+      # aiortc is in requirements-voice.txt, which this build does not install.
       - key: VOICE_ENABLED
-        value: "true"
+        value: "false"
       - key: VOICE_ROOM_LIMIT
         value: "8"
       - key: VOICE_TOTAL_LIMIT

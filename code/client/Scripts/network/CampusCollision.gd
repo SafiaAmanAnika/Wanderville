@@ -9,12 +9,14 @@ const MAP_SCENE := "res://Scenes/map2.tscn"
 ## Where the production campus places the player, read from world.tscn. Used as
 ## the centre of the movement area so tests exercise the real walkable region
 ## rather than an empty corner of the map.
-const CAMPUS_SPAWN := Vector2(1900, 500)
+const CAMPUS_SPAWN := Vector2(1658, 677)
 
 const PADDING := 2048.0
 # Exported polygons are already in global world coordinates.
 const WORLD_OFFSET := Vector2.ZERO
-const WORLD_ORIGIN := Vector2(242, -177)
+## Must equal the Map node's position in world.tscn; the ENet bridge refuses
+## a campus whose transform differs from the dedicated server's.
+const WORLD_ORIGIN := Vector2(246, -252)
 const MAP_SCALE := Vector2(15, 15)
 
 

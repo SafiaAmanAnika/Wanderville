@@ -57,3 +57,21 @@ def test_shop_stock_buy_and_sales(client, account):
     sales = data(client.get(f"/market/{shop['id']}/sales", headers=seller.headers))
     assert [(s["buyer_id"], s["quantity"], s["price"]) for s in sales] == [(buyer.id, 3, 7)]
     assert client.get(f"/market/{shop['id']}/sales", headers=buyer.headers).status_code == 403
+
+
+def test_listing_and_buying_limits_match_the_store(client, account):
+    seller = account("limits")
+    data(client.post("/market", headers=seller.headers,
+                     json={"option_id": "shop_option_01", "side": "right", "name": "Stall"}))
+    data(client.post("/inventory/add", headers=seller.headers, json={"item_code": "wheat", "quantity": 1}))
+    for body in ({"item_code": "wheat", "quantity": 1, "price": 10_000},
+                 {"item_code": "wheat", "quantity": 1, "price": 10**12},
+                 {"item_code": "wheat", "quantity": 100, "price": 5}):
+        assert client.post("/market/listings", headers=seller.headers, json=body).status_code == 422
+    assert client.post("/market/listings/remove", headers=seller.headers,
+                       json={"item_code": "wheat", "quantity": 100}).status_code == 422
+    assert client.post("/market/buy", headers=seller.headers,
+                       json={"shop_id": 1, "item_code": "wheat", "quantity": 100}).status_code == 422
+    assert quantity(client, seller, "wheat") == 1
+    data(client.post("/market/listings", headers=seller.headers,
+                     json={"item_code": "wheat", "quantity": 1, "price": 9999}))

@@ -49,6 +49,7 @@ from app.modules.social.community_router import router as community_router
 from app.modules.social.router import router as social_router
 from app.modules.social.visit_router import router as farm_visit_router
 from app.modules.state.router import router as state_router
+from app.modules.trees.router import router as trees_router
 from app.modules.world.router import router as world_router
 
 # The authoritative record of the API surface, grouped by area.
@@ -62,6 +63,7 @@ ROUTERS = (
     world_router,
     farming_router,
     fishing_router,
+    trees_router,
     shop_router,
     progression_router,
     housing_router,

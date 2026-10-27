@@ -33,6 +33,25 @@ def transform(point, row):
     return [round(x*c-y*s+row["position"][0], 6), round(x*s+y*c+row["position"][1], 6)]
 
 
+SEASONS = ("Summer", "Autumn", "Winter", "Spring")
+# Each tree scene draws a 128x160 sprite at scale 0.25, centred on the node; the
+# trunk meets the ground 72px below the sprite's centre, 18 node units down.
+TRUNK = (0.0, 18.0)
+
+
+def to_world(point, key, scene, world):
+    """Carry a point in node ``key``'s space up through the map into the world."""
+    node = key
+    while node is not None:
+        point = transform(point, scene[node])
+        node = scene[node]["parent"]
+        if node == ".":
+            node = "Map"
+    for name in ("Map", "World"):
+        point = transform(point, world[name])
+    return point
+
+
 def export():
     world_path = CLIENT / "Scenes/world.tscn"
     world = nodes(world_path)
@@ -65,8 +84,28 @@ def export():
     if not boundary or not collision:
         raise ValueError("Missing campus boundary or static collision")
     spawn = transform(world["girl"]["position"], world["World"])
+    text = (CLIENT / scene_path).read_text()
+    resources = dict((rid, path) for path, rid in re.findall(
+        r'\[ext_resource [^\]]*path="([^"]+)" id="([^"]+)"', text))
+    trees = []
+    for key, row in scene.items():
+        parts = key.split("/")
+        if len(parts) != 3 or parts[0] != "Trees" or parts[1] not in SEASONS:
+            continue
+        instance = re.search(r'instance=ExtResource\("([^"]+)"\)', row["block"].splitlines()[0])
+        x, y = to_world(TRUNK, key, scene, world)
+        trees.append({"id": parts[1] + "/" + parts[2], "season": parts[1].lower(),
+                      "scene": resources[instance[1]] if instance else "", "x": x, "y": y})
+    zone = scene["FarmField/FarmZone/CollisionShape2D"]
+    size = [float(v) for v in re.search(
+        r'\[sub_resource type="RectangleShape2D" id="' + re.escape(
+            re.search(r'SubResource\("([^"]+)"\)', zone["block"])[1]) + r'"\]\nsize = Vector2\(([^)]+)\)',
+        text)[1].split(",")]
+    corners = [to_world((sx * size[0] / 2, sy * size[1] / 2), "FarmField/FarmZone/CollisionShape2D", scene, world)
+               for sx, sy in ((-1, -1), (1, 1))]
     return {"source": scene_path + "; transforms from Scenes/world.tscn", "spawn": spawn,
-            "boundary": boundary, "water_reach": 180., "collision": collision, "water": water}
+            "boundary": boundary, "water_reach": 180., "collision": collision, "water": water,
+            "tree_reach": 220., "trees": trees, "farm": corners}
 
 
 if __name__ == "__main__":

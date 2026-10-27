@@ -196,7 +196,7 @@ def test_seeds_are_idempotent_and_preserve_clock(db):
             state.weather, state.season_duration_minutes, state.day_night_cycle_minutes) == original
     assert {table.name: db.scalar(select(func.count()).select_from(table))
             for table in Base.metadata.sorted_tables} == counts
-    assert len(Base.metadata.tables) == 54
+    assert len(Base.metadata.tables) == 56
 
 
 @pytest.mark.parametrize(

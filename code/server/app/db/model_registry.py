@@ -64,6 +64,7 @@ from app.modules.social.models import (
     PlayerReport,
     Trade,
 )
+from app.modules.trees.models import CutTree, SpawnedTree
 from app.modules.world.models import PlayerWorld, WorldState
 
 __all__ = [
@@ -136,6 +137,9 @@ __all__ = [
     "SocialPreferences",
     "SocialRevision",
     "Trade",
+    # trees
+    "CutTree",
+    "SpawnedTree",
     "WishlistEntry",
     # world
     "PlayerWorld",

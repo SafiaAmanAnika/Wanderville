@@ -261,10 +261,6 @@
           -2952.0
         ],
         [
-          -497.43,
-          -2940.7755
-        ],
-        [
           4356.0,
           -2922.0
         ],
@@ -1814,5 +1810,1747 @@
         ]
       ]
     }
+  ],
+  "tree_reach": 220.0,
+  "trees": [
+    {
+      "id": "Summer/Tree1",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_1.tscn",
+      "x": -3009.0,
+      "y": -117.0
+    },
+    {
+      "id": "Summer/Tree2",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_2.tscn",
+      "x": -3024.0,
+      "y": 303.0
+    },
+    {
+      "id": "Summer/Tree37",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_2.tscn",
+      "x": -2979.0,
+      "y": 1387.5
+    },
+    {
+      "id": "Summer/Tree54",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_2.tscn",
+      "x": -818.999775,
+      "y": 1477.5
+    },
+    {
+      "id": "Summer/Tree57",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_2.tscn",
+      "x": 336.0,
+      "y": 2017.49985
+    },
+    {
+      "id": "Summer/Tree61",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_2.tscn",
+      "x": 2496.0,
+      "y": 1387.5
+    },
+    {
+      "id": "Summer/Tree38",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_2.tscn",
+      "x": -2034.0,
+      "y": 1908.0
+    },
+    {
+      "id": "Summer/Tree41",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_2.tscn",
+      "x": -1254.0,
+      "y": 1578.0
+    },
+    {
+      "id": "Summer/Tree49",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_2.tscn",
+      "x": 831.0,
+      "y": 2118.0
+    },
+    {
+      "id": "Summer/Tree52",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_2.tscn",
+      "x": 4026.0,
+      "y": 2178.0
+    },
+    {
+      "id": "Summer/Tree44",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_2.tscn",
+      "x": 1011.0,
+      "y": 1578.0
+    },
+    {
+      "id": "Summer/Tree60",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_2.tscn",
+      "x": 1941.0,
+      "y": 1443.0
+    },
+    {
+      "id": "Summer/Tree3",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": -2679.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree4",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": -3024.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree5",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_2.tscn",
+      "x": -3024.0,
+      "y": -567.0
+    },
+    {
+      "id": "Summer/Tree6",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_1.tscn",
+      "x": -3024.0,
+      "y": -1002.0
+    },
+    {
+      "id": "Summer/Tree7",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_2.tscn",
+      "x": -3024.0,
+      "y": -1452.0
+    },
+    {
+      "id": "Summer/Tree8",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_1.tscn",
+      "x": -3024.0,
+      "y": -1887.0
+    },
+    {
+      "id": "Summer/Tree9",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_2.tscn",
+      "x": -3024.0,
+      "y": -2337.0
+    },
+    {
+      "id": "Summer/Tree10",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": -2319.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree11",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": -1959.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree12",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": -1599.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree13",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": -1239.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree14",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": -864.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree15",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": -474.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree16",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": -114.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree17",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": 246.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree18",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": 636.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree19",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": 1011.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree20",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": 1386.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree21",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": 1761.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree22",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": 2136.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree23",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": 2496.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree24",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": 2826.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree25",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": 3186.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree26",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": 3561.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree27",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": 3906.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree28",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_3.tscn",
+      "x": 4221.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Summer/Tree29",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_1.tscn",
+      "x": 2211.0,
+      "y": 843.0
+    },
+    {
+      "id": "Summer/Tree31",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_1.tscn",
+      "x": 2946.0,
+      "y": 1698.0
+    },
+    {
+      "id": "Summer/Tree33",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_1.tscn",
+      "x": 3486.0,
+      "y": 858.0
+    },
+    {
+      "id": "Summer/Tree30",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_2.tscn",
+      "x": 2826.0,
+      "y": 858.0
+    },
+    {
+      "id": "Summer/Tree32",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_2.tscn",
+      "x": 4026.0,
+      "y": 978.0
+    },
+    {
+      "id": "Summer/Tree34",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_2.tscn",
+      "x": 3846.0,
+      "y": 1638.0
+    },
+    {
+      "id": "Summer/Tree35",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_13.tscn",
+      "x": -2139.0,
+      "y": 1263.0
+    },
+    {
+      "id": "Summer/Tree40",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_13.tscn",
+      "x": -2574.0,
+      "y": 2133.0
+    },
+    {
+      "id": "Summer/Tree45",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_13.tscn",
+      "x": -699.0,
+      "y": 1938.0
+    },
+    {
+      "id": "Summer/Tree43",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_13.tscn",
+      "x": -1539.0,
+      "y": 2047.5
+    },
+    {
+      "id": "Summer/Tree55",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_13.tscn",
+      "x": -234.0,
+      "y": 2152.5
+    },
+    {
+      "id": "Summer/Tree59",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_13.tscn",
+      "x": 1791.0,
+      "y": 2122.5
+    },
+    {
+      "id": "Summer/Tree63",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_13.tscn",
+      "x": 3426.0,
+      "y": 2092.5
+    },
+    {
+      "id": "Summer/Tree48",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_13.tscn",
+      "x": 621.0,
+      "y": 1338.0
+    },
+    {
+      "id": "Summer/Tree47",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_13.tscn",
+      "x": 2601.0,
+      "y": 2148.0
+    },
+    {
+      "id": "Summer/Tree36",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_14.tscn",
+      "x": -3009.0,
+      "y": 1923.0
+    },
+    {
+      "id": "Summer/Tree39",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_14.tscn",
+      "x": -1719.0,
+      "y": 1447.5
+    },
+    {
+      "id": "Summer/Tree58",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_14.tscn",
+      "x": 1431.0,
+      "y": 1462.5
+    },
+    {
+      "id": "Summer/Tree62",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_14.tscn",
+      "x": 3336.0,
+      "y": 1447.5
+    },
+    {
+      "id": "Summer/Tree53",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_14.tscn",
+      "x": -2483.9997,
+      "y": 1732.5
+    },
+    {
+      "id": "Summer/Tree56",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_14.tscn",
+      "x": 96.0,
+      "y": 1462.5
+    },
+    {
+      "id": "Summer/Tree46",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_14.tscn",
+      "x": -354.0,
+      "y": 1563.0
+    },
+    {
+      "id": "Summer/Tree50",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_14.tscn",
+      "x": 1296.0,
+      "y": 1983.0
+    },
+    {
+      "id": "Summer/Tree51",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_14.tscn",
+      "x": 2286.0,
+      "y": 1863.0
+    },
+    {
+      "id": "Summer/Tree42",
+      "season": "summer",
+      "scene": "res://Scenes/trees/summer/tree_14.tscn",
+      "x": -1059.0,
+      "y": 2163.0
+    },
+    {
+      "id": "Autumn/Tree4",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_4.tscn",
+      "x": -3024.0,
+      "y": 288.0
+    },
+    {
+      "id": "Autumn/Tree38",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_4.tscn",
+      "x": -2349.0,
+      "y": 2047.5
+    },
+    {
+      "id": "Autumn/Tree45",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_4.tscn",
+      "x": 66.0,
+      "y": 1462.5
+    },
+    {
+      "id": "Autumn/Tree62",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_4.tscn",
+      "x": 3936.0,
+      "y": 1102.5
+    },
+    {
+      "id": "Autumn/Tree57",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_4.tscn",
+      "x": 2856.0,
+      "y": 1717.5
+    },
+    {
+      "id": "Autumn/Tree50",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_4.tscn",
+      "x": 1476.0,
+      "y": 2152.5
+    },
+    {
+      "id": "Autumn/Tree8",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_4.tscn",
+      "x": -3039.0,
+      "y": -1452.0
+    },
+    {
+      "id": "Autumn/Tree12",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_4.tscn",
+      "x": -2679.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Autumn/Tree16",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_4.tscn",
+      "x": -1224.0,
+      "y": -2787.0
+    },
+    {
+      "id": "Autumn/Tree20",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_4.tscn",
+      "x": 231.0,
+      "y": -2787.0
+    },
+    {
+      "id": "Autumn/Tree24",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_4.tscn",
+      "x": 1716.0,
+      "y": -2787.0
+    },
+    {
+      "id": "Autumn/Tree28",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_4.tscn",
+      "x": 3156.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Autumn/Tree34",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_4.tscn",
+      "x": -1899.0,
+      "y": 2178.0
+    },
+    {
+      "id": "Autumn/Tree40",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_4.tscn",
+      "x": -1224.0,
+      "y": 1608.0
+    },
+    {
+      "id": "Autumn/Tree58",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_4.tscn",
+      "x": 2601.0,
+      "y": 2088.0
+    },
+    {
+      "id": "Autumn/Tree63",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_4.tscn",
+      "x": 2676.0,
+      "y": 1158.0
+    },
+    {
+      "id": "Autumn/Tree5",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": -3009.0,
+      "y": -132.0
+    },
+    {
+      "id": "Autumn/Tree32",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": -2694.0,
+      "y": 1432.49985
+    },
+    {
+      "id": "Autumn/Tree53",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": 2076.0,
+      "y": 2122.5
+    },
+    {
+      "id": "Autumn/Tree39",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": -999.0,
+      "y": 2137.5
+    },
+    {
+      "id": "Autumn/Tree49",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": 951.0,
+      "y": 1852.5
+    },
+    {
+      "id": "Autumn/Tree56",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": 3471.0,
+      "y": 1402.5
+    },
+    {
+      "id": "Autumn/Tree35",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": -1509.0,
+      "y": 1923.0
+    },
+    {
+      "id": "Autumn/Tree48",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": 921.0,
+      "y": 1308.0
+    },
+    {
+      "id": "Autumn/Tree60",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": 3891.0,
+      "y": 1788.0
+    },
+    {
+      "id": "Autumn/Tree55",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": 2391.0,
+      "y": 1473.0
+    },
+    {
+      "id": "Autumn/Tree43",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": -369.0,
+      "y": 1278.0
+    },
+    {
+      "id": "Autumn/Tree36",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": -2139.0,
+      "y": 1518.0
+    },
+    {
+      "id": "Autumn/Tree44",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": -54.0,
+      "y": 2163.0
+    },
+    {
+      "id": "Autumn/Tree7",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": -3039.0,
+      "y": -1017.0
+    },
+    {
+      "id": "Autumn/Tree9",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": -3024.0,
+      "y": -1887.0
+    },
+    {
+      "id": "Autumn/Tree13",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": -2334.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Autumn/Tree15",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": -1584.0,
+      "y": -2787.0
+    },
+    {
+      "id": "Autumn/Tree17",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": -864.0,
+      "y": -2787.0
+    },
+    {
+      "id": "Autumn/Tree19",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": -114.0,
+      "y": -2787.0
+    },
+    {
+      "id": "Autumn/Tree21",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": 606.0,
+      "y": -2787.0
+    },
+    {
+      "id": "Autumn/Tree23",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": 1356.0,
+      "y": -2787.0
+    },
+    {
+      "id": "Autumn/Tree25",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": 2091.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Autumn/Tree27",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": 2811.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Autumn/Tree29",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": 3501.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Autumn/Tree31",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": 4221.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Autumn/Tree11",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_5.tscn",
+      "x": -3024.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Autumn/Tree6",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": -3024.0,
+      "y": -537.0
+    },
+    {
+      "id": "Autumn/Tree10",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": -3024.0,
+      "y": -2307.0
+    },
+    {
+      "id": "Autumn/Tree14",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": -1959.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Autumn/Tree18",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": -489.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Autumn/Tree22",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": 996.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Autumn/Tree26",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": 2466.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Autumn/Tree30",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": 3861.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Autumn/Tree33",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": -2949.0,
+      "y": 1968.0
+    },
+    {
+      "id": "Autumn/Tree41",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": -849.0,
+      "y": 1383.0
+    },
+    {
+      "id": "Autumn/Tree51",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": 1401.0,
+      "y": 1578.0
+    },
+    {
+      "id": "Autumn/Tree47",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": 531.0,
+      "y": 1563.0
+    },
+    {
+      "id": "Autumn/Tree54",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": 2286.0,
+      "y": 933.0
+    },
+    {
+      "id": "Autumn/Tree61",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": 3036.0,
+      "y": 903.0
+    },
+    {
+      "id": "Autumn/Tree37",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": -1674.0,
+      "y": 1462.5
+    },
+    {
+      "id": "Autumn/Tree46",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": 426.0,
+      "y": 2137.5
+    },
+    {
+      "id": "Autumn/Tree59",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": 3366.0,
+      "y": 2122.5
+    },
+    {
+      "id": "Autumn/Tree52",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": 1851.0,
+      "y": 1477.5
+    },
+    {
+      "id": "Autumn/Tree42",
+      "season": "autumn",
+      "scene": "res://Scenes/trees/autumn/tree_6.tscn",
+      "x": -489.0,
+      "y": 1882.5
+    },
+    {
+      "id": "Winter/Tree7",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_7.tscn",
+      "x": -3039.0,
+      "y": -2682.0
+    },
+    {
+      "id": "Winter/Tree16",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_7.tscn",
+      "x": -2454.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree18",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_7.tscn",
+      "x": -1854.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree20",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_7.tscn",
+      "x": -1254.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree22",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_7.tscn",
+      "x": -639.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree24",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_7.tscn",
+      "x": -39.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree26",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_7.tscn",
+      "x": 576.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree28",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_7.tscn",
+      "x": 1206.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree30",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_7.tscn",
+      "x": 1821.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree32",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_7.tscn",
+      "x": 2436.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree34",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_7.tscn",
+      "x": 3066.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree36",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_7.tscn",
+      "x": 3666.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree38",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_7.tscn",
+      "x": 4266.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree8",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": -3024.0,
+      "y": 288.0
+    },
+    {
+      "id": "Winter/Tree10",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": -3024.0,
+      "y": -567.0
+    },
+    {
+      "id": "Winter/Tree12",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": -3024.0,
+      "y": -1407.0
+    },
+    {
+      "id": "Winter/Tree14",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": -3024.0,
+      "y": -2277.0
+    },
+    {
+      "id": "Winter/Tree15",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": -2769.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree17",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": -2154.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree19",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": -1554.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree21",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": -939.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree23",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": -339.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree25",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": 261.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree27",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": 876.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree29",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": 1521.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree31",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": 2121.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree33",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": 2751.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree35",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": 3366.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree37",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": 3966.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Winter/Tree40",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": -2379.0,
+      "y": 1897.49985
+    },
+    {
+      "id": "Winter/Tree45",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": -1659.0,
+      "y": 1507.5
+    },
+    {
+      "id": "Winter/Tree54",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": 906.0,
+      "y": 1432.49985
+    },
+    {
+      "id": "Winter/Tree61",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": 2960.9997,
+      "y": 1402.5
+    },
+    {
+      "id": "Winter/Tree49",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": -639.0,
+      "y": 2152.5
+    },
+    {
+      "id": "Winter/Tree58",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": 1971.0,
+      "y": 2107.5
+    },
+    {
+      "id": "Winter/Tree66",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": 3906.0,
+      "y": 1612.5
+    },
+    {
+      "id": "Winter/Tree53",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": 501.0,
+      "y": 1717.5
+    },
+    {
+      "id": "Winter/Tree42",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": -2844.0,
+      "y": 2118.0
+    },
+    {
+      "id": "Winter/Tree44",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": -1494.0,
+      "y": 2178.0
+    },
+    {
+      "id": "Winter/Tree48",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": -489.0,
+      "y": 1593.0
+    },
+    {
+      "id": "Winter/Tree59",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": 1896.0,
+      "y": 1518.0
+    },
+    {
+      "id": "Winter/Tree65",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": 3711.0,
+      "y": 2103.0
+    },
+    {
+      "id": "Winter/Tree64",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": 3201.0,
+      "y": 873.0
+    },
+    {
+      "id": "Winter/Tree69",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": 3756.0,
+      "y": 903.0
+    },
+    {
+      "id": "Winter/Tree52",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_8.tscn",
+      "x": 411.0,
+      "y": 2193.0
+    },
+    {
+      "id": "Winter/Tree9",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": -3009.0,
+      "y": -132.0
+    },
+    {
+      "id": "Winter/Tree39",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": -2934.0,
+      "y": 1507.49985
+    },
+    {
+      "id": "Winter/Tree46",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": -1134.0,
+      "y": 1912.5
+    },
+    {
+      "id": "Winter/Tree56",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": 1431.0,
+      "y": 2152.5
+    },
+    {
+      "id": "Winter/Tree63",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": 2690.9997,
+      "y": 2092.5
+    },
+    {
+      "id": "Winter/Tree60",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": 2391.0,
+      "y": 1072.5
+    },
+    {
+      "id": "Winter/Tree50",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": -39.0,
+      "y": 1477.5
+    },
+    {
+      "id": "Winter/Tree41",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": -1959.0,
+      "y": 2058.0
+    },
+    {
+      "id": "Winter/Tree51",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": -39.0,
+      "y": 1953.0
+    },
+    {
+      "id": "Winter/Tree57",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": 1431.0,
+      "y": 1398.0
+    },
+    {
+      "id": "Winter/Tree67",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": 3486.0,
+      "y": 1413.0
+    },
+    {
+      "id": "Winter/Tree68",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": 3231.0,
+      "y": 1938.0
+    },
+    {
+      "id": "Winter/Tree62",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": 2346.0,
+      "y": 1608.0
+    },
+    {
+      "id": "Winter/Tree43",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": -2214.0,
+      "y": 1338.0
+    },
+    {
+      "id": "Winter/Tree47",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": -924.0,
+      "y": 1353.0
+    },
+    {
+      "id": "Winter/Tree55",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": 891.0,
+      "y": 2028.0
+    },
+    {
+      "id": "Winter/Tree11",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": -3009.0,
+      "y": -972.0
+    },
+    {
+      "id": "Winter/Tree13",
+      "season": "winter",
+      "scene": "res://Scenes/trees/winter/tree_9.tscn",
+      "x": -3009.0,
+      "y": -1827.0
+    },
+    {
+      "id": "Spring/Tree10",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": -3024.0,
+      "y": 288.0
+    },
+    {
+      "id": "Spring/Tree15",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": -3009.0,
+      "y": -1362.0
+    },
+    {
+      "id": "Spring/Tree18",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": -2724.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree22",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": -1254.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree26",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": 201.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree30",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": 1626.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree34",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": 3126.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree38",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": -2949.0,
+      "y": 1417.49985
+    },
+    {
+      "id": "Spring/Tree45",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": -1374.0,
+      "y": 2137.5
+    },
+    {
+      "id": "Spring/Tree50",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": 51.0,
+      "y": 1537.5
+    },
+    {
+      "id": "Spring/Tree58",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": 1896.0,
+      "y": 1522.5
+    },
+    {
+      "id": "Spring/Tree65",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": 3021.0,
+      "y": 1927.5
+    },
+    {
+      "id": "Spring/Tree41",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": -2169.0,
+      "y": 1338.0
+    },
+    {
+      "id": "Spring/Tree55",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": 966.0,
+      "y": 1623.0
+    },
+    {
+      "id": "Spring/Tree63",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": 2796.0,
+      "y": 1278.0
+    },
+    {
+      "id": "Spring/Tree69",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": 3981.0,
+      "y": 1938.0
+    },
+    {
+      "id": "Spring/Tree60",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": 2361.0,
+      "y": 2133.0
+    },
+    {
+      "id": "Spring/Tree49",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_10.tscn",
+      "x": -339.0,
+      "y": 1998.0
+    },
+    {
+      "id": "Spring/Tree11",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": -3024.0,
+      "y": -162.0
+    },
+    {
+      "id": "Spring/Tree13",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": -3024.0,
+      "y": -972.0
+    },
+    {
+      "id": "Spring/Tree16",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": -3009.0,
+      "y": -1812.0
+    },
+    {
+      "id": "Spring/Tree17",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": -3024.0,
+      "y": -2622.0
+    },
+    {
+      "id": "Spring/Tree19",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": -2364.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree21",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": -1629.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree23",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": -894.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree25",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": -174.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree27",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": 561.0,
+      "y": -2787.0
+    },
+    {
+      "id": "Spring/Tree29",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": 1266.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree32",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": 2001.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree35",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": 3501.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree37",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": 4221.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree39",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": -2244.0,
+      "y": 2167.5
+    },
+    {
+      "id": "Spring/Tree47",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": -804.0,
+      "y": 1987.5
+    },
+    {
+      "id": "Spring/Tree52",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": 396.0,
+      "y": 1957.5
+    },
+    {
+      "id": "Spring/Tree57",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": 1431.0,
+      "y": 1927.5
+    },
+    {
+      "id": "Spring/Tree61",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": 2361.0,
+      "y": 1012.49988
+    },
+    {
+      "id": "Spring/Tree68",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": 3576.0,
+      "y": 2167.5
+    },
+    {
+      "id": "Spring/Tree42",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": -2514.0,
+      "y": 1638.0
+    },
+    {
+      "id": "Spring/Tree43",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": -1524.0,
+      "y": 1293.0
+    },
+    {
+      "id": "Spring/Tree51",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": 66.0,
+      "y": 2193.0
+    },
+    {
+      "id": "Spring/Tree56",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": 1371.0,
+      "y": 1308.0
+    },
+    {
+      "id": "Spring/Tree70",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": 3801.0,
+      "y": 1488.0
+    },
+    {
+      "id": "Spring/Tree64",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": 3111.0,
+      "y": 888.0
+    },
+    {
+      "id": "Spring/Tree33",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_11.tscn",
+      "x": 2736.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree12",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_12.tscn",
+      "x": -3024.0,
+      "y": -552.0
+    },
+    {
+      "id": "Spring/Tree44",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_12.tscn",
+      "x": -2949.0,
+      "y": 1908.0
+    },
+    {
+      "id": "Spring/Tree46",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_12.tscn",
+      "x": -1134.0,
+      "y": 1533.0
+    },
+    {
+      "id": "Spring/Tree53",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_12.tscn",
+      "x": 561.0,
+      "y": 1338.0
+    },
+    {
+      "id": "Spring/Tree59",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_12.tscn",
+      "x": 1911.0,
+      "y": 1983.0
+    },
+    {
+      "id": "Spring/Tree66",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_12.tscn",
+      "x": 3336.0,
+      "y": 1443.0
+    },
+    {
+      "id": "Spring/Tree14",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_12.tscn",
+      "x": -3024.0,
+      "y": -2202.0
+    },
+    {
+      "id": "Spring/Tree20",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_12.tscn",
+      "x": -1989.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree24",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_12.tscn",
+      "x": -534.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree28",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_12.tscn",
+      "x": 921.0,
+      "y": -2787.0
+    },
+    {
+      "id": "Spring/Tree31",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_12.tscn",
+      "x": 2376.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree36",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_12.tscn",
+      "x": 3876.0,
+      "y": -2772.0
+    },
+    {
+      "id": "Spring/Tree40",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_12.tscn",
+      "x": -1809.0,
+      "y": 1777.5
+    },
+    {
+      "id": "Spring/Tree54",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_12.tscn",
+      "x": 951.0,
+      "y": 2167.5
+    },
+    {
+      "id": "Spring/Tree62",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_12.tscn",
+      "x": 2496.0,
+      "y": 1702.5
+    },
+    {
+      "id": "Spring/Tree67",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_12.tscn",
+      "x": 3636.0,
+      "y": 1057.5
+    },
+    {
+      "id": "Spring/Tree48",
+      "season": "spring",
+      "scene": "res://Scenes/trees/spring/tree_12.tscn",
+      "x": -534.0,
+      "y": 1477.5
+    }
+  ],
+  "farm": [
+    [
+      2061.0,
+      -1572.0
+    ],
+    [
+      4176.0,
+      318.0
+    ]
   ]
 }

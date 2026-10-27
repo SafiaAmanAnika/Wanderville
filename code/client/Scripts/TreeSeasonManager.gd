@@ -16,6 +16,10 @@ func set_tree_season(season: int) -> void:
 	spring_trees.visible = season == 3
 
 func _ready() -> void:
+	# C cuts the current season's trees for wood.
+	var cutter := preload("res://Scripts/trees/tree_cutter.gd").new()
+	cutter.name = "TreeCutter"
+	add_child(cutter)
 	var effects = get_node_or_null("../../SeasonalEffects")
 	if effects != null:
 		set_tree_season(effects.get_current_season())

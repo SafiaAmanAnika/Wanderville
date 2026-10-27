@@ -84,6 +84,9 @@ def seed_gameplay(db):
         ("koi", "Koi", "fish", None, 25, "rare", "fish", {}),
         ("seahorse", "Seahorse", "fish", None, 30, "rare", "fish", {}),
         ("golden_carp", "Golden Carp", "fish", None, 60, "rare", "fish", {}),
+        # Chopped from trees (15 a tree). Not sold by the General Store: it is
+        # cut, sold back to the store, or traded in player shops.
+        ("wood", "Wood", "material", None, 1, "common", "rare_materials", {}),
         (
             "lake_pearl",
             "Lake Pearl",

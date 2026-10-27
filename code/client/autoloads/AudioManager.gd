@@ -48,6 +48,9 @@ const SOUNDS := {
 	"water_crop": "Farming/Watering_plants.mp3",
 	"harvest": "Farming/Harvesting.mp3",
 	"collect_water": "Farming/Collecting_water.mp3",
+	"cut_wood": "Farming/Cutting_wood_1.mp3",   # 10 s; capped at 3 below
+	# housing
+	"furniture": "Furniture/Furniture_2.mp3",
 	# ui
 	"button_click": "Wanderville/Button_clicking.mp3",
 	"button_hover": "Wanderville/Button_hover.mp3",
@@ -99,6 +102,7 @@ const SFX_MAX_DURATION := {
 	"till": 1.0,
 	"water_crop": 1.0,
 	"collect_water": 1.0,
+	"cut_wood": 3.0,   # the wood floats for 3 s after a tree is cut
 }
 
 var music_volume: float = 80.0

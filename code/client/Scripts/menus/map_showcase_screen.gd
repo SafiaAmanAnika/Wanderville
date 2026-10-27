@@ -4,8 +4,8 @@ const BG_TEXTURE := preload("res://Assets/background/bg.png")
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
 const WORLD_CARD := preload("res://Scripts/components/world_card.gd")
 
-const TEXT_COLOR := Color(0.95, 0.91, 0.80)
-const TEXT_SECONDARY := Color(0.82, 0.74, 0.58)
+const TEXT_COLOR := UiSkin.INK
+const TEXT_SECONDARY := UiSkin.INK_SOFT
 const GOLDEN := Color(1.0, 0.84, 0.0)
 
 const CREATE_WORLD_LABEL := "+ Create New World"
@@ -45,11 +45,7 @@ func _ready() -> void:
 
 
 func _apply_info_panel_style() -> void:
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = WoodPanel.PARCHMENT_BG
-	sb.border_color = WoodPanel.PARCHMENT_DARK
-	sb.set_border_width_all(3)
-	sb.set_corner_radius_all(8)
+	var sb := UiSkin.card()
 	sb.content_margin_left = 20
 	sb.content_margin_right = 20
 	sb.content_margin_top = 16
@@ -129,25 +125,9 @@ func _add_create_world_card() -> void:
 	btn.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.45, 0.35, 0.22, 0.6)
-	sb.border_color = WoodPanel.WOOD_BORDER
-	sb.set_border_width_all(4)
-	sb.set_corner_radius_all(10)
-	sb.content_margin_left = 16
-	sb.content_margin_right = 16
-	sb.content_margin_top = 16
-	sb.content_margin_bottom = 16
-	btn.add_theme_stylebox_override("normal", sb)
-
-	var hover_sb := sb.duplicate()
-	hover_sb.bg_color = WoodPanel.WOOD_HOVER
-	hover_sb.border_color = WoodPanel.WOOD_BEVEL_LIGHT
-	btn.add_theme_stylebox_override("hover", hover_sb)
-
-	var pressed_sb := sb.duplicate()
-	pressed_sb.bg_color = WoodPanel.WOOD_DARK
-	btn.add_theme_stylebox_override("pressed", pressed_sb)
+	btn.add_theme_stylebox_override("normal", UiSkin.world_card())
+	btn.add_theme_stylebox_override("hover", UiSkin.world_card(UiSkin.HOVER_TINT))
+	btn.add_theme_stylebox_override("pressed", UiSkin.world_card(UiSkin.GOLD_TINT))
 
 	btn.add_theme_font_override("font", PIXEL_FONT)
 	btn.add_theme_font_size_override("font_size", WoodPanel.SIZE_BUTTON)

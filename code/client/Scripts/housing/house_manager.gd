@@ -529,6 +529,7 @@ func _house_options() -> void:
 	if not _can_edit(): return
 	GameState.menu_open = true   # player stops moving while the box is open
 	var box := ConfirmationDialog.new()
+	UiSkin.apply_dialog(box)
 	_panels.append(box)
 	box.title = "Your house"
 	box.dialog_text = "What do you want to do with your house?\n\n" \

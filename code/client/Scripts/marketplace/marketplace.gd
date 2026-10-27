@@ -39,6 +39,7 @@ var _shops_unknown := false
 ## What the server actually said, shown on screen instead of a guess.
 var _shops_error := ""
 var _leaving := false
+var _prompt := ""   ## the "Click ... to open it" hint on the message line
 var _leave_button: Button
 
 # ── setup ────────────────────────────────────────────────────────────────
@@ -292,18 +293,60 @@ func _process(_delta: float) -> void:
 	for shop in _shops:
 		var node := shop["node"] as CanvasItem
 		node.modulate = Color(1.15, 1.15, 1.1) if shop == _near else Color.WHITE
+	# A shop only opens from up close, so say so on the message line.
+	if _near.is_empty() or GameState.menu_open or _leaving:
+		_set_prompt("")
+	elif str(_near["kind"]) == "empty":
+		_set_prompt("Click the empty plot to open your shop here")
+	else:
+		_set_prompt("Click %s to open it" % _shop_title(_near))
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if _near.is_empty() or _busy or GameState.menu_open:
+	if _busy or GameState.menu_open:
 		return
 	if not (event is InputEventMouseButton and event.pressed
 			and event.button_index == MOUSE_BUTTON_LEFT):
 		return
-	if not _hit(_near["node"]):
+	var clicked: Dictionary = {}
+	for shop in _shops:
+		if is_instance_valid(shop["node"]) and _hit(shop["node"]):
+			clicked = shop
+			break
+	if clicked.is_empty():
 		return
 	get_viewport().set_input_as_handled()
-	_open(_near)
+	if clicked != _near:
+		# Clicking from across the street used to do nothing at all.
+		HousePrompt.flash("Walk up to %s to open it." % _shop_title(clicked), 2.0, false)
+		return
+	_open(clicked)
+
+
+func _shop_title(shop: Dictionary) -> String:
+	match str(shop["kind"]):
+		"supershop":
+			return "the General Store"
+		"own":
+			return "your shop"
+		"friend":
+			return str(shop.get("name", "this shop"))
+	return "the empty plot"
+
+
+func _set_prompt(text: String) -> void:
+	if text == _prompt:
+		return
+	_prompt = text
+	if text == "":
+		HousePrompt.hide_text()
+	else:
+		HousePrompt.show_text(text)
+
+
+func _exit_tree() -> void:
+	_set_prompt("")
+	super._exit_tree()
 
 
 func _hit(node: Node2D) -> bool:

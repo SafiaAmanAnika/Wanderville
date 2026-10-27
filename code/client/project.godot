@@ -40,6 +40,10 @@ window/size/viewport_width=1578
 window/size/viewport_height=997
 window/stretch/mode="canvas_items"
 
+[gui]
+
+theme/custom="res://Assets/ui/skin/wanderville_theme.tres"
+
 [input]
 
 interact={

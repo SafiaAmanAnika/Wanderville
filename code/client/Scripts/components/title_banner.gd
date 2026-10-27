@@ -15,8 +15,8 @@ const WOOD_BEVEL_DARK := Color(0.30, 0.18, 0.09)
 const ROPE_COLOR := Color(0.55, 0.45, 0.30)
 const ROPE_SHADOW := Color(0.35, 0.25, 0.15)
 
-const TITLE_COLOR := Color(0.98, 0.95, 0.85)
-const SUBTITLE_COLOR := Color(0.82, 0.74, 0.58)
+const TITLE_COLOR := UiSkin.INK
+const SUBTITLE_COLOR := UiSkin.INK_SOFT
 
 var title_label: Label
 var subtitle_label: Label
@@ -28,22 +28,11 @@ func _ready() -> void:
 
 
 func _apply_banner_style() -> void:
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = WOOD_SURFACE
-	sb.border_color = WOOD_BORDER
-	sb.border_width_left = 5
-	sb.border_width_right = 5
-	sb.border_width_top = 6
-	sb.border_width_bottom = 5
-	sb.set_corner_radius_all(10)
-	# Bevel effect: lighter top, darker bottom simulated via border widths
-	sb.shadow_color = Color(0.10, 0.05, 0.01, 0.6)
-	sb.shadow_size = 6
-	sb.shadow_offset = Vector2(3, 5)
-	sb.content_margin_left = 40
-	sb.content_margin_right = 40
-	sb.content_margin_top = 20
-	sb.content_margin_bottom = 16
+	var sb := UiSkin.panel()
+	sb.content_margin_left = 48
+	sb.content_margin_right = 48
+	sb.content_margin_top = 28
+	sb.content_margin_bottom = 26
 	add_theme_stylebox_override("panel", sb)
 
 

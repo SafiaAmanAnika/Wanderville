@@ -5,8 +5,6 @@ var _switching := false
 var _notice_unread := 0
 var _badges_polled := false
 var _request_count := 0
-var _toast_version := 0
-var _error_version := 0
 const Style := preload("res://Scripts/ui/lobby_theme.gd")
 var proximity_social: Node
 
@@ -25,18 +23,14 @@ func _ready() -> void:
 	%SocialButton.theme = Style.theme()
 	%SettingsButton.theme = Style.theme()
 	_build_quick_actions()
-	for label in [%Balance, %ProgressText, %WorldLabel, %LevelToastText]:
+	for label in [%Balance, %ProgressText, %WorldLabel]:
 		WoodPanel.apply_status_label(label)
 		label.add_theme_font_override("font", Style.body_font())
 	%Balance.add_theme_font_size_override("font_size", 18)
 	%ProgressText.add_theme_font_size_override("font_size", 16)
 	for label in [%Balance, %ProgressText, %WorldLabel]: label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	var track := Style.box(Color("4b3930"), 0); track.set_border_width_all(0)
-	var fill := Style.box(Style.SAGE, 0); fill.set_border_width_all(0)
-	%XP.add_theme_stylebox_override("background", track)
-	%XP.add_theme_stylebox_override("fill", fill)
+	UiSkin.apply_progress_bar(%XP)
 	%WorldLabel.add_theme_font_size_override("font_size", 16)
-	%ToastClose.pressed.connect(func() -> void: %LevelToast.hide())
 	%SocialButton.pressed.connect(func():
 		if GameState.menu_open: return
 		if active == "settings" and not await %Settings.request_close(): return
@@ -44,7 +38,8 @@ func _ready() -> void:
 	)
 	%SocialButton.draw.connect(_draw_badge)
 	%SettingsButton.pressed.connect(func() -> void: switch_panel("settings"))
-	%SettingsButton.draw.connect(func() -> void: _draw_settings_icon(%SettingsButton))
+	# WoodButton dresses itself in _ready, which runs first; the gear tile replaces it.
+	UiSkin.apply_icon_button(%SettingsButton, UiSkin.SETTINGS_ICON)
 	%Settings.closed.connect(func() -> void:
 		active = ""
 		GameState.social_open = false
@@ -54,7 +49,6 @@ func _ready() -> void:
 	GameState.experience_updated.connect(func(_data: Dictionary) -> void: _counters())
 	GameState.level_advanced.connect(_show_level_up)
 	GameState.backend_error.connect(_show_action_error)
-	WoodPanel.apply_error_label(%ActionError)
 	GameState.world_updated.connect(func(data: Dictionary) -> void:
 		_world_label()
 	)
@@ -153,25 +147,12 @@ func _show_level_up(previous: Dictionary, current: Dictionary) -> void:
 	if not unlocked.is_empty():
 		var preview := ", ".join(unlocked.slice(0, 3))
 		lines.append("Unlocked: " + preview + (" (+%d more)" % (unlocked.size() - 3) if unlocked.size() > 3 else ""))
-	%LevelToastText.text = "\n".join(lines)
-	%LevelToastText.tooltip_text = ", ".join(unlocked)
-	%LevelToast.show()
-	_toast_version += 1
-	var version := _toast_version
-	await get_tree().create_timer(9.0).timeout
-	if version == _toast_version:
-		%LevelToast.hide()
+	# The level-up chime already played; the message line stays quiet.
+	HousePrompt.flash("  ·  ".join(lines), 9.0, false)
 
 
 func _show_action_error(message: String) -> void:
-	AudioManager.play("notification")
-	%ActionError.text = message
-	%ActionError.show()
-	_error_version += 1
-	var version := _error_version
-	await get_tree().create_timer(8.0).timeout
-	if version == _error_version:
-		%ActionError.hide()
+	HousePrompt.flash(message, 8.0)
 
 
 func _refresh_badges() -> void:
@@ -197,10 +178,7 @@ func _refresh_badges() -> void:
 
 
 func _clear_account() -> void:
-	_toast_version += 1
-	_error_version += 1
-	%LevelToast.hide()
-	%ActionError.hide()
+	HousePrompt.hide_text()
 	_notice_unread = 0
 	_request_count = 0
 	_badges_polled = false
@@ -220,15 +198,6 @@ func _draw_badge() -> void:
 	%SocialButton.draw_circle(corner, 10, Color(0.65, 0.18, 0.12))
 	%SocialButton.draw_string(WoodPanel.PIXEL_FONT, corner + Vector2(-10, 4), str(mini(count, 99)), HORIZONTAL_ALIGNMENT_CENTER, 20, 12, Color.WHITE)
 
-
-func _draw_settings_icon(button: Button) -> void:
-	var c := button.size / 2.0
-	var ink := WoodPanel.TEXT_COLOR
-	button.draw_arc(c, 9, 0, TAU, 20, ink, 2)
-	button.draw_circle(c, 3, ink)
-	for i in 8:
-		var direction := Vector2.RIGHT.rotated(i * TAU / 8)
-		button.draw_line(c + direction * 9, c + direction * 14, ink, 3)
 
 func _build_quick_actions() -> void:
 	var actions := HBoxContainer.new()

@@ -28,7 +28,8 @@ var _right: VBoxContainer
 
 func _ready() -> void:
 	theme=Style.theme(); custom_minimum_size=Vector2(1100,720)
-	add_theme_stylebox_override("panel",Style.box(Style.PAPER,20))
+	add_theme_stylebox_override("panel",UiSkin.panel())
+	UiSkin.ink_text(self)
 	var column := VBoxContainer.new(); column.add_theme_constant_override("separation",18); add_child(column)
 	var header := HBoxContainer.new(); column.add_child(header)
 	_heading=Style.label("Choose Your Character",30); _heading.size_flags_horizontal=Control.SIZE_EXPAND_FILL; header.add_child(_heading)
@@ -62,8 +63,7 @@ func _ready() -> void:
 		if not _saving: close_requested.emit()
 	)
 	_save=Style.button("Save Appearance",true); _save.custom_minimum_size=Vector2(210,48)
-	_save.add_theme_stylebox_override("normal",Style.box(Style.MAROON,12))
-	_save.add_theme_color_override("font_focus_color",Style.PAPER)
+	UiSkin.apply_buy_sell_button(_save)
 	footer.add_child(_save); _save.pressed.connect(save)
 	get_viewport().size_changed.connect(_fit); minimum_size_changed.connect(_fit.call_deferred); _fit.call_deferred()
 
@@ -98,8 +98,10 @@ func begin(kind: String="character") -> void:
 			var button := Style.button(""); button.name=code; button.custom_minimum_size=Vector2(194,166)
 			button.toggle_mode=true; button.button_group=group; button.button_pressed=code==draft; options.add_child(button)
 			button.clip_contents=true
-			var selected := Style.box(Color("e1c49b"),10); selected.border_color=Style.MAROON
-			button.add_theme_stylebox_override("pressed",selected)
+			button.add_theme_stylebox_override("normal",UiSkin.slot())
+			button.add_theme_stylebox_override("hover",UiSkin.slot(UiSkin.HOVER_TINT))
+			button.add_theme_stylebox_override("pressed",UiSkin.slot(UiSkin.GOLD_TINT))
+			button.add_theme_stylebox_override("hover_pressed",UiSkin.slot(UiSkin.GOLD_TINT))
 			var picture := TextureRect.new(); picture.texture=Frames.portrait(Global.CHARACTERS[code].folder)
 			picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE; picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			picture.position=Vector2(47,10); picture.size=Vector2(100,118)

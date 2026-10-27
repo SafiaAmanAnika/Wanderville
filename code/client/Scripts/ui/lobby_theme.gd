@@ -17,9 +17,10 @@ static func body_font() -> Font:
 		_body.variation_opentype = {TextServerManager.get_primary_interface().name_to_tag("wght"): 600.0}
 	return _body
 
-static func hud_box() -> StyleBoxFlat:
-	var style := box(WALNUT, 12)
-	style.border_color = Color("72513c")
+static func hud_box() -> StyleBox:
+	var style := UiSkin.card()
+	style.content_margin_left = 20
+	style.content_margin_right = 20
 	return style
 
 static func box(color: Color = PAPER, margin: int = 14) -> StyleBoxFlat:
@@ -42,21 +43,29 @@ static func theme() -> Theme:
 		t.set_color("font_color", type, INK)
 	t.set_color("default_color", "RichTextLabel", INK)
 	t.set_color("font_placeholder_color", "LineEdit", Color("9a7d63"))
+	# Panels, buttons and fields wear the supplied UI pack (UiSkin).
 	for type in ["PanelContainer", "Panel"]:
-		t.set_stylebox("panel", type, box())
+		t.set_stylebox("panel", type, UiSkin.card())
 	for type in ["Button", "OptionButton", "MenuButton"]:
-		t.set_stylebox("normal", type, box(Color("efd6b4"), 10))
-		t.set_stylebox("hover", type, box(Color("ffe9c8"), 10))
-		t.set_stylebox("pressed", type, box(MAROON, 10))
-		t.set_stylebox("disabled", type, box(Color("e5d4bc"), 10))
-		t.set_stylebox("focus", type, box(Color(0, 0, 0, 0), 0))
-		t.set_color("font_pressed_color", type, Color("fff0d9"))
-		t.set_color("font_hover_color", type, INK)
+		for state in ["normal", "hover", "pressed", "disabled"]:
+			t.set_stylebox(state, type, UiSkin.button(state))
+		t.set_stylebox("focus", type, StyleBoxEmpty.new())
+		t.set_color("font_pressed_color", type, UiSkin.CREAM)
+		t.set_color("font_hover_color", type, UiSkin.CREAM)
+		t.set_color("font_hover_pressed_color", type, UiSkin.CREAM)
 		t.set_color("font_focus_color", type, INK)
 		t.set_color("font_disabled_color", type, Color("9a8472"))
-	for type in ["LineEdit", "TextEdit", "ItemList", "RichTextLabel"]:
-		t.set_stylebox("normal", type, box(Color("fff0d9"), 10))
-		t.set_stylebox("focus", type, box(Color("fff4df"), 10))
+	for type in ["LineEdit", "TextEdit"]:
+		t.set_stylebox("normal", type, UiSkin.input())
+		t.set_stylebox("focus", type, UiSkin.input(true))
+	# ItemList draws its box as "panel"; RichTextLabel as "normal".
+	t.set_stylebox("panel", "ItemList", UiSkin.card())
+	t.set_stylebox("focus", "ItemList", StyleBoxEmpty.new())
+	t.set_color("font_color", "ItemList", INK)
+	t.set_color("font_selected_color", "ItemList", INK)
+	t.set_color("font_hovered_color", "ItemList", INK)
+	t.set_stylebox("normal", "RichTextLabel", UiSkin.card())
+	t.set_stylebox("focus", "RichTextLabel", UiSkin.card())
 	t.set_stylebox("selected", "ItemList", box(Color("e5c399"), 4))
 	t.set_stylebox("selected_focus", "ItemList", box(Color("e5c399"), 4))
 	t.set_stylebox("scroll", "VScrollBar", box(Color("ead2b2"), 0))
@@ -69,8 +78,7 @@ static func button(text: String, primary: bool = false) -> Button:
 	b.theme = theme()
 	b.custom_minimum_size.y = 36
 	if primary:
-		b.add_theme_stylebox_override("normal", box(SAGE, 10))
-		b.add_theme_color_override("font_color", Color("fff0d9"))
+		UiSkin.apply_buy_sell_button(b)
 	return b
 
 static func label(text: String, size: int = 20) -> Label:

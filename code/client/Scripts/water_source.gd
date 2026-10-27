@@ -7,44 +7,6 @@ var _collector: Node2D
 
 func _ready() -> void:
 	_prepare_pond_interaction()
-	var panel: Panel = $PromptLayer/Panel
-	var label: Label = $PromptLayer/prompt
-
-	var screen_size := get_viewport_rect().size
-	var box_size := Vector2(560, 60)
-
-	panel.custom_minimum_size = box_size
-	panel.size = box_size
-	panel.position = (screen_size - box_size) / 2
-
-	# Red, rounded background
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.75, 0.1, 0.1, 0.85)
-	style.corner_radius_top_left = 14
-	style.corner_radius_top_right = 14
-	style.corner_radius_bottom_left = 14
-	style.corner_radius_bottom_right = 14
-	style.border_width_left = 3
-	style.border_width_right = 3
-	style.border_width_top = 3
-	style.border_width_bottom = 3
-	style.border_color = Color(1, 1, 1, 0.6)
-	style.content_margin_left = 14
-	style.content_margin_right = 14
-	style.content_margin_top = 8
-	style.content_margin_bottom = 8
-	panel.add_theme_stylebox_override("panel", style)
-
-	label.size = box_size
-	label.position = panel.position
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", WoodPanel.SIZE_STATUS)
-	label.add_theme_color_override("font_color", Color.WHITE)
-
-	panel.visible = false
-	label.visible = false
-	label.text = "Press Q to collect water"
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 
@@ -53,12 +15,11 @@ func _on_body_entered(body: Node2D) -> void:
 		if body.get("use_saved_appearance") == false: return
 		_collector = body
 		player_in_range = true
-		$PromptLayer/prompt.text = "Press Q to collect water"
+		var prompt := "Press Q to collect water"
 		if body.has_method("set_near_water"):   # characters that can fish
 			body.set_near_water(true)
-			$PromptLayer/prompt.text = "Press Q to collect water | Press F to catch a fish"
-		$PromptLayer/Panel.visible = true
-		$PromptLayer/prompt.visible = true
+			prompt += "  ·  Press F to catch a fish"
+		HousePrompt.show_text(prompt)
 
 func _on_body_exited(body: Node2D) -> void:
 	if body == _collector:
@@ -66,13 +27,10 @@ func _on_body_exited(body: Node2D) -> void:
 		player_in_range = false
 		if body.has_method("set_near_water"):
 			body.set_near_water(false)
-		$PromptLayer/Panel.visible = false
-		$PromptLayer/prompt.visible = false
+		HousePrompt.hide_text()
 
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("collect_water"):
-		print("Q pressed")
 	if GameState.menu_open or GameState.social_open:
 		return
 	if not player_in_range:
@@ -82,8 +40,7 @@ func _input(event: InputEvent) -> void:
 	if _refilling or not is_instance_valid(_collector): return
 	if _collector.get("_busy") == true or _collector.get("fishing") == true: return
 	if GameState.water_drops >= GameState.MAX_WATER:
-		$PromptLayer/prompt.text = "Water already full!"
-		print("Water already full!")
+		HousePrompt.flash("Water already full!")
 		return
 	if Global.is_logged_in() and not GameState.backend_ready: return
 	_refilling = true
@@ -109,9 +66,9 @@ func _input(event: InputEvent) -> void:
 			var data: Variant = APIClient.data_of(response)
 			GameState.water_drops = int(data.get("water_remaining", 0))
 			GameState.water_changed.emit(GameState.water_drops)
-			$PromptLayer/prompt.text = "Water refilled!"
+			HousePrompt.flash("Water refilled!", 2.0, false)
 		else:
-			$PromptLayer/prompt.text = APIClient.error_text(response)
+			# report_error puts the reason on the message line.
 			GameState.report_error(response)
 			await GameState.refresh_gameplay()
 		return
@@ -136,15 +93,3 @@ func _prepare_pond_interaction() -> void:
 				var sensor := CollisionPolygon2D.new()
 				sensor.polygon = outline
 				add_child(sensor)
-	if not has_node("PromptLayer"):
-		var layer := CanvasLayer.new()
-		layer.name = "PromptLayer"
-		add_child(layer)
-		var panel := Panel.new()
-		panel.name = "Panel"
-		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		layer.add_child(panel)
-		var label := Label.new()
-		label.name = "prompt"
-		label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		layer.add_child(label)

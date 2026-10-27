@@ -35,14 +35,15 @@ func _ready() -> void:
 func _card() -> PanelContainer:
 	var panel := PanelContainer.new()
 	panel.mouse_filter=Control.MOUSE_FILTER_IGNORE
-	panel.add_theme_stylebox_override("panel",Style.box(Color("3c594def"),20))
+	panel.add_theme_stylebox_override("panel",UiSkin.panel())
+	UiSkin.ink_text(panel)
 	add_child(panel); return panel
 
 func _label(text: String,font_size: int) -> Label:
 	var label := Style.label(text,font_size)
 	label.mouse_filter=Control.MOUSE_FILTER_IGNORE
 	label.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
-	label.add_theme_color_override("font_color",Style.PAPER)
+	label.add_theme_color_override("font_color",UiSkin.INK)
 	return label
 
 func _show_welcome() -> void:

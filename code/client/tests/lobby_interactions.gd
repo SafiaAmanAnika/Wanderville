@@ -75,7 +75,7 @@ func run() -> void:
 	check(player.position == Vector2(960,544) and player.scale == Vector2(0.72,0.72), "spawn_and_room_scale")
 	check(lobby.get_node("Camera2D").zoom.is_equal_approx(Vector2(1.2,1.2)), "camera_preserved")
 	check(lobby.get_node("StaticCollisions").get_child_count() == 24, "solid_collision_count_preserved")
-	check(not interactions.prompt.visible and interactions.modal == "", "no_center_prompt_or_auto_open")
+	check(interactions.prompt == "" and interactions.modal == "", "no_center_prompt_or_auto_open")
 	check(lobby.get_node("Receptionist") is AnimatedSprite2D and lobby.get_node("Receptionist").get_script() == null, "npc_stationary_animated_sprite")
 	check(lobby.get_node("Receptionist").sprite_frames.get_frame_texture("idle_front", 0).get_image().detect_alpha() != Image.ALPHA_NONE, "npc_transparent_asset")
 	check(lobby.get_node("ReceptionCounterForeground").region_rect == Rect2(790,258,340,94), "desk_occludes_npc")
@@ -90,7 +90,7 @@ func run() -> void:
 	print("INTERACTION_SPEED distance=", player.position.distance_to(start), " ticks=", Engine.physics_ticks_per_second)
 	check(absf(player.position.distance_to(start) - 30.0 * 300.0 / Engine.physics_ticks_per_second) < 11, "existing_speed_and_authenticated_local_walk")
 	await approach(Vector2(960,365))
-	check(interactions.prompt.visible and interactions.nearest != null and interactions.nearest.name == "Reception", "reception_proximity")
+	check(interactions.prompt != "" and root.get_node("HousePrompt").text() == interactions.prompt and interactions.nearest != null and interactions.nearest.name == "Reception", "reception_proximity")
 	await screenshot("reception-prompt")
 	press(KEY_E)
 	await process_frame
@@ -102,7 +102,7 @@ func run() -> void:
 	for i in 12:
 		await physics_frame
 	Input.action_release("ui_right")
-	check(player.position == start and not interactions.prompt.visible, "modal_locks_movement_and_prompt")
+	check(player.position == start and interactions.prompt == "", "modal_locks_movement_and_prompt")
 	await screenshot("dialogue")
 	press(KEY_ESCAPE)
 	await process_frame
@@ -114,7 +114,7 @@ func run() -> void:
 	await physics_frame
 	check(player.position.x > start.x + 35, "movement_resumes")
 	await approach(Vector2(960,600))
-	check(not interactions.prompt.visible, "prompt_hides_out_of_range")
+	check(interactions.prompt == "", "prompt_hides_out_of_range")
 	# Overlapping detectors still select exactly the closest interactable.
 	var friend_zone: Node2D = interactions.zones.get_node("FriendsBoard")
 	var original := friend_zone.position

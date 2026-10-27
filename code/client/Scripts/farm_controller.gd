@@ -21,7 +21,7 @@ const GROWTH_STAGES = 4
 
 const FARM_Z = 1          # soil tiles
 const CROP_Z = 2          # crops, always above their soil
-const CURSOR_Z = 50       # hover outline and toasts
+const CURSOR_Z = 50       # hover outline
 
 # ─── Assets ──────────────────────────────────────────────────────────
 
@@ -462,21 +462,10 @@ func _make_cursor() -> void:
 	add_child(_cursor)
 
 
-func _toast(text: String, tile: Vector2i) -> void:
-	var label := Label.new()
-	label.text = text
-	label.z_index = CURSOR_Z
-	label.add_theme_font_size_override("font_size", 26)
-	label.add_theme_color_override("font_color", Color.WHITE)
-	label.add_theme_color_override("font_outline_color", Color.BLACK)
-	label.add_theme_constant_override("outline_size", 6)
-	add_child(label)
-	label.global_position = _tile_to_world(tile) + Vector2(-60, -tile_visual_size.y)
-	var tween := create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(label, "position:y", label.position.y - 50, 1.2)
-	tween.tween_property(label, "modulate:a", 0.0, 1.2)
-	tween.chain().tween_callback(label.queue_free)
+## Farm feedback goes on the message line, not floating over the tile. It is
+## frequent (every click), so it stays silent.
+func _toast(text: String, _tile: Vector2i) -> void:
+	HousePrompt.flash(text, 2.0, false)
 
 
 # ─── Tile math ───────────────────────────────────────────────────────

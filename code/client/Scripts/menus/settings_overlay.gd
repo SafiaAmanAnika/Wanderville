@@ -58,7 +58,8 @@ func _ready() -> void:
 
 func _apply_panel_style() -> void:
 	preload("res://Scripts/ui/lobby_theme.gd").apply_tree(_panel)
-	_panel.add_theme_stylebox_override("panel", preload("res://Scripts/ui/lobby_theme.gd").box())
+	_panel.add_theme_stylebox_override("panel", UiSkin.panel())
+	UiSkin.ink_text(_panel)
 
 
 func _apply_styles() -> void:
@@ -79,20 +80,13 @@ func _label_font(label: Label, size: int) -> void:
 
 
 func _style_slider(slider: HSlider) -> void:
-	var track := StyleBoxFlat.new()
-	track.bg_color = WoodPanel.WOOD_DARK
-	track.border_color = WoodPanel.WOOD_BORDER
-	track.set_border_width_all(2)
-	track.set_corner_radius_all(4)
-	track.content_margin_left = 2
-	track.content_margin_right = 2
+	var track := UiSkin.progress_track()
 	track.content_margin_top = 6
 	track.content_margin_bottom = 6
 	slider.add_theme_stylebox_override("slider", track)
+	slider.add_theme_stylebox_override("grabber_area_highlight", UiSkin.progress_fill())
 
-	var grabber_area := StyleBoxFlat.new()
-	grabber_area.bg_color = Color(0, 0, 0, 0)
-	grabber_area.set_content_margin_all(4)
+	var grabber_area := UiSkin.progress_fill()
 	slider.add_theme_stylebox_override("grabber_area", grabber_area)
 
 	slider.add_theme_icon_override("grabber", _make_grabber_icon())

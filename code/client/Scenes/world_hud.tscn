@@ -48,7 +48,7 @@ text = "Aura —  •  Level —"
 
 [node name="XP" type="ProgressBar" parent="Screen/Top/Row/Counters" unique_id=1769671116]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(150, 10)
+custom_minimum_size = Vector2(150, 14)
 layout_mode = 2
 mouse_filter = 2
 show_percentage = false
@@ -81,44 +81,4 @@ custom_minimum_size = Vector2(56, 52)
 layout_mode = 2
 size_flags_vertical = 0
 tooltip_text = "Settings and logout"
-script = ExtResource("3")
-
-[node name="ActionError" type="Label" parent="Screen" unique_id=1929833457]
-unique_name_in_owner = true
-visible = false
-layout_mode = 0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 24.0
-offset_top = -48.0
-offset_right = -24.0
-offset_bottom = -8.0
-autowrap_mode = 3
-
-[node name="LevelToast" type="PanelContainer" parent="Screen" unique_id=1419670465]
-unique_name_in_owner = true
-visible = false
-layout_mode = 0
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = -240.0
-offset_right = 436.0
-offset_bottom = -56.0
-grow_vertical = 0
-script = ExtResource("2")
-
-[node name="Content" type="VBoxContainer" parent="Screen/LevelToast" unique_id=1018720707]
-layout_mode = 2
-
-[node name="LevelToastText" type="Label" parent="Screen/LevelToast/Content" unique_id=1458200153]
-unique_name_in_owner = true
-layout_mode = 2
-autowrap_mode = 3
-
-[node name="ToastClose" type="Button" parent="Screen/LevelToast/Content" unique_id=848636090]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Continue"
 script = ExtResource("3")

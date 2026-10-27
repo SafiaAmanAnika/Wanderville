@@ -15,7 +15,7 @@ var _inviting := false
 var nearest: Area2D
 var modal := ""
 var social: VBoxContainer
-var prompt: Label
+var prompt := ""   ## the "[E] ..." hint now on the message line, or ""
 var overlay: Control
 var heading: Label
 var dialogue: Label
@@ -45,17 +45,6 @@ func _build_ui() -> void:
 	layer.name = "LobbyUI"
 	layer.layer = 20
 	add_child(layer)
-	prompt = Label.new()
-	prompt.name = "InteractionPrompt"
-	prompt.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	prompt.add_theme_font_override("font", WoodPanel.PIXEL_FONT)
-	prompt.add_theme_font_size_override("font_size", 22)
-	prompt.add_theme_color_override("font_color", Style.INK)
-	prompt.add_theme_stylebox_override("normal", Style.box(Style.PAPER, 6))
-	prompt.add_theme_color_override("font_outline_color", Color("40291f"))
-	prompt.add_theme_constant_override("outline_size", 0)
-	layer.add_child(prompt)
-	prompt.hide()
 	overlay = Control.new()
 	overlay.name = "DialogueOverlay"
 	layer.add_child(overlay)
@@ -70,7 +59,8 @@ func _build_ui() -> void:
 	var card := PanelContainer.new()
 	_card = card
 	card.theme = Style.theme()
-	card.add_theme_stylebox_override("panel", Style.box(Style.PAPER, 18))
+	card.add_theme_stylebox_override("panel", UiSkin.panel())
+	UiSkin.ink_text(card)
 	card.custom_minimum_size = Vector2(1100, 720)
 	center.add_child(card)
 	var column := VBoxContainer.new()
@@ -79,7 +69,8 @@ func _build_ui() -> void:
 	heading = Label.new()
 	WoodPanel.apply_panel_title_style(heading)
 	var title_bar := PanelContainer.new()
-	title_bar.add_theme_stylebox_override("panel", Style.box(Style.MAROON, 10))
+	# The pack's maroon plank carries the title; the heading text stays cream.
+	title_bar.add_theme_stylebox_override("panel", UiSkin.buy_sell())
 	column.add_child(title_bar)
 	var title_row := HBoxContainer.new(); title_bar.add_child(title_row)
 	heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL; title_row.add_child(heading)
@@ -127,10 +118,10 @@ func _process(_delta: float) -> void:
 	nearest = null
 	nearby_friend = 0
 	if not is_instance_valid(player):
-		prompt.hide()
+		_set_prompt("")
 		return
 	if modal != "" or _leaving or GameState.menu_open or GameState.social_open:
-		prompt.hide()
+		_set_prompt("")
 		return
 	var distance := INF
 	# Compare the same foot position against each overlapping detection zone.
@@ -150,13 +141,22 @@ func _process(_delta: float) -> void:
 			if not avatar.is_queued_for_deletion() and separation < friend_distance:
 				friend_distance = separation
 				nearby_friend = int(id)
-	prompt.visible = nearest != null or nearby_friend > 0
-	if prompt.visible:
-		prompt.text = "[E] Talk to " + _friend_title(nearby_friend) if nearby_friend > 0 else nearest.prompt
-		prompt.reset_size()
-		var screen := get_viewport().get_canvas_transform() * player.global_position
-		prompt.position = screen + Vector2(-prompt.size.x / 2.0, -125)
-		prompt.position = prompt.position.clamp(Vector2(12, 12), get_viewport_rect().size - prompt.size - Vector2(12, 12))
+	if nearby_friend > 0:
+		_set_prompt("[E] Talk to " + _friend_title(nearby_friend))
+	else:
+		_set_prompt(nearest.prompt if nearest != null else "")
+
+
+## Interaction hints share the game's message line. Only a change is sent, so
+## a hint held every frame does not re-lay out the line every frame.
+func _set_prompt(text: String) -> void:
+	if text == prompt:
+		return
+	prompt = text
+	if text == "":
+		HousePrompt.hide_text()
+	else:
+		HousePrompt.show_text(text)
 
 
 func _input(event: InputEvent) -> void:
@@ -189,7 +189,7 @@ func _activate(action: StringName) -> void:
 	GameState.menu_open = true
 	player.velocity = Vector2.ZERO
 	modal = String(action)
-	prompt.hide()
+	_set_prompt("")
 	overlay.show()
 	primary.disabled = false
 	primary.show()
@@ -284,6 +284,7 @@ func close() -> void:
 
 
 func _exit_tree() -> void:
+	_set_prompt("")
 	if modal != "":
 		GameState.menu_open = _saved_menu
 

@@ -18,7 +18,7 @@ var _leaving := false
 var _session := 0
 
 var _layer: CanvasLayer
-var _prompt: Label
+var _prompt := ""   ## the interaction hint now on the message line, or ""
 var _profile_button: Button
 var _axis_overlay: Control
 var _axis_title: Label
@@ -51,15 +51,6 @@ func _build_ui() -> void:
 	_layer.layer = 20
 	add_child(_layer)
 
-	_prompt = Label.new()
-	_prompt.name = "InteractionPrompt"
-	_prompt.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_prompt.add_theme_font_override("font", WoodPanel.PIXEL_FONT)
-	_prompt.add_theme_font_size_override("font_size", 22)
-	_prompt.add_theme_color_override("font_color", LobbyStyle.INK)
-	_prompt.add_theme_stylebox_override("normal", LobbyStyle.box(LobbyStyle.PAPER, 6))
-	_layer.add_child(_prompt)
-	_prompt.hide()
 
 	_profile_button = LobbyStyle.button("Profile [P]")
 	_profile_button.name = "ProfileButton"
@@ -171,17 +162,8 @@ func _build_profile_panel() -> void:
 	_about_input.custom_minimum_size = Vector2(560, 96)
 	_about_input.text = Global.about_me
 	_about_input.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
-	var input_style := StyleBoxFlat.new()
-	input_style.bg_color = WoodPanel.INPUT_BG
-	input_style.border_color = WoodPanel.INPUT_BORDER
-	input_style.set_border_width_all(2)
-	input_style.set_corner_radius_all(2)
-	input_style.content_margin_left = 10
-	input_style.content_margin_right = 10
-	input_style.content_margin_top = 8
-	input_style.content_margin_bottom = 8
-	_about_input.add_theme_stylebox_override("normal", input_style)
-	_about_input.add_theme_stylebox_override("focus", input_style)
+	_about_input.add_theme_stylebox_override("normal", UiSkin.input())
+	_about_input.add_theme_stylebox_override("focus", UiSkin.input(true))
 	_about_input.add_theme_font_override("font", WoodPanel.PIXEL_FONT)
 	_about_input.add_theme_font_size_override("font_size", WoodPanel.SIZE_FIELD)
 	_about_input.add_theme_color_override("font_color", WoodPanel.TEXT_COLOR)
@@ -220,7 +202,7 @@ func _process(_delta: float) -> void:
 	if player == null or not is_instance_valid(player):
 		player = get_parent().get_node_or_null("LobbyPlayer")
 	if player == null or modal != "" or _leaving or GameState.menu_open:
-		_prompt.hide()
+		_set_prompt("")
 		return
 	var distance := INF
 	var feet := player.global_transform * Vector2(0, 80)
@@ -230,13 +212,18 @@ func _process(_delta: float) -> void:
 			if candidate < distance:
 				distance = candidate
 				nearest = zone
-	_prompt.visible = nearest != null
-	if nearest != null:
-		_prompt.text = nearest.prompt
-		_prompt.reset_size()
-		var screen := get_viewport().get_canvas_transform() * player.global_position
-		_prompt.position = screen + Vector2(-_prompt.size.x / 2.0, -125)
-		_prompt.position = _prompt.position.clamp(Vector2(12, 12), get_viewport_rect().size - _prompt.size - Vector2(12, 12))
+	_set_prompt(nearest.prompt if nearest != null else "")
+
+
+## Interaction hints share the game's message line; only changes are sent.
+func _set_prompt(text: String) -> void:
+	if text == _prompt:
+		return
+	_prompt = text
+	if text == "":
+		HousePrompt.hide_text()
+	else:
+		HousePrompt.show_text(text)
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
@@ -356,7 +343,7 @@ func _input(event: InputEvent) -> void:
 
 func _leave() -> void:
 	_leaving = true
-	_prompt.hide()
+	_set_prompt("")
 	_axis_overlay.hide()
 	_profile_overlay.hide()
 	if player != null:
@@ -366,6 +353,7 @@ func _leave() -> void:
 
 
 func _exit_tree() -> void:
+	_set_prompt("")
 	if _creator != null: _creator.cancel()
 	if modal != "":
 		GameState.menu_open = _saved_menu

@@ -68,15 +68,7 @@ func setup(player_id_: int, username_: String, character_code: String, position:
 	for audio in _body.find_children("*", "AudioStreamPlayer2D", true, false):
 		audio.autoplay = false
 
-	_label = Label.new()
-	_label.name = "Username"
-	_label.text = username
-	if label_font != null:
-		_label.add_theme_font_override("font", label_font)
-	_label.add_theme_font_size_override("font_size", 20)
-	_label.scale = Vector2.ONE / maxf(_body.scale.x, 0.001) if _body.scale.x != 0.0 else Vector2.ONE
-	_label.position = Vector2(-20, -140)
-	_body.add_child(_label)
+	_label = preload("res://Scripts/ui/player_namecard.gd").attach(_body, username)
 
 	_target = position
 	_spawned_at = Time.get_ticks_msec() / 1000.0
@@ -126,5 +118,5 @@ func age_seconds() -> float:
 func apply_gameplay_scale(character_code: String) -> void:
 	_body.scale = Vector2.ONE * (20.0 if character_code in ["", "player1", "farmer_female"] else preload("res://Scripts/chara_frames.gd").GAMEPLAY_SCALE.x)
 	_label.scale = Vector2.ONE / _body.scale
-	_label.position = Vector2(-30, -140) / _body.scale
+
 	CharacterPresentation.prepare_gameplay(_body)

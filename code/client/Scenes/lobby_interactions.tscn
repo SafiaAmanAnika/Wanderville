@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" path="res://Scripts/social/lobby_interactions.gd" id="1"]
 [ext_resource type="Script" path="res://Scripts/social/lobby_interactable.gd" id="2"]
-[ext_resource type="Script" path="res://Scripts/social/lobby_station.gd" id="3"]
 
 [sub_resource type="RectangleShape2D" id="ReceptionRange"]
 size = Vector2(360, 150)
@@ -75,9 +74,6 @@ action = &"invitations"
 prompt = "[E] Farm Visits"
 [node name="Detection" type="CollisionShape2D" parent="InteractionZones/InvitationBoard"]
 shape = SubResource("BoardRange")
-[node name="Sign" type="Node2D" parent="InteractionZones/InvitationBoard"]
-script = ExtResource("3")
-title = "Farm Visits"
 
 [node name="NoticeBoard" type="Area2D" parent="InteractionZones"]
 position = Vector2(1390, 710)
@@ -88,6 +84,3 @@ action = &"notifications"
 prompt = "[E] Notices"
 [node name="Detection" type="CollisionShape2D" parent="InteractionZones/NoticeBoard"]
 shape = SubResource("BoardRange")
-[node name="Sign" type="Node2D" parent="InteractionZones/NoticeBoard"]
-script = ExtResource("3")
-title = "Notices"

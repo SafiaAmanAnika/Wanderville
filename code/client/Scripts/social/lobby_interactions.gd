@@ -8,6 +8,10 @@ const WOOD_BUTTON := preload("res://Scripts/components/wood_button.gd")
 
 @onready var player: CharacterBody2D = get_parent().get_node_or_null("LobbyPlayer")
 @onready var zones: Node2D = $InteractionZones
+const FRIEND_RANGE := 200.0
+var nearby_friend := 0
+var invitation_target := 0
+var _inviting := false
 var nearest: Area2D
 var modal := ""
 var social: VBoxContainer
@@ -28,11 +32,6 @@ func _ready() -> void:
 	get_parent().player_spawned.connect(_on_player_spawned)
 	for zone in zones.get_children():
 		zone.activated.connect(_activate)
-	for entry in [["FriendsBoard", "Friends"], ["RequestsBoard", "Requests"], ["Reception", "Reception"]]:
-		var caption := Style.label(entry[1], 20)
-		caption.position = Vector2(-75,-115); caption.size = Vector2(150,34); caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		caption.add_theme_stylebox_override("normal", Style.hud_box()); caption.add_theme_color_override("font_color",Style.PAPER)
-		caption.mouse_filter = Control.MOUSE_FILTER_IGNORE; zones.get_node(entry[0]).add_child(caption)
 	_build_ui()
 
 
@@ -126,6 +125,7 @@ func _process(_delta: float) -> void:
 		_session = Global.session_version
 		close()
 	nearest = null
+	nearby_friend = 0
 	if not is_instance_valid(player):
 		prompt.hide()
 		return
@@ -141,9 +141,18 @@ func _process(_delta: float) -> void:
 			if candidate < distance:
 				distance = candidate
 				nearest = zone
-	prompt.visible = nearest != null
-	if nearest != null:
-		prompt.text = nearest.prompt
+	var friends := get_parent().get_node_or_null("OnlineFriends")
+	var friend_distance := FRIEND_RANGE
+	if friends != null:
+		for id in friends.avatars:
+			var avatar: Node2D = friends.avatars[id]
+			var separation := feet.distance_to(avatar.global_position)
+			if not avatar.is_queued_for_deletion() and separation < friend_distance:
+				friend_distance = separation
+				nearby_friend = int(id)
+	prompt.visible = nearest != null or nearby_friend > 0
+	if prompt.visible:
+		prompt.text = "[E] Talk to " + _friend_title(nearby_friend) if nearby_friend > 0 else nearest.prompt
 		prompt.reset_size()
 		var screen := get_viewport().get_canvas_transform() * player.global_position
 		prompt.position = screen + Vector2(-prompt.size.x / 2.0, -125)
@@ -164,8 +173,12 @@ func _input(event: InputEvent) -> void:
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if modal == "" and not _leaving and not GameState.menu_open and not GameState.social_open \
-			and nearest != null and event.is_action_pressed("interact") and not event.is_echo():
-		nearest.activate(player)
+			and (nearest != null or nearby_friend > 0) and event.is_action_pressed("interact") and not event.is_echo():
+		if nearby_friend > 0:
+			invitation_target = nearby_friend
+			_activate(&"friend")
+		else:
+			nearest.activate(player)
 		get_viewport().set_input_as_handled()
 
 
@@ -178,9 +191,16 @@ func _activate(action: StringName) -> void:
 	modal = String(action)
 	prompt.hide()
 	overlay.show()
+	primary.disabled = false
 	primary.show()
 	dialogue.show()
 	match action:
+		&"friend":
+			heading.text = _friend_title(invitation_target)
+			dialogue.text = "Ask them to visit your farm?"
+			primary.text = "Invite to my farm"
+			primary.disabled = _inviting or GameState.is_visiting()
+			if GameState.is_visiting(): dialogue.text = "Return to your own farm before sending an invitation."
 		&"reception":
 			heading.text = "Reception"
 			dialogue.text = "Welcome to Wanderville! Looking for someone?"
@@ -203,7 +223,9 @@ func _activate(action: StringName) -> void:
 func _primary() -> void:
 	if _leaving:
 		return
-	if modal == "reception":
+	if modal == "friend":
+		_invite_friend()
+	elif modal == "reception":
 		_open_section("search")
 	elif modal == "leave":
 		_leaving = true
@@ -264,3 +286,32 @@ func close() -> void:
 func _exit_tree() -> void:
 	if modal != "":
 		GameState.menu_open = _saved_menu
+
+func _friend_title(id: int) -> String:
+	var friends := get_parent().get_node_or_null("OnlineFriends")
+	if friends != null and friends.avatars.has(id):
+		return friends.avatars[id].get_node("FriendName").text
+	return "Friend"
+
+func _invite_friend() -> void:
+	if _inviting or invitation_target <= 0 or GameState.is_visiting(): return
+	var friends := get_parent().get_node_or_null("OnlineFriends")
+	if friends == null or not friends.avatars.has(invitation_target):
+		dialogue.text = "This friend is no longer online."
+		primary.disabled = true
+		return
+	var avatar: Node2D = friends.avatars[invitation_target]
+	if (player.global_transform * Vector2(0, 80)).distance_to(avatar.global_position) > FRIEND_RANGE:
+		dialogue.text = "Move closer to your friend to invite them."
+		return
+	_inviting = true
+	primary.disabled = true
+	dialogue.text = "Sending invitation..."
+	var version := Global.session_version
+	var target := invitation_target
+	var response: Dictionary = await APIClient.invite_to_farm(target)
+	if not is_inside_tree(): return
+	_inviting = false
+	if version != Global.session_version or modal != "friend" or target != invitation_target: return
+	dialogue.text = "Invitation sent! They can accept it from Farm invitations." if response.get("ok", false) else APIClient.error_text(response)
+	primary.disabled = bool(response.get("ok", false))

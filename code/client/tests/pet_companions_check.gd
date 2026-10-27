@@ -105,10 +105,12 @@ func run() -> void:
 	await shot("following")
 	player.global_position=Vector2(1900,500)
 	await create_timer(0.1).timeout
-	check(not pet.owner_visible and pet.state!=pet.State.FOLLOW,"outside proximity the pet stops chasing")
+	check(pet.owner_visible and pet.state==pet.State.FOLLOW,"pet keeps following beyond its former losing range")
+	player.global_position=pet.global_position+Vector2(0,-180)
+	pet._set_state(pet.State.IDLE)
 	pet.rng.seed=42; pet._choose_roam()
 	check(pet.state==pet.State.ROAM and not pet.path.is_empty(),"heuristic roaming selects a reachable route")
-	check(pet.target.distance_to(pet.home)<=pet.HOME_ROAM_RADIUS,"distant roaming stays within its familiar area")
+	check(pet.target.distance_to(player.global_position)<=pet.NEAR_ROAM_RADIUS,"roaming stays near its owner")
 	var valid := true
 	for point in pet.path:
 		if not nav.clear(point): valid=false
@@ -119,7 +121,7 @@ func run() -> void:
 	await create_timer(0.12).timeout
 	check(pet.state==pet.State.ROAM and not pet.path.is_empty(),"after one minute away pet keeps choosing heuristic roaming routes instead of napping")
 	pet._set_state(pet.State.IDLE)
-	check(pet.pause_time<=1.0,"independent exploring has only short pauses between routes")
+	check(pet.pause_time<=3.5,"nearby exploring takes short pauses between routes")
 	pet.active_time=pet.REST_AFTER; pet.pause_time=0.01
 	await create_timer(0.12).timeout
 	check(pet.state==pet.State.SLEEP and pet.sprite.animation=="sleep","a tired pet settles into its generated sleep pose")
@@ -129,7 +131,7 @@ func run() -> void:
 	check(pet.collision_layer!=0 and not pet.get_node("FootCollision").disabled,"sleep keeps its physics body active")
 	pet.sleep_time=pet.state_time+0.05
 	await create_timer(0.2).timeout
-	check(not pet.owner_visible and pet.state==pet.State.ROAM and not pet.path.is_empty(),"pet wakes and resumes exploring while its owner is still away")
+	check(pet.owner_visible and pet.state!=pet.State.SLEEP,"pet wakes without losing its owner")
 	check(pet.active_time<1,"waking gives the pet a fresh active period before another nap")
 	pet._set_state(pet.State.SLEEP); pet.sleep_time=20
 	player.global_position=pet.global_position+Vector2(300,0); camera.reset_smoothing()

@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://drkyreyi8km1k" path="res://Assets/social lobby/room/social_lobby_1920x1088.png" id="1_lobby"]
 [ext_resource type="Script" uid="uid://dk7cyl283bnro" path="res://Scripts/social_lobby.gd" id="3_lobby_setup"]
 
-[ext_resource type="Texture2D" path="res://Assets/charas/CharacterC/idle.png" id="4_receptionist"]
+[ext_resource type="Texture2D" path="res://Assets/social lobby/receptionist/idle.png" id="4_receptionist"]
 [ext_resource type="PackedScene" path="res://Scenes/lobby_interactions.tscn" id="5_interactions"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3llqf"]
@@ -2056,31 +2056,39 @@ sources/0 = SubResource("TileSetAtlasSource_3llqf")
 
 [sub_resource type="AtlasTexture" id="ReceptionIdle0"]
 atlas = ExtResource("4_receptionist")
-region = Rect2(0, 0, 448, 448)
+region = Rect2(0, 0, 384, 512)
 
 [sub_resource type="AtlasTexture" id="ReceptionIdle1"]
 atlas = ExtResource("4_receptionist")
-region = Rect2(448, 0, 448, 448)
+region = Rect2(384, 0, 384, 512)
 
 [sub_resource type="AtlasTexture" id="ReceptionIdle2"]
 atlas = ExtResource("4_receptionist")
-region = Rect2(896, 0, 448, 448)
+region = Rect2(768, 0, 384, 512)
 
 [sub_resource type="AtlasTexture" id="ReceptionIdle3"]
 atlas = ExtResource("4_receptionist")
-region = Rect2(1344, 0, 448, 448)
+region = Rect2(1152, 0, 384, 512)
 
 [sub_resource type="AtlasTexture" id="ReceptionIdle4"]
 atlas = ExtResource("4_receptionist")
-region = Rect2(1792, 0, 448, 448)
+region = Rect2(0, 512, 384, 512)
 
 [sub_resource type="AtlasTexture" id="ReceptionIdle5"]
 atlas = ExtResource("4_receptionist")
-region = Rect2(2240, 0, 448, 448)
+region = Rect2(384, 512, 384, 512)
+
+[sub_resource type="AtlasTexture" id="ReceptionIdle6"]
+atlas = ExtResource("4_receptionist")
+region = Rect2(768, 512, 384, 512)
+
+[sub_resource type="AtlasTexture" id="ReceptionIdle7"]
+atlas = ExtResource("4_receptionist")
+region = Rect2(1152, 512, 384, 512)
 
 [sub_resource type="SpriteFrames" id="ReceptionFrames"]
 animations = [{
-"frames": [{"duration": 1.0, "texture": SubResource("ReceptionIdle0")}, {"duration": 1.0, "texture": SubResource("ReceptionIdle1")}, {"duration": 1.0, "texture": SubResource("ReceptionIdle2")}, {"duration": 1.0, "texture": SubResource("ReceptionIdle3")}, {"duration": 1.0, "texture": SubResource("ReceptionIdle4")}, {"duration": 1.0, "texture": SubResource("ReceptionIdle5")}],
+"frames": [{"duration": 1.0, "texture": SubResource("ReceptionIdle0")}, {"duration": 1.0, "texture": SubResource("ReceptionIdle1")}, {"duration": 1.0, "texture": SubResource("ReceptionIdle2")}, {"duration": 1.0, "texture": SubResource("ReceptionIdle3")}, {"duration": 1.0, "texture": SubResource("ReceptionIdle4")}, {"duration": 1.0, "texture": SubResource("ReceptionIdle5")}, {"duration": 1.0, "texture": SubResource("ReceptionIdle6")}, {"duration": 1.0, "texture": SubResource("ReceptionIdle7")}],
 "loop": true,
 "name": &"idle_front",
 "speed": 6.0
@@ -2288,11 +2296,11 @@ collision_mask = 0
 polygon = PackedVector2Array(768, 1088, 1152, 1088, 1152, 1120, 768, 1120)
 
 [node name="Receptionist" type="AnimatedSprite2D" parent="."]
-editor_description = "Original Girl C front idle at 6 FPS; stationary behind the existing desk, without a player controller or collision."
+editor_description = "Receptionist front idle at 6 FPS; stationary behind the existing desk, without a player controller or collision."
 z_index = -5
 texture_filter = 1
-position = Vector2(960, 215)
-scale = Vector2(0.72, 0.72)
+position = Vector2(960, 220)
+scale = Vector2(0.255, 0.255)
 sprite_frames = SubResource("ReceptionFrames")
 animation = &"idle_front"
 autoplay = "idle_front"

@@ -62,14 +62,7 @@ func _snapshot(snapshot: Dictionary) -> void:
 				camera.enabled = false
 			for audio in actor.find_children("*", "AudioStreamPlayer2D", true, false):
 				audio.autoplay = false
-			var label := Label.new()
-			label.name = "Username"
-			label.text = str(entry.get("username", "Player"))
-			label.add_theme_font_override("font", WoodPanel.PIXEL_FONT)
-			label.add_theme_font_size_override("font_size", 24)
-			label.scale = Vector2.ONE / actor.scale
-			label.position = Vector2(-3, -10)
-			actor.add_child(label)
+			preload("res://Scripts/ui/player_namecard.gd").attach(actor, str(entry.get("username", "Player")))
 			add_child(actor)
 			actor.remove_from_group("player") # _ready adds the controller to this group.
 			actor.global_position = target

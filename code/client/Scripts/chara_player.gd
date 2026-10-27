@@ -9,8 +9,8 @@ extends CharacterBody2D
 # source sheets. Legacy scene-only animations (for example Death) remain.
 
 const SPEED = 300.0
-const FAST_WALK_AFTER_SECONDS := 2.0
-const FAST_WALK_SPEED_SCALE := 1.75 # 8 FPS normally, 14 FPS while held.
+const FAST_WALK_AFTER_SECONDS := 3.0
+const FAST_WALK_SPEED_SCALE := 2.25 # 8 FPS normally, 18 FPS after holding movement for 3 seconds.
 const CharaFrames := preload("res://Scripts/chara_frames.gd")
 
 # sheet row -> direction name used in the scenes (idle_front, water_back_left, ...)
@@ -51,7 +51,7 @@ func _ready() -> void:
 		var locomotion: bool = action in ["idle", "walk", "run"]
 		var fps := 10.0 if action == "run" else 6.0 if locomotion else 8.0
 		CharaFrames.add_sheet_animations(anim.sprite_frames, sheet_folder, action, CharaFrames.FILES[action], fps, locomotion, true)
-	for action in ["hoe", "water", "fish", "scythe", "axe", "death"]:
+	for action in ["hoe", "water", "fish", "scythe", "fill_bucket", "axe", "death"]:
 		for dir in ROW_DIRS:
 			var a: String = "%s_%s" % [action, dir]
 			if anim.sprite_frames.has_animation(a):
@@ -60,6 +60,9 @@ func _ready() -> void:
 	anim.play("idle_front")
 	_add_fish_key()
 	_attach_farming_actions.call_deferred()
+	if use_saved_appearance:
+		preload("res://Scripts/ui/player_namecard.gd").attach(self, "", true)
+
 
 
 func _attach_farming_actions() -> void:

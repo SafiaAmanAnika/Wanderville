@@ -111,9 +111,9 @@ func run() -> void:
 	var npc := current_scene.get_node("Receptionist") as AnimatedSprite2D
 	check(npc != null and npc.get_script() == null, "Receptionist is an animated sprite without player controls")
 	check(npc.animation == &"idle_front" and npc.is_playing() and npc.sprite_frames.get_animation_loop("idle_front"), "Receptionist loops front idle")
-	check(npc.sprite_frames.get_frame_count("idle_front") == 6 and npc.sprite_frames.get_animation_speed("idle_front") == 6.0, "Receptionist uses original six-frame idle at 6 FPS")
+	check(npc.sprite_frames.get_frame_count("idle_front") == 8 and npc.sprite_frames.get_animation_speed("idle_front") == 6.0, "Receptionist uses eight-frame idle at 6 FPS")
 	var tex := npc.sprite_frames.get_frame_texture("idle_front", 0) as AtlasTexture
-	check(tex.atlas.resource_path == "res://Assets/charas/CharacterC/idle.png", "Receptionist matches original Girl C artwork")
+	check(tex.atlas.resource_path == "res://Assets/social lobby/receptionist/idle.png", "Receptionist uses the supplied receptionist artwork")
 	var pose: int = npc.frame; var position := npc.position
 	await create_timer(0.3).timeout
 	check(npc.frame != pose and npc.position == position, "Idle advances while NPC remains stationary")

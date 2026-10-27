@@ -11,6 +11,11 @@ const SPEED = 300.0
 var _facing := "south"   # last direction moved, used for the idle pose
 
 
+func _ready() -> void:
+	if use_saved_appearance:
+		preload("res://Scripts/ui/player_namecard.gd").attach(self, "", true)
+
+
 func _physics_process(delta):
 	# FREEZE WHEN MENU IS OPEN
 	if GameState.menu_open or GameState.social_open or get_viewport().gui_get_focus_owner() is LineEdit:

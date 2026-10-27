@@ -3,8 +3,6 @@ extends "res://Scripts/lobby_player_spawner.gd"
 
 func _ready() -> void:
 	super._ready()
-	var frames := preload("res://Scripts/chara_frames.gd")
-	var folder := "res://Assets/charas/CharacterC"
-	if not frames.longer_leg_folder(folder).is_empty():
-		$Receptionist.sprite_frames = frames.preview_frames(folder, "idle")
-		$Receptionist.play("idle_front")
+	var friends := preload("res://Scripts/social/lobby_online_friends.gd").new()
+	friends.name = "OnlineFriends"
+	add_child(friends)

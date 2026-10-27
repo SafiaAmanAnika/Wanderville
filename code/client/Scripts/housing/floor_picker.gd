@@ -19,6 +19,7 @@ func _ready() -> void:
 
 	var panel := PanelContainer.new()
 	panel.add_theme_stylebox_override("panel", WoodPanel.make_dialog_panel_style())
+	UiSkin.ink_text(panel)
 	add_child(panel)
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 12)

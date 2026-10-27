@@ -7,7 +7,7 @@ extends CanvasLayer
 signal closed
 
 const CARD := Vector2(150, 158)
-const MUTED := Color(0.78, 0.71, 0.60)
+const MUTED := Color(0.56, 0.47, 0.37)   # faded ink on parchment
 
 var shop_id := 0
 var shop_name := ""
@@ -101,6 +101,7 @@ func _build() -> void:
 	var screen := get_viewport().get_visible_rect().size
 	var panel := PanelContainer.new()
 	panel.add_theme_stylebox_override("panel", WoodPanel.make_dialog_panel_style())
+	UiSkin.ink_text(panel)
 	panel.size = Vector2(minf(980, screen.x * 0.9), minf(620, screen.y * 0.85))
 	panel.position = (screen - panel.size) / 2.0
 	root.add_child(panel)
@@ -192,6 +193,7 @@ func _build_details() -> PanelContainer:
 	actions.alignment = BoxContainer.ALIGNMENT_END
 	details.add_child(actions)
 	_buy_button = _button("Buy")
+	UiSkin.apply_buy_sell_button(_buy_button)
 	_buy_button.custom_minimum_size.x = 150
 	_buy_button.pressed.connect(func() -> void: _buy(_selected, _qty))
 	actions.add_child(_buy_button)
@@ -224,11 +226,11 @@ func _listing_card(row: Dictionary) -> Button:
 	var slot := Button.new()
 	slot.custom_minimum_size = CARD
 	slot.tooltip_text = title
-	var normal := WoodPanel.make_wood_card_selected_style() if code == _selected else WoodPanel.make_wood_card_style()
+	var normal := UiSkin.slot(UiSkin.GOLD_TINT) if code == _selected else UiSkin.slot()
 	normal.set_content_margin_all(8)
 	slot.add_theme_stylebox_override("normal", normal)
-	slot.add_theme_stylebox_override("hover", WoodPanel.make_wood_card_hover_style())
-	slot.add_theme_stylebox_override("pressed", WoodPanel.make_wood_card_selected_style())
+	slot.add_theme_stylebox_override("hover", UiSkin.slot(UiSkin.HOVER_TINT))
+	slot.add_theme_stylebox_override("pressed", UiSkin.slot(UiSkin.GOLD_TINT))
 	slot.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 	slot.pressed.connect(func() -> void:
 		_selected = code
@@ -346,8 +348,6 @@ func _label(text: String, font_size: int) -> Label:
 	label.add_theme_font_override("font", WoodPanel.PIXEL_FONT)
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", WoodPanel.TEXT_COLOR)
-	label.add_theme_color_override("font_outline_color", Color.BLACK)
-	label.add_theme_constant_override("outline_size", 6)
 	return label
 
 
@@ -366,15 +366,7 @@ func _button(text: String) -> Button:
 	b.custom_minimum_size = Vector2(110, 48)
 	b.add_theme_font_override("font", WoodPanel.PIXEL_FONT)
 	b.add_theme_font_size_override("font_size", WoodPanel.SIZE_BUTTON)
-	b.add_theme_color_override("font_color", WoodPanel.TEXT_COLOR)
-	var normal := WoodPanel.make_wood_card_style()
-	normal.set_content_margin_all(8)
-	var hover := WoodPanel.make_wood_card_hover_style()
-	hover.set_content_margin_all(8)
-	b.add_theme_stylebox_override("normal", normal)
-	b.add_theme_stylebox_override("hover", hover)
-	b.add_theme_stylebox_override("pressed", hover)
-	b.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+	UiSkin.apply_button(b)
 	return b
 
 
@@ -382,4 +374,5 @@ func _small_button(text: String) -> Button:
 	var b := _button(text)
 	b.custom_minimum_size = Vector2(36, 36)
 	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	UiSkin.apply_quantity_button(b, text == "+")
 	return b

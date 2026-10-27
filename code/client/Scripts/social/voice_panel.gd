@@ -17,7 +17,8 @@ var _last_state := "Not joined"
 
 func _ready() -> void:
 	theme = Style.theme()
-	add_theme_stylebox_override("panel", Style.box(Color("e9d7bd"), 12))
+	add_theme_stylebox_override("panel", UiSkin.panel())
+	UiSkin.ink_text(self)
 	var column := VBoxContainer.new(); add_child(column)
 	column.add_child(Style.label("Proximity Voice", 22))
 	state = Style.label("Not joined", 18); column.add_child(state)
@@ -29,7 +30,8 @@ func _ready() -> void:
 	column.add_child(Style.label("Receiving audio", 16))
 	output_meter = ProgressBar.new(); output_meter.max_value = 1.0; output_meter.show_percentage = false; output_meter.custom_minimum_size.y = 10; column.add_child(output_meter)
 	for meter in [input_meter, output_meter]:
-		var fill := Style.box(Style.SAGE, 0); fill.set_border_width_all(0); meter.add_theme_stylebox_override("fill", fill)
+		UiSkin.apply_progress_bar(meter)
+		meter.custom_minimum_size.y = 14
 	join_button = Style.button("Join Voice", true); column.add_child(join_button)
 	join_button.pressed.connect(func():
 		if voice.session_id.is_empty(): await voice.join_voice()

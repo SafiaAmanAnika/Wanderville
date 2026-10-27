@@ -16,6 +16,7 @@ func _ready() -> void:
 
 	var panel := PanelContainer.new()
 	panel.add_theme_stylebox_override("panel", WoodPanel.make_dialog_panel_style())
+	UiSkin.ink_text(panel)
 	add_child(panel)
 
 	var box := VBoxContainer.new()
@@ -42,11 +43,17 @@ func _ready() -> void:
 		button.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		button.pressed.connect(_on_pick.bind(id))
-		card.add_child(button)
+		# The pack's house card is the shared panel frame at card size.
+		var frame := PanelContainer.new()
+		frame.add_theme_stylebox_override("panel", UiSkin.card())
+		frame.add_child(button)
+		card.add_child(frame)
 		grid.add_child(card)
 
 	var close_button := Button.new()
 	close_button.text = "Close"
+	close_button.add_theme_font_override("font", WoodPanel.PIXEL_FONT)
+	UiSkin.apply_button(close_button)
 	close_button.pressed.connect(close)
 	box.add_child(close_button)
 

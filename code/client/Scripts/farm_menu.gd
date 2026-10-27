@@ -11,8 +11,6 @@ var level2_options: Array[PanelContainer] = []
 var current_level: int = 1
 var selected_index: int = 0
 
-var normal_color: Color = Color(0.17, 0.17, 0.17, 1.0)
-var selected_color: Color = Color(0.4, 0.6, 0.3, 1.0)
 
 var seed_list: Array[String] = []   # filled from CROPS in _ready
 var seed_index: int = 0
@@ -28,6 +26,7 @@ func _ready():
 	for child in level2.get_children():
 		if child is PanelContainer:
 			level2_options.append(child)
+	_apply_skin()
 	GameState.seed_changed.connect(_on_seed_changed)
 
 func open():
@@ -86,9 +85,29 @@ func _clamp_index():
 func _update_highlight():
 	var options = level1_options if current_level == 1 else level2_options
 	for i in range(options.size()):
-		var style: StyleBoxFlat = StyleBoxFlat.new()
-		style.bg_color = selected_color if i == selected_index else normal_color
-		options[i].add_theme_stylebox_override("panel", style)
+		options[i].add_theme_stylebox_override("panel",
+				UiSkin.card(UiSkin.GOLD_TINT) if i == selected_index else UiSkin.card())
+
+
+## The scene was laid out with dark flat boxes; dress it in the UI pack and
+## switch its light text to ink so it reads on parchment.
+func _apply_skin() -> void:
+	$ColorRect/BgPanel.add_theme_stylebox_override("panel", UiSkin.panel())
+	for label in [$ColorRect/TitleLabel, $ColorRect/HintLabel]:
+		_ink(label, UiSkin.INK if label == $ColorRect/TitleLabel else UiSkin.INK_SOFT)
+	for option in level1_options + level2_options:
+		option.add_theme_stylebox_override("panel", UiSkin.card())
+		for child in option.get_children():
+			if child is Label:
+				_ink(child, UiSkin.INK)
+
+
+func _ink(label: Label, color: Color) -> void:
+	if label.label_settings != null:
+		label.label_settings = label.label_settings.duplicate()
+		label.label_settings.font_color = color
+	else:
+		label.add_theme_color_override("font_color", color)
 
 func _on_confirm():
 	if current_level == 1:

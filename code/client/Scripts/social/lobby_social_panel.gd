@@ -134,7 +134,7 @@ func _build_people_cards() -> void:
 	var detail := PanelContainer.new()
 	detail.custom_minimum_size.x = 260
 	_profile_detail = detail
-	detail.add_theme_stylebox_override("panel", Style.box(Color("fff0d9"), 14))
+	detail.add_theme_stylebox_override("panel", UiSkin.card())
 	layout.add_child(detail)
 	detail.owner = self
 	_profile_column = VBoxContainer.new()
@@ -200,10 +200,9 @@ func _render_people_cards() -> void:
 		card.name = "PlayerCard_%d" % i
 		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
-		var bg := Color("e9c9a1") if is_selected else Color("fff0d9")
 		card.add_theme_stylebox_override(
 			"panel",
-			Style.box(bg, 10)
+			UiSkin.card(UiSkin.GOLD_TINT) if is_selected else UiSkin.card()
 		)
 
 		_cards.add_child(card)

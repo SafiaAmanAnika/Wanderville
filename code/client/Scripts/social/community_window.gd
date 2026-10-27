@@ -99,6 +99,7 @@ func _ready() -> void:
 	box.add_child(_status)
 	preload("res://Scripts/ui/loading_progress.gd").attach(_status)
 	_confirm = ConfirmationDialog.new()
+	UiSkin.apply_dialog(_confirm)
 	add_child(_confirm)
 	_confirm.confirmed.connect(_send_gift)
 	APIClient.realtime.snapshot_received.connect(func(data: Dictionary) -> void:
@@ -110,6 +111,8 @@ func _ready() -> void:
 	)
 	Global.session_changed.connect(_close)
 	preload("res://Scripts/ui/lobby_theme.gd").apply_tree(self)
+	# The window frame and title bar wear the pack; the content keeps the lobby theme.
+	UiSkin.apply_dialog(self)
 
 
 func open_for(player_id: int = 0) -> void:

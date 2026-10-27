@@ -3,7 +3,7 @@ extends Control
 # Keep the target (arrow keys) on the fish:
 #   every 0.5 s you stay on it  -> bar jumps up one step
 #   off the fish                -> bar slowly drains
-#   bar full                    -> "Caught a Koi!" popup, fish goes to the bag
+#   bar full                    -> "Caught a Koi!" message, fish goes to the bag
 #   2 minutes pass              -> "Time's up!" and the game closes by itself
 # Esc = give up.
 
@@ -18,7 +18,7 @@ const TIME_LIMIT := 120.0     # 2 minutes, then the game closes by itself
 const HOLD_TIME := 0.5        # seconds on the fish = one catch
 const CATCH_STEP := 20.0      # bar goes up this much per catch (5 catches = full)
 const DRAIN_PER_SEC := 8.0    # bar goes down this much per second while off the fish
-const POPUP_TIME := 2.0       # how long "Caught a ...!" stays on screen
+const POPUP_TIME := 2.0       # how long the game lingers after "Caught a ...!"
 
 @onready var catch_bar: ProgressBar = %CatchBar
 @onready var panel: Control = $PanelContainer
@@ -107,28 +107,15 @@ func _update_timer_text() -> void:
 	_timer_label.text = "%d:%02d" % [t / 60, t % 60]
 
 
-# stop the game, show a message in the middle of the screen, then close
+# stop the game, put the result on the message line, then close
 func _end_with_popup(caught: bool, message: String) -> void:
 	_ended = true
 	AudioManager.stop_loop("minigame_music")
 	AudioManager.play("minigame_success" if caught else "minigame_failure")
 	fish.set_physics_process(false)
 	target.set_physics_process(false)
-	var popup := PanelContainer.new()
-	popup.z_index = 100   # on top of the fish and target
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.38, 0.25, 0.13, 0.95)
-	style.border_color = Color(1.0, 0.84, 0.0)
-	style.set_border_width_all(4)
-	style.set_corner_radius_all(12)
-	style.set_content_margin_all(20)
-	popup.add_theme_stylebox_override("panel", style)
-	var label := _make_label(WoodPanel.SIZE_BANNER_TITLE)
-	label.text = message
-	popup.add_child(label)
-	add_child(popup)
-	await get_tree().process_frame   # let the popup measure its text
-	popup.global_position = (get_viewport_rect().size - popup.size) / 2.0
+	# The result goes on the game's message line; the sound above is the cue.
+	HousePrompt.flash(message, POPUP_TIME + 1.5, false)
 	await get_tree().create_timer(POPUP_TIME).timeout
 	_close(caught)
 

@@ -143,7 +143,9 @@ func _make_hotspot(key: String) -> Button:
 	spot.add_theme_stylebox_override("hover", hover)
 	spot.add_theme_stylebox_override("pressed", hover)
 	var tag := _label(SECTIONS[key]["title"], WoodPanel.SIZE_CARD_NAME)
-	tag.size = Vector2(spot.size.x, 32)
+	# The tag floats on the room picture, so it carries its own parchment strip.
+	tag.add_theme_stylebox_override("normal", UiSkin.input())
+	tag.size = Vector2(spot.size.x, 40)
 	tag.position = Vector2(0, 6)
 	tag.visible = false
 	spot.add_child(tag)
@@ -210,6 +212,7 @@ func _build_section_view(root: Control) -> void:
 	var screen := get_viewport().get_visible_rect().size
 	_section_view = PanelContainer.new()
 	_section_view.add_theme_stylebox_override("panel", WoodPanel.make_dialog_panel_style())
+	UiSkin.ink_text(_section_view)
 	_section_view.size = Vector2(minf(1100, screen.x * 0.9), minf(660, screen.y * 0.85))
 	_section_view.position = (screen - _section_view.size) / 2.0
 	root.add_child(_section_view)
@@ -307,9 +310,11 @@ func _build_section_view(root: Control) -> void:
 	buttons.add_theme_constant_override("separation", 10)
 	details.add_child(buttons)
 	_sell = _button("Sell")
+	UiSkin.apply_buy_sell_button(_sell)
 	_sell.pressed.connect(_trade.bind("sell"))
 	buttons.add_child(_sell)
 	_buy = _button("Buy")
+	UiSkin.apply_buy_sell_button(_buy)
 	_buy.pressed.connect(_trade.bind("buy"))
 	buttons.add_child(_buy)
 	qty_row.visible = mode != "storage"
@@ -367,9 +372,11 @@ func _make_slot(code: String, qty: int) -> Button:
 	slot.tooltip_text = _item(code)["name"]
 	slot.add_theme_font_override("font", WoodPanel.PIXEL_FONT)
 	slot.add_theme_font_size_override("font_size", WoodPanel.SIZE_SMALL)
-	slot.add_theme_stylebox_override("normal", WoodPanel.make_wood_card_selected_style() if code == _selected else _slot_style())
-	slot.add_theme_stylebox_override("hover", WoodPanel.make_wood_card_hover_style())
-	slot.add_theme_stylebox_override("pressed", WoodPanel.make_wood_card_selected_style())
+	for key in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color", "font_hover_pressed_color"]:
+		slot.add_theme_color_override(key, UiSkin.INK)
+	slot.add_theme_stylebox_override("normal", UiSkin.slot(UiSkin.GOLD_TINT) if code == _selected else _slot_style())
+	slot.add_theme_stylebox_override("hover", UiSkin.slot(UiSkin.HOVER_TINT))
+	slot.add_theme_stylebox_override("pressed", UiSkin.slot(UiSkin.GOLD_TINT))
 	slot.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 	if qty == 0:
 		slot.modulate = Color(1, 1, 1, 0.6)   # in-season seed you don't own yet
@@ -381,10 +388,8 @@ func _make_slot(code: String, qty: int) -> Button:
 	return slot
 
 
-func _slot_style() -> StyleBoxFlat:
-	var sb := WoodPanel.make_wood_card_style()
-	sb.set_content_margin_all(8)
-	return sb
+func _slot_style() -> StyleBox:
+	return UiSkin.slot()
 
 
 func _render_details() -> void:
@@ -596,8 +601,6 @@ func _label(text: String, font_size: int) -> Label:
 	label.add_theme_font_override("font", WoodPanel.PIXEL_FONT)
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", WoodPanel.TEXT_COLOR)
-	label.add_theme_color_override("font_outline_color", Color.BLACK)
-	label.add_theme_constant_override("outline_size", 6)
 	return label
 
 
@@ -617,15 +620,7 @@ func _button(text: String) -> Button:
 	b.custom_minimum_size = Vector2(110, 48)
 	b.add_theme_font_override("font", WoodPanel.PIXEL_FONT)
 	b.add_theme_font_size_override("font_size", WoodPanel.SIZE_BUTTON)
-	b.add_theme_color_override("font_color", WoodPanel.TEXT_COLOR)
-	var normal := WoodPanel.make_wood_card_style()
-	normal.set_content_margin_all(8)
-	var hover := WoodPanel.make_wood_card_hover_style()
-	hover.set_content_margin_all(8)
-	b.add_theme_stylebox_override("normal", normal)
-	b.add_theme_stylebox_override("hover", hover)
-	b.add_theme_stylebox_override("pressed", hover)
-	b.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+	UiSkin.apply_button(b)
 	return b
 
 
@@ -634,4 +629,5 @@ func _small_button(text: String) -> Button:
 	var b := _button(text)
 	b.custom_minimum_size = Vector2(36, 36)
 	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	UiSkin.apply_quantity_button(b, text == "+")
 	return b

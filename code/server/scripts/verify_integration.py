@@ -124,7 +124,7 @@ def market_fixture(pid: int = Depends(get_current_player_id)):
         market = MarketService(db)
         shop = market.open(bob.id, OpenShopRequest(option_id="shop_option_01", side="left", name="Bob's Shop"))
         market.stock(bob.id, ListingRequest(item_code="wheat", quantity=3, price=7))
-        InventoryService(db).add_compatibility(pid, ItemRequest(item_code="corn", quantity=2))
+        InventoryService(db).add_compatibility(pid, ItemRequest(item_code="barley", quantity=2))
         return success({"shop_id": shop["id"]})
 app.state.lose_shop_response = False
 app.state.lose_gift_response = False

@@ -37,7 +37,7 @@ func run() -> void:
 	query.exclude = [body.get_rid()]
 	check(world.get_world_2d().direct_space_state.intersect_shape(query).is_empty(), "spawn_has_physics_clearance")
 	var water := world.get_node("Map/WaterSource/WaterInteraction") as Area2D
-	check(water.get_script() != null and water.get_node_or_null("PromptLayer/Panel") != null, "pond_interaction_initializes")
+	check(water.get_script() != null and water.get_children().any(func(child: Node) -> bool: return child is CollisionPolygon2D), "pond_interaction_initializes")
 	# The selectable-character controller must keep moving across a socket blip.
 	var selected: CharacterBody2D = load("res://Scenes/charagirlA.tscn").instantiate()
 	selected.require_world_connection = true

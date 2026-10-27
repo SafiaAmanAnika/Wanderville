@@ -187,8 +187,9 @@ func _run() -> void:
 	await shot("night_hud")
 	cycle.color = Color.WHITE
 	# Drive the seasonal effects script on small particles, avoiding the supplied
-	# map's very large GPU particle systems in this UI-only rendering run. It is
-	# kept out of the tree so _ready does not touch the real user://seasonal_state.cfg.
+	# map's very large GPU particle systems in this UI-only rendering run. Signed
+	# in, it follows the server's season and weather and never touches the local
+	# user://seasonal_state.cfg, so it can live in the tree like the real one.
 	var effects := Node2D.new()
 	effects.set_script(load("res://Scripts/seasonal_effects.gd"))
 	for name in ["Rain", "Snow", "Autumn_leaves", "Spring_leaves"]:
@@ -196,18 +197,13 @@ func _run() -> void:
 		particle.name = name
 		particle.amount = 1
 		effects.add_child(particle)
-	effects.rain = effects.get_node("Rain")
-	effects.snow = effects.get_node("Snow")
-	effects.autumn_leaves = effects.get_node("Autumn_leaves")
-	effects.spring_leaves = effects.get_node("Spring_leaves")
+	stage.add_child(effects)
 	check(effects.get_script() != null, "existing_weather_effects_hook_attached")
-	# A rain_elapsed_time of one interval is the first moment a shower is scheduled.
-	effects.rain_elapsed_time = effects.RAIN_INTERVAL
-	for season in range(4):
-		effects.current_season = season
-		effects.update_season_effects()
-		check(effects.autumn_leaves.emitting == (season == 1) and effects.spring_leaves.emitting == (season == 3) and effects.snow.emitting == (season == 2) and effects.rain.emitting == (season == 0), "season_weather_" + effects.get_season_name().to_lower())
-	effects.free()
+	for season in ["summer", "autumn", "winter", "spring"]:
+		var weather := "snow" if season == "winter" else "rain"
+		state.world_updated.emit({"current_season": season, "weather": weather})
+		check(effects.autumn_leaves.emitting == (season == "autumn") and effects.spring_leaves.emitting == (season == "spring") and effects.snow.emitting == (season == "winter") and effects.rain.emitting == (season != "winter"), "season_weather_" + season)
+	effects.queue_free()
 	state.world_updated.emit(state.world_state)
 	root.content_scale_size = Vector2i(800, 600)
 	root.size = Vector2i(800, 600)
@@ -354,20 +350,26 @@ func _run() -> void:
 	await api.authenticated(HTTPClient.METHOD_POST, "/integration/progress/%d" % (120 - int(state.experience["total_xp"])), {})
 	await state.refresh_gameplay()
 	check(hud.get_node("%Balance").text.contains("Level 2") and hud.get_node("%Balance").text.contains("Villager") and hud.get_node("%ProgressText").text.contains("40 / 100") and hud.get_node("%XP").max_value == 100 and hud.get_node("%XP").value == 40, "hud_authoritative_level_title_span")
-	check(hud.get_node("%LevelToast").visible and hud.get_node("%LevelToastText").text.contains("+3 inventory slots") and hud.get_node("%LevelToastText").text.contains("+25 Aura") and hud.get_node("%LevelToastText").text.contains("Sugarcane"), "level_toast_actual_slots_aura_unlocks")
+	var prompt: Node = root.get_node("HousePrompt")
+	check(prompt.text().contains("+3 inventory slots") and prompt.text().contains("+25 Aura") and prompt.text().contains("Sugarcane"), "level_toast_actual_slots_aura_unlocks")
 	check(int(state.inventory_summary["capacity"]) == 36, "level_increases_shared_capacity")
 	await shot("level_two_800x600")
-	hud.get_node("%ToastClose").pressed.emit()
+	prompt.hide_text()
 	await state.refresh_gameplay()
-	check(not hud.get_node("%LevelToast").visible, "poll_does_not_repeat_level_toast")
+	check(prompt.text() == "", "poll_does_not_repeat_level_toast")
 	await api.authenticated(HTTPClient.METHOD_POST, "/integration/progress/1980", {})
 	await state.refresh_gameplay()
 	check(hud.get_node("%Balance").text.contains("Level 10 · Landkeeper") and hud.get_node("%ProgressText").text == "Max level" and hud.get_node("%XP").value == hud.get_node("%XP").max_value, "max_level_hud_without_level_eleven")
-	check(int(state.inventory_summary["capacity"]) == 76 and hud.get_node("%LevelToastText").text.contains("+40 inventory slots") and hud.get_node("%LevelToastText").text.contains("+100 Aura"), "multi_level_jump_exact_rewards")
+	check(int(state.inventory_summary["capacity"]) == 76 and prompt.text().contains("+40 inventory slots") and prompt.text().contains("+100 Aura"), "multi_level_jump_exact_rewards")
 	await shot("max_level_800x600")
 	# Marketplace screens against the real market routes. Bob's shop is stocked
 	# by the fixture; alice stocks her own through the General Store.
-	var bob_shop := int(api.data_of(await api.authenticated(HTTPClient.METHOD_POST, "/integration/market-fixture", {}))["shop_id"])
+	var fixture_response: Dictionary = await api.authenticated(HTTPClient.METHOD_POST, "/integration/market-fixture", {})
+	check(fixture_response.get("ok", false), "market_fixture_ready " + api.error_text(fixture_response))
+	if not fixture_response.get("ok", false):
+		quit(1)
+		return
+	var bob_shop := int(api.data_of(fixture_response)["shop_id"])
 	await api.authenticated(HTTPClient.METHOD_POST, "/economy/earn", {"amount": 100})
 	var my_shop: Dictionary = api.data_of(await api.authenticated(HTTPClient.METHOD_POST, "/market", {"option_id": "shop_option_02", "side": "right", "name": "Alice's Shop"}))
 	await state.refresh_gameplay()
@@ -381,10 +383,10 @@ func _run() -> void:
 	await store._buy("wheat_seed", 2)
 	check(store._status.text == "Bought x2" and owned("wheat_seed") == seeds_before + 2, "general_store_buy_updates_inventory")
 	await store._switch(store.STOCK)
-	await store._put_on_shelf("corn", 2, 15)
-	check(store._status.text == "Shelved x2 at 15 Aura" and owned("corn") == 0 and store._shelf.size() == 1 and int(store._shelf[0]["quantity"]) == 2 and int(store._shelf[0]["price"]) == 15, "general_store_stocks_own_shelf")
-	await store._take_back("corn", 1)
-	check(store._status.text == "Took x1 back" and owned("corn") == 1 and int(store._shelf[0]["quantity"]) == 1, "general_store_takes_stock_back")
+	await store._put_on_shelf("barley", 2, 15)
+	check(store._status.text == "Shelved x2 at 15 Aura" and owned("barley") == 0 and store._shelf.size() == 1 and int(store._shelf[0]["quantity"]) == 2 and int(store._shelf[0]["price"]) == 15, "general_store_stocks_own_shelf")
+	await store._take_back("barley", 1)
+	check(store._status.text == "Took x1 back" and owned("barley") == 1 and int(store._shelf[0]["quantity"]) == 1, "general_store_takes_stock_back")
 	await shot("general_store_stock")
 	store.close()
 	await settle()
@@ -394,7 +396,8 @@ func _run() -> void:
 	own.shop_name = "Alice's Shop"
 	own.is_mine = true
 	stage.add_child(own)
-	await wait_until(func() -> bool: return not own._listings.is_empty(), "own_shop_window_loads")
+	# _listings arrives before the sales request returns; the title is set by the render that follows both.
+	await wait_until(func() -> bool: return own._title.text != "", "own_shop_window_loads")
 	check(own._title.text.contains("your shelf") and own._info.text == "Nothing sold yet." and not own._buy_button.visible, "own_shop_window_shows_shelf_and_sales")
 	own.close()
 	await settle()

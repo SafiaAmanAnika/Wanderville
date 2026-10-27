@@ -45,45 +45,18 @@ func _ready() -> void:
 	mouse_exited.connect(_on_mouse_exited)
 
 func _apply_wood_background() -> void:
-	var normal := StyleBoxFlat.new()
-	normal.bg_color = WOOD_SURFACE
-	normal.border_color = WOOD_BORDER
-	normal.border_width_left = 4
-	normal.border_width_right = 4
-	normal.border_width_top = 4
-	normal.border_width_bottom = 4
-	normal.corner_radius_top_left = 10
-	normal.corner_radius_top_right = 10
-	normal.corner_radius_bottom_right = 10
-	normal.corner_radius_bottom_left = 10
-	normal.shadow_color = Color(0, 0, 0, 0.4)
-	normal.shadow_size = 6
-	normal.shadow_offset = Vector2(2, 3)
-	normal.content_margin_left = 0
-	normal.content_margin_right = 0
-	normal.content_margin_top = 0
-	normal.content_margin_bottom = 0
+	# The pack's world card frame; content margins stay 0 for the thumbnail layout.
+	var normal := UiSkin.world_card()
+	normal.set_content_margin_all(0)
 	add_theme_stylebox_override("normal", normal)
-
-	var hover := normal.duplicate()
-	hover.bg_color = WOOD_HOVER
-	hover.shadow_size = 8
-	hover.shadow_offset = Vector2(2, 4)
+	var hover := UiSkin.world_card(UiSkin.HOVER_TINT)
+	hover.set_content_margin_all(0)
 	add_theme_stylebox_override("hover", hover)
 
-	var pressed := normal.duplicate()
-	pressed.bg_color = WOOD_DARK
-	pressed.shadow_size = 4
-	pressed.shadow_offset = Vector2(1, 1)
+	var pressed := UiSkin.world_card(UiSkin.GOLD_TINT)
+	pressed.set_content_margin_all(0)
 	add_theme_stylebox_override("pressed", pressed)
-
-	var focus := normal.duplicate()
-	focus.border_color = GOLDEN
-	focus.border_width_left = 2
-	focus.border_width_right = 2
-	focus.border_width_top = 2
-	focus.border_width_bottom = 2
-	add_theme_stylebox_override("focus", focus)
+	add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 
 func _apply_border_style(color: Color, width: int) -> void:
 	var style := StyleBoxFlat.new()
@@ -238,32 +211,9 @@ func set_selected(selected: bool) -> void:
 			_tween_scale(HOVER_SCALE)
 
 func _apply_selected_background() -> void:
-	var normal := StyleBoxFlat.new()
-	normal.bg_color = WOOD_HOVER
-	normal.border_color = GOLDEN
-	normal.border_width_left = 5
-	normal.border_width_right = 5
-	normal.border_width_top = 5
-	normal.border_width_bottom = 5
-	normal.corner_radius_top_left = 10
-	normal.corner_radius_top_right = 10
-	normal.corner_radius_bottom_right = 10
-	normal.corner_radius_bottom_left = 10
-	normal.shadow_color = Color(GOLDEN.r, GOLDEN.g, GOLDEN.b, 0.3)
-	normal.shadow_size = 10
-	normal.shadow_offset = Vector2(2, 4)
-	normal.content_margin_left = 0
-	normal.content_margin_right = 0
-	normal.content_margin_top = 0
-	normal.content_margin_bottom = 0
+	var normal := UiSkin.world_card(UiSkin.GOLD_TINT)
+	normal.set_content_margin_all(0)
 	add_theme_stylebox_override("normal", normal)
 
-	var hover := normal.duplicate()
-	hover.bg_color = Color(WOOD_HOVER.r + 0.05, WOOD_HOVER.g + 0.05, WOOD_HOVER.b + 0.05)
-	hover.shadow_size = 12
-	add_theme_stylebox_override("hover", hover)
-
-	var pressed := normal.duplicate()
-	pressed.bg_color = WOOD_DARK
-	pressed.shadow_size = 6
-	add_theme_stylebox_override("pressed", pressed)
+	add_theme_stylebox_override("hover", normal)
+	add_theme_stylebox_override("pressed", normal)

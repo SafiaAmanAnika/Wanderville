@@ -2,7 +2,8 @@ class_name WoodPanel
 extends PanelContainer
 
 ## Reusable wooden board panel for all menu screens.
-## Provides the carved-border, warm-brown panel look with parchment accents.
+## Every style here is a nine-patch from the supplied UI pack (see UiSkin): a
+## carved wooden frame around a parchment face, so text on it is dark ink.
 
 # ── Wood palette ────────────────────────────────────────────────────
 const WOOD_DARK := Color(0.28, 0.17, 0.08)
@@ -18,11 +19,11 @@ const ROPE_SHADOW := Color(0.35, 0.25, 0.15)
 
 # ── Text palette ────────────────────────────────────────────────────
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
-const TEXT_COLOR := Color(0.95, 0.91, 0.80)
-const TEXT_SECONDARY := Color(0.82, 0.74, 0.58)
-const TEXT_ERROR := Color(0.90, 0.38, 0.30)
-const TEXT_SUCCESS := Color(0.50, 0.78, 0.45)
-const TEXT_PLACEHOLDER := Color(0.60, 0.50, 0.38)
+const TEXT_COLOR := UiSkin.INK
+const TEXT_SECONDARY := UiSkin.INK_SOFT
+const TEXT_ERROR := Color(0.68, 0.18, 0.14)
+const TEXT_SUCCESS := Color(0.24, 0.47, 0.20)
+const TEXT_PLACEHOLDER := Color(0.62, 0.50, 0.36)
 
 # ── Parchment palette ───────────────────────────────────────────────
 const PARCHMENT := Color(0.92, 0.85, 0.68)
@@ -86,22 +87,8 @@ func _ready() -> void:
 
 
 func _apply_panel_style() -> void:
-	var outer := StyleBoxFlat.new()
-	outer.bg_color = WOOD_FRAME
-	outer.border_color = WOOD_DARK
-	outer.border_width_left = 6
-	outer.border_width_right = 6
-	outer.border_width_top = 6
-	outer.border_width_bottom = 6
-	outer.set_corner_radius_all(12)
-	outer.shadow_color = Color(0.10, 0.05, 0.01, 0.65)
-	outer.shadow_size = 8
-	outer.shadow_offset = Vector2(3, 5)
-	outer.content_margin_left = 28
-	outer.content_margin_right = 28
-	outer.content_margin_top = 24
-	outer.content_margin_bottom = 24
-	add_theme_stylebox_override("panel", outer)
+	add_theme_stylebox_override("panel", UiSkin.panel())
+	UiSkin.ink_text(self)
 
 
 # ── Static label styles ─────────────────────────────────────────────
@@ -181,43 +168,15 @@ static func apply_field_style(edit: LineEdit) -> void:
 	edit.add_theme_font_size_override("font_size", SIZE_FIELD)
 	edit.add_theme_color_override("font_color", TEXT_COLOR)
 	edit.add_theme_color_override("font_placeholder_color", TEXT_PLACEHOLDER)
-
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = INPUT_BG
-	sb.border_color = INPUT_BORDER
-	sb.set_border_width_all(3)
-	sb.set_corner_radius_all(6)
-	sb.content_margin_left = 12
-	sb.content_margin_right = 12
-	sb.content_margin_top = 10
-	sb.content_margin_bottom = 10
-	edit.add_theme_stylebox_override("normal", sb)
-
-	var focus_sb := StyleBoxFlat.new()
-	focus_sb.bg_color = INPUT_BG
-	focus_sb.border_color = Color(0.75, 0.60, 0.38)
-	focus_sb.set_border_width_all(3)
-	focus_sb.set_corner_radius_all(6)
-	focus_sb.content_margin_left = 12
-	focus_sb.content_margin_right = 12
-	focus_sb.content_margin_top = 10
-	focus_sb.content_margin_bottom = 10
-	edit.add_theme_stylebox_override("focus", focus_sb)
+	edit.add_theme_color_override("caret_color", TEXT_COLOR)
+	edit.add_theme_stylebox_override("normal", UiSkin.input())
+	edit.add_theme_stylebox_override("focus", UiSkin.input(true))
 
 
 static func apply_error_field_style(edit: LineEdit) -> void:
 	if edit == null:
 		return
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.35, 0.15, 0.12)
-	sb.border_color = Color(0.85, 0.30, 0.25)
-	sb.set_border_width_all(3)
-	sb.set_corner_radius_all(6)
-	sb.content_margin_left = 12
-	sb.content_margin_right = 12
-	sb.content_margin_top = 10
-	sb.content_margin_bottom = 10
-	edit.add_theme_stylebox_override("normal", sb)
+	edit.add_theme_stylebox_override("normal", UiSkin.input_error())
 
 
 static func clear_error_field_style(edit: LineEdit) -> void:
@@ -229,16 +188,12 @@ static func clear_error_field_style(edit: LineEdit) -> void:
 
 # ── Parchment style helpers ─────────────────────────────────────────
 
-static func make_parchment_style(margin: int = 20) -> StyleBoxFlat:
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = PARCHMENT_BG
-	sb.border_color = PARCHMENT_DARK
-	sb.set_border_width_all(3)
-	sb.set_corner_radius_all(8)
-	sb.content_margin_left = margin
-	sb.content_margin_right = margin
-	sb.content_margin_top = margin
-	sb.content_margin_bottom = margin
+static func make_parchment_style(margin: int = 20) -> StyleBox:
+	var sb := UiSkin.card()
+	sb.content_margin_left = maxi(margin, 16)
+	sb.content_margin_right = maxi(margin, 16)
+	sb.content_margin_top = maxi(margin, 14)
+	sb.content_margin_bottom = maxi(margin, 14)
 	return sb
 
 
@@ -253,37 +208,16 @@ static func apply_parchment_label(label: Label, font_size: int = SIZE_STATUS) ->
 
 # ── Wooden card style helpers ───────────────────────────────────────
 
-static func make_wood_card_style() -> StyleBoxFlat:
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = WOOD_SURFACE
-	sb.border_color = WOOD_BORDER
-	sb.set_border_width_all(4)
-	sb.set_corner_radius_all(10)
-	sb.shadow_color = Color(0.10, 0.05, 0.01, 0.5)
-	sb.shadow_size = 5
-	sb.shadow_offset = Vector2(2, 3)
-	sb.content_margin_left = 16
-	sb.content_margin_right = 16
-	sb.content_margin_top = 16
-	sb.content_margin_bottom = 16
-	return sb
+static func make_wood_card_style() -> StyleBox:
+	return UiSkin.card()
 
 
-static func make_wood_card_hover_style() -> StyleBoxFlat:
-	var sb := make_wood_card_style()
-	sb.bg_color = WOOD_HOVER
-	sb.border_color = WOOD_BEVEL_LIGHT
-	sb.shadow_size = 6
-	return sb
+static func make_wood_card_hover_style() -> StyleBox:
+	return UiSkin.card(UiSkin.HOVER_TINT)
 
 
-static func make_wood_card_selected_style() -> StyleBoxFlat:
-	var sb := make_wood_card_style()
-	sb.bg_color = WOOD_HOVER
-	sb.border_color = Color(1.0, 0.84, 0.0)
-	sb.set_border_width_all(5)
-	sb.shadow_size = 8
-	return sb
+static func make_wood_card_selected_style() -> StyleBox:
+	return UiSkin.card(UiSkin.GOLD_TINT)
 
 
 # ── Dialog overlay style ────────────────────────────────────────────
@@ -292,23 +226,8 @@ static func make_overlay_color() -> Color:
 	return Color(0.05, 0.03, 0.01, 0.7)
 
 
-static func make_dialog_panel_style() -> StyleBoxFlat:
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = WOOD_FRAME
-	sb.border_color = WOOD_DARK
-	sb.border_width_left = 8
-	sb.border_width_right = 8
-	sb.border_width_top = 8
-	sb.border_width_bottom = 8
-	sb.set_corner_radius_all(14)
-	sb.shadow_color = Color(0.05, 0.02, 0.0, 0.8)
-	sb.shadow_size = 12
-	sb.shadow_offset = Vector2(4, 6)
-	sb.content_margin_left = 32
-	sb.content_margin_right = 32
-	sb.content_margin_top = 28
-	sb.content_margin_bottom = 28
-	return sb
+static func make_dialog_panel_style() -> StyleBox:
+	return UiSkin.panel()
 
 
 # ── Viewport helper ─────────────────────────────────────────────────

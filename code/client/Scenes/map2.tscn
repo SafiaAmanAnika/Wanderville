@@ -36,9 +36,8 @@
 [ext_resource type="PackedScene" uid="uid://bkhsj4l4v1fex" path="res://Scenes/trees/spring/tree_12.tscn" id="35_46vnl"]
 [ext_resource type="Script" uid="uid://cqcm1065smcqr" path="res://Scripts/farm_field.gd" id="35_kqb6c"]
 [ext_resource type="Texture2D" uid="uid://d3sphoe7urb8y" path="res://Assets/farming/soil.png" id="36_6iy20"]
-
-[ext_resource type="PackedScene" path="res://Scenes/trees/summer/tree_13.tscn" id="restored_tree_0"]
-[ext_resource type="PackedScene" path="res://Scenes/trees/summer/tree_14.tscn" id="restored_tree_1"]
+[ext_resource type="PackedScene" uid="uid://dj2fjbtu2h0jw" path="res://Scenes/trees/summer/tree_13.tscn" id="restored_tree_0"]
+[ext_resource type="PackedScene" uid="uid://n2uiqloc4041" path="res://Scenes/trees/summer/tree_14.tscn" id="restored_tree_1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_arrue"]
 texture = ExtResource("10_80g8e")
@@ -1958,7 +1957,7 @@ tile_set = SubResource("TileSet_gg4i5")
 [node name="FarmZone" type="Area2D" parent="FarmField" unique_id=1748279136]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FarmField/FarmZone" unique_id=316995681]
-position = Vector2(192.5, -25)
+position = Vector2(191.5, -25)
 shape = SubResource("RectangleShape2D_dl0ew")
 
 [node name="WaterSource" type="StaticBody2D" parent="." unique_id=754308331]

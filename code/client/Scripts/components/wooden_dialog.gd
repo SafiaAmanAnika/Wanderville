@@ -9,7 +9,7 @@ const WOOD_DARK := Color(0.28, 0.17, 0.08)
 const WOOD_BORDER := Color(0.38, 0.25, 0.13)
 const WOOD_FRAME := Color(0.45, 0.30, 0.17)
 const WOOD_SURFACE := Color(0.55, 0.40, 0.25)
-const TEXT_COLOR := Color(0.95, 0.91, 0.80)
+const TEXT_COLOR := UiSkin.INK
 
 var _panel: PanelContainer
 var _title_label: Label
@@ -37,6 +37,7 @@ func _build() -> void:
 	_panel.anchors_preset = Control.PRESET_CENTER
 	_panel.pivot_offset = Vector2(280, 180)
 	_panel.add_theme_stylebox_override("panel", _make_panel_style())
+	UiSkin.ink_text(_panel)
 	add_child(_panel)
 
 	var vbox := VBoxContainer.new()
@@ -70,23 +71,8 @@ func _build() -> void:
 	_panel.pivot_offset = _panel.size / 2
 
 
-func _make_panel_style() -> StyleBoxFlat:
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = WOOD_FRAME
-	sb.border_color = WOOD_DARK
-	sb.border_width_left = 8
-	sb.border_width_right = 8
-	sb.border_width_top = 8
-	sb.border_width_bottom = 8
-	sb.set_corner_radius_all(14)
-	sb.shadow_color = Color(0.05, 0.02, 0.0, 0.8)
-	sb.shadow_size = 12
-	sb.shadow_offset = Vector2(4, 6)
-	sb.content_margin_left = 32
-	sb.content_margin_right = 32
-	sb.content_margin_top = 28
-	sb.content_margin_bottom = 28
-	return sb
+func _make_panel_style() -> StyleBox:
+	return UiSkin.panel()
 
 
 func open(title: String) -> void:

@@ -610,6 +610,7 @@ func _send() -> void:
 			message.clear()
 		if str(_drafts.get(sent_key, "")).strip_edges() == body:
 			_drafts.erase(sent_key)
+		AudioManager.play("msg_sent")
 		var data: Variant = APIClient.data_of(response)
 		if data is Dictionary and data.has("receiver_id"):
 			_direct_message(data)
@@ -624,6 +625,8 @@ func _snapshot(snapshot: Dictionary) -> void:
 
 
 func _nearby_message(record: Dictionary) -> void:
+	if int(record.get("sender_id", 0)) != Global.player_id:
+		AudioManager.play("msg_received")
 	_nearby.append(record)
 	if not visible or not chat.visible or mode.selected != 0:
 		_unread_channels["nearby"] = int(_unread_channels.get("nearby", 0)) + 1
@@ -644,6 +647,10 @@ func _direct_message(record: Dictionary) -> void:
 	if records.size() > 200:
 		records.pop_front()
 	_private[other] = records
+	# _direct_message also runs for the message this client just sent, which
+	# already played msg_sent, so only the incoming side makes a sound.
+	if int(record["sender_id"]) != Global.player_id:
+		AudioManager.play("msg_received")
 	if int(record["sender_id"]) != Global.player_id and (not visible or not chat.visible or mode.selected != 1 or _target != other):
 		_unread_channels[str(other)] = int(_unread_channels.get(str(other), 0)) + 1
 		_update_unread()

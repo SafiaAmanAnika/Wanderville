@@ -52,6 +52,11 @@ func _ready() -> void:
 	_timer_label = _make_label(WoodPanel.SIZE_PANEL_TITLE)
 	add_child(_timer_label)
 
+	# The mini game brings its own looping track, so the map music steps aside
+	# for as long as the game is open.
+	AudioManager.pause_music()
+	AudioManager.start_loop("minigame_music")
+
 	# wait one frame so the containers have their final size
 	await get_tree().process_frame
 	# put the game box in the middle of the screen, timer right under it
@@ -105,6 +110,8 @@ func _update_timer_text() -> void:
 # stop the game, show a message in the middle of the screen, then close
 func _end_with_popup(caught: bool, message: String) -> void:
 	_ended = true
+	AudioManager.stop_loop("minigame_music")
+	AudioManager.play("minigame_success" if caught else "minigame_failure")
 	fish.set_physics_process(false)
 	target.set_physics_process(false)
 	var popup := PanelContainer.new()
@@ -127,6 +134,12 @@ func _end_with_popup(caught: bool, message: String) -> void:
 
 
 func _close(caught: bool) -> void:
+	# Esc gives up part way through: no popup ran, so the failure sound is
+	# played here instead.
+	if AudioManager.is_looping("minigame_music"):
+		AudioManager.stop_loop("minigame_music")
+		AudioManager.play("minigame_failure")
+	AudioManager.resume_music()
 	_ended = true
 	get_tree().paused = false
 	finished.emit(caught, fish_code)

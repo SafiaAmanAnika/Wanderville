@@ -40,6 +40,7 @@ func _update_animation(input: Vector2):
 		_stand_still()
 		return
 	
+	AudioManager.start_loop("walk", -6.0)
 	# Play animation based on direction
 	var run_anim := _get_direction_animation(input)
 	_facing = run_anim.trim_prefix("run_")
@@ -56,6 +57,7 @@ func _update_animation(input: Vector2):
 
 # New characters have idle animations; the old girl doesn't, so she just stops
 func _stand_still() -> void:
+	AudioManager.stop_loop("walk")
 	var idle := "idle_" + _facing
 	if anim.sprite_frames.has_animation(idle):
 		if anim.animation != idle:
@@ -89,3 +91,7 @@ func _get_direction_animation(input: Vector2) -> String:
 		return "run_north"
 	else:
 		return "run_north_east"
+
+
+func _exit_tree() -> void:
+	AudioManager.stop_loop("walk")

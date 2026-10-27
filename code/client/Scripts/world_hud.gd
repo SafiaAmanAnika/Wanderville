@@ -3,6 +3,7 @@ extends CanvasLayer
 var active := ""
 var _switching := false
 var _notice_unread := 0
+var _badges_polled := false
 var _request_count := 0
 var _toast_version := 0
 var _error_version := 0
@@ -104,6 +105,7 @@ func _counters() -> void:
 
 
 func _show_level_up(previous: Dictionary, current: Dictionary) -> void:
+	AudioManager.play("level_up")
 	var old_level := int(previous.get("level", 1))
 	var level := int(current.get("level", 1))
 	var gained_slots := int(current.get("slot_increment", 0)) - int(previous.get("slot_increment", 0))
@@ -134,6 +136,7 @@ func _show_level_up(previous: Dictionary, current: Dictionary) -> void:
 
 
 func _show_action_error(message: String) -> void:
+	AudioManager.play("notification")
 	%ActionError.text = message
 	%ActionError.show()
 	_error_version += 1
@@ -149,7 +152,13 @@ func _refresh_badges() -> void:
 	# One bounded inbox read; the Social Lobby recomputes the rest when opened.
 	var response: Dictionary = await APIClient.authenticated(HTTPClient.METHOD_GET, "/notifications?limit=1")
 	if response.get("ok", false) and not response.get("stale", false):
-		_notice_unread = int(APIClient.data_of(response).get("unread_count", 0))
+		var unread := int(APIClient.data_of(response).get("unread_count", 0))
+		# Only a notice that arrived while playing makes a sound. The first poll
+		# of a session just reports the backlog, which must stay silent.
+		if _badges_polled and unread > _notice_unread:
+			AudioManager.play("notification")
+		_badges_polled = true
+		_notice_unread = unread
 	response = await APIClient.authenticated(HTTPClient.METHOD_GET, "/social/requests")
 	if response.get("ok", false) and not response.get("stale", false):
 		_request_count = 0
@@ -166,6 +175,7 @@ func _clear_account() -> void:
 	%ActionError.hide()
 	_notice_unread = 0
 	_request_count = 0
+	_badges_polled = false
 	%SocialButton.queue_redraw()
 	active = ""
 	%Settings.hide()

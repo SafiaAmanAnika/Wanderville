@@ -62,10 +62,12 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	if fishing:
 		velocity = Vector2.ZERO
+		_set_walking(false)
 		return
 	if _busy or GameState.menu_open or GameState.social_open \
 			or get_viewport().gui_get_focus_owner() is LineEdit:
 		velocity = Vector2.ZERO
+		_set_walking(false)
 		if not _busy:
 			_play_if_new("idle_" + facing)
 		return
@@ -81,8 +83,25 @@ func _physics_process(_delta: float) -> void:
 		_play_if_new("run_" + facing)
 	else:
 		_play_if_new("idle_" + facing)
+	_set_walking(input != Vector2.ZERO)
 	velocity = input * SPEED
 	move_and_slide()
+
+
+# Footsteps run as one looping sound that is switched on and off, rather than a
+# one-shot per step, so they never pile up. Only this client's player is heard.
+func _set_walking(moving: bool) -> void:
+	if not use_saved_appearance:
+		return
+	if moving:
+		AudioManager.start_loop("walk", -6.0)
+	else:
+		AudioManager.stop_loop("walk")
+
+
+func _exit_tree() -> void:
+	if use_saved_appearance:
+		AudioManager.stop_loop("walk")
 
 
 # Call this from farming/fishing code, e.g. player.play_action("water")

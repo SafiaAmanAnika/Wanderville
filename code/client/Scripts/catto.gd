@@ -6,6 +6,8 @@ const FOLLOW_DISTANCE = 250.0
 const IDLE_TIME_TO_LICK = 2.0
 const IDLE_TIME_TO_SLEEP = 5.0
 
+const PET_SOUND := preload("res://Scripts/pet_sound.gd")
+
 @onready var player: CharacterBody2D = $"../girl"
 @onready var anim: AnimatedSprite2D = $Catto
 
@@ -16,6 +18,10 @@ func _ready():
 		print("Could not find girl node!")
 	else:
 		global_position = player.global_position + Vector2(50, 0)
+	# Occasional meows while idle, plus one whenever you click the cat.
+	var voice := PET_SOUND.new()
+	voice.sound = "meow"
+	add_child(voice)
 
 func _physics_process(delta: float) -> void:
 	if not is_instance_valid(player) or not player.is_in_group("player"):

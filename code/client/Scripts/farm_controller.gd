@@ -313,6 +313,7 @@ func _till(tile_pos: Vector2i):
 	if Global.is_logged_in():
 		await _server_action("till", tile_pos, _key(tile_pos))
 		return
+	AudioManager.play("till")
 	_draw_soil(tile_pos)
 
 
@@ -326,6 +327,7 @@ func _on_seed_selected(seed_name: String) -> void:
 	if Global.is_logged_in():
 		await _server_action("plant", _pending_tile_pos, _pending_key, seed_name)
 		return
+	AudioManager.play("plant")
 	GameState.seed_inventory[seed_name] = int(GameState.seed_inventory.get(seed_name, 0)) - 1
 	GameState.seed_changed.emit(seed_name)
 	active_crops[_pending_key] = {"type": seed_name, "stage": 0, "watered": false}
@@ -339,6 +341,7 @@ func _water(tile_pos: Vector2i, key: String):
 	if not GameState.spend_water(1):
 		_toast("No water - refill at the pond (Q)", tile_pos)
 		return
+	AudioManager.play("water_crop")
 	active_crops[key].watered = true
 	var anim = get_node_or_null("CropVisual_" + key + "/AnimatedSprite2D")
 	if anim:
@@ -349,6 +352,7 @@ func _harvest(tile_pos: Vector2i, key: String):
 	if Global.is_logged_in():
 		await _server_action("harvest", tile_pos, key)
 		return
+	AudioManager.play("harvest")
 	var crop_type: String = active_crops[key].type
 	_remove_crop_visual(key)
 	active_crops.erase(key)
@@ -518,6 +522,7 @@ func _server_action(action: String, tile: Vector2i, key: String, seed: String = 
 	if version != Global.session_version:
 		return
 	if bool(response.get("ok", false)):
+		AudioManager.play("water_crop" if action == "water" else action)
 		var data: Variant = APIClient.data_of(response)
 		if data is Dictionary:
 			_apply_plot(data.get("plot", data))

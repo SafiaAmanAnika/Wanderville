@@ -69,6 +69,9 @@ func transition_to(scene_path: String) -> void:
 	await fade_out.finished
 
 	get_tree().change_scene_to_file(scene_path)
+	# Each scene owns its background track; a scene that has none stops the
+	# previous one, so leaving the marketplace ends the fair noise by itself.
+	AudioManager.music_for_scene(scene_path)
 	# Let the destination build and initialise its camera while it is hidden.
 	await get_tree().process_frame
 	await get_tree().process_frame

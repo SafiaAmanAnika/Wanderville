@@ -42,6 +42,9 @@ func hide_text() -> void:
 
 
 func flash(text: String, seconds := 2.5) -> void:
+	# flash() is the game-wide toast, so this one line covers every pop-up
+	# message: marketplace, housing, storage, farming.
+	AudioManager.play("notification")
 	show_text(text)
 	_flash_id += 1
 	var my_id := _flash_id

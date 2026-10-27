@@ -178,4 +178,6 @@ func _on_login() -> void:
 
 
 func _on_exit() -> void:
-	get_tree().quit()
+	# quit_game() plays the exit sound and waits for it before closing the
+	# window; get_tree().quit() would cut it off straight away.
+	AudioManager.quit_game()

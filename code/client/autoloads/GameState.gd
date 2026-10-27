@@ -149,7 +149,13 @@ func _apply_data(kind: String, data: Dictionary) -> void:
 		"session":
 			apply_session(data)
 		"economy":
+			# Compared before the swap so only a rise in the balance is heard,
+			# and never on the first load of a session.
+			var earned: bool = not _loading and not economy.is_empty() \
+					and int(data.get("aura_balance", 0)) > int(economy.get("aura_balance", 0))
 			economy = data
+			if earned:
+				AudioManager.play("aura")
 			economy_updated.emit(data)
 		"experience":
 			var previous := experience

@@ -23,6 +23,7 @@ var world_state: Dictionary = {}
 var farm_plots: Array = []
 var owned_world: Dictionary = {}
 var visit_session: Dictionary = {}
+var farm_world_id := 0
 var read_only := false
 var backend_ready := false
 var last_error := ""
@@ -71,6 +72,7 @@ func reset() -> void:
 	world_state.clear()
 	owned_world.clear()
 	visit_session.clear()
+	farm_world_id = 0
 	_set_read_only(false)
 	water_drops = 0
 	menu_open = false
@@ -182,6 +184,7 @@ func _apply_data(kind: String, data: Dictionary) -> void:
 			_world_received_at = Time.get_ticks_msec() / 1000.0
 			world_updated.emit(data)
 		"farm":
+			farm_world_id = int(data.get("world_id", 0))
 			farm_plots = data.get("plots", [])
 			farm_updated.emit(farm_plots)
 
@@ -199,11 +202,8 @@ func current_world_id() -> int:
 
 
 func desired_world_id() -> int:
-	# Which world the socket should be standing in. The campus is where
-	# everybody lives by default, so a player who is not visiting stays there
-	# and only an accepted visit moves them into somebody else's world. Zero
-	# means the campus; the server derives the room from it.
-	return current_world_id() if is_visiting() else 0
+	# Both owners and accepted visitors enter their resolved private farm room.
+	return current_world_id()
 
 
 func apply_session(session: Dictionary) -> void:

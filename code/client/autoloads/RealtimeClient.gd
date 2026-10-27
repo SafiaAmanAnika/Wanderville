@@ -53,11 +53,13 @@ var _room := ""
 # permission for. It is a request, never a claim: the server answers with the
 # room it actually put us in.
 var _wanted_owner_id := 0
+var _lobby_mode := false
 
 
 func _enter_payload() -> Dictionary:
 	# The campus is requested by omission: the server treats a missing owner_id
 	# as "no farm", and a literal 0 would fail validation.
+	if _lobby_mode: return {"location":"social_lobby"}
 	return {} if _wanted_owner_id <= 0 else {"owner_id": _wanted_owner_id}
 
 
@@ -65,8 +67,9 @@ func enter_world(owner_id: int) -> void:
 	# Switching rooms is a server-side decision: the socket has to re-enter with
 	# the world the player just resolved, and only an accepted invitation or
 	# ownership will be honoured.
-	if _wanted_owner_id == owner_id:
+	if _wanted_owner_id == owner_id and not _lobby_mode:
 		return
+	_lobby_mode = false
 	_wanted_owner_id = owner_id
 	_correct_position = true
 	_sequence = 0
@@ -75,6 +78,15 @@ func enter_world(owner_id: int) -> void:
 	if connected:
 		_send("enter", _enter_payload())
 
+
+func enter_lobby() -> void:
+	_lobby_mode = true
+	_correct_position = true
+	_force_position_correction = true
+	_sequence = 0
+	_pending_sequence = 0
+	_acknowledged_sequence = 0
+	if connected: _send("enter", _enter_payload())
 
 func restore_own_world() -> void:
 	# Back to where every non-visiting player belongs: the shared campus. The
@@ -174,7 +186,7 @@ func _process(delta: float) -> void:
 		# The server opens the socket in the campus room by default. If this
 		# player belongs somewhere else right now, ask for it explicitly before
 		# the first frame is applied, so we never render the wrong world.
-		if _wanted_owner_id > 0:
+		if _wanted_owner_id > 0 or _lobby_mode:
 			_send("enter", _enter_payload())
 	while _socket != null and _socket.get_available_packet_count() > 0:
 		var packet: Variant = JSON.parse_string(_socket.get_packet().get_string_from_utf8())
@@ -197,6 +209,8 @@ func _process(delta: float) -> void:
 func _send_movement(delta: float) -> void:
 	_move_elapsed += delta
 	if not external_movement and not pause_movement and _move_elapsed >= 0.2 and _sequence - _acknowledged_sequence < MAX_IN_FLIGHT_MOVES:
+		if _lobby_mode and _room != "social_lobby": return
+		if not _lobby_mode and _room != "world:%d" % GameState.current_world_id(): return
 		_move_elapsed = 0.0
 		var player := get_tree().get_first_node_in_group("player") as Node2D
 		if player != null and player.global_position != _last_sent_position:
@@ -233,7 +247,7 @@ func _handle_packet(packet: Dictionary) -> void:
 			# The host kicked us, went offline, or the slot was swept. The campus
 			# is where every non-visiting player belongs, so that is where this
 			# puts us rather than a room whose permission may already be gone.
-			_wanted_owner_id = 0
+			_wanted_owner_id = GameState.owning_world_id()
 			_correct_position = true
 			_sequence = 0
 			_pending_sequence = 0
@@ -275,8 +289,9 @@ func _handle_packet(packet: Dictionary) -> void:
 		_seen_messages.clear()
 		_room = room
 		room_changed.emit(_room)
-	if data.get("session") is Dictionary:
+	if data.get("session") is Dictionary and ((_lobby_mode and room == "social_lobby") or (not _lobby_mode and room == "world:%d" % _wanted_owner_id)):
 		GameState.apply_session(data["session"])
+		if not _lobby_mode: _wanted_owner_id = GameState.desired_world_id()
 	for entry in players:
 		if int(entry.get("player_id", 0)) == Global.player_id:
 			var accepted := int(entry.get("sequence", 0))
@@ -288,7 +303,7 @@ func _handle_packet(packet: Dictionary) -> void:
 				_correct_position = false
 				_retry_delay = 1.0
 				_set_connected(true)
-			elif _correct_position:
+			elif _correct_position and ((_lobby_mode and room == "social_lobby") or (not _lobby_mode and room == "world:%d" % _wanted_owner_id)):
 				var player := get_tree().get_first_node_in_group("player") as Node2D
 				if player != null:
 					var target := Vector2(float(entry["x"]), float(entry["y"]))

@@ -438,6 +438,12 @@ func _invitation_action(action: String) -> void:
 	var success_message := "Invitation declined."
 
 	if action == "accept":
+		var accepted_visit: Variant = APIClient.data_of(response)
+		if not accepted_visit is Dictionary:
+			status.text = "The server did not return the destination farm."
+			return
+		var host_world := int(accepted_visit.get("world_id", 0))
+		var arrival := Vector2(float(accepted_visit.get("spawn_x", 0)), float(accepted_visit.get("spawn_y", 0)))
 		var session_response: Dictionary = await APIClient.visit_session()
 
 		if version != Global.session_version: return
@@ -456,13 +462,13 @@ func _invitation_action(action: String) -> void:
 				await GameState.refresh_gameplay()
 
 				if version != Global.session_version: return
-				if GameState.is_visiting():
+				if GameState.is_visiting() and host_world > 0 and GameState.current_world_id() == host_world and GameState.farm_world_id == host_world:
 					# Accepting from a lobby must also leave the room and display the host's farm.
 					set_open(false)
 					GameState.menu_open = false
-					SceneManager.goto_world()
+					SceneManager.goto_visited_world(host_world, arrival)
 					return
-				success_message = "The visit ended before the farm could be opened."
+				success_message = "The host farm could not be loaded. Please reopen Farm invitations and try again."
 			else:
 				success_message = (
 					"Invitation accepted, but the visit "
@@ -623,7 +629,10 @@ func _leave_farm() -> void:
 		# never left showing our avatar in it.
 		APIClient.realtime.restore_own_world()
 		await GameState.refresh_gameplay()
-		status.text = "You are back on your own farm."
+		set_open(false)
+		GameState.menu_open = false
+		SceneManager.goto_world()
+		return
 	else:
 		status.text = APIClient.error_text(response)
 	_actions()

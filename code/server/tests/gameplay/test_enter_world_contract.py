@@ -132,9 +132,9 @@ def test_owner_may_enter_their_own_farm_by_player_id():
     )
 
 
-def test_owner_defaults_to_the_campus():
+def test_owner_defaults_to_their_private_farm():
     session = owner_session()
-    assert RealtimeService.room_for(None, session) == CAMPUS_ROOM
+    assert RealtimeService.room_for(None, session) == world_room(OWN_WORLD)
 
 
 def test_friendship_alone_is_not_entry():
@@ -142,3 +142,40 @@ def test_friendship_alone_is_not_entry():
     session = owner_session()
     with pytest.raises(Forbidden, match="Accept a farm invitation"):
         RealtimeService.room_for(None, session, owner_id=HOST_WORLD)
+
+def test_different_owners_never_share_the_default_room():
+    first = owner_session()
+    second = replace(first, player_id=77, owned_world_id=123, current_world_id=123)
+    assert RealtimeService.room_for(None, first) != RealtimeService.room_for(None, second)
+
+
+def test_lobby_presence_is_separate_from_private_farms(client, account):
+    first, second = account(), account("lobby_second")
+    def data(response):
+        assert response.status_code == 200, response.text
+        return response.json()["data"]
+    one = data(client.post("/realtime/enter", headers=first.headers, json={"location":"social_lobby"}))
+    two = data(client.post("/realtime/enter", headers=second.headers, json={"location":"social_lobby"}))
+    assert one["room"] == two["room"] == "social_lobby"
+    snapshot = data(client.get("/realtime/snapshot", headers=first.headers))
+    assert {row["player_id"] for row in snapshot["players"]} == {first.id, second.id}
+    assert all(row["username"] and row["character_code"] for row in snapshot["players"])
+    mine = data(client.post("/realtime/enter", headers=first.headers, json={}))
+    theirs = data(client.post("/realtime/enter", headers=second.headers, json={}))
+    assert mine["room"] != theirs["room"]
+    snapshot = data(client.get("/realtime/snapshot", headers=first.headers))
+    assert {row["player_id"] for row in snapshot["players"]} == {first.id}
+
+
+def test_websocket_can_switch_between_lobby_and_owned_farm(client, account):
+    user = account()
+    with client.websocket_connect("/realtime/ws") as socket:
+        socket.send_json({"type":"auth", "token":user.tokens["access_token"]})
+        own = socket.receive_json()["data"]
+        assert own["room"].startswith("world:")
+        socket.send_json({"type":"enter", "data":{"location":"social_lobby"}})
+        lobby = socket.receive_json()["data"]
+        assert lobby["room"] == "social_lobby"
+        socket.send_json({"type":"enter", "data":{}})
+        returned = socket.receive_json()["data"]
+        assert returned["room"] == own["room"]

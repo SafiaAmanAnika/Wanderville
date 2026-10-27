@@ -1,22 +1,9 @@
 """Realtime presence, scoped to a world room.
 
-Rooms come in two kinds, and the difference is the whole point:
-
-``campus``
-    The pre-existing shared map. It has no persistent per-player world data --
-    fishing spots and water sources are keyed by item/spot code, not by world --
-    so it stays a shared room exactly as before.
-
-``world:{world_id}``
-    A persistent world. Used for a player's own farm, and for the farm of
-    somebody they are currently visiting. The key names the *world*, not the
-    owner, so "I am standing in world 7" stops implying "I own world 7".
-
-A caller cannot choose a room by asking for it. ``enter`` derives the room from
-the server-held session: an ACTIVE visit session sends them to that host's
-world, otherwise they land on the campus (or, on request, their own world).
-Naming somebody else's world as a visitor is rejected -- the only way into
-another farm is an accepted invitation.
+The social lobby uses ``social_lobby`` for shared presence and movement.
+A player's persistent farm uses ``world:{world_id}``. By default the server
+resolves their owned world; only an active accepted visit selects a host world.
+Explicit lobby admission never grants access to another player's farm data.
 
 Snapshot reads are scoped by the caller's own room row, so a player can only ever
 receive presence for the room they are standing in. Movement is validated against
@@ -36,6 +23,7 @@ Two properties this module deliberately keeps from the existing design:
 """
 
 import math
+from sqlalchemy import select
 import hashlib
 from app.core.config import settings
 from app.modules.social.community_models import ChatReceipt
@@ -101,7 +89,7 @@ class RealtimeService:
           "my own farm";
         * otherwise, naming a *different* player or world is refused, since
           friendship alone must not be a key to another player's world;
-        * otherwise the shared campus, which is what an unaffiliated player gets.
+        * otherwise their own persistent farm; ordinary players never share a room.
 
         ``owner_id`` is a historical name for the host player's id, but the
         Godot client fills it from ``GameState.desired_world_id()``, which is a
@@ -125,13 +113,13 @@ class RealtimeService:
             return world_room(session.owned_world_id)
         if owner_id is not None:
             raise Forbidden("Accept a farm invitation before visiting")
-        return CAMPUS_ROOM
+        return world_room(session.owned_world_id)
 
-    def enter(self, pid, owner_id=None):
+    def enter(self, pid, owner_id=None, location="farm"):
         """Join the realtime room the server says this caller belongs in."""
         with transaction(self.db):
             session = resolve(self.db, pid)
-            room = self.room_for(session, owner_id)
+            room = "social_lobby" if location == "social_lobby" else self.room_for(session, owner_id)
 
             row = self.repo.get(Presence, pid, False)
             if row and row.room == room:
@@ -188,6 +176,9 @@ class RealtimeService:
         coordinates; that is what stops a visitor spawning inside the host's
         buildings or outside the map.
         """
+        if room == "social_lobby":
+            import secrets
+            return float(760 + secrets.randbelow(400)), 600.0
         if not is_world_room(room):
             return CAMPUS_SPAWN
         world = WorldRepository(self.db).by_id(room_world_id(room))
@@ -229,13 +220,12 @@ class RealtimeService:
         socket was still up, their room no longer matches, and this is the frame
         that tells the client to come back out.
         """
-        if is_world_room(row.room) or session.is_visitor:
-            if row.room != world_room(session.current_world_id):
-                raise AppError(
-                    "VISIT_ENDED",
-                    "You are no longer visiting this farm",
-                    409,
-                )
+        if row.room != "social_lobby" and row.room != world_room(session.current_world_id):
+            raise AppError(
+                "VISIT_ENDED",
+                "Your farm room changed. Enter your current farm again.",
+                409,
+            )
 
     def active(self, pid, session=None):
         """The caller's live presence row, or the reason they no longer have one.
@@ -329,10 +319,12 @@ class RealtimeService:
                 > settings.max_move_speed * elapsed + 5
             ):
                 raise AppError("MOVEMENT_TOO_FAST", "Movement exceeds allowed speed")
-            if row.room == CAMPUS_ROOM and blocked_segment(
+            if row.room != "social_lobby" and blocked_segment(
                 current.x, current.y, request.x, request.y
             ):
                 raise AppError("COLLISION", "Movement crosses a blocked campus polygon")
+            if row.room == "social_lobby" and not (150 <= request.x <= 1770 and 340 <= request.y <= 930):
+                raise AppError("COLLISION", "Movement leaves the lobby floor")
             now = utcnow()
             if memory:
                 position_projection.commit(
@@ -532,6 +524,19 @@ class RealtimeService:
             if not other.emote_until or as_utc(other.emote_until) < utcnow():
                 item["emote"] = None
             visible.append(item)
+        from app.modules.players.models import Player
+        from app.modules.profile.models import PlayerProfile
+        identities = self.db.execute(
+            select(Player.id, Player.username, PlayerProfile.character_code)
+            .outerjoin(PlayerProfile, PlayerProfile.player_id == Player.id)
+            .where(Player.id.in_([item["player_id"] for item in visible]))
+        ).all() if visible else []
+        names = {identity.id: identity for identity in identities}
+        for item in visible:
+            identity = names.get(item["player_id"])
+            if identity:
+                item["username"] = identity.username
+                item["character_code"] = identity.character_code or "farmer_female"
         messages = self.repo.messages(pid, row.room, row.room_epoch)
         return {
             "players": visible,

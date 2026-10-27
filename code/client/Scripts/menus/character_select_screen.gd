@@ -6,4 +6,4 @@ func _ready() -> void:
 	editor=preload("res://Scripts/customization/creator_panel.gd").new()
 	add_child(editor); editor.begin("first_time")
 	editor.close_requested.connect(SceneManager.goto_title)
-	editor.saved.connect(func(_code: String): SceneManager.goto_world())
+	editor.saved.connect(func(_code: String): SceneManager.goto_social_lobby())

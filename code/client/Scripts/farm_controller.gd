@@ -8,7 +8,7 @@ extends Node2D
 #   E on a tile      -> pick the whole tile up (soil + crop)
 #   E again          -> put it down on the hovered free spot (or back where it was)
 
-@onready var farm_layer: TileMapLayer = $"../Map/FarmLayer"
+@onready var farm_layer: TileMapLayer = $"../Map/FarmField/FarmLayer"
 @onready var seed_picker = $SeedPickerMenu
 
 # Server pins the grid at 17 x 21 (farming/service.py: 0 <= x <= 16, 0 <= y <= 20)

@@ -52,7 +52,7 @@ def get_sales(
     player_id: int = Depends(get_current_player_id),
     db: Session = Depends(get_db),
 ):
-    return success(MarketService(db).sales(shop_id))
+    return success(MarketService(db).sales(player_id, shop_id))
 
 
 @router.post("/listings")

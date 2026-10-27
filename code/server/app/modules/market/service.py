@@ -132,7 +132,10 @@ class MarketService:
                 self.db.delete(row)
             return public(sale)
 
-    def sales(self, shop_id):
+    def sales(self, player_id, shop_id):
+        # Sales name the buyers, so only the shop's owner may read them.
+        if self.repo.get(PlayerShop, shop_id).owner_id != player_id:
+            raise AppError("SHOP_NOT_OWNER", "Only the owner can see this shop's sales", 403)
         rows = self.repo.list(
             ShopSale, ShopSale.shop_id == shop_id, limit=100, order=ShopSale.id.desc()
         )

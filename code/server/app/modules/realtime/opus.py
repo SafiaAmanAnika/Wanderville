@@ -13,7 +13,10 @@ is told which encoding is in use, so the two ends never disagree about the
 bytes on the wire.
 """
 
-import av
+try:
+    import av
+except ImportError:  # pragma: no cover - voice requirements not installed
+    av = None
 
 SAMPLE_RATE = 48000
 FRAME_SAMPLES = 960
@@ -38,6 +41,8 @@ class OpusEncoder:
     """
 
     def __init__(self, bitrate=24000, application="voip"):
+        if av is None:
+            raise OpusUnavailable("PyAV is not installed")
         try:
             context = av.CodecContext.create("libopus", "w")
             # Constant bitrate, so the cost of a listener is exactly the

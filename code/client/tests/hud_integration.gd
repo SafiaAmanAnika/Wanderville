@@ -29,6 +29,8 @@ func shot(name: String) -> void:
 func open_storage(section := "") -> Node:
 	var menu: Node = load("res://Scripts/inventory/storage_menu.gd").new()
 	menu.start_section = section
+	# The bag itself is view-only; the trade controls are what these checks drive.
+	menu.mode = "trade"
 	stage.add_child(menu)
 	return menu
 
@@ -264,9 +266,21 @@ func _run() -> void:
 	# loading the supplied large map. The controller retains its world coordinates.
 	var map := Node2D.new()
 	map.name = "Map"
+	var field := Node2D.new()
+	field.name = "FarmField"
+	map.add_child(field)
 	var layer := TileMapLayer.new()
 	layer.name = "FarmLayer"
-	map.add_child(layer)
+	field.add_child(layer)
+	# The controller sizes its 17 x 21 grid from this rectangle, as in map2.tscn.
+	var zone := Area2D.new()
+	zone.name = "FarmZone"
+	field.add_child(zone)
+	var zone_shape := CollisionShape2D.new()
+	zone_shape.name = "CollisionShape2D"
+	zone_shape.shape = RectangleShape2D.new()
+	zone_shape.shape.size = Vector2(17, 21) * 50.0
+	zone.add_child(zone_shape)
 	stage.add_child(map)
 	var farm := Node2D.new()
 	farm.set_script(load("res://Scripts/farm_controller.gd"))

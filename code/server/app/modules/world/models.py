@@ -44,13 +44,14 @@ class PlayerWorld(Timestamps, Base):
     )
     name: Mapped[str] = mapped_column(String(64), server_default="My World")
     # Where a visitor appears when they enter this farm. Visitors never spawn
-    # from their own world coordinates, so this defaults to the shared spawn
-    # point rather than the map origin.
+    # from their own world coordinates. WorldRepository always writes the live
+    # CAMPUS_SPAWN; the database default is the retired map's entrance, which
+    # RealtimeService remaps, so it does not drift whenever the map is edited.
     farm_entrance_x: Mapped[float] = mapped_column(
-        Float, nullable=False, server_default=str(CAMPUS_SPAWN[0])
+        Float, nullable=False, server_default="7377.0"
     )
     farm_entrance_y: Mapped[float] = mapped_column(
-        Float, nullable=False, server_default=str(CAMPUS_SPAWN[1])
+        Float, nullable=False, server_default="-891.0"
     )
     # Admission cap, owned and enforced by the host's world row. 5 is the
     # product maximum; 1 lets a host close their farm down without deletion.

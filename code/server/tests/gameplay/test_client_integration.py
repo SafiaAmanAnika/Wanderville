@@ -27,7 +27,7 @@ def test_google_browser_code_exchange_validates_nonce_and_keeps_secret_server_si
         return SimpleNamespace(raise_for_status=lambda: None, json=lambda: {"id_token": "signed-token"})
 
     monkeypatch.setattr(oauth.requests, "post", exchange)
-    monkeypatch.setattr(oauth.id_token, "verify_oauth2_token", lambda *_: {
+    monkeypatch.setattr(oauth.id_token, "verify_oauth2_token", lambda *_, **__: {
         "sub": "browser-user", "email": "browser@gmail.com", "email_verified": True,
         "nonce": "n" * 64,
     })

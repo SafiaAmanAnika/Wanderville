@@ -840,7 +840,7 @@ def diagnose(server, clients) -> str:
 # ── movement helpers ───────────────────────────────────────────────────────
 
 #: The exported campus, the same file the backend and CampusCollision use.
-CAMPUS_GEOMETRY = json.loads((SERVER / "app/modules/world/geometry.json").read_text())
+CAMPUS_GEOMETRY = json.loads((SERVER / "app/modules/world/geometry.json").read_text(encoding="utf-8"))
 
 #: The campus spawn the server and clients both use, read from the export of
 #: world.tscn so it cannot drift from CampusCollision.CAMPUS_SPAWN.

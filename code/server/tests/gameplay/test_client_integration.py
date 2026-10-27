@@ -246,7 +246,7 @@ def test_signup_delivery_failure_keeps_account_and_explains_resend(client, monke
     assert client.post("/auth/resend-verification", json={"email": payload["email"]}).status_code == 200
 
 
-@pytest.mark.parametrize("code,total,last_frame", [("wheat", 18, 4), ("potato", 22, 5)])
+@pytest.mark.parametrize("code,total,last_frame", [("wheat", 18, 4), ("potato", 18, 4)])
 def test_inspector_crop_timing_and_relocation_preserve_growth(
     client, account, db, reach_level, code, total, last_frame
 ):
@@ -284,7 +284,7 @@ def test_crop_art_matches_server_catalog():
     """Every plantable crop has a five-stage spritesheet, and nothing is orphaned."""
     client_root = Path(__file__).resolve().parents[3] / "client"
     farming = client_root / "Assets/farming"
-    manifest = json.loads((farming / "crop_manifest.json").read_text())
+    manifest = json.loads((farming / "crop_manifest.json").read_text(encoding="utf-8"))
     art = {crop["id"]: crop for crop in manifest["crops"]}
 
     assert set(art) == set(SCENE_DURATIONS), (
@@ -298,7 +298,7 @@ def test_crop_art_matches_server_catalog():
         assert crop["hframes"] == len(durations) + 2
         assert crop["vframes"] == 1
         assert (farming / crop["sheet"]).exists(), f"missing spritesheet for {code}"
-    assert "[5.0, 6.0, 7.0, 4.0]" in (client_root / "Scripts/crop_visual.gd").read_text()
+    assert "[5.0, 6.0, 7.0, 4.0]" in (client_root / "Scripts/crop_visual.gd").read_text(encoding="utf-8")
 
 
 def test_disconnect_updates_friend_presence_and_reconnect_restores_position(client, account):

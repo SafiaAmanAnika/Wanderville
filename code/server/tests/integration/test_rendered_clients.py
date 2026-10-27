@@ -68,6 +68,7 @@ def _launch(user: dict, secret: str, port: int, workdir: Path, shots: Path):
         "TEST_PORT": str(port),
         "TEST_SCREENSHOT_DIR": str(shots),
         "TEST_SCENARIO": "presence",
+        "TEST_SCENARIO_SYNC_DIR": str(workdir),
         "TEST_EXPECT_ROSTER": "2",
     })
     log = workdir / f"rendered-{user['username']}.log"

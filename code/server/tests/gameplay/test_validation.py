@@ -144,7 +144,7 @@ def test_remove_unblock_trade_cancel_decline_and_missing_offer(client, account, 
     ok(client.post(f"/social/blocks/{b.id}/remove", headers=a.headers))
     friends(client, a, b)
     payload = {"target_id": b.id, "request_id": "missing_offer", "offered_code": "wheat",
-               "offered_quantity": 1, "wanted_code": "corn", "wanted_quantity": 1}
+               "offered_quantity": 1, "wanted_code": "sweet_corn", "wanted_quantity": 1}
     assert client.post("/social/trades", headers=a.headers, json=payload).json()["error"] == "INSUFFICIENT_INVENTORY"
     add(client, a, "wheat")
     for action, user in (("cancel", a), ("decline", b)):

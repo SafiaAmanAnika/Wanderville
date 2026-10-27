@@ -211,13 +211,15 @@ def test_full_inventory_keeps_mature_crop_and_first_bonus_available(farm, db):
     assert EconomyService(db).xp(user.id).total_xp == before_xp + 20
 
 
-def test_season_changes_growth_speed(farm, db):
+def test_season_changes_growth_speed(farm, db, monkeypatch):
+    from app.modules.farming.service import SCENE_DURATIONS
+    monkeypatch.delitem(SCENE_DURATIONS, "sweet_corn")
     user, service, tile_id, now = farm
     # Crops without a supplied Godot scene retain their catalog/season rules.
     from app.modules.inventory.models import ItemDefinition
     tile = db.get(FarmTile, tile_id)
-    tile.crop_item_code = "corn"
-    tile.item = db.scalar(select(ItemDefinition).where(ItemDefinition.item_code == "corn"))
+    tile.crop_item_code = "sweet_corn"
+    tile.item = db.scalar(select(ItemDefinition).where(ItemDefinition.item_code == "sweet_corn"))
     db.commit()
     service.water(user.id, tile_id, now)
     assert service.list(user.id, now + timedelta(seconds=4)).plots[

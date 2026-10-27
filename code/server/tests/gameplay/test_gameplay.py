@@ -155,9 +155,8 @@ def test_sale_collection_and_shared_capacity(client, account, db, monkeypatch):
     monkeypatch.setattr(settings, "inventory_partition_slots", 1)
     a = account()
     add(client, a, "river_carp", 2)
-    assert data(client.get("/shop/collection?fish_only=true", headers=a.headers))[1][
-        "obtained"
-    ]
+    assert next(row for row in data(client.get("/shop/collection?fish_only=true", headers=a.headers))
+                if row["item_code"] == "river_carp")["obtained"]
     result = data(
         client.post(
             "/shop/sell",
@@ -319,20 +318,20 @@ def test_gift_escrow_full_inventory_and_duplicate(client, account, db):
         == 409
     )
 
-    add(client, a, "corn", 2)
+    add(client, a, "sweet_corn", 2)
     second = data(
         client.post(
             "/social/gifts",
             headers=a.headers,
             json={
                 "target_id": b.id,
-                "item_code": "corn",
+                "item_code": "sweet_corn",
                 "quantity": 1,
                 "request_id": "gift_0002",
             },
         )
     )
-    fill_slots(db, b, exclude=("corn",))
+    fill_slots(db, b, exclude=("sweet_corn",))
     assert (
         client.post(f"/social/gifts/{second['id']}/claim", headers=b.headers).json()[
             "error"
@@ -356,12 +355,12 @@ def test_trade_atomic_failure_and_acceptance(client, account, db):
     a, b = account(), account("second_user")
     befriend(client, a, b)
     add(client, a, "wheat", 2)
-    add(client, b, "corn", 2)
+    add(client, b, "sweet_corn", 2)
     payload = {
         "target_id": b.id,
         "offered_code": "wheat",
         "offered_quantity": 2,
-        "wanted_code": "corn",
+        "wanted_code": "sweet_corn",
         "wanted_quantity": 2,
         "request_id": "trade_001",
     }
@@ -378,7 +377,7 @@ def test_trade_atomic_failure_and_acceptance(client, account, db):
         client.post(
             "/inventory/remove",
             headers=b.headers,
-            json={"item_code": "corn", "quantity": 1},
+            json={"item_code": "sweet_corn", "quantity": 1},
         )
     )
     assert (
@@ -391,7 +390,7 @@ def test_trade_atomic_failure_and_acceptance(client, account, db):
     )
     assert InventoryService(db).repo.stack(a.id, "wheat").quantity == 2
     assert db.get(Trade, trade["id"]).status == "pending"
-    add(client, b, "corn")
+    add(client, b, "sweet_corn")
     data(
         client.post(
             f"/social/trades/{trade['id']}",
@@ -400,7 +399,7 @@ def test_trade_atomic_failure_and_acceptance(client, account, db):
         )
     )
     db.expire_all()
-    assert InventoryService(db).repo.stack(a.id, "corn").quantity == 2
+    assert InventoryService(db).repo.stack(a.id, "sweet_corn").quantity == 2
     assert InventoryService(db).repo.stack(b.id, "wheat").quantity == 2
     assert (
         client.post(

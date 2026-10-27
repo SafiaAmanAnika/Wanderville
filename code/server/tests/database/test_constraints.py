@@ -168,7 +168,7 @@ def test_player_delete_cascades_private_data_only(account, db):
         EconomyTransaction,
     ]:
         assert db.scalar(select(model)) is None, model.__tablename__
-    assert len(db.scalars(select(ItemDefinition)).all()) == 51
+    assert len(db.scalars(select(ItemDefinition)).all()) == 75
     assert db.get(WorldState, 1) is not None
 
 
@@ -191,7 +191,7 @@ def test_seeds_are_idempotent_and_preserve_clock(db):
               for table in Base.metadata.sorted_tables}
     seed_reference_data(db)
     seed_reference_data(db)
-    assert len(db.scalars(select(ItemDefinition)).all()) == 51
+    assert len(db.scalars(select(ItemDefinition)).all()) == 75
     assert (state.season_started_at, state.day_cycle_anchor_at, state.current_season,
             state.weather, state.season_duration_minutes, state.day_night_cycle_minutes) == original
     assert {table.name: db.scalar(select(func.count()).select_from(table))

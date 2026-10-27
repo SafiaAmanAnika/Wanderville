@@ -44,6 +44,7 @@ func run() -> void:
 	selected.use_saved_appearance = false
 	world.add_child(selected)
 	selected.global_position = Layout.spawn()
+	selected.add_collision_exception_with(body)
 	await physics_frame
 	session.token = "isolated-spawn-check"
 	session.player_id = 918273

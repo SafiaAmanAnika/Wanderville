@@ -205,8 +205,18 @@ func _process(delta: float) -> void:
 				_screenshot("readmitted")
 				_enter("hold_after_reconnect")
 		"hold_after_reconnect":
-			if _phase_elapsed >= 2.5:
+			var wanted := maxi(2, int(OS.get_environment("TEST_EXPECT_ROSTER")))
+			if _phase_elapsed >= 2.5 and _roster.size() >= wanted:
 				_finish_scenario()
+		"await_peer_completion":
+			var directory := OS.get_environment("TEST_SCENARIO_SYNC_DIR")
+			var completed := 0
+			for file in DirAccess.get_files_at(directory):
+				if file.ends_with(".complete"):
+					completed += 1
+			if completed >= 2:
+				client.disconnect_from_server()
+				get_tree().quit(0 if _errors.is_empty() else 1)
 
 
 func _roster_reached(wanted: int) -> void:
@@ -248,6 +258,13 @@ func _finish_scenario() -> void:
 		"screenshots": _shots,
 	})
 	_screenshot("complete")
+	var directory := OS.get_environment("TEST_SCENARIO_SYNC_DIR")
+	if not directory.is_empty():
+		var marker := FileAccess.open(directory.path_join(username + ".complete"), FileAccess.WRITE)
+		marker.store_string("complete")
+		marker.close()
+		_enter("await_peer_completion")
+		return
 	client.disconnect_from_server()
 	get_tree().quit(0 if _errors.is_empty() else 1)
 

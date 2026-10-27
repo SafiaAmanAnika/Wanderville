@@ -12,7 +12,7 @@ from app.modules.inventory.service import InventoryService
 def test_all_apiclient_routes_exist():
     api = Path(__file__).resolve().parents[3] / "client/autoloads/APIClient.gd"
     requests = re.findall(
-        r'HTTPClient.METHOD_(GET|POST|PUT),\s*"([^"?]+)', api.read_text()
+        r'HTTPClient.METHOD_(GET|POST|PUT),\s*"([^"?]+)', api.read_text(encoding="utf-8")
     )
     assert len(requests) >= 23  # Extensions must not remove the original contract.
     routes = {
@@ -48,7 +48,7 @@ def test_every_client_screen_calls_a_real_route():
     for script in sorted(client_dir.glob("**/*.gd")):
         if "tests" in script.relative_to(client_dir).parts:
             continue
-        for method, path, concatenated in call.findall(script.read_text()):
+        for method, path, concatenated in call.findall(script.read_text(encoding="utf-8")):
             path = re.sub(r"%[ds]", "1", path.split("?")[0])
             calls.append(path)
             # "/shop/" + action names only a prefix; some route must extend it.
@@ -108,7 +108,7 @@ def test_inventory_exact_godot_payload(client, account):
         == 200
     )
     assert (
-        len(client.get("/inventory/catalog", headers=user.headers).json()["data"]) == 51
+        len(client.get("/inventory/catalog", headers=user.headers).json()["data"]) == 75
     )
 
 

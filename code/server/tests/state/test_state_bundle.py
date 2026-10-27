@@ -57,6 +57,10 @@ def test_bundle_matches_each_standalone_endpoint(client, planted):
     standalone_world = get(client, user, "/world/state")
     assert 0.0 <= bundle_world.pop("current_time_of_day") < 1.0
     assert 0.0 <= standalone_world.pop("current_time_of_day") < 1.0
+    from datetime import datetime
+    bundle_time = datetime.fromisoformat(bundle_world.pop("server_time"))
+    standalone_time = datetime.fromisoformat(standalone_world.pop("server_time"))
+    assert 0 <= (standalone_time - bundle_time).total_seconds() < 5
     assert bundle_world == standalone_world
     assert data["inventory"] == get(client, user, "/inventory/")
     assert data["economy"] == get(client, user, "/economy/")

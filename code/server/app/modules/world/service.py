@@ -29,6 +29,8 @@ def environment_at(state, now):
         weather = "clear"
     return WorldStateResponse(
         current_season=season,
+        server_time=as_utc(now),
+        season_end_time=anchor + timedelta(seconds=(periods + 1) * duration),
         season_start_time=anchor + timedelta(seconds=periods * duration),
         season_duration_minutes=state.season_duration_minutes,
         day_night_cycle_minutes=state.day_night_cycle_minutes,

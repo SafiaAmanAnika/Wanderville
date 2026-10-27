@@ -59,3 +59,18 @@ def test_state_does_not_seed_on_get(client, account, db):
     db.commit()
     assert client.get("/world/state", headers=user.headers).status_code == 503
     assert db.scalar(select(WorldState)) is None
+
+
+def test_all_seasons_expose_server_clock_and_weather(db):
+    state = db.get(WorldState, 1)
+    anchor = as_utc(state.season_started_at)
+    period = timedelta(minutes=state.season_duration_minutes)
+    for n in range(8):
+        now = anchor + period * n + timedelta(seconds=30)
+        result = environment_at(state, now)
+        assert result.current_season == ("summer", "autumn", "winter", "spring")[n % 4]
+        assert result.server_time == now
+        assert result.season_start_time <= now < result.season_end_time
+        assert result.season_end_time - result.season_start_time == period
+        assert result.weather in {"clear", "rain", "snow"}
+        assert result.weather != "snow" or result.current_season == "winter"

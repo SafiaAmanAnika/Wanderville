@@ -14,3 +14,8 @@ func set_tree_season(season: int) -> void:
 	autumn_trees.visible = season == 1
 	winter_trees.visible = season == 2
 	spring_trees.visible = season == 3
+
+func _ready() -> void:
+	var effects = get_node_or_null("../../SeasonalEffects")
+	if effects != null:
+		set_tree_season(effects.get_current_season())

@@ -11,7 +11,7 @@
 [ext_resource type="Script" uid="uid://dn30wkti03ron" path="res://Scripts/remote_players.gd" id="10_remote"]
 [ext_resource type="Script" uid="uid://cspawnesa832b" path="res://Scripts/character_spawner.gd" id="12_spawner"]
 [ext_resource type="Script" uid="uid://2sq7krkfclql" path="res://Scripts/housing/house_manager.gd" id="14_e0ngr"]
-[ext_resource type="Script" uid="uid://chiqj7r3xupbb" path="res://Scripts/housing/house_area.gd" id="15_hgpy0"]
+[ext_resource type="Script" path="res://Scripts/housing/house_area.gd" id="15_hgpy0"]
 [ext_resource type="PackedScene" uid="uid://bwpwbv2wlvfot" path="res://Scenes/map2.tscn" id="15_kn0ld"]
 [ext_resource type="Script" uid="uid://d02yhd6tn2y8c" path="res://Scripts/day_night_cycle.gd" id="15_t2t4p"]
 [ext_resource type="Script" uid="uid://cicq805ha0jtf" path="res://Scripts/seasonal_effects.gd" id="16_0pcbe"]
@@ -197,7 +197,6 @@ polygon = PackedVector2Array(-3417, 1176, 1821, 1176, 1809, 730, 3942, 736, 3954
 script = ExtResource("15_t2t4p")
 
 [node name="SeasonalEffects" type="Node2D" parent="." unique_id=641050426]
-visible = false
 script = ExtResource("16_0pcbe")
 
 [node name="Rain" type="GPUParticles2D" parent="SeasonalEffects" unique_id=241445472]

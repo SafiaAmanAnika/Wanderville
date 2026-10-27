@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://n2uiqloc4041"]
+
+[ext_resource type="Texture2D" uid="uid://bdefek5j8awvh" path="res://Assests_2/Trees/Summer/tree_14.png" id="1_7q171"]
+
+[node name="Tree14" type="Node2D" unique_id=480967199]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2005954371]
+z_index = 1
+y_sort_enabled = true
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1_7q171")

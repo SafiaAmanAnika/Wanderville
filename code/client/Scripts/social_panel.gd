@@ -405,6 +405,7 @@ func _invitation_action(action: String) -> void:
 		status.text = "Invalid invitation ID."
 		return
 
+	var version := Global.session_version
 	_acting = true
 	_actions()
 
@@ -425,7 +426,7 @@ func _invitation_action(action: String) -> void:
 
 	_acting = false
 
-	if response.get("stale", false):
+	if version != Global.session_version or response.get("stale", false):
 		_actions()
 		return
 
@@ -439,12 +440,13 @@ func _invitation_action(action: String) -> void:
 	if action == "accept":
 		var session_response: Dictionary = await APIClient.visit_session()
 
+		if version != Global.session_version: return
 		if bool(session_response.get("ok", false)):
 			var session_data: Variant = APIClient.data_of(
 				session_response
 			)
 
-			if session_data is Dictionary and not session_data.is_empty():
+			if session_data is Dictionary and str(session_data.get("session_mode", "")) == "VISITOR":
 				GameState.apply_session(session_data)
 
 				APIClient.realtime.enter_world(
@@ -453,10 +455,14 @@ func _invitation_action(action: String) -> void:
 
 				await GameState.refresh_gameplay()
 
-				success_message = (
-					"Invitation accepted. "
-					+ "You are visiting this farm."
-				)
+				if version != Global.session_version: return
+				if GameState.is_visiting():
+					# Accepting from a lobby must also leave the room and display the host's farm.
+					set_open(false)
+					GameState.menu_open = false
+					SceneManager.goto_world()
+					return
+				success_message = "The visit ended before the farm could be opened."
 			else:
 				success_message = (
 					"Invitation accepted, but the visit "

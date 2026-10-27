@@ -6,13 +6,21 @@ class_name ItemCatalog
 
 # crop code: [name, season, sell price]
 const CROPS := {
-	"paddy": ["Paddy", "all", 10], "wheat": ["Wheat", "all", 12], "sugarcane": ["Sugarcane", "all", 15],
-	"corn": ["Corn", "summer", 20], "cotton": ["Cotton", "summer", 18], "sweet_corn": ["Sweet Corn", "summer", 25],
-	"bell_pepper": ["Bell Pepper", "summer", 22], "green_bean": ["Green Bean", "summer", 18],
-	"pumpkin": ["Pumpkin", "autumn", 30], "apple": ["Apple", "autumn", 35], "turnip": ["Turnip", "autumn", 15],
-	"potato": ["Potato", "winter", 20], "carrot": ["Carrot", "winter", 16], "cabbage": ["Cabbage", "winter", 18],
-	"strawberry": ["Strawberry", "winter", 28], "lettuce": ["Lettuce", "spring", 14], "pea": ["Pea", "spring", 16],
-	"radish": ["Radish", "spring", 12],
+	"paddy": ["Paddy", "all", 10], "wheat": ["Wheat", "all", 12],
+	"sugarcane": ["Sugarcane", "all", 15], "barley": ["Barley", "all", 12],
+	"oats": ["Oats", "all", 12], "sweet_corn": ["Sweet Corn", "summer", 25],
+	"zucchini": ["Zucchini", "summer", 15], "bell_pepper": ["Bell Pepper", "summer", 22],
+	"strawberry": ["Strawberry", "summer", 28], "green_bean": ["Green Bean", "summer", 18],
+	"pumpkin": ["Pumpkin", "autumn", 30], "brussels_sprouts": ["Brussels Sprouts", "autumn", 26],
+	"kale": ["Kale", "autumn", 17], "apple": ["Apple", "autumn", 35],
+	"turnip": ["Turnip", "autumn", 15], "potato": ["Potato", "winter", 20],
+	"carrot": ["Carrot", "winter", 16], "cabbage": ["Cabbage", "winter", 18],
+	"spinach": ["Spinach", "winter", 12], "onion": ["Onion", "winter", 23],
+	"lettuce": ["Lettuce", "spring", 14], "pea": ["Pea", "spring", 16],
+	"radish": ["Radish", "spring", 12], "asparagus": ["Asparagus", "spring", 28],
+	"beetroot": ["Beetroot", "spring", 18], "moonflower": ["Moonflower", "all", 100],
+	"rivermint": ["Rivermint", "all", 80], "sunbloom": ["Sunbloom", "all", 90],
+	"ancient_grain": ["Ancient Grain", "all", 120]
 }
 
 # fish from the fishing mini game: [name, sell price]

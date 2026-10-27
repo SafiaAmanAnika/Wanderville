@@ -1,0 +1,2317 @@
+{
+  "frame_size": [
+    429,
+    724
+  ],
+  "sheet_size": [
+    2145,
+    724
+  ],
+  "hframes": 5,
+  "vframes": 1,
+  "planting_point": [
+    214,
+    530
+  ],
+  "soil": "soil_429x724.png",
+  "stages": [
+    "01_seed",
+    "02_sprout",
+    "03_young",
+    "04_developing",
+    "05_harvest_ready"
+  ],
+  "crops": [
+    {
+      "id": "paddy",
+      "name": "Paddy",
+      "category": "general_purpose",
+      "total_growth_seconds": 30,
+      "condition": null,
+      "sheet": "general_purpose/paddy/paddy_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            196,
+            475,
+            37,
+            55
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            155,
+            450,
+            118,
+            80
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            125,
+            362,
+            178,
+            168
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            92,
+            269,
+            245,
+            261
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            69,
+            243,
+            291,
+            287
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "wheat",
+      "name": "Wheat",
+      "category": "general_purpose",
+      "total_growth_seconds": 45,
+      "condition": null,
+      "sheet": "general_purpose/wheat/wheat_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            198,
+            482,
+            33,
+            48
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            161,
+            448,
+            107,
+            82
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            135,
+            362,
+            158,
+            168
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            113,
+            273,
+            202,
+            257
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            101,
+            243,
+            226,
+            287
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "sugarcane",
+      "name": "Sugarcane",
+      "category": "general_purpose",
+      "total_growth_seconds": 50,
+      "condition": null,
+      "sheet": "general_purpose/sugarcane/sugarcane_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            193,
+            462,
+            43,
+            68
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            157,
+            430,
+            114,
+            100
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            129,
+            360,
+            171,
+            170
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            110,
+            275,
+            209,
+            255
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            103,
+            243,
+            222,
+            287
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "barley",
+      "name": "Barley",
+      "category": "general_purpose",
+      "total_growth_seconds": 60,
+      "condition": null,
+      "sheet": "general_purpose/barley/barley_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            198,
+            483,
+            32,
+            47
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            149,
+            454,
+            131,
+            76
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            127,
+            376,
+            174,
+            154
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            112,
+            272,
+            204,
+            258
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            99,
+            242,
+            231,
+            288
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "oats",
+      "name": "Oats",
+      "category": "general_purpose",
+      "total_growth_seconds": 35,
+      "condition": null,
+      "sheet": "general_purpose/oats/oats_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            197,
+            476,
+            35,
+            54
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            156,
+            456,
+            116,
+            74
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            138,
+            351,
+            152,
+            179
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            115,
+            281,
+            199,
+            249
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            100,
+            243,
+            228,
+            287
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "sweet_corn",
+      "name": "Sweet Corn",
+      "category": "summer",
+      "total_growth_seconds": 180,
+      "condition": null,
+      "sheet": "summer/sweet_corn/sweet_corn_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            196,
+            479,
+            37,
+            51
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            160,
+            454,
+            108,
+            76
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            117,
+            351,
+            195,
+            179
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            111,
+            266,
+            206,
+            264
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            100,
+            243,
+            228,
+            287
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "zucchini",
+      "name": "Zucchini",
+      "category": "summer",
+      "total_growth_seconds": 150,
+      "condition": null,
+      "sheet": "summer/zucchini/zucchini_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            192,
+            465,
+            44,
+            65
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            159,
+            444,
+            111,
+            86
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            90,
+            366,
+            249,
+            164
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            61,
+            299,
+            307,
+            231
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            51,
+            270,
+            326,
+            260
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "bell_pepper",
+      "name": "Bell Pepper",
+      "category": "summer",
+      "total_growth_seconds": 210,
+      "condition": null,
+      "sheet": "summer/bell_pepper/bell_pepper_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            193,
+            478,
+            42,
+            52
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            146,
+            435,
+            137,
+            95
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            112,
+            346,
+            204,
+            184
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            84,
+            274,
+            261,
+            256
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            75,
+            243,
+            278,
+            287
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "strawberry",
+      "name": "Strawberry",
+      "category": "summer",
+      "total_growth_seconds": 240,
+      "condition": null,
+      "sheet": "summer/strawberry/strawberry_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            194,
+            477,
+            40,
+            53
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            157,
+            454,
+            114,
+            76
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            108,
+            369,
+            213,
+            161
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            78,
+            312,
+            273,
+            218
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            51,
+            275,
+            326,
+            255
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "green_bean",
+      "name": "Green Bean",
+      "category": "summer",
+      "total_growth_seconds": 120,
+      "condition": null,
+      "sheet": "summer/green_bean/green_bean_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            193,
+            477,
+            42,
+            53
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            149,
+            434,
+            131,
+            96
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            112,
+            346,
+            205,
+            184
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            92,
+            270,
+            244,
+            260
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            53,
+            243,
+            323,
+            287
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "pumpkin",
+      "name": "Pumpkin",
+      "category": "autumn",
+      "total_growth_seconds": 200,
+      "condition": null,
+      "sheet": "autumn/pumpkin/pumpkin_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            193,
+            473,
+            42,
+            57
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            158,
+            453,
+            113,
+            77
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            74,
+            356,
+            281,
+            174
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            55,
+            272,
+            318,
+            258
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            51,
+            257,
+            327,
+            273
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "brussels_sprouts",
+      "name": "Brussels Sprouts",
+      "category": "autumn",
+      "total_growth_seconds": 260,
+      "condition": null,
+      "sheet": "autumn/brussels_sprouts/brussels_sprouts_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            196,
+            483,
+            37,
+            47
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            156,
+            450,
+            116,
+            80
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            106,
+            371,
+            217,
+            159
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            87,
+            286,
+            254,
+            244
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            81,
+            243,
+            267,
+            287
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "kale",
+      "name": "Kale",
+      "category": "autumn",
+      "total_growth_seconds": 170,
+      "condition": null,
+      "sheet": "autumn/kale/kale_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            192,
+            489,
+            44,
+            41
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            151,
+            450,
+            127,
+            80
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            103,
+            370,
+            223,
+            160
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            81,
+            296,
+            266,
+            234
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            68,
+            243,
+            292,
+            287
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "apple",
+      "name": "Apple",
+      "category": "autumn",
+      "total_growth_seconds": 300,
+      "condition": null,
+      "sheet": "autumn/apple/apple_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            196,
+            482,
+            37,
+            48
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            162,
+            455,
+            105,
+            75
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            126,
+            354,
+            177,
+            176
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            72,
+            255,
+            285,
+            275
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            51,
+            211,
+            327,
+            319
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "turnip",
+      "name": "Turnip",
+      "category": "autumn",
+      "total_growth_seconds": 140,
+      "condition": null,
+      "sheet": "autumn/turnip/turnip_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            193,
+            479,
+            42,
+            51
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            148,
+            446,
+            132,
+            84
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            117,
+            342,
+            194,
+            188
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            67,
+            274,
+            295,
+            256
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            56,
+            243,
+            317,
+            287
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "potato",
+      "name": "Potato",
+      "category": "winter",
+      "total_growth_seconds": 220,
+      "condition": null,
+      "sheet": "winter/potato/potato_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            194,
+            474,
+            41,
+            56
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            159,
+            447,
+            110,
+            83
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            111,
+            365,
+            206,
+            165
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            76,
+            290,
+            277,
+            240
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            57,
+            242,
+            314,
+            288
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "carrot",
+      "name": "Carrot",
+      "category": "winter",
+      "total_growth_seconds": 160,
+      "condition": null,
+      "sheet": "winter/carrot/carrot_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            191,
+            479,
+            46,
+            51
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            146,
+            425,
+            136,
+            105
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            113,
+            330,
+            203,
+            200
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            79,
+            277,
+            270,
+            253
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            74,
+            243,
+            281,
+            287
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "cabbage",
+      "name": "Cabbage",
+      "category": "winter",
+      "total_growth_seconds": 190,
+      "condition": null,
+      "sheet": "winter/cabbage/cabbage_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            190,
+            466,
+            48,
+            64
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            143,
+            437,
+            143,
+            93
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            92,
+            346,
+            244,
+            184
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            71,
+            301,
+            286,
+            229
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            51,
+            275,
+            326,
+            255
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "spinach",
+      "name": "Spinach",
+      "category": "winter",
+      "total_growth_seconds": 110,
+      "condition": null,
+      "sheet": "winter/spinach/spinach_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            193,
+            473,
+            42,
+            57
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            152,
+            450,
+            124,
+            80
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            109,
+            372,
+            211,
+            158
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            73,
+            304,
+            283,
+            226
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            51,
+            268,
+            326,
+            262
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "onion",
+      "name": "Onion",
+      "category": "winter",
+      "total_growth_seconds": 230,
+      "condition": null,
+      "sheet": "winter/onion/onion_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            198,
+            484,
+            33,
+            46
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            183,
+            436,
+            63,
+            94
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            149,
+            359,
+            130,
+            171
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            126,
+            287,
+            176,
+            243
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            109,
+            242,
+            210,
+            288
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "lettuce",
+      "name": "Lettuce",
+      "category": "spring",
+      "total_growth_seconds": 100,
+      "condition": null,
+      "sheet": "spring/lettuce/lettuce_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            193,
+            474,
+            42,
+            56
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            162,
+            456,
+            104,
+            74
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            115,
+            398,
+            199,
+            132
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            81,
+            317,
+            267,
+            213
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            51,
+            277,
+            327,
+            253
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "pea",
+      "name": "Pea",
+      "category": "spring",
+      "total_growth_seconds": 130,
+      "condition": null,
+      "sheet": "spring/pea/pea_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            189,
+            483,
+            50,
+            47
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            162,
+            455,
+            104,
+            75
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            130,
+            374,
+            168,
+            156
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            104,
+            296,
+            220,
+            234
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            91,
+            243,
+            246,
+            287
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "radish",
+      "name": "Radish",
+      "category": "spring",
+      "total_growth_seconds": 90,
+      "condition": null,
+      "sheet": "spring/radish/radish_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            195,
+            479,
+            38,
+            51
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            171,
+            457,
+            86,
+            73
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            137,
+            392,
+            154,
+            138
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            94,
+            299,
+            240,
+            231
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            78,
+            243,
+            273,
+            287
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "asparagus",
+      "name": "Asparagus",
+      "category": "spring",
+      "total_growth_seconds": 280,
+      "condition": null,
+      "sheet": "spring/asparagus/asparagus_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            196,
+            480,
+            37,
+            50
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            152,
+            421,
+            125,
+            109
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            124,
+            349,
+            180,
+            181
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            108,
+            280,
+            213,
+            250
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            92,
+            243,
+            244,
+            287
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "beetroot",
+      "name": "Beetroot",
+      "category": "spring",
+      "total_growth_seconds": 180,
+      "condition": null,
+      "sheet": "spring/beetroot/beetroot_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            195,
+            489,
+            38,
+            41
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            162,
+            467,
+            105,
+            63
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            112,
+            372,
+            204,
+            158
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            89,
+            301,
+            250,
+            229
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            81,
+            243,
+            266,
+            287
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "moonflower",
+      "name": "Moonflower",
+      "category": "rare_plants",
+      "total_growth_seconds": null,
+      "condition": "Blooms at night; crafting ingredient",
+      "sheet": "rare_plants/moonflower/moonflower_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            197,
+            483,
+            35,
+            47
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            168,
+            462,
+            92,
+            68
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            140,
+            367,
+            149,
+            163
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            100,
+            294,
+            229,
+            236
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            81,
+            241,
+            267,
+            289
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "rivermint",
+      "name": "Rivermint",
+      "category": "rare_plants",
+      "total_growth_seconds": null,
+      "condition": "Grows near lakes; used for potions and food buffs",
+      "sheet": "rare_plants/rivermint/rivermint_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            194,
+            474,
+            41,
+            56
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            156,
+            455,
+            116,
+            75
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            117,
+            369,
+            194,
+            161
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            84,
+            292,
+            260,
+            238
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            63,
+            244,
+            302,
+            286
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "sunbloom",
+      "name": "Sunbloom",
+      "category": "rare_plants",
+      "total_growth_seconds": null,
+      "condition": "Boosts nearby crop growth",
+      "sheet": "rare_plants/sunbloom/sunbloom_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            192,
+            472,
+            44,
+            58
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            153,
+            446,
+            123,
+            84
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            138,
+            357,
+            153,
+            173
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            114,
+            284,
+            200,
+            246
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            100,
+            243,
+            228,
+            287
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    },
+    {
+      "id": "ancient_grain",
+      "name": "Ancient Grain",
+      "category": "rare_plants",
+      "total_growth_seconds": null,
+      "condition": "Rare high-tier crop",
+      "sheet": "rare_plants/ancient_grain/ancient_grain_growth_5stages.png",
+      "frame_size": [
+        429,
+        724
+      ],
+      "sheet_size": [
+        2145,
+        724
+      ],
+      "hframes": 5,
+      "vframes": 1,
+      "planting_point": [
+        214,
+        530
+      ],
+      "alignment_checks": [
+        {
+          "frame": 0,
+          "plant_bounds": [
+            198,
+            481,
+            32,
+            49
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 1,
+          "plant_bounds": [
+            165,
+            442,
+            98,
+            88
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 2,
+          "plant_bounds": [
+            136,
+            369,
+            156,
+            161
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 3,
+          "plant_bounds": [
+            106,
+            280,
+            217,
+            250
+          ],
+          "horizontal_center": 214.5,
+          "planting_baseline": 530
+        },
+        {
+          "frame": 4,
+          "plant_bounds": [
+            82,
+            242,
+            264,
+            288
+          ],
+          "horizontal_center": 214,
+          "planting_baseline": 530
+        }
+      ]
+    }
+  ]
+}

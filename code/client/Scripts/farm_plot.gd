@@ -59,9 +59,6 @@ func _spawn_crop():
 func _crop_color(crop_type: String) -> Color:
 	match crop_type:
 		"wheat":  return Color(0.95, 0.85, 0.4)
-		"corn":   return Color(0.9, 0.75, 0.2)
-		"cotton": return Color(0.85, 0.85, 0.9)
-		"tulip":  return Color(0.9, 0.3, 0.4)
 		"paddy":  return Color(0.7, 0.85, 0.4)
 		_:        return Color(0.6, 0.8, 0.4)
 

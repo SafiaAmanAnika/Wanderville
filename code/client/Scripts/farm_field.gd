@@ -1,4 +1,5 @@
 extends Node2D
+const CROP_ART = preload("res://Scripts/crop_catalog.gd")
 
 @export var grid_size: Vector2i = Vector2i(1, 1)
 @export var cell_size: float = 64.0
@@ -75,7 +76,8 @@ func _get_nearest_plot(player_pos: Vector2) -> Node:
 	return null
 
 func _auto_plant(plot):
-	for seed in ["wheat", "corn", "cotton", "tulip"]:
+	# Every crop that has art, so a seed can never be planted without a sprite.
+	for seed in CROP_ART.ids():
 		if GameState.seed_inventory.get(seed, 0) > 0:
 			if plot.plant(seed):
 				GameState.seed_inventory[seed] -= 1

@@ -13,11 +13,13 @@ from app.modules.economy.service import EconomyService
 from app.modules.players.repository import PlayerRepository
 from app.modules.progression.service import ProgressionService
 
-# Recovered from b310eae:code/client/autoloads/GameState.gd (pre-integration).
+# Every crop in Assets/farming/crop_manifest.json; the art is the source of truth.
 ORIGINAL_SEEDS = (
-    "paddy", "wheat", "sugarcane", "sweet_corn", "bell_pepper", "green_bean",
-    "pumpkin", "apple", "turnip", "potato", "carrot", "cabbage", "strawberry",
-    "lettuce", "pea", "radish", "moonflower", "rivermint", "sunbloom", "ancient_grain",
+    "paddy", "wheat", "sugarcane", "barley", "oats", "sweet_corn", "zucchini",
+    "bell_pepper", "strawberry", "green_bean", "pumpkin", "brussels_sprouts", "kale",
+    "apple", "turnip", "potato", "carrot", "cabbage", "spinach", "onion", "lettuce", "pea",
+    "radish", "asparagus", "beetroot", "moonflower", "rivermint", "sunbloom",
+    "ancient_grain",
 )
 STARTER_CODE = "original_seeds_v1"
 # Balancing choice: two level-one all-season seeds at a workable quantity, so the

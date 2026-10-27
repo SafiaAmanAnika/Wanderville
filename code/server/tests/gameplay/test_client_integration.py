@@ -1,3 +1,4 @@
+import json
 from datetime import timedelta
 from pathlib import Path
 from time import sleep
@@ -279,12 +280,24 @@ def test_inspector_crop_timing_and_relocation_preserve_growth(
     assert db.get(PlayerProfile, user.id).water_charges == 19
 
 
-def test_crop_scene_frame_counts_match_server():
+def test_crop_art_matches_server_catalog():
+    """Every plantable crop has a five-stage spritesheet, and nothing is orphaned."""
     client_root = Path(__file__).resolve().parents[3] / "client"
+    farming = client_root / "Assets/farming"
+    manifest = json.loads((farming / "crop_manifest.json").read_text())
+    art = {crop["id"]: crop for crop in manifest["crops"]}
+
+    assert set(art) == set(SCENE_DURATIONS), (
+        "crop art and server catalog disagree: "
+        f"art only={sorted(set(art) - set(SCENE_DURATIONS))} "
+        f"server only={sorted(set(SCENE_DURATIONS) - set(art))}"
+    )
     for code, durations in SCENE_DURATIONS.items():
-        scene = (client_root / f"Scenes/crops/{code}.tscn").read_text()
-        assert scene.count('"texture":') == len(durations) + 2
-        assert "frame_durations =" not in scene  # Inspector uses CropVisual defaults.
+        crop = art[code]
+        # frame 0 waits for water, one frame per duration, then the ripe frame.
+        assert crop["hframes"] == len(durations) + 2
+        assert crop["vframes"] == 1
+        assert (farming / crop["sheet"]).exists(), f"missing spritesheet for {code}"
     assert "[5.0, 6.0, 7.0, 4.0]" in (client_root / "Scripts/crop_visual.gd").read_text()
 
 

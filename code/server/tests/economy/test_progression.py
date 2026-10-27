@@ -88,10 +88,11 @@ def test_every_catalog_item_has_an_explicit_unlock_level():
 def test_unlock_levels_match_the_documented_bands(db):
     bands = {
         1: ["paddy", "wheat"],
-        2: ["sugarcane", "corn", "cotton"],
+        2: ["barley", "oats", "sugarcane"],
         4: [
-            "lettuce", "pea", "radish", "bell_pepper", "green_bean", "sweet_corn",
-            "apple", "pumpkin", "turnip", "cabbage", "carrot", "potato", "strawberry",
+            "apple", "asparagus", "beetroot", "bell_pepper", "brussels_sprouts", "cabbage",
+            "carrot", "green_bean", "kale", "lettuce", "onion", "pea", "potato", "pumpkin",
+            "radish", "spinach", "strawberry", "sweet_corn", "turnip", "zucchini",
         ],
         8: ["moonflower", "rivermint", "sunbloom", "ancient_grain"],
     }

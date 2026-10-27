@@ -236,11 +236,11 @@ def test_simultaneous_trade_acceptance_has_one_winner(account, session_factory, 
     service = SocialService(db)
     service.request(a.id, b.id)
     service.respond(b.id, a.id, "accept")
-    for user, code in ((a, "wheat"), (b, "corn")):
+    for user, code in ((a, "wheat"), (b, "sugarcane")):
         InventoryService(db).add_compatibility(user.id, ItemRequest(item_code=code))
     trade = service.propose(a.id, TradeRequest(
         target_id=b.id, request_id="parallel_trade", offered_code="wheat",
-        offered_quantity=1, wanted_code="corn", wanted_quantity=1,
+        offered_quantity=1, wanted_code="sugarcane", wanted_quantity=1,
     ))
     results = concurrent(session_factory, lambda session, _: SocialService(session).trade_action(
         b.id, trade["id"], "accept",
@@ -249,8 +249,8 @@ def test_simultaneous_trade_acceptance_has_one_winner(account, session_factory, 
     db.expire_all()
     inventory = InventoryService(db)
     assert inventory.repo.stack(a.id, "wheat") is None
-    assert inventory.repo.stack(b.id, "corn") is None
-    assert inventory.repo.stack(a.id, "corn").quantity == 1
+    assert inventory.repo.stack(b.id, "sugarcane") is None
+    assert inventory.repo.stack(a.id, "sugarcane").quantity == 1
     assert inventory.repo.stack(b.id, "wheat").quantity == 1
 
 

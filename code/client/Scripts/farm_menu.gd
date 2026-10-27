@@ -1,4 +1,5 @@
 extends CanvasLayer
+const CROP_ART = preload("res://Scripts/crop_catalog.gd")
 
 @onready var level1: HBoxContainer = $ColorRect/Level1Container
 @onready var level2: HBoxContainer = $ColorRect/Level2Container
@@ -13,11 +14,14 @@ var selected_index: int = 0
 var normal_color: Color = Color(0.17, 0.17, 0.17, 1.0)
 var selected_color: Color = Color(0.4, 0.6, 0.3, 1.0)
 
-var seed_list: Array[String] = ["wheat", "corn", "cotton", "tulip"]
+var seed_list: Array[String] = []   # filled from CROPS in _ready
 var seed_index: int = 0
 
 func _ready():
 	visible = false
+	# Only crops that actually have art can be offered.
+	for crop in CROP_ART.ids():
+		seed_list.append(str(crop))
 	for child in level1.get_children():
 		if child is PanelContainer:
 			level1_options.append(child)

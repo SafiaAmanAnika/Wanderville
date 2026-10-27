@@ -1,3 +1,5 @@
+import json
+from pathlib import Path
 from dataclasses import dataclass
 
 from app.core.clock import as_utc, utcnow
@@ -31,13 +33,25 @@ from app.modules.world.geometry import at_water
 from app.modules.world.models import CAMPUS_SPAWN
 from app.modules.world.service import WorldService, game_day, growth_seconds_between
 
-# CropVisual.gd defaults and the supplied scenes: frame 0 waits for water,
-# frame 1 starts immediately; the last frame is harvestable upon entry.
+def crop_codes():
+    """Every plantable crop, read from the same catalog the database is seeded from."""
+    path = Path(__file__).resolve().parents[2] / "db" / "catalog.json"
+    with path.open(encoding="utf-8") as handle:
+        return [
+            row["item_code"]
+            for row in json.load(handle)
+            if row.get("growth_time_seconds")
+        ]
+
+
+# Every crop spritesheet in Assets/farming is five frames: frame 0 waits for
+# water, frames 1-3 are held for these durations, and frame 4 is harvestable.
+# CropVisual.gd uses the same timings client-side.
+STAGE_DURATIONS = (5.0, 6.0, 7.0)
 SCENE_DURATIONS = {
-    code: (5.0, 6.0, 7.0)
-    for code in ("paddy", "wheat", "sugarcane", "sweet_corn", "bell_pepper", "green_bean", "pumpkin", "turnip")
+    code: STAGE_DURATIONS
+    for code in sorted(crop_codes())
 }
-SCENE_DURATIONS["potato"] = (5.0, 6.0, 7.0, 4.0)
 
 
 def scene_frame(code, progress, watered, ready=False):

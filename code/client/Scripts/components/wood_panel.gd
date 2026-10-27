@@ -45,25 +45,22 @@ const SIZE_CARD_DETAIL := 18
 const SIZE_BANNER_TITLE := 52
 const SIZE_BANNER_SUBTITLE := 22
 
+const CROP_ART = preload("res://Scripts/crop_catalog.gd")
+
 static var _item_icons: Dictionary = {}
 
 static func item_icon(code: String) -> Texture2D:
 	if _item_icons.has(code):
 		return _item_icons[code]
-	var crop := code.trim_suffix("_seed")
-	var placeholder := AtlasTexture.new()
-	placeholder.atlas = preload("res://Assets/inventory/inventorySlot.png")
-	placeholder.region = Rect2(0, 0, placeholder.atlas.get_width(), placeholder.atlas.get_height() / 2.0)
-	var texture: Texture2D = placeholder
-	# Explicit allowlist: never interpret server URLs or arbitrary paths as resources.
-	if crop in ["paddy", "wheat", "potato", "sugarcane", "sweet_corn", "bell_pepper", "green_bean", "pumpkin", "turnip"]:
-		var scene: PackedScene = load("res://Scenes/crops/" + crop + ".tscn")
-		var node := scene.instantiate()
-		var sprite: AnimatedSprite2D = node.get_node("AnimatedSprite2D")
-		var frames := sprite.sprite_frames
-		var index := 0 if code.ends_with("_seed") else frames.get_frame_count("default") - 1
-		texture = frames.get_frame_texture("default", index)
-		node.free()
+	# A seed shows the first growth stage, a harvested crop the last. CROPS
+	# only ever resolves a code that exists in the shipped manifest, so a server
+	# string can never be read as an arbitrary resource path.
+	var texture: Texture2D = CROP_ART.icon(code)
+	if texture == null:
+		var placeholder := AtlasTexture.new()
+		placeholder.atlas = preload("res://Assets/inventory/inventorySlot.png")
+		placeholder.region = Rect2(0, 0, placeholder.atlas.get_width(), placeholder.atlas.get_height() / 2.0)
+		texture = placeholder
 	_item_icons[code] = texture
 	return texture
 

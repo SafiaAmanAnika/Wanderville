@@ -33,24 +33,24 @@
     "harvest_xp": 5
   },
   {
-    "item_code": "corn",
-    "name": "Corn",
+    "item_code": "barley",
+    "name": "Barley",
     "category": "general_crop",
-    "growth_time_seconds": 170,
-    "sell_value": 20,
-    "xp_reward": 8,
-    "season": "summer",
+    "growth_time_seconds": 60,
+    "sell_value": 12,
+    "xp_reward": 5,
+    "season": "all",
     "harvest_category": "common",
     "harvest_xp": 5
   },
   {
-    "item_code": "cotton",
-    "name": "Cotton",
+    "item_code": "oats",
+    "name": "Oats",
     "category": "general_crop",
-    "growth_time_seconds": 140,
-    "sell_value": 18,
-    "xp_reward": 8,
-    "season": "summer",
+    "growth_time_seconds": 35,
+    "sell_value": 12,
+    "xp_reward": 5,
+    "season": "all",
     "harvest_category": "common",
     "harvest_xp": 5
   },
@@ -66,11 +66,33 @@
     "harvest_xp": 10
   },
   {
+    "item_code": "zucchini",
+    "name": "Zucchini",
+    "category": "summer_crop",
+    "growth_time_seconds": 150,
+    "sell_value": 15,
+    "xp_reward": 10,
+    "season": "summer",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
+  },
+  {
     "item_code": "bell_pepper",
     "name": "Bell Pepper",
     "category": "summer_crop",
-    "growth_time_seconds": 150,
+    "growth_time_seconds": 210,
     "sell_value": 22,
+    "xp_reward": 10,
+    "season": "summer",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
+  },
+  {
+    "item_code": "strawberry",
+    "name": "Strawberry",
+    "category": "summer_crop",
+    "growth_time_seconds": 240,
+    "sell_value": 28,
     "xp_reward": 10,
     "season": "summer",
     "harvest_category": "seasonal",
@@ -93,6 +115,28 @@
     "category": "autumn_crop",
     "growth_time_seconds": 200,
     "sell_value": 30,
+    "xp_reward": 10,
+    "season": "autumn",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
+  },
+  {
+    "item_code": "brussels_sprouts",
+    "name": "Brussels Sprouts",
+    "category": "autumn_crop",
+    "growth_time_seconds": 260,
+    "sell_value": 26,
+    "xp_reward": 10,
+    "season": "autumn",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
+  },
+  {
+    "item_code": "kale",
+    "name": "Kale",
+    "category": "autumn_crop",
+    "growth_time_seconds": 170,
+    "sell_value": 17,
     "xp_reward": 10,
     "season": "autumn",
     "harvest_category": "seasonal",
@@ -154,11 +198,22 @@
     "harvest_xp": 10
   },
   {
-    "item_code": "strawberry",
-    "name": "Strawberry",
+    "item_code": "spinach",
+    "name": "Spinach",
     "category": "winter_crop",
-    "growth_time_seconds": 240,
-    "sell_value": 28,
+    "growth_time_seconds": 110,
+    "sell_value": 12,
+    "xp_reward": 10,
+    "season": "winter",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
+  },
+  {
+    "item_code": "onion",
+    "name": "Onion",
+    "category": "winter_crop",
+    "growth_time_seconds": 230,
+    "sell_value": 23,
     "xp_reward": 10,
     "season": "winter",
     "harvest_category": "seasonal",
@@ -198,6 +253,28 @@
     "harvest_xp": 10
   },
   {
+    "item_code": "asparagus",
+    "name": "Asparagus",
+    "category": "spring_crop",
+    "growth_time_seconds": 280,
+    "sell_value": 28,
+    "xp_reward": 10,
+    "season": "spring",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
+  },
+  {
+    "item_code": "beetroot",
+    "name": "Beetroot",
+    "category": "spring_crop",
+    "growth_time_seconds": 180,
+    "sell_value": 18,
+    "xp_reward": 10,
+    "season": "spring",
+    "harvest_category": "seasonal",
+    "harvest_xp": 10
+  },
+  {
     "item_code": "moonflower",
     "name": "Moonflower",
     "category": "rare_plant",
@@ -205,9 +282,10 @@
     "sell_value": 100,
     "xp_reward": 30,
     "season": "all",
-    "rarity": "rare",
     "harvest_category": "rare",
-    "harvest_xp": 20
+    "harvest_xp": 20,
+    "rarity": "rare",
+    "description": "Blooms at night; crafting ingredient"
   },
   {
     "item_code": "rivermint",
@@ -217,9 +295,10 @@
     "sell_value": 80,
     "xp_reward": 25,
     "season": "all",
-    "rarity": "rare",
     "harvest_category": "rare",
-    "harvest_xp": 20
+    "harvest_xp": 20,
+    "rarity": "rare",
+    "description": "Grows near lakes; used for potions and food buffs"
   },
   {
     "item_code": "sunbloom",
@@ -229,9 +308,10 @@
     "sell_value": 90,
     "xp_reward": 25,
     "season": "all",
-    "rarity": "rare",
     "harvest_category": "rare",
-    "harvest_xp": 20
+    "harvest_xp": 20,
+    "rarity": "rare",
+    "description": "Boosts nearby crop growth"
   },
   {
     "item_code": "ancient_grain",
@@ -241,8 +321,9 @@
     "sell_value": 120,
     "xp_reward": 30,
     "season": "all",
-    "rarity": "epic",
     "harvest_category": "magical",
-    "harvest_xp": 30
+    "harvest_xp": 30,
+    "rarity": "epic",
+    "description": "Rare high-tier crop"
   }
 ]

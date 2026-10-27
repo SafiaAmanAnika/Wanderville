@@ -286,7 +286,7 @@ def test_seed_picker_payload_carries_unlock_and_harvest(client, account):
     }
     for code, category in (
         ("wheat", "common"),
-        ("corn", "common"),
+        ("sugarcane", "common"),
         ("potato", "seasonal"),
         ("apple", "seasonal"),
         ("moonflower", "rare"),

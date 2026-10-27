@@ -193,7 +193,6 @@ polygon = PackedVector2Array(-3417, 1176, 1821, 1176, 1809, 730, 3942, 736, 3954
 script = ExtResource("15_t2t4p")
 
 [node name="SeasonalEffects" type="Node2D" parent="." unique_id=641050426]
-visible = false
 script = ExtResource("16_0pcbe")
 
 [node name="Rain" type="GPUParticles2D" parent="SeasonalEffects" unique_id=241445472]

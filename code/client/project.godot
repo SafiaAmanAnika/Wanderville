@@ -18,10 +18,8 @@ config/name="Wanderville"
 run/main_scene="res://Scenes/menus/TitleScreen.tscn"
 config/features=PackedStringArray("4.6")
 boot_splash/bg_color=Color(0.14117648, 0.105882354, 0.09019608, 1)
-boot_splash/show_image=true
+boot_splash/stretch_mode=0
 boot_splash/image="res://Assets/ui/loading_boot.png"
-boot_splash/fullsize=false
-boot_splash/use_filter=true
 
 [audio]
 

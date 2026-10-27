@@ -38,11 +38,18 @@ func run() -> void:
 	camera.reset_smoothing()
 	await create_timer(4).timeout
 	check(farm._player_in_zone and not farm._blocked(), "signed-in player can farm after entering the zone")
+	var motion := InputEventMouseMotion.new()
+	motion.position = root.get_canvas_transform() * farm._tile_to_world(Vector2i(9,10))
+	root.push_input(motion, true)
+	await process_frame
 	var click := InputEventMouseButton.new()
 	click.position = root.get_canvas_transform() * farm._tile_to_world(Vector2i(9,10))
 	click.pressed = true
 	click.button_index = MOUSE_BUTTON_LEFT
 	root.push_input(click, true)
+	var release := click.duplicate()
+	release.pressed = false
+	root.push_input(release, true)
 	check(await wait_for(func(): return farm.tilled_tiles.has("9,10")), "rendered viewport click sends a real till request")
 	await process_frame
 	check(farm._cursor.visible and farm._hover_tile() == Vector2i(9,10), "signed-in tile outline follows the same mouse coordinates")

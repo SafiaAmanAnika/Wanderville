@@ -15,8 +15,8 @@ SERVER = Path(__file__).resolve().parents[1]
 ROOT = SERVER.parents[1]
 
 
-def free_port():
-    with socket.socket() as probe:
+def free_port(kind=socket.SOCK_STREAM):
+    with socket.socket(type=kind) as probe:
         probe.bind(("127.0.0.1", 0))
         return probe.getsockname()[1]
 
@@ -26,9 +26,17 @@ def cleanup_owned(run):
     # inherited marker as well as the recorded PID; never kill by process name.
     import psutil
     pidfile = run / "owned-pids.txt"
-    if not pidfile.exists():
-        return
-    for raw in pidfile.read_text().split():
+    recorded = set(pidfile.read_text().split()) if pidfile.exists() else set()
+    # A Windows launcher may exit before its interpreter child; fixture teardown
+    # can then remove its PID from the registry. The inherited marker still
+    # identifies those children without touching any unrelated local process.
+    for candidate in psutil.process_iter():
+        try:
+            if candidate.environ().get("WANDERVILLE_TEST_PIDFILE") == str(pidfile):
+                recorded.add(str(candidate.pid))
+        except psutil.Error:
+            pass
+    for raw in recorded:
         try:
             process = psutil.Process(int(raw))
             marker = process.environ().get("WANDERVILLE_TEST_PIDFILE", "")
@@ -81,6 +89,7 @@ def main():
             "WANDERVILLE_TEST_DATABASE_URL": f"postgresql+psycopg2://integration@127.0.0.1:{port}/wanderville_gameplay_test",
             "WANDERVILLE_ALLOW_TEST_RESET": "1",
             "TEST_MP_API_PORT": str(free_port()),
+            "TEST_MP_PORT": str(free_port(socket.SOCK_DGRAM)),
             "WANDERVILLE_TEST_PIDFILE": str(run / "owned-pids.txt"),
             "WANDERVILLE_TEST_BACKEND_PIDFILE": str(run / "backend.pid"),
             "WANDERVILLE_TEST_KEEP_WORKDIR": "1",

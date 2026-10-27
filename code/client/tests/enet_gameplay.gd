@@ -98,13 +98,15 @@ func _run() -> void:
 	Input.action_press("ui_right")
 	await create_timer(1.5).timeout
 	var sprite := body.get_node("girl") if role == "alpha" else body.get_node("AnimatedSprite2D")
-	check(sprite.is_playing() and str(sprite.animation).begins_with("run"), "run_animation")
-	check(sprite.speed_scale == 1.0 and sprite.sprite_frames.get_animation_speed(sprite.animation) == 10.0, "forward_run_10fps")
+	var locomotion := "run" if role == "alpha" else "walk"
+	var expected_fps := 10.0 if role == "alpha" else float(preload("res://Scripts/chara_frames.gd").FPS["walk"])
+	check(sprite.is_playing() and str(sprite.animation).begins_with(locomotion), "locomotion_animation")
+	check(sprite.speed_scale == 1.0 and sprite.sprite_frames.get_animation_speed(sprite.animation) == expected_fps, "locomotion_frame_rate")
 	Input.action_release("ui_right")
 	await create_timer(1.0).timeout
 	check(body.global_position.distance_to(start) > 150, "normal_controller_moves")
 	check(remote.get("_body").global_position.distance_to(remote_start) > 150, "remote_moves_on_campus")
-	check(remote.get("_body").scale == (Vector2(1.18, 1.18) if role == "alpha" else Vector2(20, 20)), "remote_character_scale")
+	check(remote.get("_body").scale == (preload("res://Scripts/chara_frames.gd").GAMEPLAY_SCALE if role == "alpha" else Vector2(20, 20)), "remote_character_scale")
 	check(body.global_position.distance_to(bridge.movement.authoritative_position()) < 60, "server_position_agrees")
 	# Force local divergence while input is in flight: the server must win.
 	body.global_position += Vector2(700, 0)

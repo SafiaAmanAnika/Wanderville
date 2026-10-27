@@ -104,9 +104,9 @@ func begin(kind: String="character") -> void:
 			button.add_theme_stylebox_override("hover_pressed",UiSkin.slot(UiSkin.GOLD_TINT))
 			var picture := TextureRect.new(); picture.texture=Frames.portrait(Global.CHARACTERS[code].folder)
 			picture.expand_mode=TextureRect.EXPAND_IGNORE_SIZE; picture.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			picture.position=Vector2(47,10); picture.size=Vector2(100,118)
+			picture.position=Vector2(47,10); picture.size=Vector2(100,110)
 			picture.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST; picture.mouse_filter=Control.MOUSE_FILTER_IGNORE; button.add_child(picture)
-			var label := Style.label(Global.CHARACTERS[code].name,19); label.position=Vector2(8,134); label.size.x=178
+			var label := Style.label(Global.CHARACTERS[code].name,19); label.position=Vector2(8,124); label.size.x=178
 			label.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER; label.mouse_filter=Control.MOUSE_FILTER_IGNORE; button.add_child(label)
 			button.pressed.connect(func(): _choose(code))
 	status.text="Preview only" if readonly else "Choose a character to begin." if mode=="first_time" else "Your saved appearance."

@@ -486,7 +486,9 @@ class Backend:
 
     def stop(self):
         if self.process and self.process.poll() is None:
-            self.process.terminate()
+            # Windows virtualenv launchers spawn the real interpreter as a child.
+            # Stop the owned tree before its launcher loses that parentage.
+            _kill_tree(self.process.pid)
             try:
                 self.process.wait(timeout=10)
             except subprocess.TimeoutExpired:

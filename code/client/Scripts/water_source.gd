@@ -3,6 +3,7 @@ extends Area2D
 @export var refill_amount: int = 1
 var player_in_range: bool = false
 var _refilling := false
+var _collector: Node2D
 
 func _ready() -> void:
 	_prepare_pond_interaction()
@@ -49,6 +50,8 @@ func _ready() -> void:
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
+		if body.get("use_saved_appearance") == false: return
+		_collector = body
 		player_in_range = true
 		$PromptLayer/prompt.text = "Press Q to collect water"
 		if body.has_method("set_near_water"):   # characters that can fish
@@ -58,7 +61,8 @@ func _on_body_entered(body: Node2D) -> void:
 		$PromptLayer/prompt.visible = true
 
 func _on_body_exited(body: Node2D) -> void:
-	if body.is_in_group("player"):
+	if body == _collector:
+		_collector = null
 		player_in_range = false
 		if body.has_method("set_near_water"):
 			body.set_near_water(false)
@@ -75,15 +79,27 @@ func _input(event: InputEvent) -> void:
 		return
 	if not event.is_action_pressed("collect_water"):
 		return
+	if _refilling or not is_instance_valid(_collector): return
+	if _collector.get("_busy") == true or _collector.get("fishing") == true: return
 	if GameState.water_drops >= GameState.MAX_WATER:
 		$PromptLayer/prompt.text = "Water already full!"
 		print("Water already full!")
 		return
+	if Global.is_logged_in() and not GameState.backend_ready: return
+	_refilling = true
+	var version := Global.session_version
+	var collector := _collector
+	if collector.has_method("play_action"):
+		await collector.play_action("fill_bucket")
+	if not is_inside_tree(): return
+	if version != Global.session_version or not is_instance_valid(collector) \
+			or collector != _collector or not player_in_range or GameState.menu_open or GameState.social_open:
+		_refilling = false
+		return
+	if GameState.water_drops >= GameState.MAX_WATER:
+		_refilling = false
+		return
 	if Global.is_logged_in():
-		if _refilling or not GameState.backend_ready:
-			return
-		_refilling = true
-		var version := Global.session_version
 		var response: Dictionary = await APIClient.refill_water()
 		_refilling = false
 		if version != Global.session_version:
@@ -101,6 +117,7 @@ func _input(event: InputEvent) -> void:
 		return
 	AudioManager.play("collect_water")
 	GameState.add_water(refill_amount)
+	_refilling = false
 
 
 func _prepare_pond_interaction() -> void:

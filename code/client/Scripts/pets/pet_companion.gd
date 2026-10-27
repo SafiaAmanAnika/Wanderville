@@ -13,6 +13,8 @@ const NEAR_ROAM_RADIUS := 280.0
 const HOME_ROAM_RADIUS := 480.0
 const WALK_SPEED := 80.0
 const FOLLOW_SPEED := 230.0
+const CATCH_UP_SPEED := 420.0
+const CATCH_UP_DISTANCE := 320.0
 const REST_AFTER := 180.0
 const VISUAL_SCALE := 1.15
 const SPECIES_SIZE := {"cat":1.0,"dog":1.12,"rabbit":0.82,"fox":1.04,"duck":0.65,"red_panda":1.08}
@@ -113,9 +115,9 @@ func _physics_process(delta: float) -> void:
 	var distance := global_position.distance_to(owner_body.global_position)
 	var owner_moved := owner_body.global_position.distance_to(_last_owner_position)>20
 	_last_owner_position=owner_body.global_position
-	var previously_visible := owner_visible
-	owner_visible=distance <= (LOSE_RANGE if owner_visible else DETECT_RANGE)
-	if previously_visible and not owner_visible: home=global_position
+	# The selected companion keeps following even after falling outside sensing range.
+	# Losing proximity must not strand it permanently in another part of the map.
+	owner_visible=true
 	var owner_clearance := global_position.distance_to(_owner_center())
 	if owner_clearance<OWNER_SPACE-2 or (_yielding and owner_clearance<OWNER_SPACE+20):
 		if state==State.SLEEP: active_time=0
@@ -222,6 +224,9 @@ func _move_path(delta: float) -> void:
 	var direction := _avoid_owner(global_position.direction_to(path[0]))
 	previous_direction=direction
 	var speed := (FOLLOW_SPEED if state==State.FOLLOW else WALK_SPEED)*float(SPECIES_PACE[species])
+	if state==State.FOLLOW and global_position.distance_to(owner_body.global_position)>CATCH_UP_DISTANCE:
+		# Every species must be able to close the gap on a 300 px/s player.
+		speed=maxf(speed,CATCH_UP_SPEED)
 	velocity=direction*minf(speed,global_position.distance_to(path[0])/delta)
 	move_and_slide()
 	collision_events+=get_slide_collision_count()

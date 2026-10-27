@@ -5,14 +5,14 @@ class_name CharaFrames
 # animation frames visibly jump or clip. Correct artwork alignment at source.
 
 const DIRECTIONS := ["front", "front_right", "right", "back_right", "back", "back_left", "left", "front_left"]
-const ACTIONS := ["idle", "walk", "hoe", "water", "fish", "scythe"]
-const FILES := {"idle":"idle.png", "walk":"walk.png", "hoe":"hoe.png", "water":"watering_can.png", "fish":"fishing.png", "scythe":"scythe.png"}
+const ACTIONS := ["idle", "walk", "hoe", "water", "fish", "scythe", "fill_bucket"]
+const FILES := {"idle":"idle.png", "walk":"walk.png", "hoe":"hoe.png", "water":"watering_can.png", "fish":"fishing.png", "scythe":"scythe.png", "fill_bucket":"fill_bucket.png"}
 const CELL := Vector2i(448, 448)
 # Shared world-space scale for the six 448px character sets.
 const GAMEPLAY_SCALE := Vector2(0.9, 0.9)
 const LONG_ROOT := "res://Assets/charas/long_leg_animations_v1/"
 const MODEL_ROOT := "res://Assets/charas/complete_animations/"
-const FPS := {"idle":6.0, "walk":8.0, "hoe":8.0, "water":8.0, "scythe":8.0, "fish":8.0}
+const FPS := {"idle":6.0, "walk":8.0, "hoe":8.0, "water":8.0, "scythe":8.0, "fish":8.0, "fill_bucket":8.0}
 const MODELS := {"CharacterA":"blue_female", "CharacterB":"green_female", "CharacterC":"red_female", "CharacterA_Male":"blue_male", "CharacterB_Male":"green_male", "CharacterC_Male":"red_male"}
 
 static var _previews: Dictionary = {}

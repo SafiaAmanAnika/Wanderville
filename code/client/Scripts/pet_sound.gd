@@ -11,6 +11,8 @@ extends Node
 @export var min_gap := 9.0    ## shortest wait between idle calls, in seconds
 @export var max_gap := 20.0   ## longest wait
 @export var click_radius := 60.0
+## Where the pet is drawn relative to its origin; clicks are measured from here.
+@export var click_offset := Vector2.ZERO
 
 var _countdown := 0.0
 var _owner2d: Node2D
@@ -24,7 +26,9 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_countdown -= delta
 	if _countdown <= 0.0:
-		speak()
+		# A sleeping pet stays quiet; it calls again once it is awake.
+		if not (_owner2d != null and _owner2d.has_method("is_sleeping") and _owner2d.is_sleeping()):
+			speak()
 		_reset()
 
 
@@ -36,7 +40,7 @@ func _input(event: InputEvent) -> void:
 	if click == null or not click.pressed or click.button_index != MOUSE_BUTTON_LEFT:
 		return
 	var world := _owner2d.get_global_mouse_position()
-	if world.distance_to(_owner2d.global_position) <= click_radius:
+	if world.distance_to(_owner2d.global_position + click_offset) <= click_radius:
 		speak()
 		_reset()
 

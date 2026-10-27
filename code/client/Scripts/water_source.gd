@@ -1,5 +1,7 @@
 extends Area2D
 
+const CampusLayout := preload("res://Scripts/network/CampusLayout.gd")
+
 @export var refill_amount: int = 1
 var player_in_range: bool = false
 var _refilling := false
@@ -13,20 +15,36 @@ func _ready() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		if body.get("use_saved_appearance") == false: return
+		# The sensor is only a cheap "maybe near". Whether the player really is
+		# near is decided every frame by the server's own rule, below.
 		_collector = body
-		player_in_range = true
-		var prompt := "Press Q to collect water"
-		if body.has_method("set_near_water"):   # characters that can fish
-			body.set_near_water(true)
-			prompt += "  ·  Press F to catch a fish"
-		HousePrompt.show_text(prompt)
 
 func _on_body_exited(body: Node2D) -> void:
 	if body == _collector:
 		_collector = null
-		player_in_range = false
-		if body.has_method("set_near_water"):
-			body.set_near_water(false)
+		_set_in_range(false)
+
+
+func _physics_process(_delta: float) -> void:
+	if is_instance_valid(_collector):
+		# Same point and rule the server checks on a refill or a catch. The
+		# sensor overlaps the player's feet, up to ~90 units below the origin,
+		# so trusting it alone showed the prompt where the server said no.
+		_set_in_range(CampusLayout.at_water(_collector.global_position))
+
+
+func _set_in_range(value: bool) -> void:
+	if value == player_in_range:
+		return
+	player_in_range = value
+	if is_instance_valid(_collector) and _collector.has_method("set_near_water"):
+		_collector.set_near_water(value)   # characters that can fish
+	if value:
+		var prompt := "Press Q to collect water"
+		if is_instance_valid(_collector) and _collector.has_method("set_near_water"):
+			prompt += "  ·  Press F to catch a fish"
+		HousePrompt.show_text(prompt)
+	else:
 		HousePrompt.hide_text()
 
 
@@ -81,8 +99,7 @@ func _prepare_pond_interaction() -> void:
 	# The new map keeps solid pond banks on StaticBody2D; this child senses
 	# players beside those banks without removing their physical collision.
 	if get_parent() is StaticBody2D:
-		var layout := preload("res://Scripts/network/CampusLayout.gd")
-		var reach: float = float(layout.data.water_reach) / absf(global_scale.x)
+		var reach: float = float(CampusLayout.data.water_reach) / absf(global_scale.x)
 		for bank in get_parent().get_children():
 			if not bank is CollisionPolygon2D:
 				continue

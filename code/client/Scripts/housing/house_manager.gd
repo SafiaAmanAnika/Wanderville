@@ -363,6 +363,7 @@ func _furniture_input(event: InputEvent) -> void:
 			HousePrompt.flash("You need %d wood for this." % cost)
 			return
 	_item_ghost.set_ghost(false)                           # make it real
+	AudioManager.play("furniture")
 	if not GameState.house.has("furniture"):
 		GameState.house["furniture"] = []
 	GameState.house["furniture"].append({"name": _item_name, "x": _item_ghost.position.x, "y": _item_ghost.position.y, "dir": _item_ghost.dir, "size": _item_ghost.size_factor})
@@ -403,6 +404,7 @@ func _toggle_arrange() -> void:
 				HousePrompt.show_text("Rearranging  ·  Click a piece  ·  R rotate  ·  I to increase & O to decrease  ·  S when done")
 	else:
 		GameState.save_house()
+		AudioManager.play("furniture")
 		HousePrompt.flash("Arrangement saved.")
 
 

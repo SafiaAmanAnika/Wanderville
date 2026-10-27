@@ -57,6 +57,8 @@ static func item_icon(code: String) -> Texture2D:
 	# Both resolve a code against a list that ships with the game, so a server
 	# string can never be read as an arbitrary resource path.
 	var texture: Texture2D = CROP_ART.icon(code)
+	if texture == null and code == "wood":
+		texture = preload("res://Assests_2/Trees/wood.png")
 	if texture == null:
 		texture = _fish_icon(code)
 	if texture == null:

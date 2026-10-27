@@ -18,6 +18,9 @@ const CATCH_UP_DISTANCE := 320.0
 const REST_AFTER := 180.0
 const VISUAL_SCALE := 1.15
 const SPECIES_SIZE := {"cat":1.0,"dog":1.12,"rabbit":0.82,"fox":1.04,"duck":0.65,"red_panda":1.08}
+## Species with a recorded call; the others are quiet.
+const VOICES := {"cat":"meow","dog":"woof"}
+const PET_SOUND := preload("res://Scripts/pet_sound.gd")
 const SPECIES_PACE := {"cat":1.0,"dog":1.0,"rabbit":1.05,"fox":1.0,"duck":0.8,"red_panda":0.9}
 var visual_scale := VISUAL_SCALE
 var species := "cat"
@@ -53,6 +56,10 @@ static var _frames: Dictionary = {}
 func _ready() -> void:
 	rng.randomize()
 	motion_mode=CharacterBody2D.MOTION_MODE_FLOATING
+	# Same layer as the player characters (chara_player.gd). At the map's own
+	# level the y-sorted ground tiles, 240 units tall, were drawn over the pet
+	# whenever it stood in the upper half of a tile, so it kept blinking out.
+	z_index=2
 	collision_layer=4
 	collision_mask=1|2|4
 	add_to_group("pet_companions")
@@ -86,6 +93,7 @@ func set_species(code: String) -> void:
 	species=code if code in CODES else "cat"
 	visual_scale=VISUAL_SCALE*float(SPECIES_SIZE[species])
 	if sprite==null: return
+	_update_voice()
 	(get_node("FootCollision").shape as CircleShape2D).radius=18.0*float(SPECIES_SIZE[species])
 	sprite.sprite_frames=frames_for(species)
 	sleep_texture=null
@@ -108,6 +116,22 @@ func set_species(code: String) -> void:
 			sprite.sprite_frames.add_animation("sleep")
 			sprite.sprite_frames.add_frame("sleep",frame)
 	_animate(Vector2.ZERO)
+
+func is_sleeping() -> bool:
+	return state==State.SLEEP
+
+## The companion never had a voice, so the cat never meowed. PetSound calls
+## now and then while awake and answers a click on the pet.
+func _update_voice() -> void:
+	var voice := get_node_or_null("Voice")
+	if not VOICES.has(species):
+		if voice!=null: voice.queue_free()
+		return
+	if voice==null:
+		voice=PET_SOUND.new(); voice.name="Voice"; add_child(voice)
+	voice.sound=VOICES[species]
+	voice.click_offset=Vector2(0,-46*visual_scale)
+	voice.click_radius=70.0
 
 func _physics_process(delta: float) -> void:
 	if navigation==null or not navigation.ready_for_paths or not is_instance_valid(owner_body): return

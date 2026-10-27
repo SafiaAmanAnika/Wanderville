@@ -12,6 +12,9 @@ var _facing := "south"   # last direction moved, used for the idle pose
 
 
 func _ready() -> void:
+	# Above the map's y-sorted ground tiles, like chara_player.gd; at the map's
+	# level a ground tile hid the character in the upper half of every tile.
+	z_index = 2
 	if use_saved_appearance:
 		preload("res://Scripts/ui/player_namecard.gd").attach(self, "", true)
 

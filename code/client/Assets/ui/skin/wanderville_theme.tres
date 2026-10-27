@@ -1,12 +1,12 @@
-[gd_resource type="Theme" format=3]
+[gd_resource type="Theme" format=3 uid="uid://clj758x0rpiw6"]
 
-[ext_resource type="Texture2D" path="res://Assets/ui/skin/button_disabled.png" id="1_1dgnr"]
-[ext_resource type="Texture2D" path="res://Assets/ui/skin/button_hover.png" id="2_effam"]
-[ext_resource type="Texture2D" path="res://Assets/ui/skin/button_normal.png" id="3_c2ihr"]
-[ext_resource type="Texture2D" path="res://Assets/ui/skin/button_pressed.png" id="4_qda53"]
-[ext_resource type="Texture2D" path="res://Assets/ui/skin/progress_fill.png" id="5_ee3i2"]
-[ext_resource type="Texture2D" path="res://Assets/ui/skin/progress_track.png" id="6_85gjm"]
-[ext_resource type="Texture2D" path="res://Assets/ui/skin/input.png" id="7_0rug4"]
+[ext_resource type="Texture2D" uid="uid://dytmgrljgutbw" path="res://Assets/ui/skin/button_disabled.png" id="1_1dgnr"]
+[ext_resource type="Texture2D" uid="uid://be61gc6867xa7" path="res://Assets/ui/skin/button_hover.png" id="2_effam"]
+[ext_resource type="Texture2D" uid="uid://wl0yl33y4u5f" path="res://Assets/ui/skin/button_normal.png" id="3_c2ihr"]
+[ext_resource type="Texture2D" uid="uid://coct3trd7o0af" path="res://Assets/ui/skin/button_pressed.png" id="4_qda53"]
+[ext_resource type="Texture2D" uid="uid://b5dlbrfflx2xm" path="res://Assets/ui/skin/progress_fill.png" id="5_ee3i2"]
+[ext_resource type="Texture2D" uid="uid://cwoasf34iw6n0" path="res://Assets/ui/skin/progress_track.png" id="6_85gjm"]
+[ext_resource type="Texture2D" uid="uid://dl4nib11jmbvu" path="res://Assets/ui/skin/input.png" id="7_0rug4"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_k2tbb"]
 content_margin_left = 18.0

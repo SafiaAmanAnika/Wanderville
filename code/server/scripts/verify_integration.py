@@ -55,7 +55,7 @@ def run_postgres():
         subprocess.run([pg_ctl, "stop", "-D", str(data), "-m", "fast", "-w"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
 
-def run_godot(binary, render, hud=False, social=False):
+def run_godot(binary, render, hud=False, social=False, onboarding=False):
     run = SERVER / ".verification" / ("client_" + secrets.token_hex(4))
     run.mkdir(parents=True)
     print("Creating isolated Godot fixtures:", run, flush=True)
@@ -148,6 +148,15 @@ async def simulate_lost_response(request, call_next):
     return response
 mail = []
 email.send_account_email = lambda *args: mail.append(args)
+@app.get("/integration/mail/{address}/{kind}")
+def captured_mail(address: str, kind: str):
+    # Only the disposable fixture exposes captured tokens; no message is sent.
+    if os.environ.get("WANDERVILLE_TEST_ONBOARDING") != "1":
+        return JSONResponse(status_code=404, content={})
+    for message in reversed(mail):
+        if message[0] == address and message[3] == kind:
+            return success({"token": message[2]})
+    return JSONResponse(status_code=404, content={"message": "Fixture mail not captured"})
 with SessionLocal() as db:
     for name in ("integration_alice", "integration_bob"):
         auth = AuthService(db)
@@ -171,6 +180,7 @@ if __name__ == "__main__":
     env["WORLD_WORKER_ENABLED"] = "false"
     env["VOICE_ENABLED"] = "true" if social else "false"
     env["WANDERVILLE_TEST_HUD"] = "1" if hud else "0"
+    env["WANDERVILLE_TEST_ONBOARDING"] = "1" if onboarding else "0"
     log = (run / "server.log").open("w", encoding="utf-8")
     backend = subprocess.Popen([sys.executable, str(fixture)], cwd=SERVER, env=env, stdout=log, stderr=subprocess.STDOUT)
     clients, handles = [], []
@@ -188,7 +198,7 @@ if __name__ == "__main__":
         else:
             raise RuntimeError("Fixture backend readiness timed out")
         source = ROOT / "code/client"
-        roles = ("alice",) if hud else ("alice", "bob")
+        roles = ("alice",) if hud or onboarding else ("alice", "bob")
         for role in roles:
             project = run / role
             project.mkdir()
@@ -203,7 +213,8 @@ if __name__ == "__main__":
             config = (source / "project.godot").read_text(encoding="utf-8")
             config = config.replace("[application]", '[application]\nconfig/use_custom_user_dir=true\nconfig/custom_user_dir_name="WandervilleVerification/' + run.name + '/' + role + '"')
             (project / "project.godot").write_text(config, encoding="utf-8")
-            arguments = [binary, "--path", str(project), "--script", "res://tests/proximity_integration.gd" if social else ("res://tests/hud_integration.gd" if hud else "res://tests/integration.gd")]
+            test_script = "onboarding_integration.gd" if onboarding else "proximity_integration.gd" if social else "hud_integration.gd" if hud else "integration.gd"
+            arguments = [binary, "--path", str(project), "--script", "res://tests/" + test_script]
             if render:
                 arguments += ["--rendering-method", "gl_compatibility", "--position", "20000,20000"]
             else:
@@ -227,7 +238,7 @@ if __name__ == "__main__":
                 process.terminate()
                 raise RuntimeError("Godot integration timed out; logs: " + str(run))
         result = {role: process.returncode for role, process in zip(roles, clients)}
-        if hud and all(value == 0 for value in result.values()):
+        if (hud or onboarding) and all(value == 0 for value in result.values()):
             # A new Godot process with the same isolated user directory proves
             # restart persistence and reconciliation of a saved operation ID.
             with (run / "restart.log").open("w", encoding="utf-8") as restart_log:
@@ -254,9 +265,10 @@ if __name__ == "__main__":
     parser.add_argument("--render", action="store_true")
     parser.add_argument("--social", action="store_true", help="Two native Godot clients: proximity, PCM voice, wishlist and gifts")
     parser.add_argument("--hud", action="store_true", help="Single-client HUD checks without loading the large map")
+    parser.add_argument("--onboarding", action="store_true", help="Real auth cards, verification/reset, preset setup and returning-session checks")
     args = parser.parse_args()
     if args.postgres:
         raise SystemExit(run_postgres())
     if args.godot:
-        raise SystemExit(run_godot(args.godot, args.render, args.hud, args.social))
+        raise SystemExit(run_godot(args.godot, args.render, args.hud, args.social, args.onboarding))
     parser.error("Choose --postgres or --godot PATH")

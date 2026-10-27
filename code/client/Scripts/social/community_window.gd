@@ -97,6 +97,7 @@ func _ready() -> void:
 	_status = Label.new()
 	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(_status)
+	preload("res://Scripts/ui/loading_progress.gd").attach(_status)
 	_confirm = ConfirmationDialog.new()
 	add_child(_confirm)
 	_confirm.confirmed.connect(_send_gift)
@@ -108,6 +109,7 @@ func _ready() -> void:
 				refresh()
 	)
 	Global.session_changed.connect(_close)
+	preload("res://Scripts/ui/lobby_theme.gd").apply_tree(self)
 
 
 func open_for(player_id: int = 0) -> void:

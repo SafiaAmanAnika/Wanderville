@@ -26,9 +26,9 @@ layout_mode = 1
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_left = 120.0
-offset_top = 12.0
-offset_right = -16.0
+offset_left = 24.0
+offset_top = 20.0
+offset_right = -24.0
 mouse_filter = 2
 
 [node name="Row" type="HBoxContainer" parent="Screen/Top" unique_id=209215871]
@@ -37,7 +37,7 @@ mouse_filter = 2
 theme_override_constants/separation = 8
 
 [node name="Counters" type="VBoxContainer" parent="Screen/Top/Row" unique_id=1505978877]
-custom_minimum_size = Vector2(330, 0)
+custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 mouse_filter = 2
 

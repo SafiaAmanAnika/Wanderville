@@ -17,6 +17,9 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 config/name="Wanderville"
 run/main_scene="res://Scenes/menus/TitleScreen.tscn"
 config/features=PackedStringArray("4.6")
+boot_splash/bg_color=Color(0.14117648, 0.105882354, 0.09019608, 1)
+boot_splash/stretch_mode=0
+boot_splash/image="res://Assets/ui/loading_boot.png"
 
 [audio]
 
@@ -86,4 +89,5 @@ wanderville_api_url="https://wanderville-api.onrender.com"
 
 [rendering]
 
+environment/defaults/default_clear_color=Color(0.14117648, 0.105882354, 0.09019608, 1)
 2d/snap/snap_2d_transforms_to_pixel=true

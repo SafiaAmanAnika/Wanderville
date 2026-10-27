@@ -4,7 +4,22 @@ extends Node2D
 
 const CampusLayout := preload("res://Scripts/network/CampusLayout.gd")
 
-const CHARA_SCALE := Vector2(1.18, 1.18)   # chara sheets are 448px; this matches the old girl's size
+const CHARA_SCALE := preload("res://Scripts/chara_frames.gd").GAMEPLAY_SCALE
+var _movement_keys: Array[Dictionary] = []
+
+
+func _enter_tree() -> void:
+	for binding in [["ui_up",KEY_W],["ui_left",KEY_A],["ui_down",KEY_S],["ui_right",KEY_D]]:
+		var key := InputEventKey.new(); key.physical_keycode=binding[1]
+		if not InputMap.action_has_event(binding[0],key):
+			InputMap.action_add_event(binding[0],key)
+			_movement_keys.append({"action":binding[0],"event":key})
+
+
+func _exit_tree() -> void:
+	for binding in _movement_keys:
+		InputMap.action_erase_event(binding.action,binding.event)
+		Input.action_release(binding.action)
 
 
 func _ready() -> void:
@@ -16,6 +31,10 @@ func _ready() -> void:
 	SceneManager.restore_customization_return(player)
 	if not CampusLayout.walkable(player.global_position):
 		player.global_position = CampusLayout.spawn()
+	var pets := preload("res://Scripts/pets/pet_manager.gd").new()
+	pets.name = "Pets"
+	add_child(pets)
+	add_child(preload("res://Scripts/ui/onboarding_guide.gd").new())
 	if OS.get_environment("GODOT_ENET_GAMEPLAY") == "1":
 		var bridge := preload("res://Scripts/network/EnetGameplayBridge.gd").new()
 		bridge.name = "EnetGameplayBridge"

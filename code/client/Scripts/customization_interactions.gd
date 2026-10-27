@@ -334,6 +334,8 @@ func _on_logout_pressed() -> void:
 func close() -> void:
 	if modal == "" or _leaving:
 		return
+	if modal in ["character","mirror"] and _creator._saving and _creator._session==Global.session_version:
+		return
 	var focus := get_viewport().gui_get_focus_owner()
 	if focus != null:
 		focus.release_focus()

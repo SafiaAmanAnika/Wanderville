@@ -8,6 +8,10 @@ __pycache__/
 
 # Local test logs, screenshots, baseline copies, and disposable databases
 /test-output/
+*.log
+*.bak
+*.tmp
+*.manual-backup
 
 # Virtual environments
 .venv/

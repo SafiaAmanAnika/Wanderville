@@ -21,6 +21,13 @@ class PetsService:
             or (utcnow() - as_utc(row.last_interaction_at)).total_seconds() >= 60,
         }
 
+    def choose(self, player_id, request):
+        with transaction(self.db):
+            PlayerRepository(self.db).lock(player_id)
+            row = self.repo.get(PlayerPet, player_id)
+            row.species = request.species
+        return self.get(player_id)
+
     def act(self, player_id, request):
         with transaction(self.db):
             PlayerRepository(self.db).lock(player_id)

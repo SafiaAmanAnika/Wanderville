@@ -1,9 +1,6 @@
-[gd_scene format=3 uid="uid://dc8jt6v17lkb7"]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Script" uid="uid://yv4gwexjp5pp" path="res://Scripts/menus/character_select_screen.gd" id="1"]
-[ext_resource type="Script" uid="uid://c3u3fxgx8n6qq" path="res://Scripts/components/wood_panel.gd" id="2"]
-[ext_resource type="Script" uid="uid://d23q1nwytgcdn" path="res://Scripts/components/wood_button.gd" id="3"]
-[ext_resource type="Texture2D" path="res://Assets/background/bg.png" id="4"]
+[ext_resource type="Script" path="res://Scripts/menus/character_select_screen.gd" id="1"]
 
 [node name="CharacterSelectScreen" type="Control"]
 layout_mode = 3
@@ -13,81 +10,3 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
-
-[node name="Background" type="TextureRect" parent="."]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-stretch_mode = 6
-expand_mode = 3
-texture = ExtResource("4")
-
-[node name="Center" type="CenterContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="FormPanel" type="PanelContainer" parent="Center"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(820, 0)
-layout_mode = 2
-script = ExtResource("2")
-
-[node name="VBox" type="VBoxContainer" parent="Center/FormPanel"]
-layout_mode = 2
-size_flags_vertical = 8
-theme_override_constants/separation = 10
-alignment = 1
-
-[node name="Title" type="Label" parent="Center/FormPanel/VBox"]
-layout_mode = 2
-text = "Choose Your Character"
-horizontal_alignment = 1
-
-[node name="Spacer" type="Control" parent="Center/FormPanel/VBox"]
-custom_minimum_size = Vector2(0, 8)
-layout_mode = 2
-
-[node name="CharacterGrid" type="GridContainer" parent="Center/FormPanel/VBox"]
-unique_name_in_owner = true
-layout_mode = 2
-columns = 4
-theme_override_constants/h_separation = 16
-theme_override_constants/v_separation = 16
-
-[node name="Spacer2" type="Control" parent="Center/FormPanel/VBox"]
-custom_minimum_size = Vector2(0, 12)
-layout_mode = 2
-
-[node name="Buttons" type="HBoxContainer" parent="Center/FormPanel/VBox"]
-layout_mode = 2
-alignment = 1
-theme_override_constants/separation = 16
-
-[node name="ConfirmButton" type="Button" parent="Center/FormPanel/VBox/Buttons"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 52)
-layout_mode = 2
-text = "Confirm"
-script = ExtResource("3")
-
-[node name="BackButton" type="Button" parent="Center/FormPanel/VBox/Buttons"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 52)
-layout_mode = 2
-text = "Back"
-script = ExtResource("3")
-
-[node name="StatusLabel" type="Label" parent="Center/FormPanel/VBox"]
-unique_name_in_owner = true
-layout_mode = 2
-autowrap_mode = 3
-horizontal_alignment = 1

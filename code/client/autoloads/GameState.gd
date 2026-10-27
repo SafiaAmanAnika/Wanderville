@@ -48,6 +48,9 @@ signal level_advanced(previous: Dictionary, current: Dictionary)
 
 
 func reset() -> void:
+	house = empty_house()
+	_house_scope = ""
+	_test_wood = TEST_WOOD
 	_loading = false
 	_refreshing = false
 	gameplay_refreshed.emit()
@@ -403,6 +406,20 @@ func _rebuild_seed_inventory() -> void:
 
 # ─── Housing ─────────────────────────────────────────────────────────
 const HOUSE_SAVE := "user://house.json"
+var _house_scope := ""
+
+func empty_house() -> Dictionary:
+	return {"id":0,"position":Vector2.ZERO,"stage":"none","floor":"","furniture":[]}
+
+func house_context_key() -> String:
+	if Global.is_logged_in():
+		var world_id := owning_world_id()
+		if world_id<=0: world_id=int(owned_world.get("id",0))
+		return APIClient.base_url.rstrip("/").sha256_text()+"_"+str(Global.player_id)+"_"+str(world_id)
+	return "guest"
+
+func house_save_path() -> String:
+	return "user://house_"+house_context_key()+".json"
 
 # id: 0 = no house, 1-6 = which house
 # stage: "none" → "outer" → "walls" → "done"
@@ -423,6 +440,7 @@ func wood() -> int:
 
 # take wood out of the bag; false (and nothing taken) if there isn't enough
 func spend_wood(amount: int) -> bool:
+	if read_only: return false
 	if wood() < amount:
 		return false
 	if Global.is_logged_in():
@@ -439,25 +457,35 @@ func refund_wood(amount: int) -> void:
 		add_item_offline("wood", "Wood", amount, "rare_materials", "material")
 
 func save_house() -> void:
+	if read_only or _house_scope != house_context_key(): return
 	var data := house.duplicate()
 	data["position"] = [house["position"].x, house["position"].y]   # JSON can't store Vector2
-	var file := FileAccess.open(HOUSE_SAVE, FileAccess.WRITE)
+	var file := FileAccess.open(house_save_path(), FileAccess.WRITE)
 	if file:
 		file.store_string(JSON.stringify(data))
 
 
 func load_house() -> void:
-	if not FileAccess.file_exists(HOUSE_SAVE):
+	house = empty_house()
+	_house_scope = house_context_key()
+	if read_only: return
+	var path := house_save_path()
+	# The old unowned local save is never assigned to a signed-in account.
+	# Guests can still see it, and the original file remains available for recovery.
+	if not Global.is_logged_in() and not FileAccess.file_exists(path): path = HOUSE_SAVE
+	if not FileAccess.file_exists(path):
 		return
-	var data = JSON.parse_string(FileAccess.get_file_as_string(HOUSE_SAVE))
+	var data = JSON.parse_string(FileAccess.get_file_as_string(path))
 	if data is Dictionary:
 		var p: Array = data.get("position", [0, 0])
+		if p.size()!=2 or not (p[0] is float or p[0] is int) or not (p[1] is float or p[1] is int): return
+		if int(data.get("id",0)) not in range(0,7) or str(data.get("stage","none")) not in ["none","outer","walls","done"]: return
 		house = {
 				"id": int(data.get("id", 0)),
 				"position": Vector2(p[0], p[1]),
 				"stage": str(data.get("stage", "none")),
 				"floor": str(data.get("floor", "")),
-				"furniture": data.get("furniture", []),
+				"furniture": data.get("furniture", []).duplicate(true) if data.get("furniture",[]) is Array else [],
 			}
 	if not house.has("furniture"):
 		house["furniture"] = []

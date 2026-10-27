@@ -22,8 +22,8 @@ INVITE_TTL = timedelta(minutes=10)
 # the slot. Must comfortably exceed the client socket poll interval.
 VISIT_HEARTBEAT_TIMEOUT = timedelta(seconds=90)
 
-OPEN_STATUSES = ("PENDING", "ACCEPTED")
-RESOLVED = ("DECLINED", "EXPIRED", "CANCELLED")
+OPEN_STATUSES = ("PENDING",)
+RESOLVED = ("ACCEPTED", "DECLINED", "EXPIRED", "CANCELLED")
 
 
 def active_key(host_id, guest_id, world_id):

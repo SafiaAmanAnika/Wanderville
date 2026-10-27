@@ -124,7 +124,7 @@ func age_seconds() -> float:
 	return Time.get_ticks_msec() / 1000.0 - _spawned_at
 
 func apply_gameplay_scale(character_code: String) -> void:
-	_body.scale = Vector2.ONE * (20.0 if character_code in ["", "player1", "farmer_female"] else 1.18)
+	_body.scale = Vector2.ONE * (20.0 if character_code in ["", "player1", "farmer_female"] else preload("res://Scripts/chara_frames.gd").GAMEPLAY_SCALE.x)
 	_label.scale = Vector2.ONE / _body.scale
 	_label.position = Vector2(-30, -140) / _body.scale
 	CharacterPresentation.prepare_gameplay(_body)

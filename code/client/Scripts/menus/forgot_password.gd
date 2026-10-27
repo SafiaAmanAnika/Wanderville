@@ -1,10 +1,12 @@
 extends Control
 
+const AuthShell := preload("res://Scripts/menus/auth_shell.gd")
+
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
 const BG_TEXTURE := preload("res://Assets/background/bg.png")
 
 const TEXT_SECONDARY := Color(0.82, 0.74, 0.58)
-const TEXT_SUCCESS := Color(0.50, 0.78, 0.45)
+const TEXT_SUCCESS := Color("4d6c43")
 
 @onready var _bg: TextureRect = %Background
 
@@ -15,14 +17,14 @@ const TEXT_SUCCESS := Color(0.50, 0.78, 0.45)
 @onready var _email: LineEdit = %EmailInput
 @onready var _error_label: Label = %ErrorLabel
 @onready var _loading_label: Label = %LoadingLabel
-@onready var _send_btn: WoodButton = %SendBtn
-@onready var _back_btn: WoodButton = %BackBtn
+@onready var _send_btn: Button = %SendBtn
+@onready var _back_btn: Button = %BackBtn
 
 # Success nodes
 @onready var _success_panel: PanelContainer = %SuccessPanel
 @onready var _success_title: Label = %SuccessTitle
 @onready var _success_message: Label = %SuccessMessage
-@onready var _back_to_login_btn: WoodButton = %BackToLoginBtn
+@onready var _back_to_login_btn: Button = %BackToLoginBtn
 
 
 func _ready() -> void:
@@ -48,7 +50,9 @@ func _ready() -> void:
 	_form_panel.show()
 
 	_email.grab_focus()
-	WoodPanel.play_entrance(_form_panel)
+	AuthShell.reveal(_form_panel)
+
+	AuthShell.install(self)
 
 
 func _apply_subtitle_style() -> void:
@@ -76,33 +80,37 @@ func _set_busy(busy: bool) -> void:
 
 
 func _on_send() -> void:
+	if _send_btn.disabled: return
 	var e := _email.text.strip_edges()
 	_error_label.text = " "
 
 	if e == "":
 		_error_label.text = "Please enter your email address."
-		WoodPanel.apply_error_field_style(_email)
+		AuthShell.field_error(_email)
 		_email.grab_focus()
 		return
 
 	if not e.contains("@") or not e.contains("."):
 		_error_label.text = "Please enter a valid email address."
-		WoodPanel.apply_error_field_style(_email)
+		AuthShell.field_error(_email)
 		_email.grab_focus()
 		return
 
-	WoodPanel.clear_error_field_style(_email)
+	AuthShell.clear_field(_email)
 	_set_busy(true)
 	_loading_label.text = "Sending reset link..."
 
-	var _res: Dictionary = await APIClient.forgot_password(e)
+	var response: Dictionary = await APIClient.forgot_password(e)
 	_set_busy(false)
 	_loading_label.text = " "
+	if not response.get("ok",false):
+		_error_label.text = APIClient.error_text(response)
+		return
 
 	_form_panel.hide()
 	_success_panel.show()
 	_success_message.text = "Please check your email for\npassword reset instructions."
-	WoodPanel.play_entrance(_success_panel)
+	AuthShell.reveal(_success_panel)
 
 
 func _on_back() -> void:

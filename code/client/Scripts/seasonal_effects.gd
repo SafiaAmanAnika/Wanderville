@@ -76,7 +76,7 @@ func advance_time(seconds: float) -> void:
 
 func update_season_effects() -> void:
 	# Only the current season's effect is enabled
-	snow.emitting = _server_weather == "snow" if Global.is_logged_in() else current_season == Season.WINTER
+	snow.emitting = current_season == Season.WINTER
 	autumn_leaves.emitting = current_season == Season.AUTUMN
 	spring_leaves.emitting = current_season == Season.SPRING
 
@@ -91,7 +91,7 @@ func update_season_effects() -> void:
 
 func update_rain() -> void:
 	if Global.is_logged_in():
-		rain.emitting = _server_weather == "rain"
+		rain.emitting = current_season == Season.SUMMER and _server_weather == "rain"
 		return
 	var rain_cycle := fmod(rain_elapsed_time, RAIN_INTERVAL)
 	var rain_scheduled := (rain_elapsed_time >= RAIN_INTERVAL and rain_cycle < RAIN_DURATION)

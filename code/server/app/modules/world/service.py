@@ -18,15 +18,15 @@ def environment_at(state, now):
     periods = int((as_utc(now) - anchor).total_seconds() // duration)
     season = SEASONS[(SEASONS.index(state.current_season) + periods) % 4]
     day_seconds = (as_utc(now) - as_utc(state.day_cycle_anchor_at)).total_seconds()
-    # Stable periodic weather; explicit stored rain/snow remains an override.
-    weather = state.weather
-    if (
-        weather == "clear"
-        and int(day_seconds // (state.day_night_cycle_minutes * 60)) % 4 == 2
-    ):
-        weather = "snow" if season == "winter" else "rain"
-    if weather == "snow" and season != "winter":
-        weather = "clear"
+    # Preserve the seasonal effects: summer rain for two minutes every fifteen
+    # minutes, winter snow, and leaves without precipitation in autumn/spring.
+    elapsed = (as_utc(now) - anchor).total_seconds()
+    rain_scheduled = elapsed >= 900 and elapsed % 900 < 120
+    weather = "clear"
+    if season == "winter":
+        weather = "snow"
+    elif season == "summer" and (state.weather == "rain" or rain_scheduled):
+        weather = "rain"
     return WorldStateResponse(
         current_season=season,
         server_time=as_utc(now),

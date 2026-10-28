@@ -573,6 +573,29 @@ def test_realtime_radius_blocking_and_sequence(client, account, db):
     assert data(client.get("/realtime/snapshot", headers=b.headers))["messages"] == []
 
 
+@pytest.mark.parametrize("location,allowed", [(None, True), ("social_lobby", False)])
+def test_refill_checks_private_farm_water_and_room(client, account, db, location, allowed):
+    from app.modules.realtime.service import RealtimeService
+
+    user = account("private_refill")
+    RealtimeService(db).enter(user.id, location=location)
+    presence = db.get(Presence, user.id)
+    presence.x, presence.y = GEOMETRY["water"][0]["points"][0]
+    presence.updated_at = utcnow()
+    db.get(PlayerProfile, user.id).water_charges = 0
+    db.commit()
+    response = client.post("/farm/refill", headers=user.headers)
+    if allowed:
+        assert data(response)["water_remaining"] == 1
+        presence.x, presence.y = CAMPUS_SPAWN
+        presence.updated_at = utcnow()
+        db.commit()
+        assert client.post("/farm/refill", headers=user.headers).status_code == 400
+    else:
+        assert response.status_code == 400
+        assert response.json()["error"] == "WATER_SOURCE_REQUIRED"
+
+
 def test_tutorial_refill_and_account_delete(client, account, db):
     a = account()
     assert (

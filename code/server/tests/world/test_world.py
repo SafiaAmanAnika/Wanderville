@@ -1,4 +1,5 @@
 from datetime import timedelta
+import pytest
 
 from sqlalchemy import delete, select
 
@@ -74,3 +75,21 @@ def test_all_seasons_expose_server_clock_and_weather(db):
         assert result.season_end_time - result.season_start_time == period
         assert result.weather in {"clear", "rain", "snow"}
         assert result.weather != "snow" or result.current_season == "winter"
+
+
+@pytest.mark.parametrize("season,expected", [("summer", "rain"), ("autumn", "clear"), ("winter", "snow"), ("spring", "clear")])
+@pytest.mark.parametrize("stored_weather", ["clear", "rain", "snow"])
+def test_precipitation_stays_in_its_season(db, season, expected, stored_weather):
+    state = db.get(WorldState, 1)
+    state.current_season = season
+    state.weather = stored_weather
+    anchor = as_utc(state.season_started_at)
+    assert environment_at(state, anchor + timedelta(seconds=900)).weather == expected
+
+
+def test_summer_rain_preserves_fifteen_minute_two_minute_cycle(db):
+    state = db.get(WorldState, 1)
+    state.current_season, state.weather = "summer", "clear"
+    anchor = as_utc(state.season_started_at)
+    for seconds, expected in [(0, "clear"), (899, "clear"), (900, "rain"), (1019, "rain"), (1020, "clear"), (1800, "rain")]:
+        assert environment_at(state, anchor + timedelta(seconds=seconds)).weather == expected

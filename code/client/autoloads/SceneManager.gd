@@ -23,6 +23,9 @@ const FADE_TIME := 0.15
 
 var _transition_layer: CanvasLayer
 var _is_transitioning: bool = false
+var _visit_arrival := Vector2.INF
+var _visit_arrival_world := 0
+var _visit_arrival_session := -1
 var _customization_from_world := false
 var _customization_return_scene := CHARACTER_SELECT_SCENE
 var _customization_return_position := Vector2.ZERO
@@ -163,6 +166,7 @@ func goto_profile() -> void:
 
 
 func goto_world() -> void:
+	APIClient.realtime.enter_world(GameState.desired_world_id())
 	transition_to(WORLD_SCENE)
 
 
@@ -200,7 +204,25 @@ func leave_character_customization() -> void:
 		transition_to(_customization_return_scene if _customization_return_session == Global.session_version else CHARACTER_SELECT_SCENE)
 
 
+func goto_visited_world(world_id: int, arrival: Vector2) -> void:
+	if _is_transitioning or not GameState.is_visiting() or GameState.current_world_id() != world_id: return
+	_social_from_world = false
+	_customization_from_world = false
+	_market_from_world = false
+	_visit_arrival = arrival
+	_visit_arrival_world = world_id
+	_visit_arrival_session = Global.session_version
+	goto_world()
+
 func restore_customization_return(player: Node2D) -> void:
+	if _visit_arrival.is_finite():
+		if _visit_arrival_session == Global.session_version and GameState.is_visiting() and GameState.current_world_id() == _visit_arrival_world:
+			player.global_position = _visit_arrival
+		_visit_arrival = Vector2.INF
+		_social_from_world = false
+		_customization_from_world = false
+		_market_from_world = false
+		return
 	if _social_from_world and _social_return_session == Global.session_version:
 		player.global_position = _social_return_position
 	_social_from_world = false
@@ -241,7 +263,7 @@ func leave_marketplace() -> void:
 	
 func goto_post_login() -> void:
 	if Global.has_completed_setup():
-		goto_world()
+		goto_social_lobby()
 	else:
 		goto_character_select()
 

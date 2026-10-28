@@ -148,7 +148,7 @@ class RealtimeProtocol:
         """
         if kind == "enter":
             request = EnterRequest.model_validate(message.get("data", {}))
-            service.enter(pid, request.owner_id)
+            service.enter(pid, request.owner_id, request.location)
         elif kind == "move":
             service.move(pid, MoveRequest.model_validate(message.get("data", {})))
         elif kind == "chat":

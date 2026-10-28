@@ -43,21 +43,25 @@ func _snapshot(snapshot: Dictionary) -> void:
 	var local := tree.get_first_node_in_group("player") as Node2D
 	if local == null:
 		return
-	for entry in snapshot.get("players", []):
+	var expected := "world:%d" % GameState.current_world_id()
+	var rows: Array = snapshot.get("players", []) if str(snapshot.get("room", "")) == expected else []
+	for entry in rows:
 		var id := int(entry.get("player_id", 0))
 		if id == Global.player_id:
 			continue
 		visible_ids[id] = true
 		var target := Vector2(float(entry["x"]), float(entry["y"]))
 		if not avatars.has(id):
-			var actor := Global.get_character_scene("player1").instantiate() as CharacterBody2D
+			var code := str(entry.get("character_code", "farmer_female"))
+			if not Global.CHARACTER_SCENES.has(code): code = "farmer_female"
+			var actor := Global.get_character_scene(code).instantiate() as CharacterBody2D
 			actor.name = "Remote_%d" % id
 			actor.use_saved_appearance = false
 			actor.remove_from_group("player")
 			actor.process_mode = Node.PROCESS_MODE_DISABLED
 			actor.collision_layer = 0
 			actor.collision_mask = 0
-			actor.scale = local.scale
+			actor.scale = Vector2.ONE * (20.0 if code in ["player1", "farmer_female"] else preload("res://Scripts/chara_frames.gd").GAMEPLAY_SCALE.x)
 			for camera in actor.find_children("*", "Camera2D", true, false):
 				camera.enabled = false
 			for audio in actor.find_children("*", "AudioStreamPlayer2D", true, false):
@@ -67,7 +71,7 @@ func _snapshot(snapshot: Dictionary) -> void:
 			actor.remove_from_group("player") # _ready adds the controller to this group.
 			actor.global_position = target
 			# Sprite animation is the only remote child allowed to process.
-			actor.get_node("girl").process_mode = Node.PROCESS_MODE_ALWAYS
+			CharacterPresentation.sprite_of(actor).process_mode = Node.PROCESS_MODE_ALWAYS
 			avatars[id] = actor
 		targets[id] = target
 	for id in avatars.keys():
@@ -81,7 +85,7 @@ func _process(delta: float) -> void:
 	for id in avatars:
 		var actor: CharacterBody2D = avatars[id]
 		var offset: Vector2 = targets[id] - actor.global_position
-		actor._update_animation(offset.normalized() if offset.length() > 2.0 else Vector2.ZERO)
+		CharacterPresentation.play(actor, offset.length() > 2.0, offset.normalized(), 2)
 		if offset.length() > 1500.0:
 			actor.global_position = targets[id]
 		else:

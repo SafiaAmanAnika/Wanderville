@@ -29,7 +29,7 @@ def enter(
     player_id: int = Depends(get_current_player_id),
     db: Session = Depends(get_db),
 ):
-    return success(RealtimeService(db).enter(player_id, payload.owner_id))
+    return success(RealtimeService(db).enter(player_id, payload.owner_id, payload.location))
 
 
 @router.post("/move")

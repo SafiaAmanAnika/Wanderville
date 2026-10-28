@@ -48,8 +48,8 @@ func attach(body: CharacterBody2D) -> void:
 	# the campus only, so admitting a visitor would freeze them with no entity.
 	# The room is a server decision, so if it says this player is visiting, stay
 	# on the standard connection from the very first frame.
-	if GameState.is_visiting():
-		_use_legacy("standing in another player's farm")
+	if GameState.current_world_id() > 0:
+		_use_legacy("private farm uses its isolated world connection")
 		return
 	_body_prepared = true
 	body.set_physics_process(false)

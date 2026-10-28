@@ -263,7 +263,7 @@ func leave_marketplace() -> void:
 	
 func goto_post_login() -> void:
 	if Global.has_completed_setup():
-		goto_social_lobby()
+		goto_world()
 	else:
 		goto_character_select()
 

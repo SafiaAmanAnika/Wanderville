@@ -62,7 +62,6 @@ func run() -> void:
 		root.size = Vector2i(1200, 900)
 		var camera := body.get_node("Camera2D") as Camera2D
 		camera.position = Vector2.ZERO
-		camera.zoom = Vector2(0.16, 0.16)
 		camera.make_current()
 		camera.reset_smoothing()
 		camera.force_update_scroll()

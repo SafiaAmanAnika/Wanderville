@@ -82,7 +82,7 @@ func _run() -> void:
 		print("HUD_RESTART_RESULT failures=", failures)
 		quit(0 if failures == 0 else 1)
 		return
-	# Continue validates the saved session and opens the shared social lobby.
+	# Continue validates the saved session and opens the player's own farm.
 	var title: Control = load("res://Scenes/menus/TitleScreen.tscn").instantiate()
 	root.add_child(title); current_scene = title
 	check(title.continue_button.visible, "saved_setup_has_continue")
@@ -90,7 +90,7 @@ func _run() -> void:
 	var title_deadline := Time.get_ticks_msec() + 10000
 	while root.get_node("SceneManager")._is_transitioning and Time.get_ticks_msec() < title_deadline:
 		await create_timer(0.05).timeout
-	check(current_scene.scene_file_path == root.get_node("SceneManager").SOCIAL_LOBBY_SCENE and state.backend_ready, "continue_loads_social_lobby")
+	check(current_scene.scene_file_path == root.get_node("SceneManager").WORLD_SCENE and state.backend_ready, "continue_loads_real_saved_world")
 	current_scene.queue_free(); await process_frame; current_scene = null
 	# Real UI scenes, a lightweight background, and the supplied player artwork.
 	# This is explicitly UI rendering, separate from full-world gameplay checks.

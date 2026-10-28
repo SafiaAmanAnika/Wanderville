@@ -267,7 +267,10 @@ func _enter_house() -> void:
 	await _transition(func() -> void:
 		APIClient.realtime.pause_movement = true
 		var player := get_tree().get_first_node_in_group("player") as Node2D
-		player.global_position = interior.spawn_position())
+		player.global_position = interior.spawn_position()
+		var camera := get_viewport().get_camera_2d()
+		if camera != null and camera.has_method("show_interior"):
+			camera.show_interior(interior))
 	inside = true
 	if GameState.house["stage"] == "walls":
 		_offer_floor()      # after the fade, so the picker isn't covered
@@ -515,6 +518,8 @@ func _leave_house() -> void:
 	await _transition(func() -> void:
 		var player := get_tree().get_first_node_in_group("player") as Node2D
 		player.global_position = exterior.door_position()
+		var camera := get_viewport().get_camera_2d()
+		if camera != null and camera.has_method("show_campus"): camera.show_campus()
 		APIClient.realtime.pause_movement = false)
 
 

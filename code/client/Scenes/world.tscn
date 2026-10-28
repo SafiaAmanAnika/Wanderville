@@ -17,6 +17,7 @@
 [ext_resource type="Script" uid="uid://cicq805ha0jtf" path="res://Scripts/seasonal_effects.gd" id="16_0pcbe"]
 [ext_resource type="Texture2D" uid="uid://bqds1sp8jhyk2" path="res://Assets/Orange_leaves.png" id="16_hgpy0"]
 [ext_resource type="Texture2D" uid="uid://cyiyx50hbtuv" path="res://Assets/Pink_leaves.png" id="17_t2t4p"]
+[ext_resource type="Script" path="res://Scripts/world_camera.gd" id="18_camera"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_kn0ld"]
 particles_animation = true
@@ -147,8 +148,8 @@ y_sort_enabled = false
 position = Vector2(1658, 677)
 
 [node name="Camera2D" type="Camera2D" parent="girl" unique_id=784418730]
-position = Vector2(-10.149994, -0.6000023)
-zoom = Vector2(0.3, 0.3)
+zoom = Vector2(0.45, 0.45)
+script = ExtResource("18_camera")
 
 [node name="FarmMenu" parent="." unique_id=886063808 instance=ExtResource("4_fo5ed")]
 

@@ -94,7 +94,7 @@ cut_trees={
 
 [network]
 
-wanderville_api_url="https://wanderville-api.onrender.com"
+wanderville_api_url="https://isolation-lizard-repayment.ngrok-free.dev"
 
 [rendering]
 

@@ -109,18 +109,20 @@ func load_from_backend() -> bool:
 		if version != Global.session_version:
 			return false
 		if not bool(response.get("ok", false)):
-			report_error(response)
+			report_error({"message": "Could not load %s: %s" % [request[0], APIClient.error_text(response)]})
 			success = false
 			break
 		var data: Variant = APIClient.data_of(response)
 		if not data is Dictionary:
 			success = false
 			last_error = "Server returned incomplete game data."
+			backend_error.emit(last_error)
 			break
 		_apply_data(request[1], data)
 	_loading = false
 	backend_ready = success
 	if success:
+		last_error = ""
 		# The socket has to open in the world this player actually belongs to:
 		# their own farm normally, or a host's farm while a visit is active. The
 		# call is a no-op if the socket is not connected yet, because the desired
@@ -229,7 +231,7 @@ func world_time_fraction() -> float:
 
 
 func _process(delta: float) -> void:
-	if not backend_ready or _loading or not Global.is_logged_in():
+	if _loading or not Global.is_logged_in():
 		return
 	var scene := get_tree().current_scene
 	if scene == null or scene.scene_file_path != SceneManager.WORLD_SCENE:
@@ -237,10 +239,22 @@ func _process(delta: float) -> void:
 	_poll_elapsed += delta
 	if _poll_elapsed >= 3.0 and not _refreshing:
 		_poll_elapsed = 0.0
-		refresh_gameplay()
+		if backend_ready:
+			refresh_gameplay()
+		else:
+			load_from_backend()
+
+
+func retry_backend() -> void:
+	if not _loading and Global.is_logged_in() and not backend_ready:
+		load_from_backend()
 
 
 func refresh_gameplay() -> void:
+	# A later successful refresh must also finish a failed initial load.
+	if not backend_ready:
+		await load_from_backend()
+		return
 	var version := Global.session_version
 	while _refreshing:
 		await gameplay_refreshed

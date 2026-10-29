@@ -367,7 +367,7 @@ class FarmingService:
         with transaction(self.db):
             self.players.lock(player_id)
             world = self._owner_world(player_id)
-            presence = RealtimeService(self.db).active(player_id)
+            presence = RealtimeService(self.db).active_position(player_id)
             if presence.room not in (CAMPUS_ROOM, f"world:{world.id}") or not at_water(presence.x, presence.y):
                 raise AppError(
                     "WATER_SOURCE_REQUIRED", "Stand near a campus water source"

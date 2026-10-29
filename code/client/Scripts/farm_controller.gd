@@ -114,6 +114,14 @@ func _input(event: InputEvent) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _blocked():
+		if not GameState.menu_open and not GameState.social_open \
+				and event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT \
+				and _is_in_farm_area(_hover_tile()):
+			if not _player_in_zone:
+				HousePrompt.flash("Step into your farm to work on these tiles.", 3.0, false)
+			elif Global.is_logged_in() and not GameState.backend_ready:
+				HousePrompt.flash("Game data has not loaded. Reconnecting; try again shortly.", 3.0, false)
+				GameState.retry_backend()
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if _dragging:

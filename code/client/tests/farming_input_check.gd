@@ -11,6 +11,12 @@ func check(value: bool, message: String) -> void:
 	if not value: failures += 1
 
 func click_tile(farm: Node, tile: Vector2i) -> void:
+	# A committed farm action plays a tool animation; subsequent clicks wait
+	# for that animation just as a player must, rather than racing two frames.
+	var player := current_scene.get_node("girl")
+	var deadline := Time.get_ticks_msec() + 6000
+	while player.get("_busy") == true and Time.get_ticks_msec() < deadline:
+		await process_frame
 	var click := InputEventMouseButton.new()
 	click.position = root.get_canvas_transform() * farm._tile_to_world(tile)
 	click.button_index = MOUSE_BUTTON_LEFT

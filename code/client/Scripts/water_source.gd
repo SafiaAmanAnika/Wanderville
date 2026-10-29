@@ -60,7 +60,10 @@ func _input(event: InputEvent) -> void:
 	if GameState.water_drops >= GameState.MAX_WATER:
 		HousePrompt.flash("Water already full!")
 		return
-	if Global.is_logged_in() and not GameState.backend_ready: return
+	if Global.is_logged_in() and not GameState.backend_ready:
+		HousePrompt.flash("Game data has not loaded. Reconnecting; try Q again shortly.", 3.0, false)
+		GameState.retry_backend()
+		return
 	_refilling = true
 	AudioManager.play("collect_water")
 	var version := Global.session_version

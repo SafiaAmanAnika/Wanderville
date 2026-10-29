@@ -596,6 +596,33 @@ def test_refill_checks_private_farm_water_and_room(client, account, db, location
         assert response.json()["error"] == "WATER_SOURCE_REQUIRED"
 
 
+@pytest.mark.parametrize("near", [True, False])
+@pytest.mark.parametrize("location", [None, "social_lobby"])
+def test_refill_uses_live_memory_coordinates(client, account, db, monkeypatch, near, location):
+    from app.core.config import settings
+    from app.modules.realtime import position_projection
+    from app.modules.realtime.service import RealtimeService
+
+    monkeypatch.setattr(settings, "presence_backend", "memory")
+    user = account("moving_refill")
+    RealtimeService(db).enter(user.id, location=location)
+    row = db.get(Presence, user.id)
+    lake = tuple(GEOMETRY["water"][0]["points"][0])
+    saved = CAMPUS_SPAWN if near else lake
+    live = lake if near else CAMPUS_SPAWN
+    row.x, row.y = saved
+    db.get(PlayerProfile, user.id).water_charges = 0
+    db.commit()
+    position_projection.commit(user.id, row.room, *live, 1, row.room_epoch, utcnow())
+    response = client.post("/farm/refill", headers=user.headers)
+    if near and location is None:
+        assert data(response)["water_remaining"] == 1
+    else:
+        assert response.json()["error"] == "WATER_SOURCE_REQUIRED"
+    db.refresh(row)
+    assert (row.x, row.y) == saved  # action checks must not persist movement
+
+
 def test_tutorial_refill_and_account_delete(client, account, db):
     a = account()
     assert (

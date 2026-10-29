@@ -190,8 +190,9 @@ func _cut(tree: Node2D) -> void:
 			return
 		if not response.get("ok", false):
 			_stop_chop_sound(sound)
+			# Keep the standing prompt from replacing this error on the next frame.
+			await HousePrompt.flash(APIClient.error_text(response), 3.0)
 			_busy = false
-			HousePrompt.flash(APIClient.error_text(response), 3.0)
 			return
 		grown = APIClient.data_of(response).get("spawned", [])
 	else:

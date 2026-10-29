@@ -53,6 +53,20 @@ func _full(control: Control, parent: Node) -> void:
 func _build_background() -> void:
 	var backdrop := SceneManager.show_journey_background(self,0.0,background_video)
 	background_player = backdrop.player
+	# Keep the artwork visible while giving the central menu a calm reading area.
+	var shade := TextureRect.new()
+	shade.name = "TitleShade"
+	var gradient := Gradient.new()
+	gradient.set_color(0, Color(0.12, 0.07, 0.05, 0.05))
+	gradient.set_color(1, Color(0.12, 0.07, 0.05, 0.72))
+	var texture := GradientTexture2D.new()
+	texture.gradient = gradient
+	texture.fill = GradientTexture2D.FILL_RADIAL
+	texture.fill_from = Vector2(0.5, 0.46)
+	texture.fill_to = Vector2(0.0, 0.0)
+	shade.texture = texture
+	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_full(shade, self)
 
 
 func _label(text: String, font_size: int, color: Color = Style.PAPER) -> Label:
@@ -66,10 +80,15 @@ func _build_title() -> void:
 	canvas = Control.new(); canvas.name = "TitleComposition"
 	canvas.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(canvas); canvas.size = DESIGN
+	var atmosphere := preload("res://Scripts/ui/title_atmosphere.gd").new()
+	atmosphere.name = "FireflyFrame"; atmosphere.size = DESIGN; canvas.add_child(atmosphere)
 	var logo := TextureRect.new(); logo.texture = LOGO; logo.name = "Wordmark"
 	logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE; logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	logo.position = Vector2(430,125); logo.size = Vector2(1060,340)
 	logo.mouse_filter = Control.MOUSE_FILTER_IGNORE; canvas.add_child(logo)
+	var rule := ColorRect.new(); rule.color = Color("e7c38580")
+	rule.position = Vector2(860, 494); rule.size = Vector2(200, 1)
+	rule.mouse_filter = Control.MOUSE_FILTER_IGNORE; canvas.add_child(rule)
 	menu = VBoxContainer.new(); menu.name = "JourneyMenu"
 	menu.position = Vector2(710,510); menu.custom_minimum_size.x = 500
 	menu.add_theme_constant_override("separation", -12); canvas.add_child(menu)

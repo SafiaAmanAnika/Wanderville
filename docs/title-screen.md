@@ -6,7 +6,9 @@ priority. Old opening preferences are ignored.
 
 The title uses the existing `Assets/background/bg.png` and supplied
 `Assets/background/Wanderville_Logo.png`. The original map, houses and social
-rooms remain in use. The tagline and background vignette are removed.
+rooms remain in use. The title adds a warm vignette, a fine gold frame,
+subtle drifting fireflies. The background asset is
+`Assets/background/bg.png`; replace that file to update the shared artwork.
 Title, authentication and loading use the same background construction, with
 identical aspect-preserving scaling and crop at every window size.
 

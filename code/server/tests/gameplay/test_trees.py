@@ -1,5 +1,6 @@
 """Cutting trees for wood: one forest per player, regrown when a season is cleared."""
 import math
+import pytest
 
 from app.core.clock import utcnow
 from app.modules.realtime.models import Presence
@@ -37,6 +38,28 @@ def wood(client, user):
 
 def summer_tree():
     return next(t for t in GEOMETRY["trees"] if t["season"] == "summer")
+
+
+@pytest.mark.parametrize("near", [True, False])
+def test_chop_uses_live_memory_position_not_saved_spawn(client, account, db, monkeypatch, near):
+    from app.core.config import settings
+    from app.modules.realtime import position_projection
+    monkeypatch.setattr(settings, "presence_backend", "memory")
+    season(db, "summer")
+    me = account("live_cutter")
+    tree = summer_tree()
+    # The durable coordinate is opposite to the current live coordinate.
+    stand(db, me.id, tree["x"] + (1000 if near else 0), tree["y"])
+    row = db.get(Presence, me.id)
+    position_projection.commit(me.id, row.room, tree["x"] + (0 if near else 1000),
+                               tree["y"], 1, row.room_epoch, utcnow())
+    response = client.post("/trees/chop", headers=me.headers, json={"tree_id": tree["id"]})
+    if near:
+        assert data(response)["wood"] == WOOD_PER_TREE
+        assert wood(client, me) == WOOD_PER_TREE
+    else:
+        assert response.json()["error"] == "TREE_TOO_FAR"
+        assert wood(client, me) == 0
 
 
 def test_every_season_has_map_trees_with_trunks_in_the_world():

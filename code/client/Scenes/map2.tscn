@@ -1956,172 +1956,172 @@ scale = Vector2(0.9384322, -0.78909254)
 skew = 0.058823586
 texture = ExtResource("24_xx0sa")
 
-[node name="Lampposts" type="Node" parent="TileMapLayer" unique_id=999580666]
+[node name="Lampposts" type="Node2D" parent="." unique_id=999580666]
 
-[node name="Lamppost" type="Sprite2D" parent="TileMapLayer/Lampposts" unique_id=1898226543]
+[node name="Lamppost" type="Sprite2D" parent="Lampposts" unique_id=1898226543]
 z_index = 1
 y_sort_enabled = true
 position = Vector2(-82, -87.00001)
 scale = Vector2(0.021660404, 0.017408539)
 texture = ExtResource("20_xx0sa")
 
-[node name="Lamppost2" type="Sprite2D" parent="TileMapLayer/Lampposts" unique_id=1360959025]
+[node name="Lamppost2" type="Sprite2D" parent="Lampposts" unique_id=1360959025]
 z_index = 1
 y_sort_enabled = true
 position = Vector2(-91, -60.00001)
 scale = Vector2(0.021660404, 0.017408539)
 texture = ExtResource("20_xx0sa")
 
-[node name="Lamppost3" type="Sprite2D" parent="TileMapLayer/Lampposts" unique_id=2137442104]
+[node name="Lamppost3" type="Sprite2D" parent="Lampposts" unique_id=2137442104]
 z_index = 1
 y_sort_enabled = true
 position = Vector2(-35, -61.000004)
 scale = Vector2(0.021660404, 0.017408539)
 texture = ExtResource("20_xx0sa")
 
-[node name="Lamppost4" type="Sprite2D" parent="TileMapLayer/Lampposts" unique_id=2102270999]
+[node name="Lamppost4" type="Sprite2D" parent="Lampposts" unique_id=2102270999]
 z_index = 1
 y_sort_enabled = true
 position = Vector2(-61, -73)
 scale = Vector2(0.021660404, 0.017408539)
 texture = ExtResource("20_xx0sa")
 
-[node name="Lamppost5" type="Sprite2D" parent="TileMapLayer/Lampposts" unique_id=1557025087]
+[node name="Lamppost5" type="Sprite2D" parent="Lampposts" unique_id=1557025087]
 z_index = 1
 y_sort_enabled = true
 position = Vector2(-42, -87.00001)
 scale = Vector2(0.021660404, 0.017408539)
 texture = ExtResource("20_xx0sa")
 
-[node name="Lamppost6" type="Sprite2D" parent="TileMapLayer/Lampposts" unique_id=1144610009]
+[node name="Lamppost6" type="Sprite2D" parent="Lampposts" unique_id=1144610009]
 z_index = 1
 y_sort_enabled = true
 position = Vector2(17, -91.00001)
 scale = Vector2(0.021660404, 0.017408539)
 texture = ExtResource("20_xx0sa")
 
-[node name="Lamppost7" type="Sprite2D" parent="TileMapLayer/Lampposts" unique_id=2052158091]
+[node name="Lamppost7" type="Sprite2D" parent="Lampposts" unique_id=2052158091]
 z_index = 1
 y_sort_enabled = true
 position = Vector2(-146, -122.00001)
 scale = Vector2(0.021660404, 0.017408539)
 texture = ExtResource("20_xx0sa")
 
-[node name="Lamppost8" type="Sprite2D" parent="TileMapLayer/Lampposts" unique_id=482669704]
+[node name="Lamppost8" type="Sprite2D" parent="Lampposts" unique_id=482669704]
 z_index = 1
 y_sort_enabled = true
 position = Vector2(-147, -18.000008)
 scale = Vector2(0.021660404, 0.017408539)
 texture = ExtResource("20_xx0sa")
 
-[node name="Lamppost9" type="Sprite2D" parent="TileMapLayer/Lampposts" unique_id=1434978740]
+[node name="Lamppost9" type="Sprite2D" parent="Lampposts" unique_id=1434978740]
 z_index = 1
 y_sort_enabled = true
 position = Vector2(125, -115)
 scale = Vector2(0.021660404, 0.017408539)
 texture = ExtResource("20_xx0sa")
 
-[node name="Lamppost10" type="Sprite2D" parent="TileMapLayer/Lampposts" unique_id=1718622042]
+[node name="Lamppost10" type="Sprite2D" parent="Lampposts" unique_id=1718622042]
 z_index = 1
 y_sort_enabled = true
 position = Vector2(260, -115.00001)
 scale = Vector2(0.021660404, 0.017408539)
 texture = ExtResource("20_xx0sa")
 
-[node name="Lamppost11" type="Sprite2D" parent="TileMapLayer/Lampposts" unique_id=471512289]
+[node name="Lamppost11" type="Sprite2D" parent="Lampposts" unique_id=471512289]
 z_index = 1
 y_sort_enabled = true
 position = Vector2(125, 30)
 scale = Vector2(0.021660404, 0.017408539)
 texture = ExtResource("20_xx0sa")
 
-[node name="Lamppost12" type="Sprite2D" parent="TileMapLayer/Lampposts" unique_id=695903406]
+[node name="Lamppost12" type="Sprite2D" parent="Lampposts" unique_id=695903406]
 z_index = 1
 y_sort_enabled = true
 position = Vector2(260, 30)
 scale = Vector2(0.021660404, 0.017408539)
 texture = ExtResource("20_xx0sa")
 
-[node name="Lamplight" type="Node2D" parent="TileMapLayer/Lampposts" unique_id=259002215]
+[node name="Lamplight" type="Node2D" parent="Lampposts" unique_id=259002215]
 
-[node name="PointLight2D" type="PointLight2D" parent="TileMapLayer/Lampposts/Lamplight" unique_id=930995767]
+[node name="PointLight2D" type="PointLight2D" parent="Lampposts/Lamplight" unique_id=930995767]
 position = Vector2(125.00001, 23)
 scale = Vector2(4.687493, 4.6875005)
 energy = 4.8
 texture = SubResource("GradientTexture2D_ilnrw")
 texture_scale = 0.01
 
-[node name="PointLight2D2" type="PointLight2D" parent="TileMapLayer/Lampposts/Lamplight" unique_id=1054358227]
+[node name="PointLight2D2" type="PointLight2D" parent="Lampposts/Lamplight" unique_id=1054358227]
 position = Vector2(260, 22.999998)
 scale = Vector2(4.687493, 4.6875005)
 energy = 4.8
 texture = SubResource("GradientTexture2D_ilnrw")
 texture_scale = 0.01
 
-[node name="PointLight2D3" type="PointLight2D" parent="TileMapLayer/Lampposts/Lamplight" unique_id=1132365691]
+[node name="PointLight2D3" type="PointLight2D" parent="Lampposts/Lamplight" unique_id=1132365691]
 position = Vector2(260.00003, -121.99999)
 scale = Vector2(4.687493, 4.6875005)
 energy = 4.8
 texture = SubResource("GradientTexture2D_ilnrw")
 texture_scale = 0.01
 
-[node name="PointLight2D4" type="PointLight2D" parent="TileMapLayer/Lampposts/Lamplight" unique_id=2112147279]
+[node name="PointLight2D4" type="PointLight2D" parent="Lampposts/Lamplight" unique_id=2112147279]
 position = Vector2(125, -122)
 scale = Vector2(4.687493, 4.6875005)
 energy = 4.8
 texture = SubResource("GradientTexture2D_ilnrw")
 texture_scale = 0.01
 
-[node name="PointLight2D5" type="PointLight2D" parent="TileMapLayer/Lampposts/Lamplight" unique_id=1935405604]
+[node name="PointLight2D5" type="PointLight2D" parent="Lampposts/Lamplight" unique_id=1935405604]
 position = Vector2(17.000002, -98)
 scale = Vector2(4.687493, 4.6875005)
 energy = 4.8
 texture = SubResource("GradientTexture2D_ilnrw")
 texture_scale = 0.01
 
-[node name="PointLight2D6" type="PointLight2D" parent="TileMapLayer/Lampposts/Lamplight" unique_id=1320137513]
+[node name="PointLight2D6" type="PointLight2D" parent="Lampposts/Lamplight" unique_id=1320137513]
 position = Vector2(-41.999996, -93.99999)
 scale = Vector2(4.687493, 4.6875005)
 energy = 4.8
 texture = SubResource("GradientTexture2D_ilnrw")
 texture_scale = 0.01
 
-[node name="PointLight2D7" type="PointLight2D" parent="TileMapLayer/Lampposts/Lamplight" unique_id=1228520995]
+[node name="PointLight2D7" type="PointLight2D" parent="Lampposts/Lamplight" unique_id=1228520995]
 position = Vector2(-61, -80)
 scale = Vector2(4.687493, 4.6875005)
 energy = 4.8
 texture = SubResource("GradientTexture2D_ilnrw")
 texture_scale = 0.01
 
-[node name="PointLight2D8" type="PointLight2D" parent="TileMapLayer/Lampposts/Lamplight" unique_id=374007856]
+[node name="PointLight2D8" type="PointLight2D" parent="Lampposts/Lamplight" unique_id=374007856]
 position = Vector2(-82, -94)
 scale = Vector2(4.687493, 4.6875005)
 energy = 4.8
 texture = SubResource("GradientTexture2D_ilnrw")
 texture_scale = 0.01
 
-[node name="PointLight2D9" type="PointLight2D" parent="TileMapLayer/Lampposts/Lamplight" unique_id=2113328847]
+[node name="PointLight2D9" type="PointLight2D" parent="Lampposts/Lamplight" unique_id=2113328847]
 position = Vector2(-35.000004, -68)
 scale = Vector2(4.687493, 4.6875005)
 energy = 4.8
 texture = SubResource("GradientTexture2D_ilnrw")
 texture_scale = 0.01
 
-[node name="PointLight2D10" type="PointLight2D" parent="TileMapLayer/Lampposts/Lamplight" unique_id=615287786]
+[node name="PointLight2D10" type="PointLight2D" parent="Lampposts/Lamplight" unique_id=615287786]
 position = Vector2(-91.00001, -67)
 scale = Vector2(4.687493, 4.6875005)
 energy = 4.8
 texture = SubResource("GradientTexture2D_ilnrw")
 texture_scale = 0.01
 
-[node name="PointLight2D11" type="PointLight2D" parent="TileMapLayer/Lampposts/Lamplight" unique_id=1225434820]
+[node name="PointLight2D11" type="PointLight2D" parent="Lampposts/Lamplight" unique_id=1225434820]
 position = Vector2(-147, -25)
 scale = Vector2(4.687493, 4.6875005)
 energy = 4.8
 texture = SubResource("GradientTexture2D_ilnrw")
 texture_scale = 0.01
 
-[node name="PointLight2D12" type="PointLight2D" parent="TileMapLayer/Lampposts/Lamplight" unique_id=954397222]
+[node name="PointLight2D12" type="PointLight2D" parent="Lampposts/Lamplight" unique_id=954397222]
 position = Vector2(-146.00002, -129)
 scale = Vector2(4.687493, 4.6875005)
 energy = 4.8

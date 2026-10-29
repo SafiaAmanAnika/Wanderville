@@ -34,7 +34,7 @@ class FishingService:
         now = now or utcnow()
         with transaction(self.db):
             PlayerRepository(self.db).lock(player_id)
-            presence = RealtimeService(self.db).active(player_id)
+            presence = RealtimeService(self.db).active_position(player_id)
             if presence.room != CAMPUS_ROOM or not at_water(presence.x, presence.y):
                 raise AppError("FISHING_SPOT_REQUIRED", "Stand near a campus lake")
             spot = self.repo.get(FishingSpot, request.spot_code)

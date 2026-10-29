@@ -254,6 +254,15 @@ class RealtimeService:
                 row.x, row.y, row.sequence = live.x, live.y, live.sequence
         return row
 
+    def active_position(self, pid):
+        """Authorized live coordinates for gameplay checks, without dirtying the DB row."""
+        row = self.active(pid)
+        if settings.presence_backend == "memory":
+            live = position_projection.get(pid)
+            if live is not None and live.room == row.room and live.room_epoch == row.room_epoch:
+                return live
+        return row
+
     def leave(self, pid, evict_visitors=True):
         """Release presence and every visit slot tied to this connection.
 

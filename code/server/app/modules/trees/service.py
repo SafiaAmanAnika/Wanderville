@@ -75,7 +75,7 @@ class TreeService:
             session = resolve(self.db, player_id)
             if session.is_visitor:
                 raise Forbidden("You can only cut trees on your own map")
-            presence = RealtimeService(self.db).active(player_id)
+            presence = RealtimeService(self.db).active_position(player_id)
             if presence.room not in (CAMPUS_ROOM, f"world:{session.owned_world_id}"):
                 raise Forbidden("You can only cut trees on your own map")
             season = self._season()

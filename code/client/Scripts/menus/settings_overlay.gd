@@ -3,7 +3,7 @@ extends Control
 signal closed
 
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
-const BG_TEXTURE := preload("res://Assets/background/bg.png")
+const BG_TEXTURE := preload("res://Assets/background/bg.webp")
 
 @onready var _title: Label = %Title
 @onready var _music_slider: HSlider = %MusicSlider

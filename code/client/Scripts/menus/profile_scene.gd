@@ -1,6 +1,6 @@
 extends Control
 
-const BG_TEXTURE := preload("res://Assets/background/bg.png")
+const BG_TEXTURE := preload("res://Assets/background/bg.webp")
 const CharaFrames := preload("res://Scripts/chara_frames.gd")
 const _preload_card := preload("res://Scenes/components/UISpriteSelector.tscn")
 

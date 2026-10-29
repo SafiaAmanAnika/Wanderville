@@ -105,6 +105,44 @@ def step_along(service, pid, row, index, delta=2.0, axis="x"):
 # ── common contract, both backends ────────────────────────────────────────
 
 
+def test_solo_private_world_acknowledges_each_live_movement(client, account, db, memory_mode):
+    user = account("solo_movement")
+    entered = client.post("/realtime/enter", headers=user.headers, json={}).json()["data"]
+    assert entered["room"].startswith("world:")
+    start_x, start_y = entered["x"], entered["y"]
+    for sequence in range(1, 7):
+        moved = client.post("/realtime/move", headers=user.headers,
+                            json={"x": start_x + sequence, "y": start_y, "sequence": sequence})
+        assert moved.status_code == 200, moved.text
+        snap = client.get("/realtime/snapshot", headers=user.headers).json()["data"]
+        own = next(p for p in snap["players"] if p["player_id"] == user.id)
+        assert own["sequence"] == sequence, "Solo snapshots must acknowledge movement or the client queue stalls"
+        assert own["x"] == start_x + sequence
+    saved = db.get(Presence, user.id, populate_existing=True)
+    assert (saved.x, saved.y, saved.sequence) == (start_x, start_y, 0)
+
+
+def test_solo_websocket_movement_keeps_acknowledging_after_two_packets(client, account, memory_mode):
+    user = account("solo_socket")
+    with client.websocket_connect("/realtime/ws") as socket:
+        socket.send_json({"type": "auth", "token": user.tokens["access_token"], "protocol_version": 2})
+        initial = socket.receive_json()["data"]
+        me = next(p for p in initial["players"] if p["player_id"] == user.id)
+        x, y = me["x"], me["y"]
+        for sequence in range(1, 7):
+            socket.send_json({"type": "move", "data": {"x": x + sequence, "y": y, "sequence": sequence}})
+            for _ in range(20):
+                reply = socket.receive_json()
+                assert reply["type"] != "error", reply
+                own = next(p for p in reply["data"]["players"] if p["player_id"] == user.id)
+                if own["sequence"] >= sequence:
+                    break
+            else:
+                pytest.fail("Solo WebSocket stopped acknowledging movement")
+            assert own["sequence"] == sequence
+            assert own["x"] == x + sequence
+
+
 @pytest.mark.parametrize("mode", ["database", "memory"])
 def test_caller_appears_in_their_own_roster(client, account, db, monkeypatch, mode):
     monkeypatch.setattr(settings, "presence_backend", mode)
@@ -185,7 +223,6 @@ def test_walking_does_not_write_presence(client, account, db, memory_mode, campu
     service = RealtimeService(db)
     before = {p.id: (db.get(Presence, p.id).x, db.get(Presence, p.id).y)
               for p in (a, b)}
-    seq = {a.id: db.get(Presence, a.id).sequence, b.id: db.get(Presence, b.id).sequence}
 
     for step in range(1, 11):
         for user in (a, b):

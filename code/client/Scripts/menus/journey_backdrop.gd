@@ -1,6 +1,6 @@
 extends CanvasLayer
 ## One persistent player keeps title/auth video playback continuous across routes.
-const BG := preload("res://Assets/background/bg.png")
+const BG := preload("res://Assets/background/bg.webp")
 var player: VideoStreamPlayer
 var village: TextureRect
 var dim: ColorRect

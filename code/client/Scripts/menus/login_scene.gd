@@ -3,7 +3,7 @@ extends Control
 const AuthShell := preload("res://Scripts/menus/auth_shell.gd")
 
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
-const BG_TEXTURE := preload("res://Assets/background/bg.png")
+const BG_TEXTURE := preload("res://Assets/background/bg.webp")
 
 const TEXT_SUCCESS := Color("4d6c43")
 

@@ -1,7 +1,7 @@
 extends Button
 
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
-const DEFAULT_THUMBNAIL := preload("res://Assets/background/bg.png")
+const DEFAULT_THUMBNAIL := preload("res://Assets/background/bg.webp")
 const MONTH_NAMES := ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 const WOOD_SURFACE := Color(0.60, 0.43, 0.27)

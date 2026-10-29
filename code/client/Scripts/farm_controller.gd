@@ -238,8 +238,10 @@ func _on_seed_selected(seed_name: String) -> void:
 	if Global.is_logged_in():
 		await _server_action("plant", _pending_tile_pos, _pending_key, seed_name)
 		return
+	if not GameState.remove_item_offline(seed_name + "_seed", 1):
+		_toast("You do not have that seed in your bag.", _pending_tile_pos)
+		return
 	AudioManager.play("plant")
-	GameState.seed_inventory[seed_name] = int(GameState.seed_inventory.get(seed_name, 0)) - 1
 	GameState.seed_changed.emit(seed_name)
 	active_crops[_pending_key] = {"type": seed_name, "stage": 0, "watered": false}
 	_spawn_crop_visual(_pending_tile_pos, seed_name)

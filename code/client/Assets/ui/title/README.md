@@ -1,6 +1,6 @@
 # Painted title-screen cards
 
-The landing screen uses the existing `Assets/background/bg.png` and
+The landing screen uses `Assets/background/bg.webp` and
 `Assets/background/Wanderville_Logo.png`. Neither original image was changed.
 `logo.res` bundles the supplied logo losslessly; it is not generated artwork.
 

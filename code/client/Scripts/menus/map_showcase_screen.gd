@@ -1,6 +1,6 @@
 extends Control
 
-const BG_TEXTURE := preload("res://Assets/background/bg.png")
+const BG_TEXTURE := preload("res://Assets/background/bg.webp")
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
 const WORLD_CARD := preload("res://Scripts/components/world_card.gd")
 

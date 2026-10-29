@@ -4,11 +4,11 @@ Startup opens `Scenes/menus/TitleScreen.tscn` directly. There is no seed-opening
 screen, delay, or replay action. Email verification and reset deep links retain
 priority. Old opening preferences are ignored.
 
-The title uses the existing `Assets/background/bg.png` and supplied
+The title uses `Assets/background/bg.webp` and the supplied
 `Assets/background/Wanderville_Logo.png`. The original map, houses and social
 rooms remain in use. The title adds a warm vignette, a fine gold frame,
 subtle drifting fireflies. The background asset is
-`Assets/background/bg.png`; replace that file to update the shared artwork.
+`Assets/background/bg.webp`; replace that file to update the shared artwork.
 Title, authentication and loading use the same background construction, with
 identical aspect-preserving scaling and crop at every window size.
 

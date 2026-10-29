@@ -1,7 +1,7 @@
 extends Control
 
 const PIXEL_FONT := preload("res://Assets/fonts/BoldPixels.ttf")
-const BG_TEXTURE := preload("res://Assets/background/bg.png")
+const BG_TEXTURE := preload("res://Assets/background/bg.webp")
 
 const TEXT_COLOR := Color(0.95, 0.91, 0.80)
 const TEXT_SECONDARY := Color(0.82, 0.74, 0.58)

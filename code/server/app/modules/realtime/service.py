@@ -450,11 +450,18 @@ class RealtimeService:
             )
             return visible, self.repo.usernames([r.player_id for r in visible])
 
+        # Private worlds usually contain only their owner. An empty *other*
+        # player list must still overlay our own live position and sequence;
+        # returning the saved spawn here strands the client's bounded move queue.
+        mine = position_projection.get(row.player_id)
+        if mine is not None and (mine.room != row.room or mine.room_epoch != row.room_epoch):
+            mine = None
+        center_x, center_y = (mine.x, mine.y) if mine is not None else (row.x, row.y)
         live = position_projection.nearby(
-            row.room, row.x, row.y, radius, exclude={row.player_id}
+            row.room, center_x, center_y, radius, exclude={row.player_id}
         )
-        if not live:
-            rows = self.repo.nearby(row.room, since, row.x, row.y, radius)
+        if not live and mine is None:
+            rows = self.repo.nearby(row.room, since, center_x, center_y, radius)
             visible = [r for r in rows if r.player_id not in blocked]
             return visible, self.repo.usernames([r.player_id for r in visible])
 
@@ -476,7 +483,6 @@ class RealtimeService:
         # entry would silently report the durable row while everybody else
         # reports memory, and the client would be told its own position was
         # somewhere it had never been.
-        mine = position_projection.get(own)
         if mine is not None:
             positions[own] = mine
 
@@ -486,14 +492,14 @@ class RealtimeService:
             # Memory wins for coordinates; the durable row supplies everything
             # else. A row with no live position is a player who has not moved
             # since entering, so their stored spawn is still their position.
-            if position is not None:
+            if position is not None and position.room == presence.room and position.room_epoch == presence.room_epoch:
                 presence.x = position.x
                 presence.y = position.y
                 presence.sequence = position.sequence
             merged.append(presence)
         merged.sort(
             key=lambda presence: (
-                (presence.x - row.x) ** 2 + (presence.y - row.y) ** 2,
+                (presence.x - center_x) ** 2 + (presence.y - center_y) ** 2,
                 presence.player_id,
             )
         )

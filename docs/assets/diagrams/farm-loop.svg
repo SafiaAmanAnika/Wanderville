@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1150" height="260" viewBox="0 0 1150 260" role="img" aria-label="Farming / repeatable play loop">
+<rect width="1150" height="260" fill="#fff8e9"/>
+<text x="32" y="34" font-family="Arial,sans-serif" font-size="21" font-weight="bold" fill="#722f40">Farming / repeatable play loop</text>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#722f40"/></marker></defs>
+<polyline points="270,150.0 295.0,150.0 295.0,150.0 320,150.0" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<polyline points="550,150.0 575.0,150.0 575.0,150.0 600,150.0" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<polyline points="830,150.0 855.0,150.0 855.0,150.0 880,150.0" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="40" y="100" width="230" height="100" rx="8" fill="white" stroke="#722f40"/>
+<path d="M48,100 H262 Q270,100 270,108 V136 H40 V108 Q40,100 48,100" fill="#722f40"/>
+<text x="155.0" y="124" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">Prepare soil</text>
+<text x="54" y="159" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Choose a valid farm tile</text>
+<text x="54" y="180" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Click nearby grass</text>
+<rect x="320" y="100" width="230" height="100" rx="8" fill="white" stroke="#722f40"/>
+<path d="M328,100 H542 Q550,100 550,108 V136 H320 V108 Q320,100 328,100" fill="#722f40"/>
+<text x="435.0" y="124" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">Plant owned seed</text>
+<text x="334" y="159" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Select a crop</text>
+<text x="334" y="180" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Server checks season / level</text>
+<rect x="600" y="100" width="230" height="100" rx="8" fill="white" stroke="#722f40"/>
+<path d="M608,100 H822 Q830,100 830,108 V136 H600 V108 Q600,100 608,100" fill="#722f40"/>
+<text x="715.0" y="124" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">Water once</text>
+<text x="614" y="159" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Growth starts when watered</text>
+<text x="614" y="180" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Current catalog: 18 seconds</text>
+<rect x="880" y="100" width="230" height="100" rx="8" fill="white" stroke="#722f40"/>
+<path d="M888,100 H1102 Q1110,100 1110,108 V136 H880 V108 Q880,100 888,100" fill="#722f40"/>
+<text x="995.0" y="124" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">Harvest and grow</text>
+<text x="894" y="159" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Receive produce and XP</text>
+<text x="894" y="180" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Sell or keep the crop</text>
+</svg>

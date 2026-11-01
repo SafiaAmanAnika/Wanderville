@@ -1,31 +1,87 @@
+<p align="center">
+  <img src="docs/assets/banners/wanderville-generated-banner.png" alt="Wanderville: generated pixel-art banner inspired by the game's campus hall, canals, bridge, farmer, duck and crops" width="100%">
+</p>
+
+<p align="center">
+  <img src="docs/assets/animations/readme-title.gif" alt="Wanderville — Grow. Build. Fish. Explore. Together." width="960">
+</p>
+
 # Wanderville
 
-The existing Godot 4.6 game is connected to the Python/PostgreSQL backend. This checkout now includes the requested world HUD, social/realtime integration, browser Google sign-in, verification/reset email support, and a free-tier deployment blueprint.
+**Grow a little. Explore the campus. Make the place your own.**
 
-- **Start/configure/deploy:** [exact Google, email, database and hosting steps](docs/SETUP_AND_HOSTING.md).
-- **Tests, changed files and limitations:** [verification report](docs/VERIFICATION_RESULTS.md).
-- **Native Godot proximity text/voice, gifts and wishlists:** [standalone client, setup and protocol](docs/PROXIMITY_BACKEND.md).
+A Godot campus life and farming game: grow crops, build and furnish a home, catch fish, run a shop, choose a companion and spend time with friends. A red-brick campus, canals, seasonal scenery and music connect its different spaces. FastAPI and PostgreSQL support persistent accounts and game state.
 
-## In-game controls
+Banner artwork generated using our actual campus map, buildings, logo and character assets as references.
 
-Startup opens directly on the title menu. A shared maroon cat progress bar labelled **Purring...** covers startup, scene changes and inline loading states. The supplied logo and original background keep consistent framing across title, authentication and loading. Gameplay Settings includes **Leave World** to return to title while keeping the account signed in. Detailed local house saves are isolated by server/account/owned world; [housing scope and existing-save recovery](docs/housing-isolation.md).
+[Start playing](docs/MANUAL.md) · [Run locally](docs/BUILD_AND_DEPLOY.md) · [Understand the system](docs/SYSTEM_DESIGN.md)
 
-The screen-fixed top-right controls open **Social Lobby** and **Settings**. **Nearby** stays at the bottom left, with **Voice** at the bottom right. Click the campus **CDS building** to open inventory; no duplicate inventory shortcut appears on the HUD. Notifications live in Social. Only one main panel opens at a time. Settings reuses the existing volume/preferences controls and logout confirmation. Failed saves remain visible and can be retried. The [title screen](docs/title-screen.md) uses the existing world artwork as its future-video placeholder. [Authentication and first entry](docs/onboarding-ui.md) share that backdrop and the six-preset character editor; returning players keep their saved setup, while new players enter the single campus map after character selection.
+## In this checkout
 
-Social Lobby contains Private chat and Friends, including username search, incoming requests, online status, remove/block/unblock. Nearby chat and proximity voice use the compact Nearby controls. Closing Social preserves conversation drafts; logout clears account data. Remote players reuse the supplied character scene without local input/camera control. Private messages are fetched for the active conversation every two seconds; badges only represent messages actually received plus real friend-request counts.
+| Area | What is connected |
+| --- | --- |
+| Farming and trees | Click to till, plant, water and harvest; carry tiles with E and chop seasonal trees with C |
+| Homes and interiors | Six house designs, staged construction, five floor finishes, entering/exiting and local layout saves |
+| Furniture | 228 catalog entries across 11 categories; place, rotate, resize and rearrange |
+| Fishing minigame | Track a moving fish, fill the catch meter and catch one of ten species before the timer ends |
+| Progression | Aura, XP, level unlocks and shared inventory capacity |
+| Inventory and Store | Clickable storage shelves, a swimming aquarium display, buy/sell, starter seeds and transaction receipts |
+| Marketplace | A separate shopping street, General Store, 12 storefront choices, player-stocked shelves and sales history |
+| Companions | Cat, dog, rabbit, fox, duck or red panda; following, wandering, resting and sleeping |
+| Appearance and profile | Six character presets, Wardrobe, animated directional previews, Mirror and profile controls |
+| Social spaces | Social Lobby, Reception, friends, messages, requests, invitations and notices |
+| Nearby and community | Proximity text/voice, gifts, wishlists, privacy and farm visiting |
+| Music and atmosphere | Title/world/marketplace/fishing music, gameplay sound effects, separate audio controls, seasons and day/night visuals |
+| Multiplayer | Default WebSocket path; optional experimental ENet campus movement |
 
-Inventory shows server-backed stacks, selected-item details, category filters and occupied slots against one shared capacity. Partial stacks fill before new slots are used; changing categories does not change capacity. Supplied crop-frame icons distinguish seeds and produce; missing artwork uses the existing slot placeholder. Notifications paginate and mark only the selected/viewed entry read. The HUD shows level/title, progress to the next level and Aura, with a brief notification when a gameplay action raises the level.
+These descriptions come from source review at `31ca97c39c05`. See the [manual](docs/MANUAL.md) for how to play and [mechanics](docs/GAME_MECHANICS.md) for exact rules and current integration boundaries, including local housing resources. Runtime evidence is tracked in [testing](docs/TESTING.md).
 
-The existing **E** farming interaction, **Q** water collection and **K** crop relocation remain connected to server validation and persistence. The same wooden seed picker supplies the planting flow, shows only owned seeds with season/level restrictions, and links to the Store. Cancelling does not plant or spend inventory.
+<details>
+<summary><strong>See our characters and companions in motion</strong></summary>
 
-The wooden Store uses existing server prices and stock; choose Buy or Sell, select an item and quantity, review the total, then confirm. Level restrictions, planting seasons and ownership are separate. Transactions refresh inventory, seed availability, Aura, XP and capacity together. Interrupted transactions retain their request ID across restarts; reopening the store checks the receipt before allowing another transaction. Use Refresh or Retry the same transaction if confirmation is unavailable.
+![Six playable characters](docs/assets/animations/characters.gif)
 
-**Claim starter seeds (once)** adds 5 Paddy Seeds and 5 Wheat Seeds, both usable at level one in every season, without resetting existing items or balances. The durable grant marker is retained for accounts that claimed the earlier pack; consuming seeds or logging in never grants it again. All 20 recovered seed types remain in the catalog, with supported level and season restrictions. See the [catalog and verification report](docs/VERIFICATION_RESULTS.md) and [progression rules](docs/SETUP_AND_HOSTING.md#6-progression-and-inventory-rules) for unlocks and rewards. Apply migration `0006_progression_and_stacks` and reference seeding using the [local startup commands](docs/SETUP_AND_HOSTING.md#5-local-startup-and-existing-local-database).
+![Six companion walk cycles](docs/assets/animations/companions.gif)
 
-The nine supplied crop scenes retain one-watering continuous growth: ordinary five-frame crops reach harvest at 18 seconds; the six-frame potato reaches it at 22 seconds, following the existing frame durations. The bucket holds 20 and refills one unit per action. Existing server season/level restrictions remain enforced. No starter seeds or invented balances are granted locally.
+Source sprite previews. [Full animation gallery](docs/WORLD_ART_BIBLE.md#animation-gallery).
 
-Day/night tint and existing weather effects are now attached to the world. The authoritative defaults are a **40-minute day/night cycle** (30-minute day/10-minute night) and **7 real days per season**. Seasons do not repaint the map's terrain. These durations come from the existing server rules.
+</details>
 
-Maps, TileSets, collision geometry, coordinates, character/crop assets and gameplay animations were preserved. Small UI scenes and world attachment nodes were added/updated. The existing map still has invalid atlas-entry warnings; see the verification report's rendering limitations.
+## A first harvest
 
-On 5 October 2026, after explicit authorization, the **local** database was backed up, migrated to `0006_progression_and_stacks` and seeded; the API passed `/health` and `/ready`. No cloud resources or credentials were changed. Once a shared public API is configured into the exported game, friends need no database installation or database credentials.
+![Prepare soil, plant, water, harvest](docs/assets/diagrams/farm-loop.svg)
+
+Claim 5 Paddy Seeds and 5 Wheat Seeds once, plant a seed in your farm, water it, and harvest when ready. The current server uses 18 seconds of watered growth for catalog crops. The [manual](docs/MANUAL.md) explains the controls; [mechanics](docs/GAME_MECHANICS.md) gives the numbers.
+
+## The world
+
+![Actual Wanderville campus map captured in Godot](docs/assets/screenshots/campus-scene-overview.png)
+
+Our current campus: red-brick halls, canals, the arched bridge, palms and orchard. Captured from the actual Map scene used by `world.tscn`, in Godot 4.6.2 with a fixed daylight preview.
+
+## Documentation
+
+| Play and design | Engineering | Project |
+| --- | --- | --- |
+| [Player manual](docs/MANUAL.md) | [System design](docs/SYSTEM_DESIGN.md) | [Testing and evidence](docs/TESTING.md) |
+| [Game design](docs/GAME_DESIGN.md) | [Godot client](docs/CLIENT_SIDE.md) | [Build and deploy](docs/BUILD_AND_DEPLOY.md) |
+| [Game mechanics](docs/GAME_MECHANICS.md) | [Database and ERDs](docs/DATABASE.md) | [Creators note](docs/CREATORS_NOTE.md) |
+| [World and art](docs/WORLD_ART_BIBLE.md) | [HTTP API](docs/API.md) | [Future scope](docs/FUTURE_SCOPE.md) |
+| | [Networking](docs/NETWORKING.md) | |
+
+## Meet the team
+
+| Zenia | Anika | Tayma |
+| :---: | :---: | :---: |
+| <a href="https://github.com/zenken24"><img src="https://avatars.githubusercontent.com/u/178690416?v=4" width="88" alt="Zenia's GitHub avatar"></a> | <a href="https://github.com/SafiaAmanAnika"><img src="https://avatars.githubusercontent.com/u/165454310?v=4" width="88" alt="Anika's GitHub avatar"></a> | <a href="https://github.com/tayma-06"><img src="https://avatars.githubusercontent.com/u/171417485?v=4" width="88" alt="Tayma's GitHub avatar"></a> |
+| [@zenken24](https://github.com/zenken24) | [@SafiaAmanAnika](https://github.com/SafiaAmanAnika) | [@tayma-06](https://github.com/tayma-06) |
+
+## Development
+
+Godot **4.6** · Python **3.12.12** · FastAPI · SQLAlchemy · PostgreSQL.
+
+Use the [local setup steps](docs/BUILD_AND_DEPLOY.md) before running the Windows launchers. The deployment blueprint is checked in; its presence does not establish that a public server is live.
+
+The banner is generated promotional artwork; the campus image above is a real Godot scene capture. See the [credits and project story](docs/CREATORS_NOTE.md).
+
+[Player handbook](docs/MANUAL.md) · [Game design](docs/GAME_DESIGN.md) · [Meet the team](#meet-the-team)

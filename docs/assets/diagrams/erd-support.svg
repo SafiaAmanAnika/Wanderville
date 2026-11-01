@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1210" height="1560" viewBox="0 0 1210 1560" role="img" aria-label="Database / supporting records (key inventory)">
+<rect width="1210" height="1560" fill="#fff8e9"/>
+<text x="32" y="34" font-family="Arial,sans-serif" font-size="21" font-weight="bold" fill="#722f40">Database / supporting records (key inventory)</text>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#722f40"/></marker></defs>
+<rect x="40" y="90" width="340" height="220" rx="8" fill="white" stroke="#722f40"/>
+<path d="M48,90 H372 Q380,90 380,98 V126 H40 V98 Q40,90 48,90" fill="#722f40"/>
+<text x="210.0" y="114" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">encounter_hints</text>
+<text x="54" y="149" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK player_id : INTEGER</text>
+<text x="54" y="170" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK feature : VARCHAR(32)</text>
+<rect x="430" y="90" width="340" height="220" rx="8" fill="white" stroke="#722f40"/>
+<path d="M438,90 H762 Q770,90 770,98 V126 H430 V98 Q430,90 438,90" fill="#722f40"/>
+<text x="600.0" y="114" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">feedback</text>
+<text x="444" y="149" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK id : INTEGER</text>
+<text x="444" y="170" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK player_id : INTEGER</text>
+<rect x="820" y="90" width="340" height="220" rx="8" fill="white" stroke="#722f40"/>
+<path d="M828,90 H1152 Q1160,90 1160,98 V126 H820 V98 Q820,90 828,90" fill="#722f40"/>
+<text x="990.0" y="114" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">gift_wishlist_allocations</text>
+<text x="834" y="149" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK gift_id : INTEGER</text>
+<text x="834" y="170" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK entry_id : INTEGER</text>
+<rect x="40" y="380" width="340" height="220" rx="8" fill="white" stroke="#722f40"/>
+<path d="M48,380 H372 Q380,380 380,388 V416 H40 V388 Q40,380 48,380" fill="#722f40"/>
+<text x="210.0" y="404" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">nearby_chat_receipts</text>
+<text x="54" y="439" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK sender_id : INTEGER</text>
+<text x="54" y="460" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK request_id : VARCHAR(64)</text>
+<rect x="430" y="380" width="340" height="220" rx="8" fill="white" stroke="#722f40"/>
+<path d="M438,380 H762 Q770,380 770,388 V416 H430 V388 Q430,380 438,380" fill="#722f40"/>
+<text x="600.0" y="404" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">nearby_message_recipients</text>
+<text x="444" y="439" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK message_id : INTEGER</text>
+<text x="444" y="460" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK player_id : INTEGER</text>
+<rect x="820" y="380" width="340" height="220" rx="8" fill="white" stroke="#722f40"/>
+<path d="M828,380 H1152 Q1160,380 1160,388 V416 H820 V388 Q820,380 828,380" fill="#722f40"/>
+<text x="990.0" y="404" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">notifications</text>
+<text x="834" y="439" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK id : INTEGER</text>
+<text x="834" y="460" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK player_id : INTEGER</text>
+<rect x="40" y="670" width="340" height="220" rx="8" fill="white" stroke="#722f40"/>
+<path d="M48,670 H372 Q380,670 380,678 V706 H40 V678 Q40,670 48,670" fill="#722f40"/>
+<text x="210.0" y="694" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">player_cut_trees</text>
+<text x="54" y="729" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK player_id : INTEGER</text>
+<text x="54" y="750" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK tree_id : VARCHAR(64)</text>
+<rect x="430" y="670" width="340" height="220" rx="8" fill="white" stroke="#722f40"/>
+<path d="M438,670 H762 Q770,670 770,678 V706 H430 V678 Q430,670 438,670" fill="#722f40"/>
+<text x="600.0" y="694" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">player_first_harvests</text>
+<text x="444" y="729" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK player_id : INTEGER</text>
+<text x="444" y="750" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK item_code : VARCHAR(32)</text>
+<rect x="820" y="670" width="340" height="220" rx="8" fill="white" stroke="#722f40"/>
+<path d="M828,670 H1152 Q1160,670 1160,678 V706 H820 V678 Q820,670 828,670" fill="#722f40"/>
+<text x="990.0" y="694" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">player_reports</text>
+<text x="834" y="729" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK id : INTEGER</text>
+<text x="834" y="750" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK reporter_id : INTEGER</text>
+<text x="834" y="771" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK reported_id : INTEGER</text>
+<rect x="40" y="960" width="340" height="220" rx="8" fill="white" stroke="#722f40"/>
+<path d="M48,960 H372 Q380,960 380,968 V996 H40 V968 Q40,960 48,960" fill="#722f40"/>
+<text x="210.0" y="984" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">player_shop_sales</text>
+<text x="54" y="1019" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK id : INTEGER</text>
+<text x="54" y="1040" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK shop_id : INTEGER</text>
+<text x="54" y="1061" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK buyer_id : INTEGER</text>
+<rect x="430" y="960" width="340" height="220" rx="8" fill="white" stroke="#722f40"/>
+<path d="M438,960 H762 Q770,960 770,968 V996 H430 V968 Q430,960 438,960" fill="#722f40"/>
+<text x="600.0" y="984" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">player_spawned_trees</text>
+<text x="444" y="1019" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK id : INTEGER</text>
+<text x="444" y="1040" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK player_id : INTEGER</text>
+<rect x="820" y="960" width="340" height="220" rx="8" fill="white" stroke="#722f40"/>
+<path d="M828,960 H1152 Q1160,960 1160,968 V996 H820 V968 Q820,960 828,960" fill="#722f40"/>
+<text x="990.0" y="984" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">shop_purchases</text>
+<text x="834" y="1019" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK player_id : INTEGER</text>
+<text x="834" y="1040" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK request_id : VARCHAR(64)</text>
+<text x="834" y="1061" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK item_code : VARCHAR(32)</text>
+<rect x="40" y="1250" width="340" height="220" rx="8" fill="white" stroke="#722f40"/>
+<path d="M48,1250 H372 Q380,1250 380,1258 V1286 H40 V1258 Q40,1250 48,1250" fill="#722f40"/>
+<text x="210.0" y="1274" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">social_preferences</text>
+<text x="54" y="1309" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK player_id : INTEGER</text>
+<rect x="430" y="1250" width="340" height="220" rx="8" fill="white" stroke="#722f40"/>
+<path d="M438,1250 H762 Q770,1250 770,1258 V1286 H430 V1258 Q430,1250 438,1250" fill="#722f40"/>
+<text x="600.0" y="1274" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">social_revisions</text>
+<text x="444" y="1309" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK player_id : INTEGER</text>
+<rect x="820" y="1250" width="340" height="220" rx="8" fill="white" stroke="#722f40"/>
+<path d="M828,1250 H1152 Q1160,1250 1160,1258 V1286 H820 V1258 Q820,1250 828,1250" fill="#722f40"/>
+<text x="990.0" y="1274" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">wishlist_entries</text>
+<text x="834" y="1309" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK id : INTEGER</text>
+<text x="834" y="1330" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK player_id : INTEGER</text>
+<text x="834" y="1351" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK item_code : VARCHAR(32)</text>
+</svg>

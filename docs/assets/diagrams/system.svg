@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="860" viewBox="0 0 1100 860" role="img" aria-label="Wanderville / system overview">
+<rect width="1100" height="860" fill="#fff8e9"/>
+<text x="32" y="34" font-family="Arial,sans-serif" font-size="21" font-weight="bold" fill="#722f40">Wanderville / system overview</text>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#722f40"/></marker></defs>
+<polyline points="530.0,165 530.0,195.0 265.0,195.0 265.0,225" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="397.5" y="187.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#302b2a" stroke="#fff8e9" stroke-width="4" paint-order="stroke">requests</text>
+<polyline points="530.0,165 530.0,195.0 795.0,195.0 795.0,225" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="662.5" y="187.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#302b2a" stroke="#fff8e9" stroke-width="4" paint-order="stroke">events</text>
+<polyline points="265.0,330 265.0,367.5 530.0,367.5 530.0,405" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="397.5" y="359.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#302b2a" stroke="#fff8e9" stroke-width="4" paint-order="stroke">validated commands</text>
+<polyline points="795.0,330 795.0,367.5 530.0,367.5 530.0,405" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="662.5" y="359.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#302b2a" stroke="#fff8e9" stroke-width="4" paint-order="stroke">authorised session</text>
+<polyline points="530.0,510 530.0,545.0 530.0,545.0 530.0,580" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="530.0" y="537.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#302b2a" stroke="#fff8e9" stroke-width="4" paint-order="stroke">SQLAlchemy</text>
+<polyline points="300,115.0 18,115.0 18,782.5 30,782.5" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)" stroke-dasharray="6 5"/>
+<text x="85" y="710" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#302b2a" stroke="#fff8e9" stroke-width="4" paint-order="stroke">opt-in UDP</text>
+<rect x="300" y="65" width="460" height="100" rx="8" fill="white" stroke="#722f40"/>
+<path d="M308,65 H752 Q760,65 760,73 V101 H300 V73 Q300,65 308,65" fill="#722f40"/>
+<text x="530.0" y="89" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">Godot 4.6 client</text>
+<text x="314" y="124" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Scenes, GDScript, APIClient, RealtimeClient</text>
+<rect x="90" y="225" width="350" height="105" rx="8" fill="white" stroke="#722f40"/>
+<path d="M98,225 H432 Q440,225 440,233 V261 H90 V233 Q90,225 98,225" fill="#722f40"/>
+<text x="265.0" y="249" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">HTTP / HTTPS</text>
+<text x="104" y="284" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Accounts, farming, inventory, social actions</text>
+<rect x="620" y="225" width="350" height="105" rx="8" fill="white" stroke="#722f40"/>
+<path d="M628,225 H962 Q970,225 970,233 V261 H620 V233 Q620,225 628,225" fill="#722f40"/>
+<text x="795.0" y="249" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">WebSocket / WSS</text>
+<text x="634" y="284" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Presence, movement, chat and state events</text>
+<rect x="300" y="405" width="460" height="105" rx="8" fill="white" stroke="#722f40"/>
+<path d="M308,405 H752 Q760,405 760,413 V441 H300 V413 Q300,405 308,405" fill="#722f40"/>
+<text x="530.0" y="429" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">FastAPI backend</text>
+<text x="314" y="464" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Identity, ownership, gameplay rules, transactions</text>
+<rect x="300" y="580" width="460" height="90" rx="8" fill="white" stroke="#722f40"/>
+<path d="M308,580 H752 Q760,580 760,588 V616 H300 V588 Q300,580 308,580" fill="#722f40"/>
+<text x="530.0" y="604" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">PostgreSQL</text>
+<text x="314" y="639" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">56 mapped tables / durable game state</text>
+<rect x="30" y="735" width="1000" height="95" rx="8" fill="white" stroke="#722f40"/>
+<path d="M38,735 H1022 Q1030,735 1030,743 V771 H30 V743 Q30,735 38,735" fill="#722f40"/>
+<text x="530.0" y="759" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">Optional Godot ENet host / experimental</text>
+<text x="44" y="794" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Campus movement only; HTTP admission tickets and host-only presence projection.</text>
+</svg>

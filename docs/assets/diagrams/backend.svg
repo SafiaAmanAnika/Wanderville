@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="890" viewBox="0 0 800 890" role="img" aria-label="Backend / request ownership">
+<rect width="800" height="890" fill="#fff8e9"/>
+<text x="32" y="34" font-family="Arial,sans-serif" font-size="21" font-weight="bold" fill="#722f40">Backend / request ownership</text>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#722f40"/></marker></defs>
+<polyline points="400.0,153 400.0,179.0 400.0,179.0 400.0,205" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<polyline points="400.0,293 400.0,319.0 400.0,319.0 400.0,345" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<polyline points="400.0,433 400.0,459.0 400.0,459.0 400.0,485" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<polyline points="400.0,573 400.0,599.0 400.0,599.0 400.0,625" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<polyline points="400.0,713 400.0,739.0 400.0,739.0 400.0,765" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="100" y="65" width="600" height="88" rx="8" fill="white" stroke="#722f40"/>
+<path d="M108,65 H692 Q700,65 700,73 V101 H100 V73 Q100,65 108,65" fill="#722f40"/>
+<text x="400.0" y="89" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">app/main.py</text>
+<text x="114" y="124" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Application composition, routers and lifecycle</text>
+<rect x="100" y="205" width="600" height="88" rx="8" fill="white" stroke="#722f40"/>
+<path d="M108,205 H692 Q700,205 700,213 V241 H100 V213 Q100,205 108,205" fill="#722f40"/>
+<text x="400.0" y="229" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">modules/*/router.py</text>
+<text x="114" y="264" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">HTTP endpoints, dependencies, response envelopes</text>
+<rect x="100" y="345" width="600" height="88" rx="8" fill="white" stroke="#722f40"/>
+<path d="M108,345 H692 Q700,345 700,353 V381 H100 V353 Q100,345 108,345" fill="#722f40"/>
+<text x="400.0" y="369" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">schemas.py</text>
+<text x="114" y="404" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Pydantic request and response validation</text>
+<rect x="100" y="485" width="600" height="88" rx="8" fill="white" stroke="#722f40"/>
+<path d="M108,485 H692 Q700,485 700,493 V521 H100 V493 Q100,485 108,485" fill="#722f40"/>
+<text x="400.0" y="509" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">service.py</text>
+<text x="114" y="544" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Permissions, gameplay rules, transaction boundary</text>
+<rect x="100" y="625" width="600" height="88" rx="8" fill="white" stroke="#722f40"/>
+<path d="M108,625 H692 Q700,625 700,633 V661 H100 V633 Q100,625 108,625" fill="#722f40"/>
+<text x="400.0" y="649" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">repository.py + models.py</text>
+<text x="114" y="684" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Queries, row locks and relational definitions</text>
+<rect x="100" y="765" width="600" height="88" rx="8" fill="white" stroke="#722f40"/>
+<path d="M108,765 H692 Q700,765 700,773 V801 H100 V773 Q100,765 108,765" fill="#722f40"/>
+<text x="400.0" y="789" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">PostgreSQL</text>
+<text x="114" y="824" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Commit all changes together, or roll back</text>
+</svg>

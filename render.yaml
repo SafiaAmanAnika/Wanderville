@@ -1,7 +1,7 @@
 # Ongoing free hobby service. External Neon PostgreSQL required.
 # Mail goes out over Google's HTTPS API, so no purchased domain is needed and
 # Render Free's SMTP block does not apply. Sleeps after inactivity;
-# see docs/SETUP_AND_HOSTING.md for quotas and setup.
+# see docs/BUILD_AND_DEPLOY.md for setup and deployment verification boundaries.
 services:
   - type: web
     name: wanderville-api

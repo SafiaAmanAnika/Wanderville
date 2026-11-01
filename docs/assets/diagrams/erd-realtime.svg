@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="440" viewBox="0 0 1100 440" role="img" aria-label="Database / realtime (FK → referenced key)">
+<rect width="1100" height="440" fill="#fff8e9"/>
+<text x="32" y="34" font-family="Arial,sans-serif" font-size="21" font-weight="bold" fill="#722f40">Database / realtime (FK → referenced key)</text>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#722f40"/></marker></defs>
+<polyline points="440,150.0 550.0,150.0 550.0,150.0 660,150.0" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="550.0" y="142.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#302b2a" stroke="#fff8e9" stroke-width="4" paint-order="stroke">player_id</text>
+<polyline points="440,330.0 550.0,330.0 550.0,330.0 660,330.0" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="550.0" y="322.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#302b2a" stroke="#fff8e9" stroke-width="4" paint-order="stroke">sender_id</text>
+<rect x="40" y="80" width="400" height="140" rx="8" fill="white" stroke="#722f40"/>
+<path d="M48,80 H432 Q440,80 440,88 V116 H40 V88 Q40,80 48,80" fill="#722f40"/>
+<text x="240.0" y="104" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">player_presence</text>
+<text x="54" y="139" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK: player_id</text>
+<text x="54" y="160" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK: player_id (required)</text>
+<text x="54" y="181" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Type: INTEGER</text>
+<rect x="660" y="80" width="400" height="140" rx="8" fill="white" stroke="#722f40"/>
+<path d="M668,80 H1052 Q1060,80 1060,88 V116 H660 V88 Q660,80 668,80" fill="#722f40"/>
+<text x="860.0" y="104" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">players</text>
+<text x="674" y="139" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Referenced key: id</text>
+<text x="674" y="160" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Type: INTEGER</text>
+<text x="674" y="181" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">See full columns and constraints below.</text>
+<rect x="40" y="260" width="400" height="140" rx="8" fill="white" stroke="#722f40"/>
+<path d="M48,260 H432 Q440,260 440,268 V296 H40 V268 Q40,260 48,260" fill="#722f40"/>
+<text x="240.0" y="284" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">nearby_messages</text>
+<text x="54" y="319" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK: id</text>
+<text x="54" y="340" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK: sender_id (required)</text>
+<text x="54" y="361" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Type: INTEGER</text>
+<rect x="660" y="260" width="400" height="140" rx="8" fill="white" stroke="#722f40"/>
+<path d="M668,260 H1052 Q1060,260 1060,268 V296 H660 V268 Q660,260 668,260" fill="#722f40"/>
+<text x="860.0" y="284" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">players</text>
+<text x="674" y="319" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Referenced key: id</text>
+<text x="674" y="340" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Type: INTEGER</text>
+<text x="674" y="361" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">See full columns and constraints below.</text>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="720" viewBox="0 0 800 720" role="img" aria-label="Plant a crop / the real request path">
+<rect width="800" height="720" fill="#fff8e9"/>
+<text x="32" y="34" font-family="Arial,sans-serif" font-size="21" font-weight="bold" fill="#722f40">Plant a crop / the real request path</text>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#722f40"/></marker></defs>
+<polyline points="400.0,165 400.0,197.5 400.0,197.5 400.0,230" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<polyline points="400.0,330 400.0,362.5 400.0,362.5 400.0,395" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<polyline points="400.0,515 400.0,547.5 400.0,547.5 400.0,580" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="80" y="65" width="640" height="100" rx="8" fill="white" stroke="#722f40"/>
+<path d="M88,65 H712 Q720,65 720,73 V101 H80 V73 Q80,65 88,65" fill="#722f40"/>
+<text x="400.0" y="89" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">01 / Godot request</text>
+<text x="94" y="124" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">farm_controller.gd → APIClient.gd</text>
+<text x="94" y="145" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">POST /farm/plant with coordinates and crop code</text>
+<rect x="80" y="230" width="640" height="100" rx="8" fill="white" stroke="#722f40"/>
+<path d="M88,230 H712 Q720,230 720,238 V266 H80 V238 Q80,230 88,230" fill="#722f40"/>
+<text x="400.0" y="254" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">02 / PlantRequest</text>
+<text x="94" y="289" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Integer coordinates 0..32767; item_code 1..32 chars</text>
+<text x="94" y="310" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">farming/schemas.py</text>
+<rect x="80" y="395" width="640" height="120" rx="8" fill="white" stroke="#722f40"/>
+<path d="M88,395 H712 Q720,395 720,403 V431 H80 V403 Q80,395 88,395" fill="#722f40"/>
+<text x="400.0" y="419" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">03 / FarmingService.plant</text>
+<text x="94" y="454" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Resolve owner world; validate tile, seed, season and level</text>
+<text x="94" y="475" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Consume inventory and persist the crop in one action</text>
+<rect x="80" y="580" width="640" height="100" rx="8" fill="white" stroke="#722f40"/>
+<path d="M88,580 H712 Q720,580 720,588 V616 H80 V588 Q80,580 88,580" fill="#722f40"/>
+<text x="400.0" y="604" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">04 / SQLAlchemy → PostgreSQL</text>
+<text x="94" y="639" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Crop, inventory and progression changes commit together</text>
+<text x="94" y="660" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Client refreshes authoritative crop state</text>
+</svg>

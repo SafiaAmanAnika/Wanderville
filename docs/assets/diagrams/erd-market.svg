@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="980" viewBox="0 0 1100 980" role="img" aria-label="Database / market (FK → referenced key)">
+<rect width="1100" height="980" fill="#fff8e9"/>
+<text x="32" y="34" font-family="Arial,sans-serif" font-size="21" font-weight="bold" fill="#722f40">Database / market (FK → referenced key)</text>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#722f40"/></marker></defs>
+<polyline points="440,150.0 550.0,150.0 550.0,150.0 660,150.0" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="550.0" y="142.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#302b2a" stroke="#fff8e9" stroke-width="4" paint-order="stroke">owner_id</text>
+<polyline points="440,330.0 550.0,330.0 550.0,330.0 660,330.0" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="550.0" y="322.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#302b2a" stroke="#fff8e9" stroke-width="4" paint-order="stroke">shop_id</text>
+<polyline points="440,510.0 550.0,510.0 550.0,510.0 660,510.0" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="550.0" y="502.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#302b2a" stroke="#fff8e9" stroke-width="4" paint-order="stroke">item_code</text>
+<polyline points="440,690.0 550.0,690.0 550.0,690.0 660,690.0" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="550.0" y="682.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#302b2a" stroke="#fff8e9" stroke-width="4" paint-order="stroke">player_id</text>
+<polyline points="440,870.0 550.0,870.0 550.0,870.0 660,870.0" fill="none" stroke="#722f40" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="550.0" y="862.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#302b2a" stroke="#fff8e9" stroke-width="4" paint-order="stroke">item_code</text>
+<rect x="40" y="80" width="400" height="140" rx="8" fill="white" stroke="#722f40"/>
+<path d="M48,80 H432 Q440,80 440,88 V116 H40 V88 Q40,80 48,80" fill="#722f40"/>
+<text x="240.0" y="104" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">player_shops</text>
+<text x="54" y="139" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK: id</text>
+<text x="54" y="160" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK: owner_id (required)</text>
+<text x="54" y="181" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Type: INTEGER</text>
+<rect x="660" y="80" width="400" height="140" rx="8" fill="white" stroke="#722f40"/>
+<path d="M668,80 H1052 Q1060,80 1060,88 V116 H660 V88 Q660,80 668,80" fill="#722f40"/>
+<text x="860.0" y="104" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">players</text>
+<text x="674" y="139" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Referenced key: id</text>
+<text x="674" y="160" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Type: INTEGER</text>
+<text x="674" y="181" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">See full columns and constraints below.</text>
+<rect x="40" y="260" width="400" height="140" rx="8" fill="white" stroke="#722f40"/>
+<path d="M48,260 H432 Q440,260 440,268 V296 H40 V268 Q40,260 48,260" fill="#722f40"/>
+<text x="240.0" y="284" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">shop_listings</text>
+<text x="54" y="319" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK: id</text>
+<text x="54" y="340" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK: shop_id (required)</text>
+<text x="54" y="361" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Type: INTEGER</text>
+<rect x="660" y="260" width="400" height="140" rx="8" fill="white" stroke="#722f40"/>
+<path d="M668,260 H1052 Q1060,260 1060,268 V296 H660 V268 Q660,260 668,260" fill="#722f40"/>
+<text x="860.0" y="284" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">player_shops</text>
+<text x="674" y="319" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Referenced key: id</text>
+<text x="674" y="340" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Type: INTEGER</text>
+<text x="674" y="361" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">See full columns and constraints below.</text>
+<rect x="40" y="440" width="400" height="140" rx="8" fill="white" stroke="#722f40"/>
+<path d="M48,440 H432 Q440,440 440,448 V476 H40 V448 Q40,440 48,440" fill="#722f40"/>
+<text x="240.0" y="464" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">shop_listings</text>
+<text x="54" y="499" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK: id</text>
+<text x="54" y="520" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK: item_code (required)</text>
+<text x="54" y="541" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Type: VARCHAR(32)</text>
+<rect x="660" y="440" width="400" height="140" rx="8" fill="white" stroke="#722f40"/>
+<path d="M668,440 H1052 Q1060,440 1060,448 V476 H660 V448 Q660,440 668,440" fill="#722f40"/>
+<text x="860.0" y="464" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">item_definitions</text>
+<text x="674" y="499" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Referenced key: item_code</text>
+<text x="674" y="520" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Type: VARCHAR(32)</text>
+<text x="674" y="541" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">See full columns and constraints below.</text>
+<rect x="40" y="620" width="400" height="140" rx="8" fill="white" stroke="#722f40"/>
+<path d="M48,620 H432 Q440,620 440,628 V656 H40 V628 Q40,620 48,620" fill="#722f40"/>
+<text x="240.0" y="644" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">shop_sales</text>
+<text x="54" y="679" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK: player_id, request_id</text>
+<text x="54" y="700" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK: player_id (required)</text>
+<text x="54" y="721" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Type: INTEGER</text>
+<rect x="660" y="620" width="400" height="140" rx="8" fill="white" stroke="#722f40"/>
+<path d="M668,620 H1052 Q1060,620 1060,628 V656 H660 V628 Q660,620 668,620" fill="#722f40"/>
+<text x="860.0" y="644" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">players</text>
+<text x="674" y="679" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Referenced key: id</text>
+<text x="674" y="700" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Type: INTEGER</text>
+<text x="674" y="721" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">See full columns and constraints below.</text>
+<rect x="40" y="800" width="400" height="140" rx="8" fill="white" stroke="#722f40"/>
+<path d="M48,800 H432 Q440,800 440,808 V836 H40 V808 Q40,800 48,800" fill="#722f40"/>
+<text x="240.0" y="824" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">shop_sales</text>
+<text x="54" y="859" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">PK: player_id, request_id</text>
+<text x="54" y="880" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">FK: item_code (required)</text>
+<text x="54" y="901" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Type: VARCHAR(32)</text>
+<rect x="660" y="800" width="400" height="140" rx="8" fill="white" stroke="#722f40"/>
+<path d="M668,800 H1052 Q1060,800 1060,808 V836 H660 V808 Q660,800 668,800" fill="#722f40"/>
+<text x="860.0" y="824" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">item_definitions</text>
+<text x="674" y="859" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Referenced key: item_code</text>
+<text x="674" y="880" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">Type: VARCHAR(32)</text>
+<text x="674" y="901" font-family="Arial,sans-serif" font-size="13" fill="#302b2a">See full columns and constraints below.</text>
+</svg>

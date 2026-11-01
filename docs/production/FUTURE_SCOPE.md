@@ -5,7 +5,7 @@ Concrete follow-up work suggested by the current gaps; no release dates are prom
 <details>
 <summary><strong>Explore this page</strong></summary>
 
-[Home](../README.md) · [Priorities](#priorities) · [Gameplay ideas](#gameplay-ideas) · [Dependencies](#dependencies)
+[Home](../../README.md) · [Priorities](#priorities) · [Gameplay ideas](#gameplay-ideas) · [Dependencies](#dependencies)
 
 </details>
 
@@ -43,4 +43,4 @@ Source reviewed: `31ca97c39c05` · 2026-11-01. Source inspection is not a new ga
 
 </details>
 
-[← Previous](CREATORS_NOTE.md) · [Back to top](#future-scope) · [Home](../README.md)
+[← Previous](CREATORS_NOTE.md) · [Back to top](#future-scope) · [Home](../../README.md)

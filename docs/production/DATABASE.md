@@ -5,7 +5,7 @@ Current tables, real foreign keys, constraints and migration boundaries.
 <details>
 <summary><strong>Explore this page</strong></summary>
 
-[Home](../README.md) · [Reading the schema](#reading-the-schema) · [Domain diagrams](#domain-diagrams) · [Tables and constraints](#tables-and-constraints) · [Migrations and transactions](#migrations-and-transactions) · [Backup and restore](#backup-and-restore)
+[Home](../../README.md) · [Reading the schema](#reading-the-schema) · [Domain diagrams](#domain-diagrams) · [Tables and constraints](#tables-and-constraints) · [Migrations and transactions](#migrations-and-transactions) · [Backup and restore](#backup-and-restore)
 
 </details>
 
@@ -23,99 +23,99 @@ The supplied reference mixes client classes, services and database entities. The
 <details>
 <summary><strong>Expand farm schema</strong></summary>
 
-![farm ERD](assets/diagrams/erd-farm.svg)
+![farm ERD](../assets/diagrams/erd-farm.svg)
 
-[Edit in draw.io](assets/diagrams/erd-farm.drawio)
+[Edit in draw.io](../assets/diagrams/erd-farm.drawio)
 
 </details>
 
 <details>
 <summary><strong>Expand identity schema</strong></summary>
 
-![identity ERD](assets/diagrams/erd-identity.svg)
+![identity ERD](../assets/diagrams/erd-identity.svg)
 
-[Edit in draw.io](assets/diagrams/erd-identity.drawio)
+[Edit in draw.io](../assets/diagrams/erd-identity.drawio)
 
 </details>
 
 <details>
 <summary><strong>Expand economy schema</strong></summary>
 
-![economy ERD](assets/diagrams/erd-economy.svg)
+![economy ERD](../assets/diagrams/erd-economy.svg)
 
-[Edit in draw.io](assets/diagrams/erd-economy.drawio)
+[Edit in draw.io](../assets/diagrams/erd-economy.drawio)
 
 </details>
 
 <details>
 <summary><strong>Expand social schema</strong></summary>
 
-![social ERD](assets/diagrams/erd-social.svg)
+![social ERD](../assets/diagrams/erd-social.svg)
 
-[Edit in draw.io](assets/diagrams/erd-social.drawio)
+[Edit in draw.io](../assets/diagrams/erd-social.drawio)
 
 </details>
 
 <details>
 <summary><strong>Expand housing schema</strong></summary>
 
-![housing ERD](assets/diagrams/erd-housing.svg)
+![housing ERD](../assets/diagrams/erd-housing.svg)
 
-[Edit in draw.io](assets/diagrams/erd-housing.drawio)
+[Edit in draw.io](../assets/diagrams/erd-housing.drawio)
 
 </details>
 
 <details>
 <summary><strong>Expand market schema</strong></summary>
 
-![market ERD](assets/diagrams/erd-market.svg)
+![market ERD](../assets/diagrams/erd-market.svg)
 
-[Edit in draw.io](assets/diagrams/erd-market.drawio)
+[Edit in draw.io](../assets/diagrams/erd-market.drawio)
 
 </details>
 
 <details>
 <summary><strong>Expand realtime schema</strong></summary>
 
-![realtime ERD](assets/diagrams/erd-realtime.svg)
+![realtime ERD](../assets/diagrams/erd-realtime.svg)
 
-[Edit in draw.io](assets/diagrams/erd-realtime.drawio)
+[Edit in draw.io](../assets/diagrams/erd-realtime.drawio)
 
 </details>
 
 <details>
 <summary><strong>Expand progression schema</strong></summary>
 
-![progression ERD](assets/diagrams/erd-progression.svg)
+![progression ERD](../assets/diagrams/erd-progression.svg)
 
-[Edit in draw.io](assets/diagrams/erd-progression.drawio)
+[Edit in draw.io](../assets/diagrams/erd-progression.drawio)
 
 </details>
 
 <details>
 <summary><strong>Expand shop schema</strong></summary>
 
-![shop ERD](assets/diagrams/erd-shop.svg)
+![shop ERD](../assets/diagrams/erd-shop.svg)
 
-[Edit in draw.io](assets/diagrams/erd-shop.drawio)
+[Edit in draw.io](../assets/diagrams/erd-shop.drawio)
 
 </details>
 
 <details>
 <summary><strong>Expand world schema</strong></summary>
 
-![world ERD](assets/diagrams/erd-world.svg)
+![world ERD](../assets/diagrams/erd-world.svg)
 
-[Edit in draw.io](assets/diagrams/erd-world.drawio)
+[Edit in draw.io](../assets/diagrams/erd-world.drawio)
 
 </details>
 
 <details>
 <summary><strong>Expand support schema</strong></summary>
 
-![support ERD](assets/diagrams/erd-support.svg)
+![support ERD](../assets/diagrams/erd-support.svg)
 
-[Edit in draw.io](assets/diagrams/erd-support.drawio)
+[Edit in draw.io](../assets/diagrams/erd-support.drawio)
 
 </details>
 
@@ -1199,7 +1199,7 @@ One service action uses one outer transaction. Internal helpers flush but do not
 
 Before migrating a real database, use PostgreSQL's `pg_dump` against your configured database and keep the dump outside the repository. Verify a restore into a separate database with `pg_restore`, migrations and `/ready` before relying on it. No production restore or backup was performed in this documentation pass. Never run reset helpers against a shared player database.
 
-Sources: [model registry](../code/server/app/db/model_registry.py) · [migrations](../code/server/migrations/versions) · [transactions](../code/server/app/db/session.py) · [setup](BUILD_AND_DEPLOY.md).
+Sources: [model registry](../../code/server/app/db/model_registry.py) · [migrations](../../code/server/migrations/versions) · [transactions](../../code/server/app/db/session.py) · [setup](BUILD_AND_DEPLOY.md).
 
 <details>
 <summary><strong>Source and verification</strong></summary>

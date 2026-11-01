@@ -5,7 +5,7 @@ Exact constants and important edge cases from the current source.
 <details>
 <summary><strong>Explore this page</strong></summary>
 
-[Home](../README.md) · [Farming](#farming) · [XP and capacity](#xp-and-capacity) · [Store and time](#store-and-time) · [Housing and furniture](#housing-and-furniture) · [Fishing minigame](#fishing-minigame) · [Trees and wood](#trees-and-wood) · [Player shops](#player-shops) · [Companions and customization](#companions-and-customization) · [Seasons weather and lighting](#seasons-weather-and-lighting) · [Music and sound effects](#music-and-sound-effects) · [Social rules and backend progression](#social-rules-and-backend-progression) · [Catalog values](#catalog-values)
+[Home](../../README.md) · [Farming](#farming) · [XP and capacity](#xp-and-capacity) · [Store and time](#store-and-time) · [Housing and furniture](#housing-and-furniture) · [Fishing minigame](#fishing-minigame) · [Trees and wood](#trees-and-wood) · [Player shops](#player-shops) · [Companions and customization](#companions-and-customization) · [Seasons weather and lighting](#seasons-weather-and-lighting) · [Music and sound effects](#music-and-sound-effects) · [Social rules and backend progression](#social-rules-and-backend-progression) · [Catalog values](#catalog-values)
 
 </details>
 
@@ -16,7 +16,7 @@ The current `crop_codes()` reads every plantable catalog row into `SCENE_DURATIO
 
 This replaces the old README's potato-specific 22-second claim: that exception is absent from the current server implementation. Catalog growth seconds below describe stored reference data; they do not override the scene-timing branch.
 
-Source: [service.py](../code/server/app/modules/farming/service.py). Coordinates are strict integers from 0 to 32767. A visitor cannot mutate a host's farm. Seed/season/level/soil checks are server-side.
+Source: [service.py](../../code/server/app/modules/farming/service.py). Coordinates are strict integers from 0 to 32767. A visitor cannot mutate a host's farm. Seed/season/level/soil checks are server-side.
 
 <details>
 <summary><strong>Farming workflow</strong></summary>
@@ -58,7 +58,7 @@ Default base capacity is 30. Capacity is `max(base + cumulative level slot incre
 | First harvest of a species, once per player | +15 |
 | Eligible sale, per unit | 5 |
 
-Awards depend on the action and item rule; these constants do not mean every item grants sale XP. Level Aura rewards are 25 at level 2 and 100 at level 10. Source: [progression.py](../code/server/app/core/progression.py).
+Awards depend on the action and item rule; these constants do not mean every item grants sale XP. Level Aura rewards are 25 at level 2 and 100 at level 10. Source: [progression.py](../../code/server/app/core/progression.py).
 
 ## Store and time
 
@@ -66,7 +66,7 @@ The starter receipt `original_seeds_v1` grants 5 `paddy_seed` and 5 `wheat_seed`
 
 The backend world defaults are **40 minutes per day/night cycle** and **10080 minutes (7 real days) per season**. Existing database values can differ. The client's visual lighting and offline season timers are separate; see [seasons, weather and lighting](#seasons-weather-and-lighting).
 
-Sources: [service.py](../code/server/app/modules/shop/service.py) · [models.py](../code/server/app/modules/world/models.py) · [service.py](../code/server/app/modules/world/service.py).
+Sources: [service.py](../../code/server/app/modules/shop/service.py) · [models.py](../../code/server/app/modules/world/models.py) · [service.py](../../code/server/app/modules/world/service.py).
 
 ## Housing and furniture
 
@@ -93,7 +93,7 @@ Signed-in construction currently spends from `GameState._test_wood`, initialized
 
 </details>
 
-Sources: [house catalog](../code/client/Scripts/housing/house_catalog.gd) · [house manager](../code/client/Scripts/housing/house_manager.gd) · [furniture manifest](../code/client/Assets/furniture/furniture_manifest.json) · [GameState](../code/client/autoloads/GameState.gd).
+Sources: [house catalog](../../code/client/Scripts/housing/house_catalog.gd) · [house manager](../../code/client/Scripts/housing/house_manager.gd) · [furniture manifest](../../code/client/Assets/furniture/furniture_manifest.json) · [GameState](../../code/client/autoloads/GameState.gd).
 
 <details>
 <summary><strong>Construction workflow</strong></summary>
@@ -133,7 +133,7 @@ Leaving the fish resets the partial 0.5-second hold. Five complete holds, with n
 
 `chara_player.gd` receives the completion signal. Offline catches enter local inventory; signed-in catches call `APIClient.record_catch`, with a visible error if the server rejects the result. The `/fishing` backend also contains cast/reel session rules; those are distinct from the moving-target UI's result-recording path.
 
-Sources: [fishing game](../code/client/Scripts/fishing_game.gd) · [fish movement](../code/client/Scripts/fish.gd) · [target](../code/client/Scripts/target.gd) · [character integration](../code/client/Scripts/chara_player.gd) · [fishing service](../code/server/app/modules/fishing/service.py).
+Sources: [fishing game](../../code/client/Scripts/fishing_game.gd) · [fish movement](../../code/client/Scripts/fish.gd) · [target](../../code/client/Scripts/target.gd) · [character integration](../../code/client/Scripts/chara_player.gd) · [fishing service](../../code/server/app/modules/fishing/service.py).
 
 <details>
 <summary><strong>Catch workflow</strong></summary>
@@ -162,7 +162,7 @@ C chops a nearby tree in the currently visible seasonal tree group. Palm trees r
 
 Tree inventory rewards and the temporary house/shop construction counter are currently separate, as described above.
 
-Sources: [tree cutter](../code/client/Scripts/trees/tree_cutter.gd) · [tree service](../code/server/app/modules/trees/service.py) · [season manager](../code/client/Scripts/TreeSeasonManager.gd).
+Sources: [tree cutter](../../code/client/Scripts/trees/tree_cutter.gd) · [tree service](../../code/server/app/modules/trees/service.py) · [season manager](../../code/client/Scripts/TreeSeasonManager.gd).
 
 <details>
 <summary><strong>Wood workflow</strong></summary>
@@ -186,7 +186,7 @@ The marketplace has a General Store and **12 storefront choices**. An owner choo
 
 Stocking moves owned items into a shop listing with an owner-selected unit price. Unstocking returns stock. Buying checks listing stock and uses `price × quantity`; the backend handles the buyer/seller inventory and Aura changes in a transaction. Your shop window shows sales; friends' windows show their stocked listings. A player's existing shop is restored from the server rather than rebuilt on each room entry.
 
-Sources: [marketplace client](../code/client/Scripts/marketplace/marketplace.gd) · [General Store](../code/client/Scripts/marketplace/general_store.gd) · [shop window](../code/client/Scripts/marketplace/shop_window.gd) · [market service](../code/server/app/modules/market/service.py).
+Sources: [marketplace client](../../code/client/Scripts/marketplace/marketplace.gd) · [General Store](../../code/client/Scripts/marketplace/general_store.gd) · [shop window](../../code/client/Scripts/marketplace/shop_window.gd) · [market service](../../code/server/app/modules/market/service.py).
 
 <details>
 <summary><strong>Shop workflow</strong></summary>
@@ -210,7 +210,7 @@ One active companion is selected from **cat, dog, rabbit, fox, duck and red pand
 
 The character editor offers **Girl A/B/C and Boy A/B/C**. Wardrobe saves a selected preset; Mirror is read-only. Previews expose eight directions and the idle, walk, hoe, water, fish, scythe and fill-bucket action sheets. They do not implement arbitrary clothing recoloring or a free-form body editor. Display name and device-local About Me use separate profile controls.
 
-Sources: [pet manager](../code/client/Scripts/pets/pet_manager.gd) · [companion behavior](../code/client/Scripts/pets/pet_companion.gd) · [creator panel](../code/client/Scripts/customization/creator_panel.gd) · [character frames](../code/client/Scripts/chara_frames.gd) · [profile panel](../code/client/Scripts/customization_interactions.gd).
+Sources: [pet manager](../../code/client/Scripts/pets/pet_manager.gd) · [companion behavior](../../code/client/Scripts/pets/pet_companion.gd) · [creator panel](../../code/client/Scripts/customization/creator_panel.gd) · [character frames](../../code/client/Scripts/chara_frames.gd) · [profile panel](../../code/client/Scripts/customization_interactions.gd).
 
 <details>
 <summary><strong>Companion workflow</strong></summary>
@@ -304,7 +304,7 @@ flowchart TD
     G -->|Summer| K[Use server rain or offline rain phase]
 ```
 
-Sources: [world model defaults](../code/server/app/modules/world/models.py) · [seasonal effects](../code/client/Scripts/seasonal_effects.gd) · [day/night tint](../code/client/Scripts/day_night_cycle.gd) · [world scene](../code/client/Scenes/world.tscn).
+Sources: [world model defaults](../../code/server/app/modules/world/models.py) · [seasonal effects](../../code/client/Scripts/seasonal_effects.gd) · [day/night tint](../../code/client/Scripts/day_night_cycle.gd) · [world scene](../../code/client/Scenes/world.tscn).
 
 ## Music and sound effects
 
@@ -322,7 +322,7 @@ Sources: [world model defaults](../code/server/app/modules/world/models.py) · [
 
 The SFX pool allows **12 overlapping one-shots**. Long source clips are capped for short actions: tilling, watering and collecting water at **1 second**, chopping at **3 seconds**. This describes the game's audio behavior; the supplied files are linked through the manager rather than duplicated in documentation.
 
-Source: [AudioManager.gd](../code/client/autoloads/AudioManager.gd).
+Source: [AudioManager.gd](../../code/client/autoloads/AudioManager.gd).
 
 <details>
 <summary><strong>Music workflow</strong></summary>
@@ -343,7 +343,7 @@ flowchart TD
 
 Friends, requests, private messages, block/privacy settings, gifts, wishlists, invitations and notices have client interfaces and backend services. Farm visitors receive the host world's crops in read-only mode. Nearby text/voice use room membership and proximity checks; they are separate from private messages. Gift recovery and Store recovery use their own saved operation identifiers rather than inventing a second outcome after a timeout.
 
-The backend also exposes goals, statistics, login streak state, trades and event claims. They are part of the implemented service surface; this audit does not identify a dedicated current client screen for every one. See [API](API.md), [progression service](../code/server/app/modules/progression/service.py), [events](../code/server/app/modules/events/service.py) and [social service](../code/server/app/modules/social/service.py).
+The backend also exposes goals, statistics, login streak state, trades and event claims. They are part of the implemented service surface; this audit does not identify a dedicated current client screen for every one. See [API](API.md), [progression service](../../code/server/app/modules/progression/service.py), [events](../../code/server/app/modules/events/service.py) and [social service](../../code/server/app/modules/social/service.py).
 
 <details>
 <summary><strong>Social workflow</strong></summary>
@@ -399,7 +399,7 @@ flowchart TD
 
 </details>
 
-Generated directly from [catalog.json](../code/server/app/db/catalog.json). Unlock rules also depend on [progression.py](../code/server/app/core/progression.py) and seeded item rules.
+Generated directly from [catalog.json](../../code/server/app/db/catalog.json). Unlock rules also depend on [progression.py](../../code/server/app/core/progression.py) and seeded item rules.
 
 <details>
 <summary><strong>Source and verification</strong></summary>

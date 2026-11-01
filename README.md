@@ -14,7 +14,7 @@ A Godot campus life and farming game: grow crops, build and furnish a home, catc
 
 Banner artwork generated using our actual campus map, buildings, logo and character assets as references.
 
-[Start playing](docs/MANUAL.md) · [Run locally](docs/BUILD_AND_DEPLOY.md) · [Understand the system](docs/SYSTEM_DESIGN.md)
+[Start playing](docs/production/MANUAL.md) · [Run locally](docs/production/BUILD_AND_DEPLOY.md) · [Understand the system](docs/production/SYSTEM_DESIGN.md)
 
 ## In this checkout
 
@@ -34,7 +34,7 @@ Banner artwork generated using our actual campus map, buildings, logo and charac
 | Music and atmosphere | Title/world/marketplace/fishing music, gameplay sound effects, separate audio controls, seasons and day/night visuals |
 | Multiplayer | Default WebSocket path; optional experimental ENet campus movement |
 
-These descriptions come from source review at `31ca97c39c05`. See the [manual](docs/MANUAL.md) for how to play and [mechanics](docs/GAME_MECHANICS.md) for exact rules and current integration boundaries, including local housing resources. Runtime evidence is tracked in [testing](docs/TESTING.md).
+These descriptions come from source review at `31ca97c39c05`. See the [manual](docs/production/MANUAL.md) for how to play and [mechanics](docs/production/GAME_MECHANICS.md) for exact rules and current integration boundaries, including local housing resources. Runtime evidence is tracked in [testing](docs/production/TESTING.md).
 
 <details>
 <summary><strong>See our characters and companions in motion</strong></summary>
@@ -43,7 +43,7 @@ These descriptions come from source review at `31ca97c39c05`. See the [manual](d
 
 ![Six companion walk cycles](docs/assets/animations/companions.gif)
 
-Source sprite previews. [Full animation gallery](docs/WORLD_ART_BIBLE.md#animation-gallery).
+Source sprite previews. [Full animation gallery](docs/production/WORLD_ART_BIBLE.md#animation-gallery).
 
 </details>
 
@@ -51,7 +51,7 @@ Source sprite previews. [Full animation gallery](docs/WORLD_ART_BIBLE.md#animati
 
 ![Prepare soil, plant, water, harvest](docs/assets/diagrams/farm-loop.svg)
 
-Claim 5 Paddy Seeds and 5 Wheat Seeds once, plant a seed in your farm, water it, and harvest when ready. The current server uses 18 seconds of watered growth for catalog crops. The [manual](docs/MANUAL.md) explains the controls; [mechanics](docs/GAME_MECHANICS.md) gives the numbers.
+Claim 5 Paddy Seeds and 5 Wheat Seeds once, plant a seed in your farm, water it, and harvest when ready. The current server uses 18 seconds of watered growth for catalog crops. The [manual](docs/production/MANUAL.md) explains the controls; [mechanics](docs/production/GAME_MECHANICS.md) gives the numbers.
 
 ## The world
 
@@ -61,13 +61,15 @@ Our current campus: red-brick halls, canals, the arched bridge, palms and orchar
 
 ## Documentation
 
+[Production documentation](docs/production/)
+
 | Play and design | Engineering | Project |
 | --- | --- | --- |
-| [Player manual](docs/MANUAL.md) | [System design](docs/SYSTEM_DESIGN.md) | [Testing and evidence](docs/TESTING.md) |
-| [Game design](docs/GAME_DESIGN.md) | [Godot client](docs/CLIENT_SIDE.md) | [Build and deploy](docs/BUILD_AND_DEPLOY.md) |
-| [Game mechanics](docs/GAME_MECHANICS.md) | [Database and ERDs](docs/DATABASE.md) | [Creators note](docs/CREATORS_NOTE.md) |
-| [World and art](docs/WORLD_ART_BIBLE.md) | [HTTP API](docs/API.md) | [Future scope](docs/FUTURE_SCOPE.md) |
-| | [Networking](docs/NETWORKING.md) | |
+| [Player manual](docs/production/MANUAL.md) | [System design](docs/production/SYSTEM_DESIGN.md) | [Testing and evidence](docs/production/TESTING.md) |
+| [Game design](docs/production/GAME_DESIGN.md) | [Godot client](docs/production/CLIENT_SIDE.md) | [Build and deploy](docs/production/BUILD_AND_DEPLOY.md) |
+| [Game mechanics](docs/production/GAME_MECHANICS.md) | [Database and ERDs](docs/production/DATABASE.md) | [Creators note](docs/production/CREATORS_NOTE.md) |
+| [World and art](docs/production/WORLD_ART_BIBLE.md) | [HTTP API](docs/production/API.md) | [Future scope](docs/production/FUTURE_SCOPE.md) |
+| | [Networking](docs/production/NETWORKING.md) | |
 
 ## Meet the team
 
@@ -80,8 +82,8 @@ Our current campus: red-brick halls, canals, the arched bridge, palms and orchar
 
 Godot **4.6** · Python **3.12.12** · FastAPI · SQLAlchemy · PostgreSQL.
 
-Use the [local setup steps](docs/BUILD_AND_DEPLOY.md) before running the Windows launchers. The deployment blueprint is checked in; its presence does not establish that a public server is live.
+Use the [local setup steps](docs/production/BUILD_AND_DEPLOY.md) before running the Windows launchers. The deployment blueprint is checked in; its presence does not establish that a public server is live.
 
-The banner is generated promotional artwork; the campus image above is a real Godot scene capture. See the [credits and project story](docs/CREATORS_NOTE.md).
+The banner is generated promotional artwork; the campus image above is a real Godot scene capture. See the [credits and project story](docs/production/CREATORS_NOTE.md).
 
-[Player handbook](docs/MANUAL.md) · [Game design](docs/GAME_DESIGN.md) · [Meet the team](#meet-the-team)
+[Player handbook](docs/production/MANUAL.md) · [Game design](docs/production/GAME_DESIGN.md) · [Meet the team](#meet-the-team)

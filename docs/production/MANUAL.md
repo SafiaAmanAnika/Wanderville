@@ -5,7 +5,7 @@ A player guide to exploring, farming, fishing, building a home, shopping, compan
 <details>
 <summary><strong>Explore this page</strong></summary>
 
-[Home](../README.md) · [First session](#first-session) · [Controls](#controls) · [Campus destinations](#campus-destinations) · [Farming and inventory](#farming-and-inventory) · [Build and decorate a home](#build-and-decorate-a-home) · [Fishing minigame](#fishing-minigame) · [Shops and the marketplace](#shops-and-the-marketplace) · [Companions and appearance](#companions-and-appearance) · [Friends and farm visits](#friends-and-farm-visits) · [Music settings and atmosphere](#music-settings-and-atmosphere) · [When something fails](#when-something-fails)
+[Home](../../README.md) · [First session](#first-session) · [Controls](#controls) · [Campus destinations](#campus-destinations) · [Farming and inventory](#farming-and-inventory) · [Build and decorate a home](#build-and-decorate-a-home) · [Fishing minigame](#fishing-minigame) · [Shops and the marketplace](#shops-and-the-marketplace) · [Companions and appearance](#companions-and-appearance) · [Friends and farm visits](#friends-and-farm-visits) · [Music settings and atmosphere](#music-settings-and-atmosphere) · [When something fails](#when-something-fails)
 
 </details>
 
@@ -41,7 +41,7 @@ No release download or trailer URL is published here because none was verified f
 | Nearby / Voice | Proximity communication |
 | Settings → Leave World | Return to title while keeping the session |
 
-Bindings come from [project.godot](../code/client/project.godot); individual actions also depend on location and interaction state. The selected character adds F for fishing at runtime in [chara_player.gd](../code/client/Scripts/chara_player.gd); [character_spawner.gd](../code/client/Scripts/character_spawner.gd) adds WASD. F and S also have housing actions, so interaction context matters.
+Bindings come from [project.godot](../../code/client/project.godot); individual actions also depend on location and interaction state. The selected character adds F for fishing at runtime in [chara_player.gd](../../code/client/Scripts/chara_player.gd); [character_spawner.gd](../../code/client/Scripts/character_spawner.gd) adds WASD. F and S also have housing actions, so interaction context matters.
 
 ## Campus destinations
 
@@ -60,9 +60,9 @@ Building clicks and proximity prompts are separate interactions. Walk up when a 
 
 ## Farming and inventory
 
-![Farming loop](assets/diagrams/farm-loop.svg)
+![Farming loop](../assets/diagrams/farm-loop.svg)
 
-[Edit the diagram in draw.io](assets/diagrams/farm-loop.drawio).
+[Edit the diagram in draw.io](../assets/diagrams/farm-loop.drawio).
 
 The seed picker lists owned seeds. Level and season checks happen on the server. Cancelling the picker does not plant. Dry crops do not progress; current catalog crops finish after 18 seconds of watered growth. Inventory categories share one slot pool. Fill partial stacks before expecting a new slot to be available.
 
@@ -137,7 +137,7 @@ Source reviewed: `31ca97c39c05` · 2026-11-01. Source inspection is not a new ga
 
 </details>
 
-[Home](../README.md) · [Back to top](#start-playing) · [Next →](GAME_DESIGN.md)
+[Home](../../README.md) · [Back to top](#start-playing) · [Next →](GAME_DESIGN.md)
 
 ## Weather and time
 

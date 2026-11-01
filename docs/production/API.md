@@ -5,7 +5,7 @@ Generated endpoints and concrete request conventions from the current FastAPI ap
 <details>
 <summary><strong>Explore this page</strong></summary>
 
-[Home](../README.md) · [Contract and authentication](#contract-and-authentication) · [Envelopes and errors](#envelopes-and-errors) · [Planting example](#planting-example) · [Endpoint reference](#endpoint-reference) · [Request and response models](#request-and-response-models)
+[Home](../../README.md) · [Contract and authentication](#contract-and-authentication) · [Envelopes and errors](#envelopes-and-errors) · [Planting example](#planting-example) · [Endpoint reference](#endpoint-reference) · [Request and response models](#request-and-response-models)
 
 </details>
 
@@ -14,7 +14,7 @@ Generated endpoints and concrete request conventions from the current FastAPI ap
 
 The app identifies itself as **WanderVille API 2.0.0**. No universal `/api/v2` path prefix is assumed. Local examples use `http://127.0.0.1:8000`. Authenticated gameplay requests use `Authorization: Bearer <access-token>`; internal multiplayer routes have their own host authentication. Check each endpoint's schema and dependency.
 
-[OPENAPI.json](OPENAPI.json) was generated from the current app. It contains **124 paths / 136 operations**. Interactive `/docs` and `/openapi.json` are available on a running FastAPI instance. The shop router is currently registered twice in [app/main.py](../code/server/app/main.py), duplicating six method/path pairs.
+[OPENAPI.json](../OPENAPI.json) was generated from the current app. It contains **124 paths / 136 operations**. Interactive `/docs` and `/openapi.json` are available on a running FastAPI instance. The shop router is currently registered twice in [app/main.py](../../code/server/app/main.py), duplicating six method/path pairs.
 
 The game using this API also has house construction and furniture editing, a moving-target fishing minigame, an inventory aquarium, player-run shops, companions, customization, social rooms and music. Endpoint groups and client activities do not map one-to-one: detailed house layouts are local even though `/housing` tier/decorations endpoints exist; the fishing minigame records a catch separately from backend cast/reel sessions; pet selection is saved while companion movement runs locally. Music/SFX and device preferences are client systems. Use the [manual](MANUAL.md) for player flows and [client implementation](CLIENT_SIDE.md) for the owning scripts.
 
@@ -34,7 +34,7 @@ Translated error:
 
 Validation maps to 422, missing bearer authentication may yield 401, integrity conflicts map to 409, and database failures map to 503. Domain errors choose their own status. Health, OAuth/browser and other special endpoints can use their own response shape; do not force every route into a common envelope. Generated responses below describe declared OpenAPI contracts; runtime exception handlers may add statuses not listed there.
 
-Sources: [responses](../code/server/app/core/responses.py) · [error mapping](../code/server/app/core/errors.py).
+Sources: [responses](../../code/server/app/core/responses.py) · [error mapping](../../code/server/app/core/errors.py).
 
 ## Planting example
 
@@ -2153,7 +2153,7 @@ Security: `[{"HTTPBearer": []}]`.
 
 ## Request and response models
 
-All `$ref` values above resolve under `components.schemas` in [OPENAPI.json](OPENAPI.json). For retries, use a route's actual request ID contract; not all mutation routes are idempotent. Buying with the same receipt ID and a changed payload is rejected. WebSocket messages are described separately in [networking](NETWORKING.md).
+All `$ref` values above resolve under `components.schemas` in [OPENAPI.json](../OPENAPI.json). For retries, use a route's actual request ID contract; not all mutation routes are idempotent. Buying with the same receipt ID and a changed payload is rejected. WebSocket messages are described separately in [networking](NETWORKING.md).
 
 <details>
 <summary><strong>Source and verification</strong></summary>

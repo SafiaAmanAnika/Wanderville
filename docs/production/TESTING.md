@@ -5,7 +5,7 @@ Source coverage and existing tests for the full game, with runtime gaps stated s
 <details>
 <summary><strong>Explore this page</strong></summary>
 
-[Home](../README.md) · [Current documentation checks](#current-documentation-checks) · [Feature audit](#feature-audit) · [Test map](#test-map) · [Acceptance gaps](#acceptance-gaps)
+[Home](../../README.md) · [Current documentation checks](#current-documentation-checks) · [Feature audit](#feature-audit) · [Test map](#test-map) · [Acceptance gaps](#acceptance-gaps)
 
 </details>
 
@@ -34,16 +34,16 @@ The audit also corrected two misleading earlier descriptions: current farming is
 
 | Area | Existing tests or runner | What it can establish |
 | --- | --- | --- |
-| API/auth contracts | [contract](../code/server/tests/contract), [auth](../code/server/tests/auth) | Schemas, identity and response behavior |
-| Farming/inventory | [farming](../code/server/tests/farming), [inventory](../code/server/tests/inventory) | Ownership, crop mutations and stack rules |
-| Database | [database](../code/server/tests/database) | Migration/integrity behavior under the configured engine |
-| Integrated multiplayer | [verify_enet_gameplay.py](../code/server/scripts/verify_enet_gameplay.py) | Disposable backend/host and two-client scenarios |
-| Godot checks | [client tests](../code/client/tests) | Specific scene, UI and integration assertions |
-| House entry/camera | [housing_entry_check.gd](../code/client/tests/housing_entry_check.gd), [world_camera_check.gd](../code/client/tests/world_camera_check.gd) | Existing transition/camera assertions; does not replace a complete build/decorate/save walkthrough |
-| Companions | [pet_companions_check.gd](../code/client/tests/pet_companions_check.gd), [pet_authenticated_check.gd](../code/client/tests/pet_authenticated_check.gd) | Existing companion behavior and signed-in integration checks |
-| Wardrobe/customization | [customization_lobby_check.gd](../code/client/tests/customization_lobby_check.gd) | Existing editor/room checks |
-| Tree cutting | [tree_cutting_input_check.gd](../code/client/tests/tree_cutting_input_check.gd) | Existing tree interaction checks |
-| Entrances/onboarding | [campus_lobby_entrances_check.gd](../code/client/tests/campus_lobby_entrances_check.gd), [onboarding_check.gd](../code/client/tests/onboarding_check.gd) | Existing room-entry and first-session UI checks |
+| API/auth contracts | [contract](../../code/server/tests/contract), [auth](../../code/server/tests/auth) | Schemas, identity and response behavior |
+| Farming/inventory | [farming](../../code/server/tests/farming), [inventory](../../code/server/tests/inventory) | Ownership, crop mutations and stack rules |
+| Database | [database](../../code/server/tests/database) | Migration/integrity behavior under the configured engine |
+| Integrated multiplayer | [verify_enet_gameplay.py](../../code/server/scripts/verify_enet_gameplay.py) | Disposable backend/host and two-client scenarios |
+| Godot checks | [client tests](../../code/client/tests) | Specific scene, UI and integration assertions |
+| House entry/camera | [housing_entry_check.gd](../../code/client/tests/housing_entry_check.gd), [world_camera_check.gd](../../code/client/tests/world_camera_check.gd) | Existing transition/camera assertions; does not replace a complete build/decorate/save walkthrough |
+| Companions | [pet_companions_check.gd](../../code/client/tests/pet_companions_check.gd), [pet_authenticated_check.gd](../../code/client/tests/pet_authenticated_check.gd) | Existing companion behavior and signed-in integration checks |
+| Wardrobe/customization | [customization_lobby_check.gd](../../code/client/tests/customization_lobby_check.gd) | Existing editor/room checks |
+| Tree cutting | [tree_cutting_input_check.gd](../../code/client/tests/tree_cutting_input_check.gd) | Existing tree interaction checks |
+| Entrances/onboarding | [campus_lobby_entrances_check.gd](../../code/client/tests/campus_lobby_entrances_check.gd), [onboarding_check.gd](../../code/client/tests/onboarding_check.gd) | Existing room-entry and first-session UI checks |
 
 For backend tests, use the test fixture configuration and an isolated database. SQLite checks do not establish PostgreSQL locking correctness.
 

@@ -5,14 +5,14 @@ Default WebSocket play, optional ENet movement, and world authority.
 <details>
 <summary><strong>Explore this page</strong></summary>
 
-[Home](../README.md) · [Transport responsibilities](#transport-responsibilities) · [Admission and movement](#admission-and-movement) · [Rooms and permissions](#rooms-and-permissions) · [Local activities and synchronization](#local-activities-and-synchronization) · [Limits and reproduction](#limits-and-reproduction)
+[Home](../../README.md) · [Transport responsibilities](#transport-responsibilities) · [Admission and movement](#admission-and-movement) · [Rooms and permissions](#rooms-and-permissions) · [Local activities and synchronization](#local-activities-and-synchronization) · [Limits and reproduction](#limits-and-reproduction)
 
 </details>
 
 
 ## Transport responsibilities
 
-![Transport overview](assets/diagrams/system.svg)
+![Transport overview](../assets/diagrams/system.svg)
 
 | Transport | Responsibility | Scope |
 | --- | --- | --- |
@@ -43,7 +43,7 @@ Fishing pauses the local Godot scene tree while the minigame and audio continue.
 
 Companion movement and sleep states are local simulations; the pet API persists selection. Wardrobe saves appearance through account/profile integration. Marketplace listings, stock, purchases and sales use HTTP services. Music, effect playback, local house furniture and device preferences are not replicated as live movement events.
 
-Sources: [house transitions](../code/client/Scripts/housing/house_manager.gd) · [fishing entry/results](../code/client/Scripts/chara_player.gd) · [fishing UI](../code/client/Scripts/fishing_game.gd) · [companion selection](../code/client/Scripts/pets/pet_manager.gd) · [marketplace](../code/client/Scripts/marketplace/marketplace.gd).
+Sources: [house transitions](../../code/client/Scripts/housing/house_manager.gd) · [fishing entry/results](../../code/client/Scripts/chara_player.gd) · [fishing UI](../../code/client/Scripts/fishing_game.gd) · [companion selection](../../code/client/Scripts/pets/pet_manager.gd) · [marketplace](../../code/client/Scripts/marketplace/marketplace.gd).
 
 ## Limits and reproduction
 
@@ -55,7 +55,7 @@ ENet UDP is plaintext and the dedicated host defaults to loopback. The experimen
 
 The verifier requires Godot and PostgreSQL binaries; configure `GODOT_EXE` and `PG_BIN`. It creates disposable test services and databases. Historical outcomes are in [testing](TESTING.md), not claimed as a run of this documentation revision.
 
-Sources: [EnetGameplayBridge](../code/client/Scripts/network/EnetGameplayBridge.gd) · [MovementClient](../code/client/Scripts/network/MovementClient.gd) · [MovementAuthority](../code/client/Scripts/network/MovementAuthority.gd) · [admission router](../code/server/app/modules/realtime/admission_router.py) · [internal router](../code/server/app/modules/realtime/internal_router.py) · [configuration](../code/server/app/core/config.py).
+Sources: [EnetGameplayBridge](../../code/client/Scripts/network/EnetGameplayBridge.gd) · [MovementClient](../../code/client/Scripts/network/MovementClient.gd) · [MovementAuthority](../../code/client/Scripts/network/MovementAuthority.gd) · [admission router](../../code/server/app/modules/realtime/admission_router.py) · [internal router](../../code/server/app/modules/realtime/internal_router.py) · [configuration](../../code/server/app/core/config.py).
 
 <details>
 <summary><strong>Source and verification</strong></summary>

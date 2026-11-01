@@ -5,7 +5,7 @@ An honest account of the project that the repository can support.
 <details>
 <summary><strong>Explore this page</strong></summary>
 
-[Home](../README.md) · [The project in front of us](#the-project-in-front-of-us) · [Development evidence](#development-evidence) · [Credits](#credits) · [Meet the team](#meet-the-team)
+[Home](../../README.md) · [The project in front of us](#the-project-in-front-of-us) · [Development evidence](#development-evidence) · [Credits](#credits) · [Meet the team](#meet-the-team)
 
 </details>
 
@@ -20,7 +20,7 @@ The code and migrations show successive additions for gameplay, presence, shop r
 
 | Evidence | Read it |
 | --- | --- |
-| Schema evolution | [Migrations](../code/server/migrations/versions) |
+| Schema evolution | [Migrations](../../code/server/migrations/versions) |
 | Development history | [GitHub commits](https://github.com/SafiaAmanAnika/Wanderville/commits/main/) |
 | Current system boundaries | [System design](SYSTEM_DESIGN.md) |
 

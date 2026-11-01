@@ -5,16 +5,16 @@ Where requests go, who owns the rules, and what is saved.
 <details>
 <summary><strong>Explore this page</strong></summary>
 
-[Home](../README.md) · [System overview](#system-overview) · [Gameplay ownership](#gameplay-ownership) · [Backend layers](#backend-layers) · [Planting across the layers](#planting-across-the-layers) · [Integrity and limits](#integrity-and-limits)
+[Home](../../README.md) · [System overview](#system-overview) · [Gameplay ownership](#gameplay-ownership) · [Backend layers](#backend-layers) · [Planting across the layers](#planting-across-the-layers) · [Integrity and limits](#integrity-and-limits)
 
 </details>
 
 
 ## System overview
 
-![System overview](assets/diagrams/system.svg)
+![System overview](../assets/diagrams/system.svg)
 
-[Edit in draw.io](assets/diagrams/system.drawio). HTTP and WebSocket are separate transports into the same backend. PostgreSQL holds durable accounts and game state. The optional ENet host simulates campus movement; it does not replace gameplay services.
+[Edit in draw.io](../assets/diagrams/system.drawio). HTTP and WebSocket are separate transports into the same backend. PostgreSQL holds durable accounts and game state. The optional ENet host simulates campus movement; it does not replace gameplay services.
 
 ## Gameplay ownership
 
@@ -37,25 +37,25 @@ See [client implementation](CLIENT_SIDE.md) for the owning scripts and [mechanic
 
 ## Backend layers
 
-![Backend layers](assets/diagrams/backend.svg)
+![Backend layers](../assets/diagrams/backend.svg)
 
-[Editable source](assets/diagrams/backend.drawio). `app/main.py` composes routers, middleware, errors and an optional background worker. Routers inject authenticated identity and a database session. Services enforce policy. Repositories and ORM models access state. Validation occurs before service execution, with response validation after the handler where a response model is declared.
+[Editable source](../assets/diagrams/backend.drawio). `app/main.py` composes routers, middleware, errors and an optional background worker. Routers inject authenticated identity and a database session. Services enforce policy. Repositories and ORM models access state. Validation occurs before service execution, with response validation after the handler where a response model is declared.
 
 ## Planting across the layers
 
-![Planting workflow](assets/diagrams/planting.svg)
+![Planting workflow](../assets/diagrams/planting.svg)
 
-![Planting sequence](assets/diagrams/planting-sequence.svg)
+![Planting sequence](../assets/diagrams/planting-sequence.svg)
 
-Editable: [workflow](assets/diagrams/planting.drawio) · [sequence](assets/diagrams/planting-sequence.drawio). InventoryService participates inside the farming action's transaction; it does not commit a separate purchase or seed removal.
+Editable: [workflow](../assets/diagrams/planting.drawio) · [sequence](../assets/diagrams/planting-sequence.drawio). InventoryService participates inside the farming action's transaction; it does not commit a separate purchase or seed removal.
 
 ## Integrity and limits
 
 The outer `transaction(db)` commits or rolls back one service action. Nested transaction boundaries raise an error. Identity comes from server authentication; showing a disabled client button is not authorization. Player locks serialize conflicting player actions where explicitly taken by the service.
 
-In-memory presence and realtime runtime are per-process. The deployment blueprint uses one worker. A multi-worker/shared-presence design is future work. [app/main.py](../code/server/app/main.py) currently includes `shop_router` twice, duplicating six method/path registrations.
+In-memory presence and realtime runtime are per-process. The deployment blueprint uses one worker. A multi-worker/shared-presence design is future work. [app/main.py](../../code/server/app/main.py) currently includes `shop_router` twice, duplicating six method/path registrations.
 
-Sources: [main.py](../code/server/app/main.py) · [transaction boundary](../code/server/app/db/session.py) · [owner checks](../code/server/app/modules/world/access.py) · [farming service](../code/server/app/modules/farming/service.py).
+Sources: [main.py](../../code/server/app/main.py) · [transaction boundary](../../code/server/app/db/session.py) · [owner checks](../../code/server/app/modules/world/access.py) · [farming service](../../code/server/app/modules/farming/service.py).
 
 <details>
 <summary><strong>Source and verification</strong></summary>
